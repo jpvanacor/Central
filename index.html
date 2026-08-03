@@ -376,6 +376,37 @@ pre.fmt{
 .starbtns button.on{color:var(--warn)}
 .kemoji{flex:none; width:22px; text-align:center}
 
+/* ===== Rotina checklist ===== */
+.rt-ck{flex:none; width:22px; height:22px; border-radius:7px; border:2px solid var(--line2); background:none; padding:0; position:relative}
+.rt-ck.on{background:var(--good); border-color:var(--good)}
+.rt-ck.on::after{content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700}
+.trow.rt-done .tt{color:var(--muted); text-decoration:line-through}
+.rt-status{font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:2px 8px; border-radius:6px; flex:none}
+.rt-status.ok{color:var(--good); background:var(--good-soft)}
+.rt-status.late{color:var(--danger); background:var(--danger-soft)}
+
+/* ===== Mercado ===== */
+.shop-cat{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px 4px}
+.shop-row{display:flex; align-items:center; gap:10px; padding:8px 14px}
+.shop-row + .shop-row{border-top:1px solid var(--line)}
+.shop-row.bought .tt{color:var(--muted); text-decoration:line-through}
+.shop-row .recur{font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); background:var(--surface2); border-radius:4px; padding:1px 5px}
+
+/* ===== Finanças ===== */
+.fin-in{color:var(--good); font-weight:600}
+.fin-out{color:var(--danger); font-weight:600}
+.fin-bal{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700; font-variant-numeric:tabular-nums}
+.fin-row .amt{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; flex:none}
+
+/* ===== Estudos ===== */
+.sj-row{display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer}
+.sj-row + .sj-row{border-top:1px solid var(--line)}
+.sj-row:hover{background:var(--surface2)}
+.sj-prog{flex:1; min-width:80px}
+.sj-prog-track{height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin-top:4px}
+.sj-prog-fill{height:100%; border-radius:4px; transition:width .2s}
+.sj-hrs{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); flex:none; text-align:right; min-width:70px}
+
 /* responsivo básico */
 .bottom-nav{display:none; position:fixed; left:0; right:0; bottom:0; z-index:40;
   background:var(--surface); border-top:1px solid var(--line);
@@ -422,6 +453,10 @@ pre.fmt{
   <button class="nav-item" data-view="rotina"><span class="ic">☰</span><span class="lb">Rotina</span></button>
   <button class="nav-item" data-view="conhecimento"><span class="ic">✎</span><span class="lb">Conhecimento</span></button>
   <button class="nav-item" data-view="lugares"><span class="ic">➤</span><span class="lb">Lugares</span></button>
+
+  <button class="nav-item" data-view="financas"><span class="ic">$</span><span class="lb">Finanças</span></button>
+  <button class="nav-item" data-view="estudos"><span class="ic">⬡</span><span class="lb">Estudos</span></button>
+  <button class="nav-item" data-view="mercado"><span class="ic">🛒</span><span class="lb">Mercado</span></button>
 
   <div class="spacer"></div>
   <div class="side-foot">
@@ -513,6 +548,7 @@ pre.fmt{
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="novo-lembrete">+ Novo lembrete</button>
     </div>
+    <div class="chips" id="rlCats"></div>
     <div class="qadd">
       <input class="inp" type="text" id="rlTitle" placeholder="Lembrete rápido e Enter…">
       <input class="inp" type="date" id="rlDate">
@@ -559,6 +595,56 @@ pre.fmt{
       <input class="inp" type="text" id="lSearch" placeholder="Buscar por nome, cidade ou nota…">
     </div>
     <div id="lLista"></div>
+  </section>
+
+  <!-- ===== FINANÇAS ===== -->
+  <section class="view" id="view-financas">
+    <div class="vhead">
+      <h1 class="vtitle">Finanças</h1>
+      <span class="vdate mono" id="finMes"></span>
+      <div class="grow"></div>
+      <button class="btn btn-ghost btn-sm" data-action="fin-prev">←</button>
+      <button class="btn btn-ghost btn-sm" data-action="fin-next">→</button>
+      <button class="btn btn-primary btn-sm" data-action="nova-transacao">+ Lançamento</button>
+    </div>
+    <div class="sumrow" id="finResumo"></div>
+    <div id="finBars"></div>
+    <div id="finLista"></div>
+  </section>
+
+  <!-- ===== ESTUDOS ===== -->
+  <section class="view" id="view-estudos">
+    <div class="vhead">
+      <h1 class="vtitle">Estudos</h1>
+      <span class="vdate mono" id="estSemana"></span>
+      <div class="grow"></div>
+      <button class="btn btn-ghost btn-sm" data-action="ger-materias">Matérias</button>
+      <button class="btn btn-primary btn-sm" data-action="nova-sessao">+ Registrar sessão</button>
+    </div>
+    <div id="estProgresso"></div>
+    <div id="estLista"></div>
+  </section>
+
+  <!-- ===== MERCADO ===== -->
+  <section class="view" id="view-mercado">
+    <div class="vhead">
+      <h1 class="vtitle">Mercado</h1>
+      <div class="grow"></div>
+      <button class="btn btn-ghost btn-sm" data-action="limpar-comprados">Limpar comprados</button>
+    </div>
+    <div class="qadd">
+      <input class="inp" type="text" id="shopInp" placeholder="Adicionar item e Enter…">
+      <select class="inp" id="shopCat" style="width:auto; font-size:12.5px">
+        <option value="">Sem categoria</option>
+        <option value="frutas">frutas</option><option value="verduras">verduras</option>
+        <option value="carnes">carnes</option><option value="laticínios">laticínios</option>
+        <option value="padaria">padaria</option><option value="bebidas">bebidas</option>
+        <option value="limpeza">limpeza</option><option value="higiene">higiene</option>
+        <option value="outros">outros</option>
+      </select>
+      <button class="btn" data-action="qadd-shop">Adicionar</button>
+    </div>
+    <div id="shopLista"></div>
   </section>
 
   <!-- ===== DADOS ===== -->
@@ -646,13 +732,7 @@ pre.fmt{
 
 </div></main>
 
-<nav class="bottom-nav">
-  <button class="bn-item" data-view="hoje"><span class="ic">◐</span>Hoje</button>
-  <button class="bn-item" data-view="tarefas"><span class="ic">☑</span>Tarefas</button>
-  <button class="bn-item" data-view="habitos"><span class="ic">▣</span>Hábitos</button>
-  <button class="bn-item" data-view="tempo"><span class="ic">◷</span>Tempo</button>
-  <button class="bn-item" data-action="mais"><span class="ic">☰</span>Mais</button>
-</nav>
+<nav class="bottom-nav" id="bottomNav"></nav>
 
 <div class="mback" id="mback">
   <div class="modal" role="dialog" aria-modal="true">
@@ -692,9 +772,10 @@ const PRIO_TXT = {0:'Nenhuma', 1:'Baixa', 2:'Média', 3:'Alta'};
 function blank(){
   const n = new Date().toISOString();
   return {
-    meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light'},
+    meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','tempo']},
     projects:[], tasks:[], habits:[], habitLogs:{},
-    timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[]
+    timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[],
+    finances:[], subjects:[], studySessions:[], routineChecks:{}, shoppingItems:[]
   };
 }
 let S = load();
@@ -802,13 +883,26 @@ let VIEW = 'hoje';
 let TF = 'hoje';      /* filtro de tarefas */
 let TPROJ = '';        /* filtro por projeto */
 let M = null;          /* estado do modal */
+const TABS = {
+  hoje:{ic:'◐',lb:'Hoje'}, tarefas:{ic:'☑',lb:'Tarefas'}, habitos:{ic:'▣',lb:'Hábitos'},
+  tempo:{ic:'◷',lb:'Tempo'}, lembretes:{ic:'⚑',lb:'Lembretes'}, pessoas:{ic:'◌',lb:'Pessoas'},
+  rotina:{ic:'☰',lb:'Rotina'}, conhecimento:{ic:'✎',lb:'Conhecimento'}, lugares:{ic:'➤',lb:'Lugares'},
+  dados:{ic:'⚙',lb:'Dados'}, financas:{ic:'$',lb:'Finanças'}, estudos:{ic:'⬡',lb:'Estudos'}, mercado:{ic:'🛒',lb:'Mercado'}
+};
+function renderBottomNav(){
+  const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
+  const bn = document.getElementById('bottomNav');
+  if(!bn) return;
+  bn.innerHTML = bt.map(v => {
+    const t = TABS[v] || {ic:'?',lb:v};
+    return '<button class="bn-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '"><span class="ic">' + t.ic + '</span>' + t.lb + '</button>';
+  }).join('') + '<button class="bn-item' + (!bt.includes(VIEW) && VIEW !== 'hoje' ? ' active' : '') + '" data-action="mais"><span class="ic">☰</span>Mais</button>';
+}
 function setView(v){
   VIEW = v;
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('active', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
-  document.querySelectorAll('.bn-item[data-view]').forEach(n => n.classList.toggle('active', n.dataset.view === v));
-  const _mb = document.querySelector('.bn-item[data-action="mais"]');
-  if(_mb) _mb.classList.toggle('active', !document.querySelector('.bn-item[data-view="' + v + '"]'));
+  renderBottomNav();
   render();
 }
 
@@ -871,13 +965,20 @@ function renderHoje(){
     }).join('') + '</div>';
 
   const cb = currentBlock(), nb = nextBlock();
-  const rot = (!cb && !nb) ? '' :
-    '<div class="card runstrip" style="cursor:pointer" data-action="ir-rotina" title="Abrir rotina">' +
+  const rp = rtProgress(t);
+  const rot = (!cb && !nb && !rp.total) ? '' :
+    '<div class="card runstrip" style="cursor:pointer; flex-wrap:wrap" data-action="ir-rotina" title="Abrir rotina">' +
     (cb ? '<span class="rt-cbar" style="background:' + CORES[cb.color] + '"></span>' +
-          '<span class="clock-desc">' + esc(cb.name) + '</span><span class="due">até ' + cb.end + '</span>'
-        : '<span class="clock-desc" style="color:var(--muted); font-weight:500">Sem bloco de rotina agora</span>') +
+          '<span class="clock-desc">' + esc(cb.name) + '</span>' +
+          (rtChecked(cb.id, t) ? '<span class="rt-status ok">✓</span>' : '<span class="due">até ' + cb.end + '</span>')
+        : '<span class="clock-desc" style="color:var(--muted); font-weight:500">Sem bloco agora</span>') +
+    (rp.total ? '<span class="due">' + rp.done + '/' + rp.total + ' feitos</span>' : '') +
     (nb ? '<span class="due">depois: ' + esc(nb.name) + ' ' + nb.start + '</span>' : '') +
     '</div>';
+
+  const shopPend = S.shoppingItems.filter(i => !i.bought).length;
+  const shopBanner = !shopPend ? '' :
+    '<div class="card runstrip" style="cursor:pointer" data-action="ir-mercado">🛒 <span class="clock-desc">' + shopPend + ' ite' + (shopPend === 1 ? 'm' : 'ns') + ' no mercado</span></div>';
   const nivers = S.people.filter(p => nextBday(p.birthday) === 0);
   const bd = !nivers.length ? '' :
     '<div class="bdays" style="margin-bottom:16px">' + nivers.map(p =>
@@ -895,7 +996,7 @@ function renderHoje(){
     (S.meta.lastBackupAt ? 'O último backup tem mais de 7 dias.' : 'Ainda não existe nenhum backup exportado.') +
     ' O localStorage pode ser limpo pelo navegador.</span>' +
     '<button class="btn btn-primary btn-sm" data-action="exportar">Exportar agora</button></div>';
-  $('#hojeBanner').innerHTML += strip + rot + lemBanner + bd;
+  $('#hojeBanner').innerHTML += strip + rot + shopBanner + lemBanner + bd;
 
   /* hábitos de hoje */
   const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
@@ -1016,8 +1117,7 @@ function renderHabitos(){
       }
       return '<div class="hab"><div class="hab-top">' +
         '<span class="hab-emoji">' + esc(h.emoji || '✦') + '</span>' +
-        '<div style="flex:1; min-width:0"><div class="hab-name" data-action="edit-habit" data-id="' + h.id + '">' + esc(h.name) + '</div>' +
-        '<div class="hab-freq">' + freqLabel(h) + '</div></div>' +
+        '<div style="flex:1; min-width:0"><div class="hab-name" data-action="edit-habit" data-id="' + h.id + '">' + esc(h.name) + '</div></div>' +
         '<span class="streak">seq <b>' + streak(h) + '</b></span></div>' +
         '<div class="hgrid">' + labs + '</div>' +
         '<div class="hgrid">' + cells + '</div></div>';
@@ -1057,6 +1157,9 @@ function renderDados(){
     '<div class="stat-row"><span class="k">Blocos de rotina</span><span class="v">' + S.routines.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Notas</span><span class="v">' + S.notes.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Lugares (quero · fui)</span><span class="v">' + S.places.filter(x => x.status !== 'fui').length + ' · ' + S.places.filter(x => x.status === 'fui').length + '</span></div>' +
+    '<div class="stat-row"><span class="k">Lançamentos financeiros</span><span class="v">' + S.finances.length + '</span></div>' +
+    '<div class="stat-row"><span class="k">Matérias de estudo</span><span class="v">' + S.subjects.filter(s => !s.archived).length + '</span></div>' +
+    '<div class="stat-row"><span class="k">Sessões de estudo</span><span class="v">' + S.studySessions.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Tamanho do banco</span><span class="v">' + kb + ' KB</span></div>' +
     '<div class="stat-row"><span class="k">Criado em</span><span class="v">' + fmtDT(S.meta.createdAt) + '</span></div>';
   $('#stBackup').textContent = fmtDT(S.meta.lastBackupAt);
@@ -1079,6 +1182,9 @@ function render(){
   else if(VIEW === 'rotina') renderRotina();
   else if(VIEW === 'conhecimento') renderConhecimento();
   else if(VIEW === 'lugares') renderLugares();
+  else if(VIEW === 'financas') renderFinancas();
+  else if(VIEW === 'estudos') renderEstudos();
+  else if(VIEW === 'mercado') renderMercado();
   else if(VIEW === 'dados') renderDados();
   if(window.__stamp){
     const {sel} = window.__stamp;
@@ -1271,7 +1377,8 @@ function renderPessoas(){
   const ps = S.people.filter(p => !q ||
       p.name.toLowerCase().includes(q) ||
       (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
-      (p.notes || '').toLowerCase().includes(q))
+      (p.notes || '').toLowerCase().includes(q) ||
+      (p.followups || []).some(f => f.toLowerCase().includes(q)))
     .sort((a,b) => a.name.localeCompare(b.name));
   $('#pLista').innerHTML = !S.people.length
     ? '<div class="list"><div class="empty">Ninguém cadastrado ainda. Comece pelas pessoas que você quer manter por perto.</div></div>'
@@ -1280,17 +1387,19 @@ function renderPessoas(){
     : secHTML('Pessoas', ps.length) + '<div class="list">' + ps.map(p => {
         const li = lastInt(p.id);
         const dias = li ? Math.round((fromD(today()) - fromD(li)) / 864e5) : null;
-        return '<div class="trow" data-action="edit-pessoa" data-id="' + p.id + '">' +
+        const fups = (p.followups || []).filter(f => f.trim());
+        return '<div class="trow" style="flex-wrap:wrap" data-action="edit-pessoa" data-id="' + p.id + '">' +
           '<span class="tt">' + esc(p.name) + '</span><span class="tmeta">' +
           (p.tags || []).slice(0,2).map(t => '<span class="tag-chip">' + esc(t) + '</span>').join('') +
-          (p.phone ? '<span class="due">' + esc(p.phone) + '</span>' : '') +
           '<span class="lastc' + (dias !== null && dias > 45 ? ' old' : '') + '">' + (li ? fmtRel(li) : 'sem registro') + '</span>' +
-          '</span></div>';
+          '</span>' +
+          (fups.length ? '<div style="width:100%; font-size:12px; color:var(--muted); padding:2px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">📌 ' + esc(fups[0]) + (fups.length > 1 ? ' (+' + (fups.length - 1) + ')' : '') + '</div>' : '') +
+          '</div>';
       }).join('') + '</div>';
 }
 function openPessoa(id){
   const p = id ? S.people.find(x => x.id === id) : null;
-  M = { type:'pessoa', id: id || null, draft: p ? JSON.parse(JSON.stringify(p)) : {name:'', phone:'', email:'', birthday:'', tags:[], notes:''} };
+  M = { type:'pessoa', id: id || null, draft: p ? JSON.parse(JSON.stringify(p)) : {name:'', phone:'', email:'', birthday:'', tags:[], notes:'', followups:[]} };
   renderPessoaModal();
 }
 function renderPessoaModal(){
@@ -1323,6 +1432,13 @@ function renderPessoaModal(){
       '<div class="field"><label>Etiquetas (vírgula)</label><input class="inp" id="f_ptags" value="' + esc((d.tags || []).join(', ')) + '"></div>' +
     '</div>' +
     '<div class="field"><label>Notas</label><textarea class="inp" id="f_pnotes" placeholder="Como se conheceram, assuntos, o que importa">' + esc(d.notes || '') + '</textarea></div>' +
+    '<div class="field"><label>📌 Perguntar / acompanhar na próxima vez</label>' +
+    '<div class="subs" id="f_fups">' + ((d.followups || []).length ? (d.followups || []).map((f,i) =>
+      '<div class="sub"><input class="inp" data-fup="' + i + '" value="' + esc(f) + '">' +
+      '<button class="x" data-action="del-fup" data-i="' + i + '" aria-label="Remover">✕</button></div>').join('') :
+      '<div class="empty" style="text-align:left; padding:4px; font-size:12.5px">Nenhum item. Adicione coisas para lembrar de perguntar.</div>') +
+    '</div><div style="display:flex; gap:8px; margin-top:6px"><input class="inp" id="f_newfup" placeholder="Ex.: Como foi a entrevista?">' +
+    '<button class="btn btn-sm" data-action="add-fup">Adicionar</button></div></div>' +
     hist;
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-pessoa">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
@@ -1338,6 +1454,9 @@ function syncPessoaDraft(){
   if(g('f_pnasc')) d.birthday = g('f_pnasc').value;
   if(g('f_ptags')) d.tags = g('f_ptags').value.split(',').map(x => x.trim()).filter(Boolean);
   if(g('f_pnotes')) d.notes = g('f_pnotes').value;
+  const fups = [];
+  document.querySelectorAll('#f_fups input[data-fup]').forEach(inp => { const v = inp.value.trim(); if(v) fups.push(v); });
+  d.followups = fups;
 }
 function salvarPessoa(){
   syncPessoaDraft();
@@ -1350,10 +1469,18 @@ function salvarPessoa(){
 }
 
 /* ===================== Lembretes ===================== */
+let LCAT = '';
 function renderLembretes(){
   const t = today();
-  const ativos = S.reminders.filter(r => !r.dismissed);
-  const feitos = S.reminders.filter(r => r.dismissed);
+  const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))].sort();
+  $('#rlCats').innerHTML = !cats.length ? '' :
+    '<button class="chip' + (!LCAT ? ' on' : '') + '" data-action="lcat" data-c="">Todos</button>' +
+    cats.map(c => '<button class="chip' + (LCAT === c ? ' on' : '') + '" data-action="lcat" data-c="' + esc(c) + '">' + esc(c) +
+      '<span class="c">' + S.reminders.filter(r => !r.dismissed && (r.category || '') === c).length + '</span></button>').join('');
+
+  const base = S.reminders.filter(r => !LCAT || (r.category || '') === LCAT);
+  const ativos = base.filter(r => !r.dismissed);
+  const feitos = base.filter(r => r.dismissed);
   const atras = ativos.filter(r => r.date && r.date < t).sort((a,b) => a.date.localeCompare(b.date));
   const hoje = ativos.filter(r => r.date === t);
   const prox = ativos.filter(r => r.date && r.date > t && r.date <= addD(t,7)).sort((a,b) => a.date.localeCompare(b.date));
@@ -1363,6 +1490,7 @@ function renderLembretes(){
   function lemRow(r){
     const ack = r.dismissed;
     let meta = '';
+    if(r.category) meta += '<span class="tag-chip">' + esc(r.category) + '</span>';
     if(r.date){
       const [txt, cls] = fmtDue(r.date);
       meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
@@ -1397,21 +1525,26 @@ function quickAddLem(){
   const title = inp.value.trim();
   if(!title){ inp.focus(); return; }
   const date = $('#rlDate').value || null;
-  S.reminders.push({id:uid(), title, date, notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+  S.reminders.push({id:uid(), title, date, category:LCAT || '', notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
   inp.value = ''; $('#rlDate').value = '';
   save(); render(); inp.focus();
 }
 function openLembrete(id){
   const r = id ? S.reminders.find(x => x.id === id) : null;
   M = { type:'lembrete', id: id || null, draft: r ? JSON.parse(JSON.stringify(r)) :
-    {title:'', date:'', notes:'', dismissed:false} };
+    {title:'', date:'', category:LCAT || '', notes:'', dismissed:false} };
   renderLembreteModal();
 }
 function renderLembreteModal(){
   const d = M.draft;
+  const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))];
   const body =
     '<div class="field"><label>Lembrete</label><input class="inp" id="f_ltitle" value="' + esc(d.title) + '" placeholder="Do que precisa lembrar?"></div>' +
-    '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:auto"></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%"></div>' +
+      '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
+    '</div>' +
+    '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
     '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>';
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-lembrete">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
@@ -1422,6 +1555,7 @@ function salvarLembrete(){
   const d = M.draft;
   d.title = ($('#f_ltitle').value || '').trim();
   d.date = $('#f_ldate').value || null;
+  d.category = ($('#f_lcat').value || '').trim();
   d.notes = $('#f_lnotes').value || '';
   if(!d.title){ toast('Escreva o lembrete.'); return; }
   if(M.id) Object.assign(S.reminders.find(x => x.id === M.id), d);
@@ -1437,10 +1571,28 @@ function blocksOn(dw){ return S.routines.filter(r => (r.days || []).includes(dw)
 function currentBlock(){ const n = nowMin(); return blocksOn(new Date().getDay()).find(b => hm2m(b.start) <= n && n < hm2m(b.end)) || null; }
 function nextBlock(){ const n = nowMin(); return blocksOn(new Date().getDay()).find(b => hm2m(b.start) > n) || null; }
 const m2hm = m => pad(Math.floor(m / 60)) + ':' + pad(m % 60);
+function rtChecked(bid, ds){ return !!(S.routineChecks[ds] && S.routineChecks[ds][bid]); }
+function rtToggle(bid, ds){
+  if(!S.routineChecks[ds]) S.routineChecks[ds] = {};
+  if(S.routineChecks[ds][bid]) delete S.routineChecks[ds][bid];
+  else S.routineChecks[ds][bid] = new Date().toISOString();
+  if(Object.keys(S.routineChecks[ds]).length === 0) delete S.routineChecks[ds];
+  save(); render();
+}
+function rtProgress(ds){
+  const bs = blocksOn(fromD(ds).getDay());
+  if(!bs.length) return {done:0, total:0};
+  return {done:bs.filter(b => rtChecked(b.id, ds)).length, total:bs.length};
+}
 function renderRotina(){
   const hd = new Date().getDay();
-  $('#rtDias').innerHTML = [1,2,3,4,5,6,0].map(i =>
-    '<button class="chip' + (RDAY === i ? ' on' : '') + '" data-action="rt-day" data-d="' + i + '">' + DOW[i] + (i === hd ? ' •' : '') + '</button>').join('');
+  const isToday = RDAY === hd;
+  const ds = isToday ? today() : null;
+  $('#rtDias').innerHTML = [1,2,3,4,5,6,0].map(i => {
+    const p = i === hd ? rtProgress(today()) : {done:0, total:0};
+    return '<button class="chip' + (RDAY === i ? ' on' : '') + '" data-action="rt-day" data-d="' + i + '">' + DOW[i] +
+      (i === hd && p.total ? '<span class="c">' + p.done + '/' + p.total + '</span>' : '') + '</button>';
+  }).join('');
   const bs = blocksOn(RDAY);
   if(!bs.length){
     $('#rtStrip').innerHTML = '';
@@ -1450,21 +1602,29 @@ function renderRotina(){
   const ws = Math.max(0, hm2m(bs[0].start) - 30);
   const we = Math.min(1440, Math.max(...bs.map(b => hm2m(b.end))) + 30);
   const tot = we - ws;
-  let segs = bs.map(b =>
-    '<button class="tseg" style="left:' + ((hm2m(b.start) - ws) / tot * 100) + '%; width:' + ((hm2m(b.end) - hm2m(b.start)) / tot * 100) + '%; background:' + CORES[b.color] + '" ' +
-    'title="' + esc(b.name) + ' · ' + b.start + '–' + b.end + '" data-action="edit-bloco" data-id="' + b.id + '"></button>').join('');
-  if(RDAY === hd && nowMin() >= ws && nowMin() <= we)
+  let segs = bs.map(b => {
+    const done = ds && rtChecked(b.id, ds);
+    return '<button class="tseg" style="left:' + ((hm2m(b.start) - ws) / tot * 100) + '%; width:' + ((hm2m(b.end) - hm2m(b.start)) / tot * 100) + '%; background:' + CORES[b.color] + (done ? '; opacity:.4' : '') + '" ' +
+      'title="' + esc(b.name) + ' · ' + b.start + '–' + b.end + '" data-action="edit-bloco" data-id="' + b.id + '"></button>';
+  }).join('');
+  if(isToday && nowMin() >= ws && nowMin() <= we)
     segs += '<span class="tnow" style="left:' + ((nowMin() - ws) / tot * 100) + '%"></span>';
   $('#rtStrip').innerHTML = '<div class="tstrip">' + segs + '</div>' +
     '<div class="tstrip-lab"><span>' + m2hm(ws) + '</span><span>' + m2hm(we) + '</span></div>';
   $('#rtLista').innerHTML = '<div class="list">' + bs.map(b => {
-    const agora = RDAY === hd && hm2m(b.start) <= nowMin() && nowMin() < hm2m(b.end);
-    return '<div class="trow' + (agora ? ' rt-now' : '') + '" data-action="edit-bloco" data-id="' + b.id + '">' +
+    const agora = isToday && hm2m(b.start) <= nowMin() && nowMin() < hm2m(b.end);
+    const done = ds && rtChecked(b.id, ds);
+    const late = isToday && !done && hm2m(b.end) <= nowMin();
+    return '<div class="trow' + (agora ? ' rt-now' : '') + (done ? ' rt-done' : '') + '">' +
+      (isToday ? '<button class="rt-ck' + (done ? ' on' : '') + '" data-action="rt-ck" data-id="' + b.id + '" data-ds="' + ds + '"></button>' : '') +
       '<span class="rt-cbar" style="background:' + CORES[b.color] + '"></span>' +
       '<span class="trange">' + b.start + '–' + b.end + '</span>' +
-      '<span class="tt">' + esc(b.name) + '</span>' +
-      '<span class="tmeta">' + (agora ? '<span class="rundot"></span>' : '') +
-      '<span class="due">' + fmtDur((hm2m(b.end) - hm2m(b.start)) * 60) + '</span></span></div>';
+      '<span class="tt"' + (done ? '' : ' data-action="edit-bloco" data-id="' + b.id + '" style="cursor:pointer"') + '>' + esc(b.name) + '</span>' +
+      '<span class="tmeta">' +
+      (agora && !done ? '<span class="rundot"></span>' : '') +
+      (late ? '<span class="rt-status late">atrasado</span>' : '') +
+      (done ? '<span class="rt-status ok">✓</span>' : '') +
+      '</span></div>';
   }).join('') + '</div>';
 }
 function openBloco(id){
@@ -1657,6 +1817,275 @@ function salvarLugar(){
   save(); closeModal(); render(); toast('Lugar salvo.');
 }
 
+/* ===================== Finanças ===================== */
+const FIN_CATS = ['alimentação','transporte','moradia','saúde','lazer','educação','assinatura','pessoal','trabalho','outro'];
+let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear();
+function fmtR(v){ return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function finOfMonth(){ return S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === FIN_MES && d.getFullYear() === FIN_ANO; }); }
+function renderFinancas(){
+  $('#finMes').textContent = MES[FIN_MES] + ' ' + FIN_ANO;
+  const fs = finOfMonth();
+  const receitas = fs.filter(f => f.type === 'receita').reduce((s,f) => s + f.amount, 0);
+  const despesas = fs.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
+  const saldo = receitas - despesas;
+  $('#finResumo').innerHTML =
+    '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
+    '<div class="card sum"><div class="k">Despesas</div><div class="v fin-out">- ' + fmtR(despesas) + '</div></div>' +
+    '<div class="card sum"><div class="k">Saldo do mês</div><div class="v fin-bal" style="color:' + (saldo >= 0 ? 'var(--good)' : 'var(--danger)') + '">' + (saldo >= 0 ? '+' : '') + fmtR(saldo).replace('R$ ', 'R$ ' + (saldo < 0 ? '-' : '')) + '</div></div>';
+  const porCat = {};
+  fs.filter(f => f.type === 'despesa').forEach(f => { const c = f.category || 'outro'; porCat[c] = (porCat[c] || 0) + f.amount; });
+  const ks = Object.keys(porCat).sort((a,b) => porCat[b] - porCat[a]);
+  const maxC = ks.length ? porCat[ks[0]] : 0;
+  $('#finBars').innerHTML = !ks.length ? '' :
+    secHTML('Despesas por categoria', ks.length) + '<div class="card bars">' + ks.map(k =>
+      '<div class="bar-row"><span class="bar-lab">' + esc(k) + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + Math.max(3, Math.round(porCat[k] / maxC * 100)) + '%; background:var(--danger)"></span></span>' +
+      '<span class="bar-v">' + fmtR(porCat[k]) + '</span></div>').join('') + '</div>';
+  const sorted = fs.slice().sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+  $('#finLista').innerHTML = !sorted.length
+    ? '<div class="list" style="margin-top:14px"><div class="empty">Nenhum lançamento em ' + MES[FIN_MES] + '. Adicione receitas e despesas.</div></div>'
+    : secHTML('Lançamentos', sorted.length) + '<div class="list">' + sorted.map(f =>
+      '<div class="trow fin-row" data-action="edit-fin" data-id="' + f.id + '">' +
+      '<span class="tt">' + esc(f.title) + '</span><span class="tmeta">' +
+      (f.category ? '<span class="tag-chip">' + esc(f.category) + '</span>' : '') +
+      '<span class="due">' + f.date.slice(8,10) + '/' + f.date.slice(5,7) + '</span>' +
+      '<span class="amt ' + (f.type === 'receita' ? 'fin-in' : 'fin-out') + '">' + (f.type === 'receita' ? '+' : '-') + fmtR(f.amount) + '</span>' +
+      '</span></div>').join('') + '</div>';
+}
+function openTransacao(id){
+  const f = id ? S.finances.find(x => x.id === id) : null;
+  M = { type:'fin', id: id || null, draft: f ? JSON.parse(JSON.stringify(f)) :
+    {title:'', type:'despesa', amount:'', category:'', date:today(), notes:''} };
+  renderFinModal();
+}
+function renderFinModal(){
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Descrição</label><input class="inp" id="f_ftitle" value="' + esc(d.title) + '" placeholder="Ex.: Mercado, Salário, Uber"></div>' +
+    '<div class="field"><label>Tipo</label><div class="seg">' +
+      '<button data-action="fin-tipo" data-v="despesa" class="' + (d.type === 'despesa' ? 'on d' : '') + '">Despesa</button>' +
+      '<button data-action="fin-tipo" data-v="receita" class="' + (d.type === 'receita' ? 'on' : '') + '">Receita</button>' +
+    '</div></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Valor (R$)</label><input class="inp mono" id="f_famt" type="number" step="0.01" min="0" value="' + (d.amount || '') + '" placeholder="0,00" style="width:100%"></div>' +
+      '<div class="field"><label>Data</label><input class="inp" type="date" id="f_fdate" value="' + esc(d.date || today()) + '" style="width:100%"></div>' +
+    '</div>' +
+    '<div class="field"><label>Categoria</label><input class="inp" id="f_fcat" value="' + esc(d.category || '') + '" list="fincatlist" placeholder="alimentação, transporte…"></div>' +
+    '<datalist id="fincatlist">' + FIN_CATS.map(c => '<option value="' + c + '">').join('') + '</datalist>' +
+    '<div class="field"><label>Notas</label><textarea class="inp" id="f_fnotes" placeholder="Detalhes">' + esc(d.notes || '') + '</textarea></div>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-fin">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-fin">Salvar</button>';
+  openModal(M.id ? 'Editar lançamento' : 'Novo lançamento', body, foot);
+}
+function salvarFin(){
+  const d = M.draft;
+  d.title = ($('#f_ftitle').value || '').trim();
+  d.amount = Math.abs(parseFloat($('#f_famt').value) || 0);
+  d.date = $('#f_fdate').value || today();
+  d.category = ($('#f_fcat').value || '').trim();
+  d.notes = $('#f_fnotes').value || '';
+  if(!d.title){ toast('Descreva o lançamento.'); return; }
+  if(!d.amount){ toast('Informe o valor.'); return; }
+  if(M.id) Object.assign(S.finances.find(x => x.id === M.id), d);
+  else S.finances.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
+  save(); closeModal(); render(); toast('Lançamento salvo.');
+}
+
+/* ===================== Estudos ===================== */
+function estWeekStart(){ const d = fromD(today()); const w = (d.getDay() + 6) % 7; d.setDate(d.getDate() - w); return dstr(d); }
+function sessionsOfWeek(ws){ return S.studySessions.filter(s => s.date >= ws && s.date < addD(ws, 7)); }
+function subById(id){ return S.subjects.find(s => s.id === id) || null; }
+function renderEstudos(){
+  const ws = estWeekStart();
+  $('#estSemana').textContent = 'semana de ' + fmtCurto(ws);
+  const sems = sessionsOfWeek(ws);
+  const ativos = S.subjects.filter(s => !s.archived);
+  if(!ativos.length){
+    $('#estProgresso').innerHTML = '<div class="list"><div class="empty">Nenhuma matéria cadastrada. Crie as matérias que você está estudando.</div></div>';
+    $('#estLista').innerHTML = '';
+    return;
+  }
+  const totalMin = sems.reduce((s,x) => s + (x.minutes || 0), 0);
+  let prog = '<div class="sumrow"><div class="card sum"><div class="k">Total da semana</div><div class="v">' + fmtDur(totalMin * 60) + '</div></div></div>';
+  prog += secHTML('Progresso semanal', ativos.length);
+  prog += '<div class="list">' + ativos.map(sj => {
+    const mins = sems.filter(s => s.subjectId === sj.id).reduce((a,s) => a + (s.minutes || 0), 0);
+    const goal = (sj.targetHoursWeek || 0) * 60;
+    const pct = goal > 0 ? Math.min(100, Math.round(mins / goal * 100)) : (mins > 0 ? 100 : 0);
+    return '<div class="sj-row" data-action="edit-materia" data-id="' + sj.id + '">' +
+      '<span class="rt-cbar" style="background:' + CORES[sj.color] + '"></span>' +
+      '<span class="tt">' + esc(sj.name) + '</span>' +
+      '<div class="sj-prog"><div class="sj-prog-track"><div class="sj-prog-fill" style="width:' + pct + '%; background:' + CORES[sj.color] + '"></div></div></div>' +
+      '<span class="sj-hrs">' + fmtDur(mins * 60) + (goal > 0 ? ' / ' + sj.targetHoursWeek + 'h' : '') + '</span></div>';
+  }).join('') + '</div>';
+  $('#estProgresso').innerHTML = prog;
+
+  const sorted = sems.slice().sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+  $('#estLista').innerHTML = !sorted.length
+    ? secHTML('Sessões desta semana', 0) + '<div class="list"><div class="empty">Nenhuma sessão registrada. Estude e registre aqui.</div></div>'
+    : secHTML('Sessões desta semana', sorted.length) + '<div class="list">' + sorted.map(s => {
+      const sj = subById(s.subjectId);
+      return '<div class="trow" data-action="edit-sessao" data-id="' + s.id + '">' +
+        (sj ? '<span class="rt-cbar" style="background:' + CORES[sj.color] + '"></span>' : '') +
+        '<span class="tt">' + esc(s.notes || (sj ? sj.name : 'Sessão')) + '</span><span class="tmeta">' +
+        (sj ? '<span class="pchip"><span class="pdot" style="background:' + CORES[sj.color] + '"></span>' + esc(sj.name) + '</span>' : '') +
+        '<span class="due">' + DOW[fromD(s.date).getDay()] + '</span>' +
+        '<span class="due">' + fmtDur(s.minutes * 60) + '</span></span></div>';
+    }).join('') + '</div>';
+}
+function openSessao(id){
+  const s = id ? S.studySessions.find(x => x.id === id) : null;
+  M = { type:'sessao', id: id || null, draft: s ? JSON.parse(JSON.stringify(s)) :
+    {subjectId:S.subjects.length ? S.subjects[0].id : '', date:today(), minutes:'', notes:''} };
+  renderSessaoModal();
+}
+function renderSessaoModal(){
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Matéria</label><select class="inp" id="f_ssub" style="width:100%">' +
+      S.subjects.filter(s => !s.archived).map(s => '<option value="' + s.id + '"' + (d.subjectId === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>').join('') +
+    '</select></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Duração (minutos)</label><input class="inp mono" type="number" id="f_smin" value="' + (d.minutes || '') + '" min="1" placeholder="60" style="width:100%"></div>' +
+      '<div class="field"><label>Data</label><input class="inp" type="date" id="f_sdate" value="' + esc(d.date || today()) + '" style="width:100%"></div>' +
+    '</div>' +
+    '<div class="field"><label>O que estudou</label><textarea class="inp" id="f_snotes" placeholder="Temas, capítulos, questões">' + esc(d.notes || '') + '</textarea></div>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-sessao">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-sessao">Salvar</button>';
+  openModal(M.id ? 'Editar sessão' : 'Registrar sessão de estudo', body, foot);
+}
+function salvarSessao(){
+  const d = M.draft;
+  d.subjectId = $('#f_ssub').value;
+  d.minutes = Math.max(1, parseInt($('#f_smin').value) || 0);
+  d.date = $('#f_sdate').value || today();
+  d.notes = ($('#f_snotes').value || '').trim();
+  if(!d.subjectId){ toast('Escolha a matéria.'); return; }
+  if(!d.minutes){ toast('Informe a duração.'); return; }
+  if(M.id) Object.assign(S.studySessions.find(x => x.id === M.id), d);
+  else S.studySessions.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
+  save(); closeModal(); render(); toast('Sessão registrada.');
+}
+function openMaterias(){
+  M = { type:'materias', drafts: JSON.parse(JSON.stringify(S.subjects)) };
+  renderMateriasModal();
+}
+function renderMateriasModal(){
+  const rows = M.drafts.map((s,i) =>
+    '<div class="pj" style="flex-wrap:wrap">' +
+    '<select class="inp" data-sj-cor="' + i + '" style="padding:6px 8px; font-size:12.5px; width:auto">' +
+      Object.keys(CORES).map(c => '<option value="' + c + '"' + (s.color === c ? ' selected' : '') + '>' + c + '</option>').join('') +
+    '</select>' +
+    '<input class="inp" data-sj-nome="' + i + '" value="' + esc(s.name) + '" style="flex:1; min-width:120px">' +
+    '<input class="inp mono" type="number" data-sj-meta="' + i + '" value="' + (s.targetHoursWeek || '') + '" placeholder="h/sem" min="0" step="0.5" style="width:70px">' +
+    '<button class="btn btn-sm" data-action="sj-arch" data-i="' + i + '">' + (s.archived ? 'Ativar' : 'Arq') + '</button>' +
+    '<button class="btn btn-danger btn-sm" data-action="sj-del" data-i="' + i + '">✕</button></div>').join('') ||
+    '<div class="empty" style="text-align:left; padding:4px">Nenhuma matéria ainda.</div>';
+  openModal('Matérias', rows +
+    '<button class="btn btn-sm" data-action="sj-add" style="align-self:flex-start; margin-top:8px">+ Adicionar matéria</button>',
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-materias">Salvar</button>');
+}
+function syncMateriasDrafts(){
+  document.querySelectorAll('[data-sj-nome]').forEach(inp => { M.drafts[+inp.dataset.sjNome].name = inp.value; });
+  document.querySelectorAll('[data-sj-cor]').forEach(sel => { M.drafts[+sel.dataset.sjCor].color = sel.value; });
+  document.querySelectorAll('[data-sj-meta]').forEach(inp => { M.drafts[+inp.dataset.sjMeta].targetHoursWeek = parseFloat(inp.value) || 0; });
+}
+function salvarMaterias(){
+  syncMateriasDrafts();
+  M.drafts.forEach(s => { s.name = (s.name || '').trim() || 'Sem nome'; });
+  S.subjects = M.drafts;
+  save(); closeModal(); render(); toast('Matérias atualizadas.');
+}
+
+/* ===================== Mercado ===================== */
+const SHOP_CATS_ORDER = ['frutas','verduras','carnes','laticínios','padaria','bebidas','limpeza','higiene','outros',''];
+function renderMercado(){
+  const items = S.shoppingItems;
+  const pending = items.filter(i => !i.bought);
+  const bought = items.filter(i => i.bought);
+  const grouped = {};
+  pending.forEach(i => { const c = i.category || ''; if(!grouped[c]) grouped[c] = []; grouped[c].push(i); });
+  const cats = Object.keys(grouped).sort((a,b) => {
+    const ai = SHOP_CATS_ORDER.indexOf(a), bi = SHOP_CATS_ORDER.indexOf(b);
+    return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+  });
+  function shopRow(i){
+    return '<div class="shop-row' + (i.bought ? ' bought' : '') + '">' +
+      '<button class="ck' + (i.bought ? ' on' : '') + '" data-action="shop-ck" data-id="' + i.id + '"></button>' +
+      '<span class="tt">' + esc(i.name) + (i.qty ? ' <span class="tag-chip">' + esc(i.qty) + '</span>' : '') + '</span>' +
+      (i.recurring ? '<span class="recur">sempre</span>' : '') +
+      '<button class="btn btn-ghost btn-sm" data-action="edit-shop" data-id="' + i.id + '" style="padding:2px 6px">✎</button></div>';
+  }
+  let out = '';
+  if(!pending.length && !bought.length){
+    out = '<div class="list"><div class="empty">Lista vazia. Adicione itens acima ou marque os que sempre compra como recorrentes.</div></div>';
+  }else{
+    if(pending.length){
+      out += secHTML('Para comprar', pending.length);
+      out += '<div class="list">';
+      cats.forEach(c => {
+        if(c) out += '<div class="shop-cat">' + esc(c) + '</div>';
+        grouped[c].forEach(i => out += shopRow(i));
+      });
+      out += '</div>';
+    }
+    if(bought.length){
+      out += secHTML('Comprados', bought.length);
+      out += '<div class="list">' + bought.map(shopRow).join('') + '</div>';
+    }
+  }
+  $('#shopLista').innerHTML = out;
+}
+function quickAddShop(){
+  const inp = $('#shopInp');
+  const name = inp.value.trim();
+  if(!name){ inp.focus(); return; }
+  const cat = $('#shopCat').value || '';
+  S.shoppingItems.push({id:uid(), name, category:cat, qty:'', recurring:false, bought:false, createdAt:new Date().toISOString()});
+  inp.value = '';
+  save(); render(); inp.focus();
+}
+function openShopItem(id){
+  const i = id ? S.shoppingItems.find(x => x.id === id) : null;
+  M = { type:'shop', id: id || null, draft: i ? JSON.parse(JSON.stringify(i)) :
+    {name:'', category:'', qty:'', recurring:false} };
+  renderShopModal();
+}
+function renderShopModal(){
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Item</label><input class="inp" id="f_shname" value="' + esc(d.name) + '"></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Categoria</label><select class="inp" id="f_shcat" style="width:100%">' +
+        '<option value="">Sem categoria</option>' +
+        ['frutas','verduras','carnes','laticínios','padaria','bebidas','limpeza','higiene','outros'].map(c =>
+          '<option value="' + c + '"' + (d.category === c ? ' selected' : '') + '>' + c + '</option>').join('') +
+      '</select></div>' +
+      '<div class="field"><label>Quantidade</label><input class="inp" id="f_shqty" value="' + esc(d.qty || '') + '" placeholder="Ex.: 2kg, 1L"></div>' +
+    '</div>' +
+    '<div class="field"><label>Recorrente</label><div class="seg">' +
+      '<button data-action="sh-rec" data-v="0" class="' + (!d.recurring ? 'on' : '') + '">Avulso (acabou)</button>' +
+      '<button data-action="sh-rec" data-v="1" class="' + (d.recurring ? 'on' : '') + '">Sempre compro</button>' +
+    '</div><p class="vsub" style="margin:4px 0 0">Itens recorrentes voltam para a lista automaticamente quando você limpar os comprados.</p></div>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-shop">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-shop">Salvar</button>';
+  openModal(M.id ? 'Editar item' : 'Novo item', body, foot);
+}
+function salvarShop(){
+  const d = M.draft;
+  d.name = ($('#f_shname').value || '').trim();
+  d.category = $('#f_shcat').value || '';
+  d.qty = ($('#f_shqty').value || '').trim();
+  if(!d.name){ toast('Dê um nome ao item.'); return; }
+  if(M.id) Object.assign(S.shoppingItems.find(x => x.id === M.id), d);
+  else S.shoppingItems.push(Object.assign({id:uid(), bought:false, createdAt:new Date().toISOString()}, d));
+  save(); closeModal(); render(); toast('Item salvo.');
+}
+
 /* sincroniza o rascunho certo conforme o modal aberto */
 function syncAny(){
   if(!M) return;
@@ -1666,16 +2095,29 @@ function syncAny(){
   else if(M.type === 'bloco') syncBlocoDraft();
   else if(M.type === 'nota') syncNotaDraft();
   else if(M.type === 'lugar') syncLugarDraft();
+  else if(M.type === 'materias') syncMateriasDrafts();
 }
 
 /* ===================== Menu "Mais" (celular) ===================== */
+let MAIS_EDIT = false;
 function openMais(){
   M = { type:'mais' };
-  const item = (v, ic, lb) => '<button class="nav-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '" style="width:100%"><span class="ic">' + ic + '</span><span class="lb">' + lb + '</span></button>';
-  openModal('Mais',
-    item('pessoas','◌','Pessoas') + item('lembretes','⚑','Lembretes') + item('rotina','☰','Rotina') + item('conhecimento','✎','Conhecimento') +
-    item('lugares','➤','Lugares') + item('dados','⚙','Dados e sincronização') +
-    '<button class="nav-item" id="maisTema" style="width:100%"><span class="ic">◑</span><span class="lb">Alternar tema</span></button>',
+  const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
+  const allTabs = ['hoje','tarefas','habitos','tempo','lembretes','pessoas','rotina','conhecimento','lugares','financas','estudos','mercado','dados'];
+  const item = (v) => {
+    const t = TABS[v] || {ic:'?',lb:v};
+    const pinned = bt.includes(v);
+    const pin = MAIS_EDIT ? '<button class="btn btn-sm' + (pinned ? ' btn-danger' : '') + '" data-action="toggle-pin" data-v="' + v + '" style="flex:none">' + (pinned ? '✕' : '＋') + '</button>' : '';
+    return '<div style="display:flex; align-items:center; gap:4px">' +
+      '<button class="nav-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '" style="flex:1"><span class="ic">' + t.ic + '</span><span class="lb">' + t.lb + '</span>' +
+      (MAIS_EDIT && pinned ? '<span class="tag" style="margin-left:auto">barra</span>' : '') +
+      '</button>' + pin + '</div>';
+  };
+  const body = (MAIS_EDIT ? '<p class="vsub" style="margin:0 0 8px">＋ fixa na barra inferior, ✕ tira. Máximo 5.</p>' : '') +
+    allTabs.map(item).join('') +
+    '<button class="nav-item" id="maisTema" style="width:100%; margin-top:8px"><span class="ic">◑</span><span class="lb">Alternar tema</span></button>';
+  openModal('Mais', body,
+    '<button class="btn btn-ghost btn-sm" data-action="toggle-mais-edit">' + (MAIS_EDIT ? 'Pronto' : 'Editar barra') + '</button>' +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Fechar</button>');
   const t = document.getElementById('maisTema');
   if(t) t.onclick = () => { S.meta.theme = S.meta.theme === 'light' ? 'dark' : 'light'; save(); applyTheme(); closeModal(); };
@@ -2062,7 +2504,19 @@ document.addEventListener('click', e => {
   if(a === 'exportar'){ doExport(); return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'fechar-modal'){ closeModal(); return; }
-  if(a === 'mais'){ openMais(); return; }
+  if(a === 'mais'){ MAIS_EDIT = false; openMais(); return; }
+  if(a === 'toggle-mais-edit'){ MAIS_EDIT = !MAIS_EDIT; openMais(); return; }
+  if(a === 'toggle-pin'){
+    const v = el.dataset.v;
+    const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
+    const i = bt.indexOf(v);
+    if(i >= 0){ bt.splice(i, 1); }
+    else if(bt.length >= 5){ toast('Máximo 5 itens na barra. Tire um antes de adicionar.'); return; }
+    else{ bt.push(v); }
+    S.meta.bottomTabs = bt;
+    save(); renderBottomNav(); openMais();
+    return;
+  }
 
   if(a === 'zerar'){
     if(!confirm('Apagar TODOS os dados do Central neste navegador?')) return;
@@ -2186,7 +2640,19 @@ document.addEventListener('click', e => {
     save(); closeModal(); render(); toast('Pessoa excluída.');
     return;
   }
+  if(a === 'add-fup'){
+    syncPessoaDraft();
+    const v = $('#f_newfup').value.trim();
+    if(v){ if(!M.draft.followups) M.draft.followups = []; M.draft.followups.push(v); renderPessoaModal(); }
+    return;
+  }
+  if(a === 'del-fup'){
+    syncPessoaDraft();
+    (M.draft.followups || []).splice(+el.dataset.i, 1);
+    renderPessoaModal(); return;
+  }
   if(a === 'reg-int'){
+    syncPessoaDraft();
     syncPessoaDraft();
     S.interactions.push({id:uid(), personId:M.id, kind:$('#f_ikind').value, date:$('#f_idate').value || today(), notes:$('#f_inote').value.trim(), createdAt:new Date().toISOString()});
     save(); renderPessoaModal();
@@ -2209,6 +2675,7 @@ document.addEventListener('click', e => {
   if(a === 'salvar-lembrete'){ salvarLembrete(); return; }
   if(a === 'qadd-lem'){ quickAddLem(); return; }
   if(a === 'ir-lembretes'){ setView('lembretes'); return; }
+  if(a === 'lcat'){ LCAT = el.dataset.c; renderLembretes(); return; }
   if(a === 'ack-lem'){
     e.stopPropagation();
     const r = S.reminders.find(x => x.id === el.dataset.id);
@@ -2231,6 +2698,7 @@ document.addEventListener('click', e => {
 
   /* rotina */
   if(a === 'rt-day'){ RDAY = +el.dataset.d; renderRotina(); return; }
+  if(a === 'rt-ck'){ e.stopPropagation(); rtToggle(el.dataset.id, el.dataset.ds); return; }
   if(a === 'novo-bloco'){ openBloco(null); return; }
   if(a === 'edit-bloco'){ openBloco(el.dataset.id); return; }
   if(a === 'salvar-bloco'){ salvarBloco(); return; }
@@ -2276,6 +2744,71 @@ document.addEventListener('click', e => {
     save(); closeModal(); render(); toast('Lugar excluído.');
     return;
   }
+
+  /* finanças */
+  if(a === 'nova-transacao'){ openTransacao(null); return; }
+  if(a === 'edit-fin'){ openTransacao(el.dataset.id); return; }
+  if(a === 'salvar-fin'){ salvarFin(); return; }
+  if(a === 'fin-tipo'){ M.draft.type = el.dataset.v; renderFinModal(); return; }
+  if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } renderFinancas(); return; }
+  if(a === 'fin-next'){ FIN_MES++; if(FIN_MES > 11){ FIN_MES = 0; FIN_ANO++; } renderFinancas(); return; }
+  if(a === 'excluir-fin'){
+    if(!confirm('Excluir este lançamento?')) return;
+    S.finances = S.finances.filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Lançamento excluído.');
+    return;
+  }
+
+  /* estudos */
+  if(a === 'nova-sessao'){ if(!S.subjects.length){ toast('Crie ao menos uma matéria antes.'); openMaterias(); return; } openSessao(null); return; }
+  if(a === 'edit-sessao'){ openSessao(el.dataset.id); return; }
+  if(a === 'salvar-sessao'){ salvarSessao(); return; }
+  if(a === 'ger-materias'){ openMaterias(); return; }
+  if(a === 'edit-materia'){ openMaterias(); return; }
+  if(a === 'salvar-materias'){ salvarMaterias(); return; }
+  if(a === 'sj-add'){ syncMateriasDrafts(); M.drafts.push({id:uid(), name:'', color:'azul', targetHoursWeek:0, archived:false, createdAt:new Date().toISOString()}); renderMateriasModal(); return; }
+  if(a === 'sj-arch'){ syncMateriasDrafts(); M.drafts[+el.dataset.i].archived = !M.drafts[+el.dataset.i].archived; renderMateriasModal(); return; }
+  if(a === 'sj-del'){
+    syncMateriasDrafts();
+    const sjid = M.drafts[+el.dataset.i].id;
+    M.drafts.splice(+el.dataset.i, 1);
+    S.studySessions = S.studySessions.filter(s => s.subjectId !== sjid);
+    renderMateriasModal(); return;
+  }
+  if(a === 'excluir-sessao'){
+    if(!confirm('Excluir esta sessão?')) return;
+    S.studySessions = S.studySessions.filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Sessão excluída.');
+    return;
+  }
+
+  /* mercado */
+  if(a === 'ir-mercado'){ setView('mercado'); return; }
+  if(a === 'qadd-shop'){ quickAddShop(); return; }
+  if(a === 'edit-shop'){ e.stopPropagation(); openShopItem(el.dataset.id); return; }
+  if(a === 'salvar-shop'){ salvarShop(); return; }
+  if(a === 'shop-ck'){
+    e.stopPropagation();
+    const i = S.shoppingItems.find(x => x.id === el.dataset.id);
+    if(i){ i.bought = !i.bought; save(); render(); }
+    return;
+  }
+  if(a === 'sh-rec'){ M.draft.recurring = el.dataset.v === '1'; renderShopModal(); return; }
+  if(a === 'excluir-shop'){
+    if(!confirm('Excluir este item?')) return;
+    S.shoppingItems = S.shoppingItems.filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Item excluído.');
+    return;
+  }
+  if(a === 'limpar-comprados'){
+    const comprados = S.shoppingItems.filter(i => i.bought);
+    if(!comprados.length){ toast('Nenhum item comprado para limpar.'); return; }
+    S.shoppingItems = S.shoppingItems.filter(i => !i.bought || i.recurring);
+    S.shoppingItems.forEach(i => { if(i.recurring) i.bought = false; });
+    save(); render();
+    toast('Comprados removidos. Recorrentes voltaram para a lista.');
+    return;
+  }
 });
 
 document.addEventListener('change', e => {
@@ -2309,6 +2842,7 @@ document.addEventListener('keydown', e => {
   }
   if(e.key === 'Enter' && e.target.id === 'ttDesc'){ startTimer(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
+  if(e.key === 'Enter' && e.target.id === 'shopInp'){ quickAddShop(); return; }
 });
 
 $('#fileImp').addEventListener('change', e => {
