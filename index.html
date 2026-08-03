@@ -915,6 +915,7 @@ function taskRowHTML(t){
     meta += '<span class="sub-n">' + ok + '/' + t.subtasks.length + '</span>';
   }
   (t.tags || []).slice(0,3).forEach(tg => meta += '<span class="tag-chip">' + esc(tg) + '</span>');
+  if(t.recurrence && t.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
   meta += projChipHTML(t);
   if(t.due){
     const [txt, cls] = fmtDue(t.due);
@@ -1491,6 +1492,7 @@ function renderLembretes(){
     const ack = r.dismissed;
     let meta = '';
     if(r.category) meta += '<span class="tag-chip">' + esc(r.category) + '</span>';
+    if(r.recurrence && r.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
     if(r.date){
       const [txt, cls] = fmtDue(r.date);
       meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
@@ -1545,6 +1547,7 @@ function renderLembreteModal(){
       '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
     '</div>' +
     '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
+    recurrenceHTML(d.recurrence, 'lem') +
     '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>';
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-lembrete">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
@@ -1557,6 +1560,7 @@ function salvarLembrete(){
   d.date = $('#f_ldate').value || null;
   d.category = ($('#f_lcat').value || '').trim();
   d.notes = $('#f_lnotes').value || '';
+  if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'lem');
   if(!d.title){ toast('Escreva o lembrete.'); return; }
   if(M.id) Object.assign(S.reminders.find(x => x.id === M.id), d);
   else S.reminders.push(Object.assign({id:uid(), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()}, d));
@@ -2159,6 +2163,7 @@ function renderTaskModal(){
         (d.priority === p ? 'on' + (p === 2 ? ' w' : p === 3 ? ' d' : '') : '') + '">' + PRIO_TXT[p] + '</button>').join('') +
     '</div></div>' +
     '<div class="field"><label>Etiquetas (separadas por vírgula)</label><input class="inp" id="f_tags" value="' + esc((d.tags || []).join(', ')) + '"></div>' +
+    recurrenceHTML(d.recurrence, 'tk') +
     '<div class="field"><label>Subtarefas</label><div class="subs" id="f_subs">' + subsHTML(d) + '</div>' +
       '<div style="display:flex; gap:8px; margin-top:8px"><input class="inp" id="f_newsub" placeholder="Nova subtarefa e Enter">' +
       '<button class="btn btn-sm" data-action="add-sub">Adicionar</button></div></div>' +
@@ -2186,6 +2191,7 @@ function syncTaskDraft(){
   if(g('f_due')) d.due = g('f_due').value || '';
   if(g('f_tags')) d.tags = g('f_tags').value.split(',').map(x => x.trim()).filter(Boolean);
   if(g('f_notes')) d.notes = g('f_notes').value;
+  if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'tk');
   document.querySelectorAll('#f_subs input[data-sub]').forEach(inp => {
     const i = +inp.dataset.sub;
     if(d.subtasks[i]) d.subtasks[i].title = inp.value;
@@ -2452,9 +2458,61 @@ function doImport(file){
 }
 
 /* ===================== Ações rápidas ===================== */
+function recurrenceHTML(rec, prefix){
+  rec = rec || {};
+  const tp = rec.type || '';
+  return '<div class="field"><label>Repetição</label><div class="seg">' +
+    [['','Não repete'],['daily','Diária'],['weekly','Semanal'],['monthly','Mensal'],['interval','A cada N dias']].map(([v,l]) =>
+      '<button data-action="' + prefix + '-rec-type" data-v="' + v + '" class="' + (tp === v ? 'on' : '') + '">' + l + '</button>').join('') +
+    '</div></div>' +
+    (tp === 'weekly' ? '<div class="field"><label>Quais dias</label><div class="dows">' +
+      [1,2,3,4,5,6,0].map(i => '<button class="dow' + ((rec.days || []).includes(i) ? ' on' : '') + '" data-action="' + prefix + '-rec-dow" data-d="' + i + '">' + DOW[i] + '</button>').join('') +
+    '</div></div>' : '') +
+    (tp === 'monthly' ? '<div class="field"><label>Dia do mês</label><input class="inp mono" type="number" id="' + prefix + '_recdom" value="' + (rec.dayOfMonth || 1) + '" min="1" max="31" style="width:80px"></div>' : '') +
+    (tp === 'interval' ? '<div class="field"><label>A cada quantos dias</label><input class="inp mono" type="number" id="' + prefix + '_recint" value="' + (rec.interval || 7) + '" min="1" style="width:80px"></div>' : '');
+}
+function syncRecurrence(rec, prefix){
+  rec = rec || {};
+  if(rec.type === 'monthly'){
+    const el = document.getElementById(prefix + '_recdom');
+    if(el) rec.dayOfMonth = Math.max(1, Math.min(31, parseInt(el.value) || 1));
+  }
+  if(rec.type === 'interval'){
+    const el = document.getElementById(prefix + '_recint');
+    if(el) rec.interval = Math.max(1, parseInt(el.value) || 7);
+  }
+  return rec;
+}
+function nextRecDate(fromDate, rec){
+  if(!rec || !rec.type || !fromDate) return null;
+  const d = fromD(fromDate);
+  if(rec.type === 'daily'){ d.setDate(d.getDate() + 1); return dstr(d); }
+  if(rec.type === 'interval'){ d.setDate(d.getDate() + (rec.interval || 1)); return dstr(d); }
+  if(rec.type === 'monthly'){
+    d.setMonth(d.getMonth() + 1);
+    if(rec.dayOfMonth) d.setDate(Math.min(rec.dayOfMonth, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+    return dstr(d);
+  }
+  if(rec.type === 'weekly' && rec.days && rec.days.length){
+    const sorted = rec.days.slice().sort((a,b) => a - b);
+    for(let i = 1; i <= 7; i++){
+      const nd = new Date(d); nd.setDate(nd.getDate() + i);
+      if(sorted.includes(nd.getDay())) return dstr(nd);
+    }
+  }
+  d.setDate(d.getDate() + 1);
+  return dstr(d);
+}
 function toggleTask(id){
   const t = S.tasks.find(x => x.id === id);
   if(!t) return;
+  if(t.status !== 'done' && t.recurrence && t.recurrence.type){
+    t.due = nextRecDate(t.due || today(), t.recurrence);
+    t.completedAt = null;
+    save(); render();
+    toast('Feita. Próxima: ' + fmtCurto(t.due) + '.');
+    return;
+  }
   t.status = t.status === 'done' ? 'open' : 'done';
   t.completedAt = t.status === 'done' ? new Date().toISOString() : null;
   save(); render();
@@ -2504,6 +2562,40 @@ document.addEventListener('click', e => {
   if(a === 'exportar'){ doExport(); return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'fechar-modal'){ closeModal(); return; }
+  if(a === 'tk-rec-type'){
+    syncTaskDraft(); M.draft.recurrence = M.draft.recurrence || {};
+    M.draft.recurrence.type = el.dataset.v || ''; if(!el.dataset.v) M.draft.recurrence = null;
+    if(M.draft.recurrence && M.draft.recurrence.type === 'weekly' && !(M.draft.recurrence.days || []).length) M.draft.recurrence.days = [1,2,3,4,5];
+    renderTaskModal(); return;
+  }
+  if(a === 'tk-rec-dow'){
+    syncTaskDraft(); const r = M.draft.recurrence || (M.draft.recurrence = {type:'weekly', days:[]});
+    const dn = +el.dataset.d, arr = r.days || (r.days = []);
+    const ix = arr.indexOf(dn); if(ix >= 0) arr.splice(ix,1); else arr.push(dn);
+    el.classList.toggle('on', ix < 0); return;
+  }
+  if(a === 'lem-rec-type'){
+    if(M.draft.title === undefined || M.type === 'lembrete'){
+      const ti = document.getElementById('f_ltitle');
+      const dt = document.getElementById('f_ldate');
+      const ct = document.getElementById('f_lcat');
+      const nt = document.getElementById('f_lnotes');
+      if(ti) M.draft.title = ti.value;
+      if(dt) M.draft.date = dt.value;
+      if(ct) M.draft.category = ct.value;
+      if(nt) M.draft.notes = nt.value;
+    }
+    M.draft.recurrence = M.draft.recurrence || {};
+    M.draft.recurrence.type = el.dataset.v || ''; if(!el.dataset.v) M.draft.recurrence = null;
+    if(M.draft.recurrence && M.draft.recurrence.type === 'weekly' && !(M.draft.recurrence.days || []).length) M.draft.recurrence.days = [1,2,3,4,5];
+    renderLembreteModal(); return;
+  }
+  if(a === 'lem-rec-dow'){
+    const r = M.draft.recurrence || (M.draft.recurrence = {type:'weekly', days:[]});
+    const dn = +el.dataset.d, arr = r.days || (r.days = []);
+    const ix = arr.indexOf(dn); if(ix >= 0) arr.splice(ix,1); else arr.push(dn);
+    el.classList.toggle('on', ix < 0); return;
+  }
   if(a === 'mais'){ MAIS_EDIT = false; openMais(); return; }
   if(a === 'toggle-mais-edit'){ MAIS_EDIT = !MAIS_EDIT; openMais(); return; }
   if(a === 'toggle-pin'){
@@ -2679,7 +2771,17 @@ document.addEventListener('click', e => {
   if(a === 'ack-lem'){
     e.stopPropagation();
     const r = S.reminders.find(x => x.id === el.dataset.id);
-    if(r){ r.dismissed = !r.dismissed; r.dismissedAt = r.dismissed ? new Date().toISOString() : null; save(); render(); }
+    if(r){
+      if(!r.dismissed && r.recurrence && r.recurrence.type && r.date){
+        r.date = nextRecDate(r.date, r.recurrence);
+        save(); render();
+        toast('OK. Próximo: ' + fmtCurto(r.date) + '.');
+      }else{
+        r.dismissed = !r.dismissed;
+        r.dismissedAt = r.dismissed ? new Date().toISOString() : null;
+        save(); render();
+      }
+    }
     return;
   }
   if(a === 'excluir-lembrete'){
