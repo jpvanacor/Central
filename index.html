@@ -197,7 +197,10 @@ input[type="date"].inp{width:auto; font-family:'IBM Plex Mono',monospace; font-s
 .hcell.done:hover{filter:brightness(.92)}
 .hcell.stamp{animation:stamp .28s cubic-bezier(.2,1.4,.4,1)}
 @keyframes stamp{0%{transform:scale(.4) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
-.hgrid-gap{width:6px}
+.hgrid-lab{font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); text-align:center; width:32px; letter-spacing:.04em; text-transform:uppercase}
+.hgrid{gap:6px}
+.hcell{width:32px; height:32px; border-radius:8px}
+.hcell.today{width:32px; height:32px; border-width:2px}
 
 /* check de hoje (visão Hoje) */
 .today-habits{display:flex; flex-wrap:wrap; gap:10px}
@@ -343,6 +346,11 @@ pre.fmt{
 .int-row .x{border:0; background:none; color:var(--muted); border-radius:6px; padding:2px 6px}
 .int-row .x:hover{color:var(--danger); background:var(--danger-soft)}
 
+/* ===== Lembretes ===== */
+.lem-flag{flex:none; width:18px; text-align:center; color:var(--warn); font-size:14px}
+.trow.lem-ack .tt{color:var(--muted); text-decoration:line-through}
+.lem-ack .lem-flag{color:var(--line2)}
+
 /* ===== Rotina ===== */
 .rt-cbar{width:4px; height:20px; border-radius:2px; flex:none}
 .trow.rt-now, .trow.rt-now:hover{background:var(--accent-soft)}
@@ -410,6 +418,7 @@ pre.fmt{
   <button class="nav-item" data-view="tempo"><span class="ic">◷</span><span class="lb">Time track</span></button>
   <button class="nav-item" data-view="pessoas"><span class="ic">◌</span><span class="lb">Pessoas</span></button>
 
+  <button class="nav-item" data-view="lembretes"><span class="ic">⚑</span><span class="lb">Lembretes</span></button>
   <button class="nav-item" data-view="rotina"><span class="ic">☰</span><span class="lb">Rotina</span></button>
   <button class="nav-item" data-view="conhecimento"><span class="ic">✎</span><span class="lb">Conhecimento</span></button>
   <button class="nav-item" data-view="lugares"><span class="ic">➤</span><span class="lb">Lugares</span></button>
@@ -495,6 +504,21 @@ pre.fmt{
     </div>
     <div id="pAnivers"></div>
     <div id="pLista"></div>
+  </section>
+
+  <!-- ===== LEMBRETES ===== -->
+  <section class="view" id="view-lembretes">
+    <div class="vhead">
+      <h1 class="vtitle">Lembretes</h1>
+      <div class="grow"></div>
+      <button class="btn btn-primary btn-sm" data-action="novo-lembrete">+ Novo lembrete</button>
+    </div>
+    <div class="qadd">
+      <input class="inp" type="text" id="rlTitle" placeholder="Lembrete rápido e Enter…">
+      <input class="inp" type="date" id="rlDate">
+      <button class="btn" data-action="qadd-lem">Adicionar</button>
+    </div>
+    <div id="rlLista"></div>
   </section>
 
   <!-- ===== ROTINA ===== -->
@@ -609,6 +633,9 @@ pre.fmt{
   ],
   "routines": [
     { "name": "Academia", "days": ["ter","qui"], "start": "18:30", "end": "19:30", "color": "verde" }
+  ],
+  "reminders": [
+    { "title": "Estagiária nova começa", "date": "2026-08-07", "notes": "Preparar a mesa" }
   ]
 }</pre>
     <p class="vsub" style="margin-top:10px">Cores aceitas: azul, verde, ambar, vermelho, roxo, ciano, rosa, grafite. Prioridade: alta, media, baixa ou nenhuma. Dias: "diario" ou lista com dom, seg, ter, qua, qui, sex, sab. Tipos de lugar: viagem, restaurante, bar, passeio, outro. Status de lugar: quero ou fui.</p>
@@ -667,7 +694,7 @@ function blank(){
   return {
     meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light'},
     projects:[], tasks:[], habits:[], habitLogs:{},
-    timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[]
+    timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[]
   };
 }
 let S = load();
@@ -747,10 +774,11 @@ function schedOn(h, ds){
 const habDone = (h, ds) => !!(S.habitLogs[h.id] && S.habitLogs[h.id][ds]);
 function streak(h){
   let n = 0, ds = today();
+  if(schedOn(h, ds) && habDone(h, ds)) n++;
+  ds = addD(ds, -1);
   for(let i = 0; i < 400; i++){
     if(schedOn(h, ds)){
       if(habDone(h, ds)) n++;
-      else if(ds === today()){ /* hoje pendente não quebra */ }
       else break;
     }
     ds = addD(ds, -1);
@@ -829,6 +857,19 @@ function renderHoje(){
     '<span class="clock-desc">' + esc(rr.desc) + '</span>' +
     '<span class="clock" style="font-size:17px" data-tick-start="' + rr.start + '">' + fmtClock(durSec(rr)) + '</span>' +
     '<button class="btn btn-sm" data-action="parar-timer">Parar</button></div>';
+  /* lembretes de hoje e atrasados */
+  const lemsHoje = S.reminders.filter(r => !r.dismissed && r.date && r.date <= t);
+  const lemBanner = !lemsHoje.length ? '' :
+    '<div class="seclab"><span>Lembretes</span><span class="n">' + lemsHoje.length + '</span><span class="rule"></span>' +
+    '<button class="btn btn-ghost btn-sm" data-action="ir-lembretes">ver todos</button></div>' +
+    '<div class="list" style="margin-bottom:16px">' + lemsHoje.map(r => {
+      const late = r.date < t;
+      return '<div class="trow" data-action="edit-lembrete" data-id="' + r.id + '">' +
+        '<span class="lem-flag">⚑</span><span class="tt">' + esc(r.title) + '</span>' +
+        '<span class="tmeta">' + (late ? '<span class="due late">' + fmtDue(r.date)[0] + '</span>' : '') +
+        '<button class="btn btn-sm" data-action="ack-lem" data-id="' + r.id + '">OK</button></span></div>';
+    }).join('') + '</div>';
+
   const cb = currentBlock(), nb = nextBlock();
   const rot = (!cb && !nb) ? '' :
     '<div class="card runstrip" style="cursor:pointer" data-action="ir-rotina" title="Abrir rotina">' +
@@ -854,7 +895,7 @@ function renderHoje(){
     (S.meta.lastBackupAt ? 'O último backup tem mais de 7 dias.' : 'Ainda não existe nenhum backup exportado.') +
     ' O localStorage pode ser limpo pelo navegador.</span>' +
     '<button class="btn btn-primary btn-sm" data-action="exportar">Exportar agora</button></div>';
-  $('#hojeBanner').innerHTML += strip + rot + bd;
+  $('#hojeBanner').innerHTML += strip + rot + lemBanner + bd;
 
   /* hábitos de hoje */
   const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
@@ -947,34 +988,38 @@ function renderTarefas(){
 }
 
 /* ===================== Render: Hábitos ===================== */
-const H_DIAS = 14;
+function weekSunday(){ const d = fromD(today()); d.setDate(d.getDate() - d.getDay()); return dstr(d); }
 function renderHabitos(){
   const t = today();
-  $('#habRange').textContent = fmtCurto(addD(t, -(H_DIAS-1))) + ' – hoje';
+  const ws = weekSunday();
+  $('#habRange').textContent = 'semana de ' + fmtCurto(ws);
   const ativos = S.habits.filter(h => !h.archived);
   let out = '';
   if(!ativos.length){
     out = '<div class="list"><div class="empty">Nenhum hábito ainda. Crie o primeiro e marque os dias na grade.</div></div>';
   }else{
     out = '<div class="list">' + ativos.map(h => {
-      let cells = '';
-      for(let i = H_DIAS - 1; i >= 0; i--){
-        const ds = addD(t, -i);
+      let labs = '', cells = '';
+      for(let i = 0; i < 7; i++){
+        const ds = addD(ws, i);
         const sched = schedOn(h, ds);
         const done = habDone(h, ds);
-        const cls = 'hcell' + (done ? ' done' : '') + (!sched ? ' off' : '') + (ds === t ? ' today' : '');
-        const st = done ? ' style="background:' + CORES[h.color] + (ds === t ? ';--hc:' + CORES[h.color] : '') + '"' :
-                   (ds === t ? ' style="--hc:' + CORES[h.color] + '"' : '');
-        cells += '<button class="' + cls + '"' + st + (!sched ? ' disabled' : '') +
+        const isFuture = ds > t;
+        const isToday = ds === t;
+        const cls = 'hcell' + (done ? ' done' : '') + ((!sched || isFuture) ? ' off' : '') + (isToday ? ' today' : '');
+        const st = done ? ' style="background:' + CORES[h.color] + (isToday ? ';--hc:' + CORES[h.color] : '') + '"' :
+                   (isToday ? ' style="--hc:' + CORES[h.color] + '"' : '');
+        labs += '<span class="hgrid-lab">' + DOW[i] + '</span>';
+        cells += '<button class="' + cls + '"' + st + ((!sched || isFuture) ? ' disabled' : '') +
           ' data-action="hcell" data-id="' + h.id + '" data-ds="' + ds + '"' +
-          ' title="' + DOW[fromD(ds).getDay()] + ', ' + fmtCurto(ds) + '"></button>';
-        if(i === 7) cells += '<span class="hgrid-gap"></span>';
+          ' title="' + DOW[fromD(ds).getDay()] + ', ' + fmtCurto(ds) + (isFuture ? ' (futuro)' : '') + '"></button>';
       }
       return '<div class="hab"><div class="hab-top">' +
         '<span class="hab-emoji">' + esc(h.emoji || '✦') + '</span>' +
         '<div style="flex:1; min-width:0"><div class="hab-name" data-action="edit-habit" data-id="' + h.id + '">' + esc(h.name) + '</div>' +
         '<div class="hab-freq">' + freqLabel(h) + '</div></div>' +
         '<span class="streak">seq <b>' + streak(h) + '</b></span></div>' +
+        '<div class="hgrid">' + labs + '</div>' +
         '<div class="hgrid">' + cells + '</div></div>';
     }).join('') + '</div>';
   }
@@ -1008,6 +1053,7 @@ function renderDados(){
     '<div class="stat-row"><span class="k">Pessoas</span><span class="v">' + S.people.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Contatos registrados</span><span class="v">' + S.interactions.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Tempo lançado</span><span class="v">' + (tsec ? fmtDur(tsec) : '0min') + '</span></div>' +
+    '<div class="stat-row"><span class="k">Lembretes ativos</span><span class="v">' + S.reminders.filter(r => !r.dismissed).length + '</span></div>' +
     '<div class="stat-row"><span class="k">Blocos de rotina</span><span class="v">' + S.routines.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Notas</span><span class="v">' + S.notes.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Lugares (quero · fui)</span><span class="v">' + S.places.filter(x => x.status !== 'fui').length + ' · ' + S.places.filter(x => x.status === 'fui').length + '</span></div>' +
@@ -1029,6 +1075,7 @@ function render(){
   else if(VIEW === 'habitos') renderHabitos();
   else if(VIEW === 'tempo') renderTempo();
   else if(VIEW === 'pessoas') renderPessoas();
+  else if(VIEW === 'lembretes') renderLembretes();
   else if(VIEW === 'rotina') renderRotina();
   else if(VIEW === 'conhecimento') renderConhecimento();
   else if(VIEW === 'lugares') renderLugares();
@@ -1302,6 +1349,86 @@ function salvarPessoa(){
   save(); closeModal(); render(); toast('Pessoa salva.');
 }
 
+/* ===================== Lembretes ===================== */
+function renderLembretes(){
+  const t = today();
+  const ativos = S.reminders.filter(r => !r.dismissed);
+  const feitos = S.reminders.filter(r => r.dismissed);
+  const atras = ativos.filter(r => r.date && r.date < t).sort((a,b) => a.date.localeCompare(b.date));
+  const hoje = ativos.filter(r => r.date === t);
+  const prox = ativos.filter(r => r.date && r.date > t && r.date <= addD(t,7)).sort((a,b) => a.date.localeCompare(b.date));
+  const depois = ativos.filter(r => r.date && r.date > addD(t,7)).sort((a,b) => a.date.localeCompare(b.date));
+  const semd = ativos.filter(r => !r.date);
+
+  function lemRow(r){
+    const ack = r.dismissed;
+    let meta = '';
+    if(r.date){
+      const [txt, cls] = fmtDue(r.date);
+      meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
+    }
+    return '<div class="trow' + (ack ? ' lem-ack' : '') + '" data-action="edit-lembrete" data-id="' + r.id + '">' +
+      '<span class="lem-flag">⚑</span>' +
+      '<span class="tt">' + esc(r.title) + '</span>' +
+      '<span class="tmeta">' + meta +
+      '<button class="btn btn-sm" data-action="ack-lem" data-id="' + r.id + '">' + (ack ? 'Restaurar' : 'OK') + '</button>' +
+      '</span></div>';
+  }
+  function lemList(arr, msg){
+    if(!arr.length) return msg ? '<div class="list"><div class="empty">' + msg + '</div></div>' : '';
+    return '<div class="list">' + arr.map(lemRow).join('') + '</div>';
+  }
+  let out = '';
+  if(atras.length) out += secHTML('Passados', atras.length, 'danger') + lemList(atras);
+  out += secHTML('Hoje', hoje.length) + lemList(hoje, !atras.length ? 'Nenhum lembrete para hoje.' : '');
+  if(prox.length) out += secHTML('Próximos 7 dias', prox.length) + lemList(prox);
+  if(depois.length) out += secHTML('Futuros', depois.length) + lemList(depois);
+  if(semd.length) out += secHTML('Sem data', semd.length) + lemList(semd);
+  if(feitos.length){
+    out += secHTML('Dispensados', feitos.length);
+    out += '<div style="display:flex; justify-content:flex-end; margin-bottom:8px">' +
+      '<button class="btn btn-danger btn-sm" data-action="limpar-lems">Apagar dispensados (' + feitos.length + ')</button></div>';
+    out += '<div class="list">' + feitos.sort((a,b) => (b.dismissedAt || '').localeCompare(a.dismissedAt || '')).map(lemRow).join('') + '</div>';
+  }
+  $('#rlLista').innerHTML = out;
+}
+function quickAddLem(){
+  const inp = $('#rlTitle');
+  const title = inp.value.trim();
+  if(!title){ inp.focus(); return; }
+  const date = $('#rlDate').value || null;
+  S.reminders.push({id:uid(), title, date, notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+  inp.value = ''; $('#rlDate').value = '';
+  save(); render(); inp.focus();
+}
+function openLembrete(id){
+  const r = id ? S.reminders.find(x => x.id === id) : null;
+  M = { type:'lembrete', id: id || null, draft: r ? JSON.parse(JSON.stringify(r)) :
+    {title:'', date:'', notes:'', dismissed:false} };
+  renderLembreteModal();
+}
+function renderLembreteModal(){
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Lembrete</label><input class="inp" id="f_ltitle" value="' + esc(d.title) + '" placeholder="Do que precisa lembrar?"></div>' +
+    '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:auto"></div>' +
+    '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-lembrete">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-lembrete">Salvar</button>';
+  openModal(M.id ? 'Editar lembrete' : 'Novo lembrete', body, foot);
+}
+function salvarLembrete(){
+  const d = M.draft;
+  d.title = ($('#f_ltitle').value || '').trim();
+  d.date = $('#f_ldate').value || null;
+  d.notes = $('#f_lnotes').value || '';
+  if(!d.title){ toast('Escreva o lembrete.'); return; }
+  if(M.id) Object.assign(S.reminders.find(x => x.id === M.id), d);
+  else S.reminders.push(Object.assign({id:uid(), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()}, d));
+  save(); closeModal(); render(); toast('Lembrete salvo.');
+}
+
 /* ===================== Rotina ===================== */
 let RDAY = new Date().getDay();
 const hm2m = t => +t.slice(0,2) * 60 + +t.slice(3,5);
@@ -1546,7 +1673,7 @@ function openMais(){
   M = { type:'mais' };
   const item = (v, ic, lb) => '<button class="nav-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '" style="width:100%"><span class="ic">' + ic + '</span><span class="lb">' + lb + '</span></button>';
   openModal('Mais',
-    item('pessoas','◌','Pessoas') + item('rotina','☰','Rotina') + item('conhecimento','✎','Conhecimento') +
+    item('pessoas','◌','Pessoas') + item('lembretes','⚑','Lembretes') + item('rotina','☰','Rotina') + item('conhecimento','✎','Conhecimento') +
     item('lugares','➤','Lugares') + item('dados','⚙','Dados e sincronização') +
     '<button class="nav-item" id="maisTema" style="width:100%"><span class="ic">◑</span><span class="lb">Alternar tema</span></button>',
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Fechar</button>');
@@ -1756,7 +1883,7 @@ function doPaste(){
   let o;
   try{ o = JSON.parse($('#f_paste').value); }
   catch(e){ toast('JSON inválido: ' + e.message); return; }
-  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, pulados = 0;
+  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, nrem = 0, pulados = 0;
   (Array.isArray(o.projects) ? o.projects : []).forEach(p => {
     if(p && p.name && !S.projects.find(x => x.name.toLowerCase() === String(p.name).toLowerCase())){ ensureProject(p.name, p.color); np++; }
   });
@@ -1828,7 +1955,13 @@ function doPaste(){
       createdAt:new Date().toISOString()});
     nr++;
   });
-  if(!nt && !nh && !np && !npp && !nn && !nl && !nr){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
+  (Array.isArray(o.reminders) ? o.reminders : []).forEach(x => {
+    if(!x || !x.title) return;
+    S.reminders.push({id:uid(), title:String(x.title).trim(), date:/^\d{4}-\d{2}-\d{2}$/.test(x.date || '') ? x.date : null,
+      notes:String(x.notes || ''), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+    nrem++;
+  });
+  if(!nt && !nh && !np && !npp && !nn && !nl && !nr && !nrem){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
   save(); closeModal(); render();
   const parts = [];
   if(nt) parts.push(nt + ' tarefa(s)');
@@ -1838,6 +1971,7 @@ function doPaste(){
   if(nn) parts.push(nn + ' nota(s)');
   if(nl) parts.push(nl + ' lugar(es)');
   if(nr) parts.push(nr + ' bloco(s) de rotina');
+  if(nrem) parts.push(nrem + ' lembrete(s)');
   toast('Adicionado: ' + parts.join(', ') + (pulados ? ' (' + pulados + ' já existiam)' : '') + '.');
 }
 
@@ -2069,6 +2203,33 @@ document.addEventListener('click', e => {
   }
 
   /* rotina */
+  /* lembretes */
+  if(a === 'novo-lembrete'){ openLembrete(null); return; }
+  if(a === 'edit-lembrete'){ openLembrete(el.dataset.id); return; }
+  if(a === 'salvar-lembrete'){ salvarLembrete(); return; }
+  if(a === 'qadd-lem'){ quickAddLem(); return; }
+  if(a === 'ir-lembretes'){ setView('lembretes'); return; }
+  if(a === 'ack-lem'){
+    e.stopPropagation();
+    const r = S.reminders.find(x => x.id === el.dataset.id);
+    if(r){ r.dismissed = !r.dismissed; r.dismissedAt = r.dismissed ? new Date().toISOString() : null; save(); render(); }
+    return;
+  }
+  if(a === 'excluir-lembrete'){
+    if(!confirm('Excluir este lembrete?')) return;
+    S.reminders = S.reminders.filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Lembrete excluído.');
+    return;
+  }
+  if(a === 'limpar-lems'){
+    const n = S.reminders.filter(r => r.dismissed).length;
+    if(!confirm('Apagar ' + n + ' lembrete(s) dispensado(s)?')) return;
+    S.reminders = S.reminders.filter(r => !r.dismissed);
+    save(); render(); toast('Dispensados apagados.');
+    return;
+  }
+
+  /* rotina */
   if(a === 'rt-day'){ RDAY = +el.dataset.d; renderRotina(); return; }
   if(a === 'novo-bloco'){ openBloco(null); return; }
   if(a === 'edit-bloco'){ openBloco(el.dataset.id); return; }
@@ -2147,6 +2308,7 @@ document.addEventListener('keydown', e => {
     if(btn) btn.click();
   }
   if(e.key === 'Enter' && e.target.id === 'ttDesc'){ startTimer(); return; }
+  if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
 });
 
 $('#fileImp').addEventListener('change', e => {
