@@ -1015,10 +1015,14 @@ function renderHoje(){
   $('#hojeHabitos').innerHTML = hh;
 
   /* tarefas de hoje */
-  const abertas = S.tasks.filter(x => x.status !== 'done');
+  const abertas = S.tasks.filter(x => x.status !== 'done' && !(x.inbox && x.inboxDate === t));
+  const caixaHoje = S.tasks.filter(x => x.inbox && x.inboxDate === t && x.status !== 'done');
   const atras = sortTasks(abertas.filter(x => x.due && x.due < t));
   const hoje = sortTasks(abertas.filter(x => x.due === t));
   let th = '';
+  if(caixaHoje.length){
+    th += secHTML('Caixa do dia', caixaHoje.length) + listHTML(caixaHoje);
+  }
   if(atras.length) th += secHTML('Atrasadas', atras.length, 'danger') + listHTML(atras);
   th += '<div class="seclab"><span>Tarefas de hoje</span><span class="n">' + hoje.length + '</span><span class="rule"></span>' +
         '<button class="btn btn-ghost btn-sm" data-action="nova-hoje">+ para hoje</button></div>';
@@ -1037,13 +1041,18 @@ function renderHoje(){
 function renderTarefas(){
   const t = today();
   const base = S.tasks.filter(x => !TPROJ || x.projectId === TPROJ);
-  const open = base.filter(x => x.status !== 'done');
+  /* caixa do dia: itens de hoje */
+  const inbox = base.filter(x => x.inbox && x.inboxDate === t && x.status !== 'done');
+  const inboxDone = base.filter(x => x.inbox && x.inboxDate === t && x.status === 'done');
+  /* lista geral: exclui itens da caixa do dia */
+  const geral = base.filter(x => !(x.inbox && x.inboxDate === t));
+  const open = geral.filter(x => x.status !== 'done');
   const cnt = {
     hoje: open.filter(x => x.due && x.due <= t).length,
     prox: open.filter(x => x.due && x.due <= addD(t,7)).length,
     todas: open.length,
     semdata: open.filter(x => !x.due).length,
-    feitas: base.filter(x => x.status === 'done').length
+    feitas: geral.filter(x => x.status === 'done').length
   };
   const defs = [['hoje','Hoje'],['prox','7 dias'],['todas','Todas'],['semdata','Sem data'],['feitas','Concluídas']];
   let ch = defs.map(([k,l]) =>
@@ -1059,9 +1068,20 @@ function renderTarefas(){
   $('#tFiltros').innerHTML = ch;
   $('#qaDue').style.display = TF === 'hoje' ? 'none' : '';
 
+  /* caixa do dia */
   let out = '';
+  out += '<div class="seclab"><span>Caixa do dia</span><span class="n">' + inbox.length + '</span><span class="rule"></span></div>';
+  out += '<div class="qadd" style="margin:0 0 8px"><input class="inp" type="text" id="qaCaixa" placeholder="O que apareceu para fazer? Enter…">' +
+    '<button class="btn" data-action="qadd-caixa">+</button></div>';
+  if(inbox.length || inboxDone.length){
+    out += '<div class="list">' + inbox.map(taskRowHTML).join('') + inboxDone.map(taskRowHTML).join('') + '</div>';
+  }else{
+    out += '<div class="list"><div class="empty">Conforme coisas forem aparecendo, jogue aqui. O que não fizer hoje vira tarefa normal amanhã.</div></div>';
+  }
+
+  /* lista geral */
   if(TF === 'feitas'){
-    const done = base.filter(x => x.status === 'done')
+    const done = geral.filter(x => x.status === 'done')
       .sort((a,b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
     if(done.length) out += '<div style="display:flex; justify-content:flex-end; margin-bottom:8px">' +
       '<button class="btn btn-danger btn-sm" data-action="apagar-feitas">Apagar concluídas (' + done.length + ')</button></div>';
@@ -1173,6 +1193,17 @@ function renderSide(){
     'backup: ' + (b ? fmtDT(b).slice(0,10) : 'nunca');
 }
 function render(){
+  /* migrar itens da caixa do dia de dias anteriores */
+  const _t = today();
+  let _dirty = false;
+  S.tasks.forEach(x => {
+    if(x.inbox && x.inboxDate && x.inboxDate < _t && x.status !== 'done'){
+      x.inbox = false;
+      if(!x.due) x.due = x.inboxDate;
+      _dirty = true;
+    }
+  });
+  if(_dirty) try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
   renderSide();
   if(VIEW === 'hoje') renderHoje();
   else if(VIEW === 'tarefas') renderTarefas();
@@ -2553,6 +2584,17 @@ document.addEventListener('click', e => {
   }
   if(a === 'filtro'){ TF = el.dataset.f; renderTarefas(); return; }
   if(a === 'qadd'){ quickAdd(); return; }
+  if(a === 'qadd-caixa'){
+    const inp = $('#qaCaixa');
+    const title = inp ? inp.value.trim() : '';
+    if(!title){ if(inp) inp.focus(); return; }
+    S.tasks.push({id:uid(), title, notes:'', projectId:TPROJ || null, priority:0, due:null,
+      tags:[], subtasks:[], status:'open', createdAt:new Date().toISOString(), completedAt:null,
+      inbox:true, inboxDate:today()});
+    inp.value = '';
+    save(); render(); inp.focus();
+    return;
+  }
   if(a === 'nova-tarefa'){ openTask(null); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
@@ -2937,6 +2979,10 @@ document.addEventListener('input', e => {
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
+  if(e.key === 'Enter' && e.target.id === 'qaCaixa'){
+    const btn = document.querySelector('[data-action="qadd-caixa"]');
+    if(btn) btn.click(); return;
+  }
   if(e.key === 'Enter' && e.target.id === 'f_newsub'){
     e.preventDefault();
     const btn = document.querySelector('[data-action="add-sub"]');
