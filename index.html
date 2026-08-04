@@ -376,6 +376,29 @@ pre.fmt{
 .starbtns button.on{color:var(--warn)}
 .kemoji{flex:none; width:22px; text-align:center}
 
+/* ===== Calendário ===== */
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:16px}
+.cal-head{font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); text-align:center; padding:6px 0}
+.cal-cell{
+  min-height:68px; padding:5px 6px; border-radius:8px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); position:relative;
+  display:flex; flex-direction:column; gap:2px;
+}
+.cal-cell:hover{border-color:var(--muted)}
+.cal-cell.out{opacity:.35; cursor:default; background:none; border-color:transparent}
+.cal-cell.today{border-color:var(--accent); border-width:2px; background:var(--accent-soft)}
+.cal-cell.sel{box-shadow:0 0 0 2px var(--accent)}
+.cal-dn{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--ink)}
+.cal-dots{display:flex; flex-wrap:wrap; gap:2px; margin-top:auto}
+.cal-dot{width:7px; height:7px; border-radius:50%}
+.cal-ev{font-size:10px; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); max-width:100%}
+.cal-detail{padding:16px 18px}
+.cal-detail h3{margin:0 0 10px; font-size:15px; font-weight:700}
+.cal-item{display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; border-bottom:1px solid var(--line)}
+.cal-item:last-child{border-bottom:0}
+.cal-item .ci-type{font-size:11px; flex:none; width:18px; text-align:center}
+@media(max-width:760px){.cal-cell{min-height:48px; padding:3px 4px} .cal-ev{display:none}}
+
 /* ===== Rotina checklist ===== */
 .rt-ck{flex:none; width:22px; height:22px; border-radius:7px; border:2px solid var(--line2); background:none; padding:0; position:relative}
 .rt-ck.on{background:var(--good); border-color:var(--good)}
@@ -445,6 +468,7 @@ pre.fmt{
   <button class="nav-item active" data-view="hoje"><span class="ic">◐</span><span class="lb">Hoje</span></button>
   <button class="nav-item" data-view="tarefas"><span class="ic">☑</span><span class="lb">Tarefas</span></button>
   <button class="nav-item" data-view="habitos"><span class="ic">▣</span><span class="lb">Hábitos</span></button>
+  <button class="nav-item" data-view="calendario"><span class="ic">▦</span><span class="lb">Calendário</span></button>
 
   <button class="nav-item" data-view="tempo"><span class="ic">◷</span><span class="lb">Time track</span></button>
   <button class="nav-item" data-view="pessoas"><span class="ic">◌</span><span class="lb">Pessoas</span></button>
@@ -539,6 +563,19 @@ pre.fmt{
     </div>
     <div id="pAnivers"></div>
     <div id="pLista"></div>
+  </section>
+
+  <!-- ===== CALENDÁRIO ===== -->
+  <section class="view" id="view-calendario">
+    <div class="vhead">
+      <h1 class="vtitle" id="calTitle"></h1>
+      <div class="grow"></div>
+      <button class="btn btn-ghost btn-sm" data-action="cal-prev">←</button>
+      <button class="btn btn-ghost btn-sm" data-action="cal-today">Hoje</button>
+      <button class="btn btn-ghost btn-sm" data-action="cal-next">→</button>
+    </div>
+    <div id="calGrid"></div>
+    <div id="calDetail"></div>
   </section>
 
   <!-- ===== LEMBRETES ===== -->
@@ -887,7 +924,7 @@ const TABS = {
   hoje:{ic:'◐',lb:'Hoje'}, tarefas:{ic:'☑',lb:'Tarefas'}, habitos:{ic:'▣',lb:'Hábitos'},
   tempo:{ic:'◷',lb:'Tempo'}, lembretes:{ic:'⚑',lb:'Lembretes'}, pessoas:{ic:'◌',lb:'Pessoas'},
   rotina:{ic:'☰',lb:'Rotina'}, conhecimento:{ic:'✎',lb:'Conhecimento'}, lugares:{ic:'➤',lb:'Lugares'},
-  dados:{ic:'⚙',lb:'Dados'}, financas:{ic:'$',lb:'Finanças'}, estudos:{ic:'⬡',lb:'Estudos'}, mercado:{ic:'🛒',lb:'Mercado'}
+  dados:{ic:'⚙',lb:'Dados'}, financas:{ic:'$',lb:'Finanças'}, estudos:{ic:'⬡',lb:'Estudos'}, mercado:{ic:'🛒',lb:'Mercado'}, calendario:{ic:'▦',lb:'Calendário'}
 };
 function renderBottomNav(){
   const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
@@ -1001,13 +1038,16 @@ function renderHoje(){
 
   /* hábitos de hoje */
   const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
-  let hh = secHTML('Hábitos de hoje', hs.filter(h => habDone(h, t)).length + '/' + hs.length);
+  const hsDone = hs.filter(h => habDone(h, t)).length;
+  const hsPend = hs.filter(h => !habDone(h, t));
+  let hh = secHTML('Hábitos de hoje', hsDone + '/' + hs.length);
   if(!hs.length){
     hh += '<div class="empty" style="text-align:left; padding:6px 2px">Nenhum hábito programado para hoje. Crie um na aba Hábitos.</div>';
+  }else if(!hsPend.length){
+    hh += '<div class="empty" style="text-align:left; padding:6px 2px">Todos feitos ✓</div>';
   }else{
-    hh += '<div class="today-habits">' + hs.map(h => {
-      const done = habDone(h, t);
-      return '<button class="thab' + (done ? ' done' : '') + '" style="--hc:' + CORES[h.color] + '" data-action="thab" data-id="' + h.id + '">' +
+    hh += '<div class="today-habits">' + hsPend.map(h => {
+      return '<button class="thab" style="--hc:' + CORES[h.color] + '" data-action="thab" data-id="' + h.id + '">' +
         '<span class="dot">✓</span><span>' + esc((h.emoji ? h.emoji + ' ' : '') + h.name) + '</span>' +
         '<span class="st">seq ' + streak(h) + '</span></button>';
     }).join('') + '</div>';
@@ -1208,6 +1248,7 @@ function render(){
   if(VIEW === 'hoje') renderHoje();
   else if(VIEW === 'tarefas') renderTarefas();
   else if(VIEW === 'habitos') renderHabitos();
+  else if(VIEW === 'calendario') renderCalendario();
   else if(VIEW === 'tempo') renderTempo();
   else if(VIEW === 'pessoas') renderPessoas();
   else if(VIEW === 'lembretes') renderLembretes();
@@ -1498,6 +1539,79 @@ function salvarPessoa(){
   if(M.id) Object.assign(S.people.find(x => x.id === M.id), d);
   else S.people.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
   save(); closeModal(); render(); toast('Pessoa salva.');
+}
+
+/* ===================== Calendário ===================== */
+let CAL_MES = new Date().getMonth(), CAL_ANO = new Date().getFullYear(), CAL_SEL = today();
+function calEvents(ds){
+  const items = [];
+  S.tasks.filter(x => x.due === ds && x.status !== 'done').forEach(x =>
+    items.push({type:'task', color: x.priority >= 3 ? CORES.vermelho : x.priority >= 2 ? CORES.ambar : CORES.azul, title:x.title, id:x.id}));
+  S.reminders.filter(x => x.date === ds && !x.dismissed).forEach(x =>
+    items.push({type:'rem', color:CORES.ambar, title:x.title, id:x.id}));
+  S.tasks.filter(x => x.due === ds && x.status === 'done').forEach(x =>
+    items.push({type:'done', color:'var(--muted)', title:x.title, id:x.id}));
+  const h = S.habits.filter(h => !h.archived && schedOn(h, ds));
+  if(h.length){
+    const ok = h.filter(hb => habDone(hb, ds)).length;
+    if(ok < h.length) items.push({type:'hab', color:CORES.verde, title:'Hábitos ' + ok + '/' + h.length});
+  }
+  return items;
+}
+function renderCalendario(){
+  const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  $('#calTitle').textContent = MESES[CAL_MES] + ' ' + CAL_ANO;
+  const t = today();
+  const first = new Date(CAL_ANO, CAL_MES, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(CAL_ANO, CAL_MES + 1, 0).getDate();
+  const prevDays = new Date(CAL_ANO, CAL_MES, 0).getDate();
+
+  let html = '<div class="cal-grid">';
+  ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => html += '<div class="cal-head">' + d + '</div>');
+
+  const totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
+  for(let i = 0; i < totalCells; i++){
+    const dayNum = i - startDow + 1;
+    let ds, dn, out = false;
+    if(dayNum < 1){ dn = prevDays + dayNum; out = true; const pd = new Date(CAL_ANO, CAL_MES - 1, dn); ds = dstr(pd); }
+    else if(dayNum > daysInMonth){ dn = dayNum - daysInMonth; out = true; const nd = new Date(CAL_ANO, CAL_MES + 1, dn); ds = dstr(nd); }
+    else{ dn = dayNum; ds = CAL_ANO + '-' + pad(CAL_MES + 1) + '-' + pad(dn); }
+
+    const isToday = ds === t;
+    const isSel = ds === CAL_SEL;
+    const evs = out ? [] : calEvents(ds);
+    const dots = evs.slice(0, 5).map(e => '<span class="cal-dot" style="background:' + e.color + '"></span>').join('');
+    const firstEv = evs.length && !out ? '<div class="cal-ev">' + esc(evs[0].title) + '</div>' : '';
+    const more = evs.length > 1 ? '<div class="cal-ev">+' + (evs.length - 1) + '</div>' : '';
+
+    html += '<div class="cal-cell' + (out ? ' out' : '') + (isToday ? ' today' : '') + (isSel && !out ? ' sel' : '') + '"' +
+      (!out ? ' data-action="cal-sel" data-ds="' + ds + '"' : '') + '>' +
+      '<span class="cal-dn">' + dn + '</span>' + firstEv + more +
+      (dots ? '<div class="cal-dots">' + dots + '</div>' : '') + '</div>';
+  }
+  html += '</div>';
+  $('#calGrid').innerHTML = html;
+
+  /* detail panel */
+  const sevs = calEvents(CAL_SEL);
+  const selDate = fmtLong(CAL_SEL);
+  let det = '<div class="card cal-detail"><h3>' + selDate + '</h3>';
+  if(!sevs.length){
+    det += '<div class="empty" style="text-align:left; padding:4px">Nada neste dia.</div>';
+  }else{
+    det += sevs.map(e => {
+      const icon = e.type === 'task' ? '☑' : e.type === 'rem' ? '⚑' : e.type === 'done' ? '✓' : '▣';
+      return '<div class="cal-item">' +
+        '<span class="ci-type" style="color:' + e.color + '">' + icon + '</span>' +
+        '<span class="tt">' + esc(e.title) + '</span></div>';
+    }).join('');
+  }
+  det += '<div style="display:flex; gap:8px; margin-top:12px">' +
+    '<button class="btn btn-sm" data-action="cal-add-task">+ Tarefa neste dia</button>' +
+    '<button class="btn btn-sm" data-action="cal-add-lem">+ Lembrete neste dia</button></div>';
+  det += '</div>';
+  $('#calDetail').innerHTML = det;
 }
 
 /* ===================== Lembretes ===================== */
@@ -2138,7 +2252,7 @@ let MAIS_EDIT = false;
 function openMais(){
   M = { type:'mais' };
   const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
-  const allTabs = ['hoje','tarefas','habitos','tempo','lembretes','pessoas','rotina','conhecimento','lugares','financas','estudos','mercado','dados'];
+  const allTabs = ['hoje','tarefas','habitos','calendario','tempo','lembretes','pessoas','rotina','conhecimento','lugares','financas','estudos','mercado','dados'];
   const item = (v) => {
     const t = TABS[v] || {ic:'?',lb:v};
     const pinned = bt.includes(v);
@@ -2595,6 +2709,13 @@ document.addEventListener('click', e => {
     save(); render(); inp.focus();
     return;
   }
+  /* calendário */
+  if(a === 'cal-sel'){ CAL_SEL = el.dataset.ds; renderCalendario(); return; }
+  if(a === 'cal-prev'){ CAL_MES--; if(CAL_MES < 0){ CAL_MES = 11; CAL_ANO--; } renderCalendario(); return; }
+  if(a === 'cal-next'){ CAL_MES++; if(CAL_MES > 11){ CAL_MES = 0; CAL_ANO++; } renderCalendario(); return; }
+  if(a === 'cal-today'){ CAL_MES = new Date().getMonth(); CAL_ANO = new Date().getFullYear(); CAL_SEL = today(); renderCalendario(); return; }
+  if(a === 'cal-add-task'){ openTask(null, {due:CAL_SEL}); return; }
+  if(a === 'cal-add-lem'){ openLembrete(null); M.draft.date = CAL_SEL; renderLembreteModal(); return; }
   if(a === 'nova-tarefa'){ openTask(null); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
