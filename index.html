@@ -759,6 +759,11 @@ pre.fmt{
   ],
   "reminders": [
     { "title": "Estagiária nova começa", "date": "2026-08-07", "notes": "Preparar a mesa" }
+  ],
+  "finances": [
+    { "title": "Mercado Zaffari", "type": "despesa", "amount": 287.50,
+      "category": "alimentação", "date": "2026-08-01" },
+    { "title": "Salário", "type": "receita", "amount": 5000, "date": "2026-08-05" }
   ]
 }</pre>
     <p class="vsub" style="margin-top:10px">Cores aceitas: azul, verde, ambar, vermelho, roxo, ciano, rosa, grafite. Prioridade: alta, media, baixa ou nenhuma. Dias: "diario" ou lista com dom, seg, ter, qua, qui, sex, sab. Tipos de lugar: viagem, restaurante, bar, passeio, outro. Status de lugar: quero ou fui.</p>
@@ -961,7 +966,9 @@ function taskRowHTML(t){
   return '<div class="trow' + (done ? ' done' : '') + '" data-action="open-task" data-id="' + t.id + '">'
     + '<button class="ck p' + (t.priority || 0) + (done ? ' on' : '') + '" data-action="ck" data-id="' + t.id + '" aria-label="Concluir"></button>'
     + '<span class="tt">' + esc(t.title) + '</span>'
-    + '<span class="tmeta">' + meta + '</span></div>';
+    + '<span class="tmeta">' + meta
+    + (done ? '' : '<button class="btn btn-ghost btn-sm" data-action="timer-task" data-id="' + t.id + '" title="Iniciar timer" style="padding:2px 6px; font-size:12px">◷</button>')
+    + '</span></div>';
 }
 function listHTML(items, emptyMsg){
   if(!items.length) return emptyMsg ? '<div class="list"><div class="empty">' + emptyMsg + '</div></div>' : '';
@@ -974,7 +981,7 @@ function sortTasks(arr){
   return arr.slice().sort((a,b) =>
     (a.due || '9999') < (b.due || '9999') ? -1 :
     (a.due || '9999') > (b.due || '9999') ? 1 :
-    (b.priority || 0) - (a.priority || 0) || a.title.localeCompare(b.title));
+    (b.priority || 0) - (a.priority || 0) || (a.createdAt || '').localeCompare(b.createdAt || ''));
 }
 
 /* ===================== Render: Hoje ===================== */
@@ -1627,11 +1634,11 @@ function renderLembretes(){
   const base = S.reminders.filter(r => !LCAT || (r.category || '') === LCAT);
   const ativos = base.filter(r => !r.dismissed);
   const feitos = base.filter(r => r.dismissed);
-  const atras = ativos.filter(r => r.date && r.date < t).sort((a,b) => a.date.localeCompare(b.date));
-  const hoje = ativos.filter(r => r.date === t);
-  const prox = ativos.filter(r => r.date && r.date > t && r.date <= addD(t,7)).sort((a,b) => a.date.localeCompare(b.date));
-  const depois = ativos.filter(r => r.date && r.date > addD(t,7)).sort((a,b) => a.date.localeCompare(b.date));
-  const semd = ativos.filter(r => !r.date);
+  const atras = ativos.filter(r => r.date && r.date < t).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
+  const hoje = ativos.filter(r => r.date === t).sort((a,b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+  const prox = ativos.filter(r => r.date && r.date > t && r.date <= addD(t,7)).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
+  const depois = ativos.filter(r => r.date && r.date > addD(t,7)).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
+  const semd = ativos.filter(r => !r.date).sort((a,b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
 
   function lemRow(r){
     const ack = r.dismissed;
@@ -2476,7 +2483,7 @@ function doPaste(){
   let o;
   try{ o = JSON.parse($('#f_paste').value); }
   catch(e){ toast('JSON inválido: ' + e.message); return; }
-  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, nrem = 0, pulados = 0;
+  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, nrem = 0, nfin = 0, pulados = 0;
   (Array.isArray(o.projects) ? o.projects : []).forEach(p => {
     if(p && p.name && !S.projects.find(x => x.name.toLowerCase() === String(p.name).toLowerCase())){ ensureProject(p.name, p.color); np++; }
   });
@@ -2554,7 +2561,16 @@ function doPaste(){
       notes:String(x.notes || ''), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
     nrem++;
   });
-  if(!nt && !nh && !np && !npp && !nn && !nl && !nr && !nrem){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
+  (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
+    if(!x || !x.title || !x.amount) return;
+    const tp = (x.type === 'receita' || x.type === 'income') ? 'receita' : 'despesa';
+    S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
+      amount:Math.abs(parseFloat(x.amount) || 0),
+      category:String(x.category || '').trim(), date:x.date || today(),
+      notes:String(x.notes || ''), createdAt:new Date().toISOString()});
+    nfin++;
+  });
+  if(!nt && !nh && !np && !npp && !nn && !nl && !nr && !nrem && !nfin){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
   save(); closeModal(); render();
   const parts = [];
   if(nt) parts.push(nt + ' tarefa(s)');
@@ -2565,6 +2581,7 @@ function doPaste(){
   if(nl) parts.push(nl + ' lugar(es)');
   if(nr) parts.push(nr + ' bloco(s) de rotina');
   if(nrem) parts.push(nrem + ' lembrete(s)');
+  if(nfin) parts.push(nfin + ' lançamento(s)');
   toast('Adicionado: ' + parts.join(', ') + (pulados ? ' (' + pulados + ' já existiam)' : '') + '.');
 }
 
@@ -2689,6 +2706,17 @@ document.addEventListener('click', e => {
   const a = el.dataset.action;
 
   if(a === 'ck'){ e.stopPropagation(); toggleTask(el.dataset.id); return; }
+  if(a === 'timer-task'){
+    e.stopPropagation();
+    const tk = S.tasks.find(x => x.id === el.dataset.id);
+    if(!tk) return;
+    const r = running();
+    if(r) r.end = new Date().toISOString();
+    S.timeEntries.push({id:uid(), desc:tk.title, projectId:tk.projectId || null, start:new Date().toISOString(), end:null, createdAt:new Date().toISOString()});
+    save(); render();
+    toast('Timer iniciado: ' + tk.title);
+    return;
+  }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
   if(a === 'thab'){
     toggleHabitDay(el.dataset.id, today(), '.thab[data-id="' + el.dataset.id + '"]'); return;
