@@ -958,6 +958,7 @@ function taskRowHTML(t){
   }
   (t.tags || []).slice(0,3).forEach(tg => meta += '<span class="tag-chip">' + esc(tg) + '</span>');
   if(t.recurrence && t.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
+  (t.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">◌ ' + esc(p.name) + '</span>'; });
   meta += projChipHTML(t);
   if(t.due){
     const [txt, cls] = fmtDue(t.due);
@@ -1485,7 +1486,16 @@ function openPessoa(id){
 function renderPessoaModal(){
   const d = M.draft;
   let hist = '';
+  let vinculos = '';
   if(M.id){
+    const vTasks = S.tasks.filter(x => (x.personIds || []).includes(M.id) && x.status !== 'done');
+    const vLems = S.reminders.filter(x => (x.personIds || []).includes(M.id) && !x.dismissed);
+    if(vTasks.length || vLems.length){
+      vinculos = '<div class="field"><label>Tarefas e lembretes vinculados</label>';
+      vTasks.forEach(x => vinculos += '<div class="int-row"><span class="ci-type">☑</span><span class="nt">' + esc(x.title) + '</span>' + (x.due ? '<span class="dt">' + fmtCurto(x.due) + '</span>' : '') + '</div>');
+      vLems.forEach(x => vinculos += '<div class="int-row"><span class="ci-type">⚑</span><span class="nt">' + esc(x.title) + '</span>' + (x.date ? '<span class="dt">' + fmtCurto(x.date) + '</span>' : '') + '</div>');
+      vinculos += '</div>';
+    }
     const ints = S.interactions.filter(i => i.personId === M.id).sort((a,b) => b.date.localeCompare(a.date));
     hist =
       '<div class="field"><label>Registrar contato</label>' +
@@ -1519,6 +1529,7 @@ function renderPessoaModal(){
       '<div class="empty" style="text-align:left; padding:4px; font-size:12.5px">Nenhum item. Adicione coisas para lembrar de perguntar.</div>') +
     '</div><div style="display:flex; gap:8px; margin-top:6px"><input class="inp" id="f_newfup" placeholder="Ex.: Como foi a entrevista?">' +
     '<button class="btn btn-sm" data-action="add-fup">Adicionar</button></div></div>' +
+    vinculos +
     hist;
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-pessoa">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
@@ -1645,6 +1656,7 @@ function renderLembretes(){
     let meta = '';
     if(r.category) meta += '<span class="tag-chip">' + esc(r.category) + '</span>';
     if(r.recurrence && r.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
+    (r.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">◌ ' + esc(p.name) + '</span>'; });
     if(r.date){
       const [txt, cls] = fmtDue(r.date);
       meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
@@ -1693,14 +1705,15 @@ function renderLembreteModal(){
   const d = M.draft;
   const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))];
   const body =
-    '<div class="field"><label>Lembrete</label><input class="inp" id="f_ltitle" value="' + esc(d.title) + '" placeholder="Do que precisa lembrar?"></div>' +
+    '<div class="field"><label>Lembrete</label><textarea class="inp" id="f_ltitle" rows="2" style="resize:vertical; min-height:42px" placeholder="Do que precisa lembrar?">' + esc(d.title) + '</textarea></div>' +
     '<div class="frow">' +
       '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%"></div>' +
       '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
     '</div>' +
     '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
     recurrenceHTML(d.recurrence, 'lem') +
-    '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>';
+    '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>' +
+    peoplePickerHTML(d.personIds, 'lem');
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-lembrete">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
     '<button class="btn btn-primary" data-action="salvar-lembrete">Salvar</button>';
@@ -2302,7 +2315,7 @@ function renderTaskModal(){
   const d = M.draft;
   const projs = S.projects.filter(p => !p.archived);
   const body =
-    '<div class="field"><label>Título</label><input class="inp" id="f_title" value="' + esc(d.title) + '" placeholder="O que precisa ser feito"></div>' +
+    '<div class="field"><label>Título</label><textarea class="inp" id="f_title" rows="2" style="resize:vertical; min-height:42px" placeholder="O que precisa ser feito">' + esc(d.title) + '</textarea></div>' +
     '<div class="frow">' +
       '<div class="field"><label>Projeto</label><select class="inp" id="f_proj" style="width:100%">' +
         '<option value="">Sem projeto</option>' +
@@ -2319,7 +2332,8 @@ function renderTaskModal(){
     '<div class="field"><label>Subtarefas</label><div class="subs" id="f_subs">' + subsHTML(d) + '</div>' +
       '<div style="display:flex; gap:8px; margin-top:8px"><input class="inp" id="f_newsub" placeholder="Nova subtarefa e Enter">' +
       '<button class="btn btn-sm" data-action="add-sub">Adicionar</button></div></div>' +
-    '<div class="field"><label>Notas</label><textarea class="inp" id="f_notes" placeholder="Detalhes, links, contexto">' + esc(d.notes || '') + '</textarea></div>';
+    '<div class="field"><label>Notas</label><textarea class="inp" id="f_notes" placeholder="Detalhes, links, contexto">' + esc(d.notes || '') + '</textarea></div>' +
+    peoplePickerHTML(d.personIds, 'tk');
   const foot =
     (M.id ? '<button class="btn btn-danger" data-action="excluir-task">Excluir</button>' : '') +
     '<div class="grow"></div>' +
@@ -2620,6 +2634,20 @@ function doImport(file){
 }
 
 /* ===================== Ações rápidas ===================== */
+function peoplePickerHTML(ids, prefix){
+  ids = ids || [];
+  const ps = S.people;
+  const linked = ids.map(id => ps.find(p => p.id === id)).filter(Boolean);
+  const avail = ps.filter(p => !ids.includes(p.id));
+  return '<div class="field"><label>Pessoas vinculadas</label>' +
+    (linked.length ? '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px">' +
+      linked.map(p => '<span class="pchip" style="cursor:pointer" data-action="' + prefix + '-unlink" data-pid="' + p.id + '">' + esc(p.name) + ' ✕</span>').join('') + '</div>' : '') +
+    (avail.length ? '<div style="display:flex; gap:8px"><select class="inp" id="' + prefix + '_addperson" style="flex:1"><option value="">Vincular pessoa…</option>' +
+      avail.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('') +
+      '</select><button class="btn btn-sm" data-action="' + prefix + '-link">+</button></div>' :
+      (linked.length ? '' : '<div class="empty" style="text-align:left; padding:4px; font-size:12.5px">Nenhuma pessoa cadastrada. Crie na aba Pessoas.</div>')) +
+    '</div>';
+}
 function recurrenceHTML(rec, prefix){
   rec = rec || {};
   const tp = rec.type || '';
@@ -2753,6 +2781,41 @@ document.addEventListener('click', e => {
   if(a === 'exportar'){ doExport(); return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'fechar-modal'){ closeModal(); return; }
+  /* vincular pessoas */
+  if(a === 'tk-link'){
+    syncTaskDraft(); const sel = document.getElementById('tk_addperson');
+    if(sel && sel.value){ if(!M.draft.personIds) M.draft.personIds = []; M.draft.personIds.push(sel.value); renderTaskModal(); }
+    return;
+  }
+  if(a === 'tk-unlink'){
+    syncTaskDraft(); M.draft.personIds = (M.draft.personIds || []).filter(id => id !== el.dataset.pid);
+    renderTaskModal(); return;
+  }
+  if(a === 'lem-link'){
+    const ti = document.getElementById('f_ltitle');
+    const dt = document.getElementById('f_ldate');
+    const ct = document.getElementById('f_lcat');
+    const nt = document.getElementById('f_lnotes');
+    if(ti) M.draft.title = ti.value;
+    if(dt) M.draft.date = dt.value;
+    if(ct) M.draft.category = ct.value;
+    if(nt) M.draft.notes = nt.value;
+    const sel = document.getElementById('lem_addperson');
+    if(sel && sel.value){ if(!M.draft.personIds) M.draft.personIds = []; M.draft.personIds.push(sel.value); renderLembreteModal(); }
+    return;
+  }
+  if(a === 'lem-unlink'){
+    const ti = document.getElementById('f_ltitle');
+    const dt = document.getElementById('f_ldate');
+    const ct = document.getElementById('f_lcat');
+    const nt = document.getElementById('f_lnotes');
+    if(ti) M.draft.title = ti.value;
+    if(dt) M.draft.date = dt.value;
+    if(ct) M.draft.category = ct.value;
+    if(nt) M.draft.notes = nt.value;
+    M.draft.personIds = (M.draft.personIds || []).filter(id => id !== el.dataset.pid);
+    renderLembreteModal(); return;
+  }
   if(a === 'tk-rec-type'){
     syncTaskDraft(); M.draft.recurrence = M.draft.recurrence || {};
     M.draft.recurrence.type = el.dataset.v || ''; if(!el.dataset.v) M.draft.recurrence = null;
