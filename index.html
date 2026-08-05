@@ -50,7 +50,16 @@ input,select,textarea{font:inherit; color:inherit}
   width:228px; flex:none; display:flex; flex-direction:column;
   border-right:1px solid var(--line); background:var(--surface);
   padding:20px 14px 16px; gap:2px; position:sticky; top:0; height:100vh;
+  transition:width .2s ease;
 }
+.side.collapsed{width:56px; padding:20px 6px 16px}
+.side.collapsed .lb, .side.collapsed .navlab, .side.collapsed .side-hint, .side.collapsed .ver{display:none}
+.side.collapsed .brand{justify-content:center; padding:4px 0 12px}
+.side.collapsed .nav-item{justify-content:center; padding:8px}
+.side.collapsed .nav-item .tag{display:none}
+.collapse-btn{border:0; background:none; color:var(--muted); padding:2px; border-radius:6px; cursor:pointer; align-self:flex-end; margin:-8px -4px 4px 0}
+.collapse-btn:hover{color:var(--ink); background:var(--surface2)}
+.side.collapsed .collapse-btn{align-self:center; margin:0 0 4px}
 .brand{
   font-weight:800; font-stretch:118%; font-size:19px; letter-spacing:-.01em;
   padding:4px 10px 14px; display:flex; align-items:baseline; gap:8px;
@@ -171,6 +180,8 @@ input[type="date"].inp{width:auto; font-family:'IBM Plex Mono',monospace; font-s
   content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   color:var(--bg); font-size:12px; font-weight:700;
 }
+.ck.pop{animation:ckpop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes ckpop{0%{transform:scale(.3) rotate(-15deg)}50%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
 .empty{color:var(--muted); font-size:13.5px; padding:18px 16px; text-align:center}
 
 /* quick add */
@@ -481,6 +492,7 @@ pre.fmt{
 <body>
 
 <aside class="side">
+  <button class="collapse-btn" id="collapseBtn" title="Recolher/expandir"><i data-lucide="panel-left-close"></i></button>
   <div class="brand"><span class="t">Central</span> <span class="ver">V4</span></div>
 
   <button class="nav-item active" data-view="hoje"><span class="ic"><i data-lucide="layout-dashboard"></i></span><span class="lb">Hoje</span></button>
@@ -861,6 +873,32 @@ function save(){
 
 /* ===================== Helpers ===================== */
 const $ = sel => document.querySelector(sel);
+function playDing(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+    const o1 = ctx.createOscillator();
+    o1.type = 'sine';
+    o1.frequency.setValueAtTime(880, ctx.currentTime);
+    o1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.08);
+    o1.connect(g);
+    o1.start(ctx.currentTime);
+    o1.stop(ctx.currentTime + 0.4);
+    const o2 = ctx.createOscillator();
+    o2.type = 'sine';
+    o2.frequency.setValueAtTime(1320, ctx.currentTime + 0.06);
+    const g2 = ctx.createGain();
+    g2.connect(ctx.destination);
+    g2.gain.setValueAtTime(0.15, ctx.currentTime + 0.06);
+    g2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+    o2.connect(g2);
+    o2.start(ctx.currentTime + 0.06);
+    o2.stop(ctx.currentTime + 0.35);
+  }catch(e){}
+}
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad = n => String(n).padStart(2,'0');
@@ -2080,7 +2118,7 @@ function salvarLugar(){
 
 /* ===================== Finanças ===================== */
 const FIN_CATS = ['alimentação','transporte','moradia','saúde','lazer','educação','assinatura','pessoal','trabalho','outro'];
-let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear();
+let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear(), FIN_CAT = '';
 function fmtR(v){ return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 function finOfMonth(){ return S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === FIN_MES && d.getFullYear() === FIN_ANO; }); }
 function renderFinancas(){
@@ -2099,15 +2137,20 @@ function renderFinancas(){
   const maxC = ks.length ? porCat[ks[0]] : 0;
   $('#finBars').innerHTML = !ks.length ? '' :
     secHTML('Despesas por categoria', ks.length) + '<div class="card bars">' + ks.map(k =>
-      '<div class="bar-row"><span class="bar-lab">' + esc(k) + '</span>' +
-      '<span class="bar-track"><span class="bar-fill" style="width:' + Math.max(3, Math.round(porCat[k] / maxC * 100)) + '%; background:var(--danger)"></span></span>' +
-      '<span class="bar-v">' + fmtR(porCat[k]) + '</span></div>').join('') + '</div>';
-  const sorted = fs.slice().sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+      '<div class="bar-row" style="cursor:pointer" data-action="fin-cat" data-c="' + esc(k) + '">' +
+      '<span class="bar-lab">' + esc(k) + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + Math.max(3, Math.round(porCat[k] / maxC * 100)) + '%; background:' + (FIN_CAT === k ? 'var(--accent)' : 'var(--danger)') + '"></span></span>' +
+      '<span class="bar-v">' + fmtR(porCat[k]) + '</span></div>').join('') + '</div>' +
+    (FIN_CAT ? '<button class="btn btn-ghost btn-sm" data-action="fin-cat" data-c="" style="margin:6px 0">✕ Limpar filtro: ' + esc(FIN_CAT) + '</button>' : '');
+
+  const filtered = FIN_CAT ? fs.filter(f => (f.category || 'outro') === FIN_CAT) : fs;
+  const sorted = filtered.slice().sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+  const label = FIN_CAT ? 'Lançamentos: ' + FIN_CAT : 'Lançamentos';
   $('#finLista').innerHTML = !sorted.length
-    ? '<div class="list" style="margin-top:14px"><div class="empty">Nenhum lançamento em ' + MES[FIN_MES] + '. Adicione receitas e despesas.</div></div>'
-    : secHTML('Lançamentos', sorted.length) + '<div class="list">' + sorted.map(f =>
+    ? '<div class="list" style="margin-top:14px"><div class="empty">' + (FIN_CAT ? 'Nenhum lançamento em "' + esc(FIN_CAT) + '" neste mês.' : 'Nenhum lançamento em ' + MES[FIN_MES] + '.') + '</div></div>'
+    : secHTML(label, sorted.length) + '<div class="list">' + sorted.map(f =>
       '<div class="trow fin-row" data-action="edit-fin" data-id="' + f.id + '">' +
-      '<span class="tt">' + esc(f.title) + '</span><span class="tmeta">' +
+      '<span class="tt">' + esc(f.title) + (f.installment ? ' <span class="tag-chip">' + esc(f.installment) + '</span>' : '') + '</span><span class="tmeta">' +
       (f.category ? '<span class="tag-chip">' + esc(f.category) + '</span>' : '') +
       '<span class="due">' + f.date.slice(8,10) + '/' + f.date.slice(5,7) + '</span>' +
       '<span class="amt ' + (f.type === 'receita' ? 'fin-in' : 'fin-out') + '">' + (f.type === 'receita' ? '+' : '-') + fmtR(f.amount) + '</span>' +
@@ -2116,7 +2159,7 @@ function renderFinancas(){
 function openTransacao(id){
   const f = id ? S.finances.find(x => x.id === id) : null;
   M = { type:'fin', id: id || null, draft: f ? JSON.parse(JSON.stringify(f)) :
-    {title:'', type:'despesa', amount:'', category:'', date:today(), notes:''} };
+    {title:'', type:'despesa', amount:'', category:'', date:today(), installment:'', notes:''} };
   renderFinModal();
 }
 function renderFinModal(){
@@ -2130,6 +2173,7 @@ function renderFinModal(){
     '<div class="frow">' +
       '<div class="field"><label>Valor (R$)</label><input class="inp mono" id="f_famt" type="number" step="0.01" min="0" value="' + (d.amount || '') + '" placeholder="0,00" style="width:100%"></div>' +
       '<div class="field"><label>Data</label><input class="inp" type="date" id="f_fdate" value="' + esc(d.date || today()) + '" style="width:100%"></div>' +
+      '<div class="field"><label>Parcela</label><input class="inp mono" id="f_finst" value="' + esc(d.installment || '') + '" placeholder="3/12" style="width:100%"></div>' +
     '</div>' +
     '<div class="field"><label>Categoria</label><input class="inp" id="f_fcat" value="' + esc(d.category || '') + '" list="fincatlist" placeholder="alimentação, transporte…"></div>' +
     '<datalist id="fincatlist">' + FIN_CATS.map(c => '<option value="' + c + '">').join('') + '</datalist>' +
@@ -2145,6 +2189,7 @@ function salvarFin(){
   d.amount = Math.abs(parseFloat($('#f_famt').value) || 0);
   d.date = $('#f_fdate').value || today();
   d.category = ($('#f_fcat').value || '').trim();
+  d.installment = ($('#f_finst').value || '').trim();
   d.notes = $('#f_fnotes').value || '';
   if(!d.title){ toast('Descreva o lançamento.'); return; }
   if(!d.amount){ toast('Informe o valor.'); return; }
@@ -2763,6 +2808,7 @@ function doPaste(){
     S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
       amount:Math.abs(parseFloat(x.amount) || 0),
       category:String(x.category || '').trim(), date:x.date || today(),
+      installment:String(x.installment || '').trim(),
       notes:String(x.notes || ''), createdAt:new Date().toISOString()});
     nfin++;
   });
@@ -2967,7 +3013,13 @@ document.addEventListener('click', e => {
   if(!el) return;
   const a = el.dataset.action;
 
-  if(a === 'ck'){ e.stopPropagation(); toggleTask(el.dataset.id); return; }
+  if(a === 'ck'){
+    e.stopPropagation();
+    const tk = S.tasks.find(x => x.id === el.dataset.id);
+    if(tk && tk.status !== 'done'){ el.classList.add('pop'); playDing(); }
+    toggleTask(el.dataset.id);
+    return;
+  }
   if(a === 'timer-task'){
     e.stopPropagation();
     const tk = S.tasks.find(x => x.id === el.dataset.id);
@@ -2981,6 +3033,7 @@ document.addEventListener('click', e => {
   }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
   if(a === 'thab'){
+    playDing();
     toggleHabitDay(el.dataset.id, today(), '.thab[data-id="' + el.dataset.id + '"]'); return;
   }
   if(a === 'hcell'){
@@ -3333,7 +3386,11 @@ document.addEventListener('click', e => {
 
   /* rotina */
   if(a === 'rt-day'){ RDAY = +el.dataset.d; renderRotina(); return; }
-  if(a === 'rt-ck'){ e.stopPropagation(); rtToggle(el.dataset.id, el.dataset.ds); return; }
+  if(a === 'rt-ck'){
+    e.stopPropagation();
+    if(!rtChecked(el.dataset.id, el.dataset.ds)){ el.classList.add('pop'); playDing(); }
+    rtToggle(el.dataset.id, el.dataset.ds); return;
+  }
   if(a === 'novo-bloco'){ openBloco(null); return; }
   if(a === 'edit-bloco'){ openBloco(el.dataset.id); return; }
   if(a === 'salvar-bloco'){ salvarBloco(); return; }
@@ -3385,8 +3442,9 @@ document.addEventListener('click', e => {
   if(a === 'edit-fin'){ openTransacao(el.dataset.id); return; }
   if(a === 'salvar-fin'){ salvarFin(); return; }
   if(a === 'fin-tipo'){ M.draft.type = el.dataset.v; renderFinModal(); return; }
-  if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } renderFinancas(); return; }
-  if(a === 'fin-next'){ FIN_MES++; if(FIN_MES > 11){ FIN_MES = 0; FIN_ANO++; } renderFinancas(); return; }
+  if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } FIN_CAT = ''; renderFinancas(); return; }
+  if(a === 'fin-next'){ FIN_MES++; if(FIN_MES > 11){ FIN_MES = 0; FIN_ANO++; } FIN_CAT = ''; renderFinancas(); return; }
+  if(a === 'fin-cat'){ FIN_CAT = FIN_CAT === el.dataset.c ? '' : el.dataset.c; renderFinancas(); return; }
   if(a === 'excluir-fin'){
     if(!confirm('Excluir este lançamento?')) return;
     S.finances = S.finances.filter(x => x.id !== M.id);
@@ -3514,6 +3572,14 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
   if(sl) sl.onclick = () => toast('Antes, configure o Firebase seguindo o PASSO-A-PASSO.md.');
   const gsb = document.getElementById('globalSearchBtn');
   if(gsb) gsb.onclick = () => openGlobalSearch();
+  const cb = document.getElementById('collapseBtn');
+  if(cb) cb.onclick = () => {
+    const s = document.querySelector('.side');
+    s.classList.toggle('collapsed');
+    const icon = cb.querySelector('i');
+    if(icon) icon.dataset.lucide = s.classList.contains('collapsed') ? 'panel-left-open' : 'panel-left-close';
+    refreshIcons();
+  };
 }
 applyTheme();
 setInterval(tick, 1000);
