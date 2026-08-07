@@ -483,9 +483,7 @@ pre.fmt{
   .modal{max-width:100%; max-height:94vh; border-radius:16px 16px 0 0}
   .bar-lab{width:90px}
   .clock{font-size:24px}
-  .trow{flex-wrap:wrap}
-  .trow .tt{min-width:60%; white-space:normal}
-  .trow .tmeta{width:100%; justify-content:flex-end; margin-top:2px}
+  .trow .tmeta .tag-chip, .trow .tmeta .pchip, .trow .tmeta .sub-n, .trow .tmeta .recur{display:none}
 }
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important}
@@ -678,7 +676,10 @@ pre.fmt{
       <button class="btn btn-primary btn-sm" data-action="nova-transacao">+ Lançamento</button>
     </div>
     <div class="sumrow" id="finResumo"></div>
+    <div id="finMeta"></div>
+    <div id="finFixas"></div>
     <div id="finBars"></div>
+    <div id="finParcelas"></div>
     <div id="finLista"></div>
   </section>
 
@@ -854,7 +855,7 @@ function blank(){
     meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','tempo']},
     projects:[], tasks:[], habits:[], habitLogs:{},
     timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[],
-    finances:[], subjects:[], studySessions:[], routineChecks:{}, shoppingItems:[]
+    finances:[], fixedExpenses:[], subjects:[], studySessions:[], routineChecks:{}, shoppingItems:[]
   };
 }
 let S = load();
@@ -911,14 +912,18 @@ const fromD = s => { const [a,b,c] = s.split('-').map(Number); return new Date(a
 const addD = (s,n) => { const d = fromD(s); d.setDate(d.getDate()+n); return dstr(d); };
 const fmtLong = s => { const d = fromD(s); return DOW[d.getDay()] + ', ' + pad(d.getDate()) + ' ' + MES[d.getMonth()] + ' ' + d.getFullYear(); };
 const fmtCurto = s => { const d = fromD(s), now = new Date(); return d.getDate() + ' ' + MES[d.getMonth()] + (d.getFullYear() !== now.getFullYear() ? ' ' + d.getFullYear() : ''); };
+function fmtAtraso(s){
+  if(!s) return '';
+  const t = today();
+  if(s >= t) return '';
+  const diff = Math.round((fromD(t) - fromD(s)) / 864e5);
+  if(diff === 1) return '1 dia de atraso';
+  return diff + ' dias de atraso';
+}
 function fmtDue(s){
   const t = today();
   if(s === t) return ['hoje','today'];
-  if(s === addD(t,1)) return ['amanhã',''];
-  if(s < t){
-    const diff = Math.round((fromD(t) - fromD(s)) / 864e5);
-    return [diff === 1 ? 'ontem' : diff + ' dias atrás', 'late'];
-  }
+  if(s < t) return [fmtCurto(s), 'late'];
   return [fmtCurto(s), ''];
 }
 function fmtDT(iso){
@@ -1019,6 +1024,7 @@ let TF = 'hoje';      /* filtro de tarefas */
 let TPROJ = '';        /* filtro por projeto */
 let M = null;          /* estado do modal */
 let CAIXA_OPEN = true; /* caixa do dia aberta */
+let TFILTROS_OPEN = false; /* filtros de tarefas */
 let ATRASADAS_OPEN = true; /* atrasadas aberta */
 const LEM_FOLDS = {passados:true, hoje:true, prox:true, futuros:true, semdata:true, dispensados:false};
 const TABS = {
@@ -1208,9 +1214,14 @@ function renderTarefas(){
     feitas: geral.filter(x => x.status === 'done').length
   };
   const defs = [['hoje','Hoje'],['prox','7 dias'],['todas','Todas'],['semdata','Sem data'],['feitas','Concluídas']];
-  let ch = defs.map(([k,l]) =>
-    '<button class="chip' + (TF === k ? ' on' : '') + '" data-action="filtro" data-f="' + k + '">' + l +
-    '<span class="c">' + cnt[k] + '</span></button>').join('');
+  const activeLabel = defs.find(([k]) => k === TF);
+  let ch = '<button class="btn btn-sm" data-action="toggle-tfiltros" style="flex:none">' + (activeLabel ? activeLabel[1] : 'Filtro') +
+    '<span class="c" style="margin-left:5px">' + (cnt[TF] || 0) + '</span> ▾</button>';
+  if(TFILTROS_OPEN){
+    ch += defs.map(([k,l]) =>
+      '<button class="chip' + (TF === k ? ' on' : '') + '" data-action="filtro" data-f="' + k + '">' + l +
+      '<span class="c">' + cnt[k] + '</span></button>').join('');
+  }
   const projs = S.projects.filter(p => !p.archived);
   if(projs.length){
     ch += '<select class="inp" id="fProj" style="margin-left:auto; padding:5px 9px; font-size:12.5px">' +
@@ -1830,7 +1841,8 @@ function renderLembreteModal(){
   const body =
     '<div class="field"><label>Lembrete</label><textarea class="inp" id="f_ltitle" rows="2" style="resize:vertical; min-height:42px" placeholder="Do que precisa lembrar?">' + esc(d.title) + '</textarea></div>' +
     '<div class="frow">' +
-      '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%"></div>' +
+      '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%">' +
+      (d.date && d.date < today() ? '<span style="color:var(--danger); font-size:12px; margin-top:4px; display:block">' + fmtAtraso(d.date) + '</span>' : '') + '</div>' +
       '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
     '</div>' +
     '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
@@ -2133,7 +2145,72 @@ function renderFinancas(){
   $('#finResumo').innerHTML =
     '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
     '<div class="card sum"><div class="k">Despesas</div><div class="v fin-out">- ' + fmtR(despesas) + '</div></div>' +
-    '<div class="card sum"><div class="k">Saldo do mês</div><div class="v fin-bal" style="color:' + (saldo >= 0 ? 'var(--good)' : 'var(--danger)') + '">' + (saldo >= 0 ? '+' : '') + fmtR(saldo).replace('R$ ', 'R$ ' + (saldo < 0 ? '-' : '')) + '</div></div>';
+    '<div class="card sum"><div class="k">Saldo do mês</div><div class="v fin-bal" style="color:' + (saldo >= 0 ? 'var(--good)' : 'var(--danger)') + '">' + (saldo >= 0 ? '+' : '-') + fmtR(saldo) + '</div></div>';
+
+  /* meta de economia: 10% da receita do mês anterior */
+  const prevM = FIN_MES === 0 ? 11 : FIN_MES - 1;
+  const prevA = FIN_MES === 0 ? FIN_ANO - 1 : FIN_ANO;
+  const recAnterior = S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === prevM && d.getFullYear() === prevA && f.type === 'receita'; }).reduce((s2,f) => s2 + f.amount, 0);
+  const meta10 = recAnterior * 0.10;
+  const disponivel = recAnterior > 0 ? recAnterior - despesas : 0;
+  const pctGasto = recAnterior > 0 ? Math.round(despesas / recAnterior * 100) : 0;
+  if(recAnterior > 0){
+    const ok = disponivel >= meta10;
+    $('#finMeta').innerHTML =
+      '<div class="card" style="padding:12px 16px; margin-bottom:14px">' +
+      '<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">' +
+      '<span style="font-weight:700; font-size:13px">Meta 10%</span>' +
+      '<span class="mono" style="font-size:12px; color:var(--muted)">Poupar ' + fmtR(meta10) + ' (base: ' + MES[prevM] + ')</span>' +
+      '<span class="mono" style="font-size:12px; margin-left:auto; color:' + (ok ? 'var(--good)' : 'var(--danger)') + '">' +
+      (ok ? '\u2713 ' + fmtR(disponivel) + ' dispon\u00edvel' : '\u26a0 ' + fmtR(Math.abs(disponivel)) + (disponivel < 0 ? ' acima' : ' restam')) +
+      '</span></div>' +
+      '<div class="bar-track" style="margin-top:8px; height:6px"><div class="bar-fill" style="width:' + Math.min(100, pctGasto) + '%; background:' + (pctGasto <= 90 ? 'var(--accent)' : 'var(--danger)') + '; border-radius:3px"></div></div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:3px">' +
+      '<span>' + pctGasto + '% gasto</span><span>limite 90%</span></div></div>';
+  }else{ $('#finMeta').innerHTML = ''; }
+
+  /* despesas fixas */
+  const fixas = S.fixedExpenses || [];
+  let fixHtml = '';
+  if(fixas.length){
+    fixHtml += secHTML('Despesas fixas', fixas.length);
+    fixHtml += '<div class="list">';
+    fixas.forEach(fx => {
+      const pago = fs.some(f => f.fixedId === fx.id);
+      fixHtml += '<div class="trow' + (pago ? ' done' : '') + '">' +
+        '<button class="ck' + (pago ? ' on' : '') + '" data-action="fix-pay" data-id="' + fx.id + '"></button>' +
+        '<span class="tt">' + esc(fx.name) + '</span><span class="tmeta">' +
+        (fx.category ? '<span class="tag-chip">' + esc(fx.category) + '</span>' : '') +
+        '<span class="amt fin-out">' + fmtR(fx.amount) + '</span>' +
+        '<button class="btn btn-ghost btn-sm" data-action="edit-fixa" data-id="' + fx.id + '" style="padding:2px 6px">\u270e</button>' +
+        '</span></div>';
+    });
+    fixHtml += '</div>';
+  }
+  fixHtml += '<button class="btn btn-sm" data-action="nova-fixa" style="margin:8px 0">+ Despesa fixa mensal</button>';
+  $('#finFixas').innerHTML = fixHtml;
+
+  /* alertas de parcelas */
+  const parcelas = fs.filter(f => f.installment && /^\d+\/\d+$/.test(f.installment));
+  let parcHtml = '';
+  if(parcelas.length){
+    const alertas = [];
+    parcelas.forEach(f => {
+      const [cur, tot] = f.installment.split('/').map(Number);
+      if(cur === tot) alertas.push({text: f.title + ' \u2013 \u00faltima parcela (' + f.installment + ')', type: 'last'});
+      else if(cur === tot - 1) alertas.push({text: f.title + ' \u2013 pen\u00faltima (' + f.installment + ')', type: 'near'});
+      else alertas.push({text: f.title + ' \u2013 ' + f.installment + ' (faltam ' + (tot - cur) + ')', type: 'info'});
+    });
+    parcHtml += secHTML('Parcelas', alertas.length);
+    parcHtml += '<div class="list">';
+    alertas.forEach(a => {
+      const color = a.type === 'last' ? 'var(--good)' : a.type === 'near' ? 'var(--warn)' : 'var(--muted)';
+      parcHtml += '<div class="trow" style="cursor:default"><span class="lem-flag" style="color:' + color + '">' + (a.type === 'last' ? '\u2713' : a.type === 'near' ? '\u26a0' : '\u2022') + '</span><span class="tt">' + esc(a.text) + '</span></div>';
+    });
+    parcHtml += '</div>';
+  }
+  $('#finParcelas').innerHTML = parcHtml;
+
   const porCat = {};
   fs.filter(f => f.type === 'despesa').forEach(f => { const c = f.category || 'outro'; porCat[c] = (porCat[c] || 0) + f.amount; });
   const ks = Object.keys(porCat).sort((a,b) => porCat[b] - porCat[a]);
@@ -2199,6 +2276,24 @@ function salvarFin(){
   if(M.id) Object.assign(S.finances.find(x => x.id === M.id), d);
   else S.finances.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
   save(); closeModal(); render(); toast('Lançamento salvo.');
+}
+
+/* ===================== Despesas fixas ===================== */
+function openFixa(id){
+  const f = id ? (S.fixedExpenses || []).find(x => x.id === id) : null;
+  M = { type:'fixa', id: id || null, draft: f ? JSON.parse(JSON.stringify(f)) :
+    {name:'', amount:'', category:'moradia'} };
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Nome</label><input class="inp" id="f_fxname" value="' + esc(d.name) + '" placeholder="Ex.: Aluguel, Conta de luz, Internet"></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Valor mensal (R$)</label><input class="inp mono" id="f_fxamt" type="number" step="0.01" value="' + (d.amount || '') + '" style="width:100%"></div>' +
+      '<div class="field"><label>Categoria</label><input class="inp" id="f_fxcat" value="' + esc(d.category || '') + '" list="fincatlist" style="width:100%"></div>' +
+    '</div>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-fixa">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-fixa">Salvar</button>';
+  openModal(M.id ? 'Editar despesa fixa' : 'Nova despesa fixa', body, foot);
 }
 
 /* ===================== Estudos ===================== */
@@ -2550,7 +2645,8 @@ function renderTaskModal(){
         '<option value="">Sem projeto</option>' +
         projs.map(p => '<option value="' + p.id + '"' + (d.projectId === p.id ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') +
         '<option value="__new">+ Novo projeto…</option></select></div>' +
-      '<div class="field"><label>Prazo</label><input class="inp" type="date" id="f_due" value="' + esc(d.due || '') + '" style="width:100%"></div>' +
+      '<div class="field"><label>Prazo</label><input class="inp" type="date" id="f_due" value="' + esc(d.due || '') + '" style="width:100%">' +
+      (d.due && d.due < today() ? '<span style="color:var(--danger); font-size:12px; margin-top:4px; display:block">' + fmtAtraso(d.due) + '</span>' : '') + '</div>' +
     '</div>' +
     '<div class="field"><label>Prioridade</label><div class="seg">' +
       [0,1,2,3].map(p => '<button data-action="seg-prio" data-v="' + p + '" class="' +
@@ -3042,7 +3138,8 @@ document.addEventListener('click', e => {
   if(a === 'hcell'){
     toggleHabitDay(el.dataset.id, el.dataset.ds, '.hcell[data-id="' + el.dataset.id + '"][data-ds="' + el.dataset.ds + '"]'); return;
   }
-  if(a === 'filtro'){ TF = el.dataset.f; renderTarefas(); return; }
+  if(a === 'filtro'){ TF = el.dataset.f; TFILTROS_OPEN = false; renderTarefas(); return; }
+  if(a === 'toggle-tfiltros'){ TFILTROS_OPEN = !TFILTROS_OPEN; renderTarefas(); return; }
   if(a === 'qadd'){ quickAdd(); return; }
   if(a === 'toggle-caixa'){ CAIXA_OPEN = !CAIXA_OPEN; renderTarefas(); return; }
   if(a === 'toggle-atrasadas'){ ATRASADAS_OPEN = !ATRASADAS_OPEN; render(); return; }
@@ -3448,6 +3545,41 @@ document.addEventListener('click', e => {
   if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } FIN_CAT = ''; renderFinancas(); return; }
   if(a === 'fin-next'){ FIN_MES++; if(FIN_MES > 11){ FIN_MES = 0; FIN_ANO++; } FIN_CAT = ''; renderFinancas(); return; }
   if(a === 'fin-cat'){ FIN_CAT = FIN_CAT === el.dataset.c ? '' : el.dataset.c; renderFinancas(); return; }
+
+  /* despesas fixas */
+  if(a === 'nova-fixa'){ openFixa(null); return; }
+  if(a === 'edit-fixa'){ e.stopPropagation(); openFixa(el.dataset.id); return; }
+  if(a === 'salvar-fixa'){
+    const d = M.draft;
+    d.name = ($('#f_fxname').value || '').trim();
+    d.amount = Math.abs(parseFloat($('#f_fxamt').value) || 0);
+    d.category = ($('#f_fxcat').value || '').trim();
+    if(!d.name || !d.amount){ toast('Preencha nome e valor.'); return; }
+    if(!S.fixedExpenses) S.fixedExpenses = [];
+    if(M.id) Object.assign(S.fixedExpenses.find(x => x.id === M.id), d);
+    else S.fixedExpenses.push(Object.assign({id:uid()}, d));
+    save(); closeModal(); render(); toast('Despesa fixa salva.');
+    return;
+  }
+  if(a === 'excluir-fixa'){
+    if(!confirm('Excluir esta despesa fixa?')) return;
+    S.fixedExpenses = (S.fixedExpenses || []).filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Despesa fixa excluída.');
+    return;
+  }
+  if(a === 'fix-pay'){
+    e.stopPropagation();
+    const fx = (S.fixedExpenses || []).find(x => x.id === el.dataset.id);
+    if(!fx) return;
+    const t2 = today(), m = new Date(t2).getMonth(), y = new Date(t2).getFullYear();
+    const already = S.finances.some(f => f.fixedId === fx.id && new Date(f.date).getMonth() === FIN_MES && new Date(f.date).getFullYear() === FIN_ANO);
+    if(already){ toast('Já registrado neste mês.'); return; }
+    const dt = FIN_ANO + '-' + pad(FIN_MES + 1) + '-' + pad(new Date().getDate());
+    S.finances.push({id:uid(), title:fx.name, type:'despesa', amount:fx.amount, category:fx.category,
+      date:dt, installment:'', notes:'', fixedId:fx.id, createdAt:new Date().toISOString()});
+    save(); render(); playDing(); toast(fx.name + ' registrado em ' + MES[FIN_MES] + '.');
+    return;
+  }
   if(a === 'excluir-fin'){
     if(!confirm('Excluir este lançamento?')) return;
     S.finances = S.finances.filter(x => x.id !== M.id);
