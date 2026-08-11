@@ -458,6 +458,14 @@ pre.fmt{
 .sj-prog-track{height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin-top:4px}
 .sj-prog-fill{height:100%; border-radius:4px; transition:width .2s}
 .sj-hrs{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); flex:none; text-align:right; min-width:70px}
+.est-session{display:flex; align-items:flex-start; gap:10px; padding:10px 14px; cursor:pointer}
+.est-session + .est-session{border-top:1px solid var(--line)}
+.est-session:hover{background:var(--surface2)}
+.est-session.done .est-topic{color:var(--muted); text-decoration:line-through}
+.est-tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:99px; white-space:nowrap}
+.est-topic{font-size:13px; line-height:1.4; flex:1; min-width:0}
+.est-ref{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); flex:none}
+.est-day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); flex:none; width:40px}
 
 /* responsivo básico */
 .bottom-nav{display:none; position:fixed; left:0; right:0; bottom:0; z-index:40;
@@ -687,12 +695,12 @@ pre.fmt{
   <section class="view" id="view-estudos">
     <div class="vhead">
       <h1 class="vtitle">Estudos</h1>
-      <span class="vdate mono" id="estSemana"></span>
       <div class="grow"></div>
-      <button class="btn btn-ghost btn-sm" data-action="ger-materias">Matérias</button>
-      <button class="btn btn-primary btn-sm" data-action="nova-sessao">+ Registrar sessão</button>
+      <button class="btn btn-ghost btn-sm" data-action="est-log">Registrar sessão</button>
     </div>
-    <div id="estProgresso"></div>
+    <div class="sumrow" id="estResumo"></div>
+    <div class="chips" id="estWeeks" style="margin-bottom:12px"></div>
+    <div id="estPlano"></div>
     <div id="estLista"></div>
   </section>
 
@@ -855,7 +863,7 @@ function blank(){
     meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','tempo']},
     projects:[], tasks:[], habits:[], habitLogs:{},
     timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[],
-    finances:[], fixedExpenses:[], subjects:[], studySessions:[], routineChecks:{}, shoppingItems:[]
+    finances:[], fixedExpenses:[], subjects:[], studySessions:[], studyPlan:[], routineChecks:{}, shoppingItems:[]
   };
 }
 let S = load();
@@ -2297,111 +2305,75 @@ function openFixa(id){
 }
 
 /* ===================== Estudos ===================== */
-function estWeekStart(){ const d = fromD(today()); const w = (d.getDay() + 6) % 7; d.setDate(d.getDate() - w); return dstr(d); }
-function sessionsOfWeek(ws){ return S.studySessions.filter(s => s.date >= ws && s.date < addD(ws, 7)); }
-function subById(id){ return S.subjects.find(s => s.id === id) || null; }
+const EST_COLORS = {
+  pt:'#2C4A8A', rlm:'#4A3A85', inf:'#3E4C59', const:'#2F5D3A',
+  adm:'#7A5A17', inst:'#7C1D2E', civ:'#1F5F58', pciv:'#23557A',
+  pen:'#8A3324', ppen:'#8C4A16', lesp:'#7D2B5E', red:'#7C1D2E', rev:'#55524B'
+};
+const EST_BG = {
+  pt:'#E2E9F8', rlm:'#E9E4F6', inf:'#E6EAEE', const:'#E4F0E4',
+  adm:'#F6ECD9', inst:'#F3E2E5', civ:'#DFEFED', pciv:'#E0EDF5',
+  pen:'#F7E3DE', ppen:'#F8E9DC', lesp:'#F5E4EE', red:'transparent', rev:'#E9E7E2'
+};
+let EST_WEEK = 1;
+function estPlanWeeks(){
+  const ws = new Set();
+  (S.studyPlan || []).forEach(s => ws.add(s.week));
+  return [...ws].sort((a,b) => a - b);
+}
 function renderEstudos(){
-  const ws = estWeekStart();
-  $('#estSemana').textContent = 'semana de ' + fmtCurto(ws);
-  const sems = sessionsOfWeek(ws);
-  const ativos = S.subjects.filter(s => !s.archived);
-  if(!ativos.length){
-    $('#estProgresso').innerHTML = '<div class="list"><div class="empty">Nenhuma matéria cadastrada. Crie as matérias que você está estudando.</div></div>';
+  const plan = S.studyPlan || [];
+  if(!plan.length){
+    $('#estResumo').innerHTML = '';
+    $('#estWeeks').innerHTML = '';
+    $('#estPlano').innerHTML = '<div class="list"><div class="empty">Nenhum plano de estudo carregado. Cole o bloco do cronograma na aba Dados (Colar do Claude) para preencher.</div></div>';
     $('#estLista').innerHTML = '';
     return;
   }
-  const totalMin = sems.reduce((s,x) => s + (x.minutes || 0), 0);
-  let prog = '<div class="sumrow"><div class="card sum"><div class="k">Total da semana</div><div class="v">' + fmtDur(totalMin * 60) + '</div></div></div>';
-  prog += secHTML('Progresso semanal', ativos.length);
-  prog += '<div class="list">' + ativos.map(sj => {
-    const mins = sems.filter(s => s.subjectId === sj.id).reduce((a,s) => a + (s.minutes || 0), 0);
-    const goal = (sj.targetHoursWeek || 0) * 60;
-    const pct = goal > 0 ? Math.min(100, Math.round(mins / goal * 100)) : (mins > 0 ? 100 : 0);
-    return '<div class="sj-row" data-action="edit-materia" data-id="' + sj.id + '">' +
-      '<span class="rt-cbar" style="background:' + CORES[sj.color] + '"></span>' +
-      '<span class="tt">' + esc(sj.name) + '</span>' +
-      '<div class="sj-prog"><div class="sj-prog-track"><div class="sj-prog-fill" style="width:' + pct + '%; background:' + CORES[sj.color] + '"></div></div></div>' +
-      '<span class="sj-hrs">' + fmtDur(mins * 60) + (goal > 0 ? ' / ' + sj.targetHoursWeek + 'h' : '') + '</span></div>';
-  }).join('') + '</div>';
-  $('#estProgresso').innerHTML = prog;
+  const weeks = estPlanWeeks();
+  const totalSessions = plan.length;
+  const doneSessions = plan.filter(s => s.done).length;
+  const pct = totalSessions ? Math.round(doneSessions / totalSessions * 100) : 0;
 
-  const sorted = sems.slice().sort((a,b) => b.date.localeCompare(a.date) || (b.createdAt || '').localeCompare(a.createdAt || ''));
-  $('#estLista').innerHTML = !sorted.length
-    ? secHTML('Sessões desta semana', 0) + '<div class="list"><div class="empty">Nenhuma sessão registrada. Estude e registre aqui.</div></div>'
-    : secHTML('Sessões desta semana', sorted.length) + '<div class="list">' + sorted.map(s => {
-      const sj = subById(s.subjectId);
-      return '<div class="trow" data-action="edit-sessao" data-id="' + s.id + '">' +
-        (sj ? '<span class="rt-cbar" style="background:' + CORES[sj.color] + '"></span>' : '') +
-        '<span class="tt">' + esc(s.notes || (sj ? sj.name : 'Sessão')) + '</span><span class="tmeta">' +
-        (sj ? '<span class="pchip"><span class="pdot" style="background:' + CORES[sj.color] + '"></span>' + esc(sj.name) + '</span>' : '') +
-        '<span class="due">' + DOW[fromD(s.date).getDay()] + '</span>' +
-        '<span class="due">' + fmtDur(s.minutes * 60) + '</span></span></div>';
-    }).join('') + '</div>';
-}
-function openSessao(id){
-  const s = id ? S.studySessions.find(x => x.id === id) : null;
-  M = { type:'sessao', id: id || null, draft: s ? JSON.parse(JSON.stringify(s)) :
-    {subjectId:S.subjects.length ? S.subjects[0].id : '', date:today(), minutes:'', notes:''} };
-  renderSessaoModal();
-}
-function renderSessaoModal(){
-  const d = M.draft;
-  const body =
-    '<div class="field"><label>Matéria</label><select class="inp" id="f_ssub" style="width:100%">' +
-      S.subjects.filter(s => !s.archived).map(s => '<option value="' + s.id + '"' + (d.subjectId === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>').join('') +
-    '</select></div>' +
-    '<div class="frow">' +
-      '<div class="field"><label>Duração (minutos)</label><input class="inp mono" type="number" id="f_smin" value="' + (d.minutes || '') + '" min="1" placeholder="60" style="width:100%"></div>' +
-      '<div class="field"><label>Data</label><input class="inp" type="date" id="f_sdate" value="' + esc(d.date || today()) + '" style="width:100%"></div>' +
-    '</div>' +
-    '<div class="field"><label>O que estudou</label><textarea class="inp" id="f_snotes" placeholder="Temas, capítulos, questões">' + esc(d.notes || '') + '</textarea></div>';
-  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-sessao">Excluir</button>' : '') +
-    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-sessao">Salvar</button>';
-  openModal(M.id ? 'Editar sessão' : 'Registrar sessão de estudo', body, foot);
-}
-function salvarSessao(){
-  const d = M.draft;
-  d.subjectId = $('#f_ssub').value;
-  d.minutes = Math.max(1, parseInt($('#f_smin').value) || 0);
-  d.date = $('#f_sdate').value || today();
-  d.notes = ($('#f_snotes').value || '').trim();
-  if(!d.subjectId){ toast('Escolha a matéria.'); return; }
-  if(!d.minutes){ toast('Informe a duração.'); return; }
-  if(M.id) Object.assign(S.studySessions.find(x => x.id === M.id), d);
-  else S.studySessions.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
-  save(); closeModal(); render(); toast('Sessão registrada.');
-}
-function openMaterias(){
-  M = { type:'materias', drafts: JSON.parse(JSON.stringify(S.subjects)) };
-  renderMateriasModal();
-}
-function renderMateriasModal(){
-  const rows = M.drafts.map((s,i) =>
-    '<div class="pj" style="flex-wrap:wrap">' +
-    '<select class="inp" data-sj-cor="' + i + '" style="padding:6px 8px; font-size:12.5px; width:auto">' +
-      Object.keys(CORES).map(c => '<option value="' + c + '"' + (s.color === c ? ' selected' : '') + '>' + c + '</option>').join('') +
-    '</select>' +
-    '<input class="inp" data-sj-nome="' + i + '" value="' + esc(s.name) + '" style="flex:1; min-width:120px">' +
-    '<input class="inp mono" type="number" data-sj-meta="' + i + '" value="' + (s.targetHoursWeek || '') + '" placeholder="h/sem" min="0" step="0.5" style="width:70px">' +
-    '<button class="btn btn-sm" data-action="sj-arch" data-i="' + i + '">' + (s.archived ? 'Ativar' : 'Arq') + '</button>' +
-    '<button class="btn btn-danger btn-sm" data-action="sj-del" data-i="' + i + '">✕</button></div>').join('') ||
-    '<div class="empty" style="text-align:left; padding:4px">Nenhuma matéria ainda.</div>';
-  openModal('Matérias', rows +
-    '<button class="btn btn-sm" data-action="sj-add" style="align-self:flex-start; margin-top:8px">+ Adicionar matéria</button>',
-    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-materias">Salvar</button>');
-}
-function syncMateriasDrafts(){
-  document.querySelectorAll('[data-sj-nome]').forEach(inp => { M.drafts[+inp.dataset.sjNome].name = inp.value; });
-  document.querySelectorAll('[data-sj-cor]').forEach(sel => { M.drafts[+sel.dataset.sjCor].color = sel.value; });
-  document.querySelectorAll('[data-sj-meta]').forEach(inp => { M.drafts[+inp.dataset.sjMeta].targetHoursWeek = parseFloat(inp.value) || 0; });
-}
-function salvarMaterias(){
-  syncMateriasDrafts();
-  M.drafts.forEach(s => { s.name = (s.name || '').trim() || 'Sem nome'; });
-  S.subjects = M.drafts;
-  save(); closeModal(); render(); toast('Matérias atualizadas.');
+  $('#estResumo').innerHTML =
+    '<div class="card sum"><div class="k">Progresso geral</div><div class="v">' + doneSessions + '/' + totalSessions + ' (' + pct + '%)</div>' +
+    '<div class="bar-track" style="margin-top:6px; height:6px"><div class="bar-fill" style="width:' + pct + '%; background:var(--accent); border-radius:3px"></div></div></div>' +
+    '<div class="card sum"><div class="k">Semana atual</div><div class="v">' + EST_WEEK + ' de ' + weeks.length + '</div></div>';
+
+  $('#estWeeks').innerHTML = weeks.map(w => {
+    const ws = plan.filter(s => s.week === w);
+    const wd = ws.filter(s => s.done).length;
+    return '<button class="chip' + (EST_WEEK === w ? ' on' : '') + '" data-action="est-week" data-w="' + w + '">' + w +
+      '<span class="c">' + wd + '/' + ws.length + '</span></button>';
+  }).join('');
+
+  const weekSessions = plan.filter(s => s.week === EST_WEEK);
+  const dayOrder = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, 'sab1':6, 'sab2':7, sab:6};
+  weekSessions.sort((a,b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
+
+  const weekDone = weekSessions.filter(s => s.done).length;
+  const weekPct = weekSessions.length ? Math.round(weekDone / weekSessions.length * 100) : 0;
+  let html = secHTML('Semana ' + EST_WEEK + (EST_WEEK === weeks[weeks.length-1] ? ' (revis\u00e3o)' : ''), weekDone + '/' + weekSessions.length);
+  html += '<div class="bar-track" style="height:6px; margin-bottom:12px"><div class="bar-fill" style="width:' + weekPct + '%; background:var(--accent); border-radius:3px"></div></div>';
+  html += '<div class="list">';
+  weekSessions.forEach(s => {
+    const color = EST_COLORS[s.color] || 'var(--muted)';
+    const bg = EST_BG[s.color] || 'var(--surface2)';
+    html += '<div class="est-session' + (s.done ? ' done' : '') + '" data-action="est-toggle" data-id="' + s.id + '">' +
+      '<button class="ck' + (s.done ? ' on' : '') + '" style="margin-top:2px"></button>' +
+      '<span class="est-day">' + esc(s.day) + '</span>' +
+      '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(s.subject) + '</span>' +
+      '<span class="est-topic">' + esc(s.topic) + '</span>' +
+      (s.ref ? '<span class="est-ref">' + esc(s.ref) + '</span>' : '') +
+      '</div>';
+  });
+  html += '</div>';
+  if(weekDone === weekSessions.length && weekSessions.length > 0){
+    html += '<div class="empty" style="color:var(--good); font-weight:600; padding:14px">Semana ' + EST_WEEK + ' conclu\u00edda \u2713</div>';
+  }
+  $('#estPlano').innerHTML = html;
+  $('#estLista').innerHTML = '';
+  refreshIcons();
 }
 
 /* ===================== Mercado ===================== */
@@ -2590,8 +2562,9 @@ function runGlobalSearch(raw){
     if(m(x.title) || m(x.category) || m(x.notes))
       results.push({type:'Finanças', icon:'wallet', text:x.title, meta:fmtR(x.amount), action:'edit-fin', id:x.id});
   });
-  S.subjects.forEach(x => {
-    if(m(x.name)) results.push({type:'Estudos', icon:'graduation-cap', text:x.name, meta:'', action:'edit-materia', id:x.id});
+  (S.studyPlan || []).forEach(x => {
+    if(m(x.subject) || m(x.topic))
+      results.push({type:'Estudos', icon:'graduation-cap', text:x.subject + ': ' + x.topic, meta:'Sem ' + x.week, action:'est-go', id:String(x.week)});
   });
   S.shoppingItems.forEach(x => {
     if(m(x.name) || m(x.category))
@@ -2822,7 +2795,7 @@ function doPaste(){
   let o;
   try{ o = JSON.parse($('#f_paste').value); }
   catch(e){ toast('JSON inválido: ' + e.message); return; }
-  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, nrem = 0, nfin = 0, pulados = 0;
+  let nt = 0, nh = 0, np = 0, npp = 0, nn = 0, nl = 0, nr = 0, nrem = 0, nfin = 0, nsp = 0, pulados = 0;
   (Array.isArray(o.projects) ? o.projects : []).forEach(p => {
     if(p && p.name && !S.projects.find(x => x.name.toLowerCase() === String(p.name).toLowerCase())){ ensureProject(p.name, p.color); np++; }
   });
@@ -2901,7 +2874,16 @@ function doPaste(){
       notes:String(x.notes || ''), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
     nrem++;
   });
-  (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
+  (Array.isArray(o.studyPlan) ? o.studyPlan : []).forEach(x => {
+    if(!x || !x.subject || !x.topic) return;
+    if(!S.studyPlan) S.studyPlan = [];
+    S.studyPlan.push({id:uid(), week:parseInt(x.week) || 1, day:String(x.day || '').trim(),
+      subject:String(x.subject).trim(), topic:String(x.topic).trim(),
+      color:String(x.color || '').trim(), ref:String(x.ref || '').trim(),
+      done:false, doneAt:null});
+    nsp++;
+  });
+    (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
     if(!x || !x.title || !x.amount) return;
     const tp = (x.type === 'receita' || x.type === 'income') ? 'receita' : 'despesa';
     S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
@@ -2911,7 +2893,7 @@ function doPaste(){
       notes:String(x.notes || ''), createdAt:new Date().toISOString()});
     nfin++;
   });
-  if(!nt && !nh && !np && !npp && !nn && !nl && !nr && !nrem && !nfin){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
+  if(!nt && !nh && !np && !npp && !nn && !nl && !nr && !nrem && !nfin && !nsp){ toast(pulados ? 'Nada novo: itens já existentes.' : 'Nenhum item reconhecido no bloco.'); return; }
   save(); closeModal(); render();
   const parts = [];
   if(nt) parts.push(nt + ' tarefa(s)');
@@ -3187,7 +3169,7 @@ document.addEventListener('click', e => {
     else if(act === 'edit-habit') openHabit(gid);
     else if(act === 'edit-bloco') openBloco(gid);
     else if(act === 'edit-fin') openTransacao(gid);
-    else if(act === 'edit-materia') openMaterias();
+    else if(act === 'est-go'){ EST_WEEK = parseInt(gid) || 1; setView('estudos'); }
     else if(act === 'edit-shop') openShopItem(gid);
     return;
   }
@@ -3588,25 +3570,36 @@ document.addEventListener('click', e => {
   }
 
   /* estudos */
-  if(a === 'nova-sessao'){ if(!S.subjects.length){ toast('Crie ao menos uma matéria antes.'); openMaterias(); return; } openSessao(null); return; }
-  if(a === 'edit-sessao'){ openSessao(el.dataset.id); return; }
-  if(a === 'salvar-sessao'){ salvarSessao(); return; }
-  if(a === 'ger-materias'){ openMaterias(); return; }
-  if(a === 'edit-materia'){ openMaterias(); return; }
-  if(a === 'salvar-materias'){ salvarMaterias(); return; }
-  if(a === 'sj-add'){ syncMateriasDrafts(); M.drafts.push({id:uid(), name:'', color:'azul', targetHoursWeek:0, archived:false, createdAt:new Date().toISOString()}); renderMateriasModal(); return; }
-  if(a === 'sj-arch'){ syncMateriasDrafts(); M.drafts[+el.dataset.i].archived = !M.drafts[+el.dataset.i].archived; renderMateriasModal(); return; }
-  if(a === 'sj-del'){
-    syncMateriasDrafts();
-    const sjid = M.drafts[+el.dataset.i].id;
-    M.drafts.splice(+el.dataset.i, 1);
-    S.studySessions = S.studySessions.filter(s => s.subjectId !== sjid);
-    renderMateriasModal(); return;
+  /* estudos */
+  if(a === 'est-week'){ EST_WEEK = +el.dataset.w; renderEstudos(); return; }
+  if(a === 'est-toggle'){
+    const s2 = (S.studyPlan || []).find(x => x.id === el.dataset.id);
+    if(s2){ s2.done = !s2.done; s2.doneAt = s2.done ? new Date().toISOString() : null; if(s2.done) playDing(); save(); render(); }
+    return;
   }
-  if(a === 'excluir-sessao'){
-    if(!confirm('Excluir esta sessão?')) return;
-    S.studySessions = S.studySessions.filter(x => x.id !== M.id);
-    save(); closeModal(); render(); toast('Sessão excluída.');
+  if(a === 'est-log'){
+    M = { type:'est-log' };
+    const subs = [...new Set((S.studyPlan || []).map(s => s.subject))].sort();
+    const body =
+      '<div class="field"><label>Matéria</label><select class="inp" id="f_elsubj">' +
+        subs.map(s => '<option>' + esc(s) + '</option>').join('') +
+        '<option value="__other">Outra…</option></select></div>' +
+      '<div class="frow">' +
+        '<div class="field"><label>Duração (min)</label><input class="inp mono" type="number" id="f_elmin" value="75" min="1" style="width:100%"></div>' +
+        '<div class="field"><label>Data</label><input class="inp" type="date" id="f_eldate" value="' + today() + '" style="width:100%"></div>' +
+      '</div>' +
+      '<div class="field"><label>Notas</label><textarea class="inp" id="f_elnotes" placeholder="Temas, questões, observações"></textarea></div>';
+    openModal('Registrar sessão de estudo', body,
+      '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+      '<button class="btn btn-primary" data-action="salvar-est-log">Salvar</button>');
+    return;
+  }
+  if(a === 'salvar-est-log'){
+    const subj = $('#f_elsubj').value === '__other' ? prompt('Matéria:') : $('#f_elsubj').value;
+    if(!subj){ toast('Escolha a matéria.'); return; }
+    S.studySessions.push({id:uid(), subject:subj, minutes:parseInt($('#f_elmin').value) || 75,
+      date:$('#f_eldate').value || today(), notes:$('#f_elnotes').value || '', createdAt:new Date().toISOString()});
+    save(); closeModal(); render(); toast('Sessão registrada.');
     return;
   }
 
