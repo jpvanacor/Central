@@ -458,14 +458,25 @@ pre.fmt{
 .sj-prog-track{height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin-top:4px}
 .sj-prog-fill{height:100%; border-radius:4px; transition:width .2s}
 .sj-hrs{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); flex:none; text-align:right; min-width:70px}
-.est-session{display:flex; align-items:flex-start; gap:10px; padding:10px 14px; cursor:pointer}
+.est-session{display:flex; align-items:center; gap:8px; padding:10px 14px; cursor:pointer}
 .est-session + .est-session{border-top:1px solid var(--line)}
 .est-session:hover{background:var(--surface2)}
 .est-session.done .est-topic{color:var(--muted); text-decoration:line-through}
-.est-tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:99px; white-space:nowrap}
-.est-topic{font-size:13px; line-height:1.4; flex:1; min-width:0}
+.est-tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:99px; white-space:nowrap; flex:none}
+.est-topic{font-size:13px; line-height:1.4; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .est-ref{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); flex:none}
-.est-day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); flex:none; width:40px}
+.est-day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); flex:none; width:32px}
+.est-q{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); flex:none; padding:2px 6px; border:1px solid var(--line); border-radius:4px}
+.est-q:hover{background:var(--accent-soft)}
+.qday-row{display:flex; align-items:center; gap:8px; padding:6px 0}
+.qday-row .est-tag{font-size:9px}
+.qday-bar{flex:1; height:6px; background:var(--surface2); border-radius:3px; overflow:hidden}
+.qday-fill{height:100%; border-radius:3px; transition:width .2s}
+.qday-n{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); width:36px; text-align:right}
+@media(max-width:760px){.est-ref{display:none} .est-topic{font-size:12.5px}}
+.est-q{font-family:'IBM Plex Mono',monospace; font-size:11px; flex:none; padding:1px 6px; border-radius:4px; background:var(--surface2); color:var(--muted)}
+.est-q.ok{background:var(--good-soft); color:var(--good)}
+.est-q.low{background:var(--danger-soft); color:var(--danger)}
 
 /* responsivo básico */
 .bottom-nav{display:none; position:fixed; left:0; right:0; bottom:0; z-index:40;
@@ -699,8 +710,10 @@ pre.fmt{
       <button class="btn btn-ghost btn-sm" data-action="est-log">Registrar sessão</button>
     </div>
     <div class="sumrow" id="estResumo"></div>
+    <div id="estQuestoes"></div>
     <div class="chips" id="estWeeks" style="margin-bottom:12px"></div>
     <div id="estPlano"></div>
+    <div id="estTrabalho"></div>
     <div id="estLista"></div>
   </section>
 
@@ -863,7 +876,7 @@ function blank(){
     meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','tempo']},
     projects:[], tasks:[], habits:[], habitLogs:{},
     timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[],
-    finances:[], fixedExpenses:[], subjects:[], studySessions:[], studyPlan:[], routineChecks:{}, shoppingItems:[]
+    finances:[], fixedExpenses:[], subjects:[], studySessions:[], studyPlan:[], workStudy:[], questionLog:{}, routineChecks:{}, shoppingItems:[]
   };
 }
 let S = load();
@@ -1033,6 +1046,7 @@ let TPROJ = '';        /* filtro por projeto */
 let M = null;          /* estado do modal */
 let CAIXA_OPEN = true; /* caixa do dia aberta */
 let TFILTROS_OPEN = false; /* filtros de tarefas */
+let WORK_STUDY_OPEN = true; /* estudo profissional */
 let ATRASADAS_OPEN = true; /* atrasadas aberta */
 const LEM_FOLDS = {passados:true, hoje:true, prox:true, futuros:true, semdata:true, dispensados:false};
 const TABS = {
@@ -2335,6 +2349,32 @@ function renderEstudos(){
   const doneSessions = plan.filter(s => s.done).length;
   const pct = totalSessions ? Math.round(doneSessions / totalSessions * 100) : 0;
 
+  /* questões do dia */
+  const t = today();
+  const ql = S.questionLog || {};
+  const todayQ = ql[t] || {};
+  const subjects = [...new Set(plan.map(s => s.subject))].filter(s => s !== 'Redação' && s !== 'Revisão' && s !== 'Simulado');
+  const GOAL = 5;
+  let qh = '<div class="card" style="padding:12px 16px; margin-bottom:14px">';
+  qh += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px"><span style="font-weight:700; font-size:13px">Questões de hoje</span>';
+  const totalQ = subjects.reduce((s,k) => s + (todayQ[k] || 0), 0);
+  const metaQ = subjects.length * GOAL;
+  qh += '<span class="mono" style="font-size:12px; color:var(--muted); margin-left:auto">' + totalQ + '/' + metaQ + ' (meta: ' + GOAL + '/matéria)</span></div>';
+  subjects.forEach(subj => {
+    const n = todayQ[subj] || 0;
+    const done2 = n >= GOAL;
+    const colorKey = plan.find(s => s.subject === subj);
+    const c = colorKey ? (EST_COLORS[colorKey.color] || 'var(--muted)') : 'var(--muted)';
+    const bg2 = colorKey ? (EST_BG[colorKey.color] || 'var(--surface2)') : 'var(--surface2)';
+    qh += '<div class="qday-row">' +
+      '<span class="est-tag" style="background:' + bg2 + '; color:' + c + '; min-width:70px; text-align:center">' + esc(subj.substring(0,10)) + '</span>' +
+      '<div class="qday-bar"><div class="qday-fill" style="width:' + Math.min(100, Math.round(n / GOAL * 100)) + '%; background:' + (done2 ? 'var(--good)' : c) + '"></div></div>' +
+      '<span class="qday-n">' + n + '/' + GOAL + '</span>' +
+      '<button class="btn btn-ghost btn-sm" data-action="q-add" data-subj="' + esc(subj) + '" style="padding:2px 8px; font-size:12px">+</button></div>';
+  });
+  qh += '</div>';
+  $('#estQuestoes').innerHTML = qh;
+
   $('#estResumo').innerHTML =
     '<div class="card sum"><div class="k">Progresso geral</div><div class="v">' + doneSessions + '/' + totalSessions + ' (' + pct + '%)</div>' +
     '<div class="bar-track" style="margin-top:6px; height:6px"><div class="bar-fill" style="width:' + pct + '%; background:var(--accent); border-radius:3px"></div></div></div>' +
@@ -2359,12 +2399,14 @@ function renderEstudos(){
   weekSessions.forEach(s => {
     const color = EST_COLORS[s.color] || 'var(--muted)';
     const bg = EST_BG[s.color] || 'var(--surface2)';
-    html += '<div class="est-session' + (s.done ? ' done' : '') + '" data-action="est-toggle" data-id="' + s.id + '">' +
-      '<button class="ck' + (s.done ? ' on' : '') + '" style="margin-top:2px"></button>' +
+    const q = s.questions || 0;
+    const qcls = q >= 5 ? 'ok' : q > 0 ? 'low' : '';
+    html += '<div class="est-session' + (s.done ? ' done' : '') + '">' +
+      '<button class="ck' + (s.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + s.id + '" style="margin-top:2px"></button>' +
       '<span class="est-day">' + esc(s.day) + '</span>' +
       '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(s.subject) + '</span>' +
-      '<span class="est-topic">' + esc(s.topic) + '</span>' +
-      (s.ref ? '<span class="est-ref">' + esc(s.ref) + '</span>' : '') +
+      '<span class="est-topic" data-action="est-edit" data-id="' + s.id + '">' + esc(s.topic) + '</span>' +
+      (q || s.done ? '<span class="est-q ' + qcls + '" data-action="est-edit" data-id="' + s.id + '">' + q + 'q</span>' : '') +
       '</div>';
   });
   html += '</div>';
@@ -2372,6 +2414,33 @@ function renderEstudos(){
     html += '<div class="empty" style="color:var(--good); font-weight:600; padding:14px">Semana ' + EST_WEEK + ' conclu\u00edda \u2713</div>';
   }
   $('#estPlano').innerHTML = html;
+
+  /* estudo profissional */
+  const ws = S.workStudy || [];
+  let wh = '';
+  wh += '<div style="margin-top:20px">';
+  wh += '<div class="seclab" style="cursor:pointer" data-action="toggle-work-study"><span>Estudo profissional</span><span class="n">' + ws.filter(w => w.done).length + '/' + ws.length + '</span><span class="rule"></span>' +
+    '<span style="font-size:12px; color:var(--muted)">' + (WORK_STUDY_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
+  if(WORK_STUDY_OPEN){
+    if(ws.length){
+      wh += '<div class="list">';
+      ws.forEach(w => {
+        wh += '<div class="trow' + (w.done ? ' done' : '') + '">' +
+          '<button class="ck' + (w.done ? ' on' : '') + '" data-action="ws-toggle" data-id="' + w.id + '"></button>' +
+          '<span class="tt" data-action="ws-edit" data-id="' + w.id + '" style="cursor:pointer">' + esc(w.name) + '</span>' +
+          '<span class="tmeta">' + (w.category ? '<span class="tag-chip">' + esc(w.category) + '</span>' : '') + '</span></div>';
+      });
+      wh += '</div>';
+    }
+    wh += '<div class="qadd" style="margin:8px 0"><input class="inp" type="text" id="wsInp" placeholder="Novo tema profissional e Enter...">' +
+      '<select class="inp" id="wsCat" style="width:auto; font-size:12.5px">' +
+      '<option value="">Sem cat.</option><option value="improbidade">improbidade</option><option value="patrimônio">patr. público</option>' +
+      '<option value="NF">NF</option><option value="PP">PP</option><option value="IC">IC</option><option value="ACP">ACP</option>' +
+      '<option value="licitação">licitação</option><option value="outro">outro</option></select>' +
+      '<button class="btn" data-action="qadd-ws">+</button></div>';
+  }
+  wh += '</div>';
+  $('#estTrabalho').innerHTML = wh;
   $('#estLista').innerHTML = '';
   refreshIcons();
 }
@@ -3573,9 +3642,87 @@ document.addEventListener('click', e => {
   /* estudos */
   if(a === 'est-week'){ EST_WEEK = +el.dataset.w; renderEstudos(); return; }
   if(a === 'est-toggle'){
+    e.stopPropagation();
     const s2 = (S.studyPlan || []).find(x => x.id === el.dataset.id);
-    if(s2){ s2.done = !s2.done; s2.doneAt = s2.done ? new Date().toISOString() : null; if(s2.done) playDing(); save(); render(); }
+    if(!s2) return;
+    if(!s2.done){
+      s2.done = true; s2.doneAt = new Date().toISOString(); playDing();
+      const q = prompt('Quantas questões fez nesta sessão? (meta: 5)');
+      if(q !== null) s2.questions = Math.max(0, parseInt(q) || 0);
+    }else{ s2.done = false; s2.doneAt = null; }
+    save(); render();
     return;
+  }
+  if(a === 'est-edit'){
+    const s2 = (S.studyPlan || []).find(x => x.id === el.dataset.id);
+    if(!s2) return;
+    M = {type:'est-edit', id:s2.id};
+    openModal('Sessão: ' + s2.subject,
+      '<div class="field"><label>Tópico</label><input class="inp" id="f_estopic" value="' + esc(s2.topic) + '"></div>' +
+      '<div class="frow">' +
+        '<div class="field"><label>Questões feitas</label><input class="inp mono" type="number" id="f_esq" value="' + (s2.questions || 0) + '" min="0" style="width:100%"></div>' +
+        '<div class="field"><label>Meta</label><span class="inp mono" style="background:none; border:none">5</span></div>' +
+      '</div>' +
+      '<div class="field"><label>Notas</label><textarea class="inp" id="f_esnotes" placeholder="Observações, erros, artigos para revisar">' + esc(s2.notes || '') + '</textarea></div>',
+      '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+      '<button class="btn btn-primary" data-action="salvar-est-edit">Salvar</button>');
+    return;
+  }
+  if(a === 'salvar-est-edit'){
+    const s2 = (S.studyPlan || []).find(x => x.id === M.id);
+    if(s2){
+      s2.topic = ($('#f_estopic').value || '').trim() || s2.topic;
+      s2.questions = Math.max(0, parseInt($('#f_esq').value) || 0);
+      s2.notes = $('#f_esnotes').value || '';
+    }
+    save(); closeModal(); render(); return;
+  }
+  if(a === 'toggle-work-study'){ WORK_STUDY_OPEN = !WORK_STUDY_OPEN; renderEstudos(); return; }
+  if(a === 'q-add'){
+    const subj = el.dataset.subj;
+    const t2 = today();
+    if(!S.questionLog) S.questionLog = {};
+    if(!S.questionLog[t2]) S.questionLog[t2] = {};
+    const n = parseInt(prompt(subj + ': quantas questões fez?', '5'));
+    if(isNaN(n) || n <= 0) return;
+    S.questionLog[t2][subj] = (S.questionLog[t2][subj] || 0) + n;
+    save(); render(); toast('+' + n + ' questões de ' + subj);
+    return;
+  }
+  if(a === 'qadd-ws'){
+    const inp = $('#wsInp'); const name = (inp ? inp.value : '').trim();
+    if(!name){ if(inp) inp.focus(); return; }
+    if(!S.workStudy) S.workStudy = [];
+    S.workStudy.push({id:uid(), name, category:$('#wsCat').value || '', done:false, notes:'', createdAt:new Date().toISOString()});
+    save(); render(); return;
+  }
+  if(a === 'ws-toggle'){
+    e.stopPropagation();
+    const w = (S.workStudy || []).find(x => x.id === el.dataset.id);
+    if(w){ w.done = !w.done; if(w.done) playDing(); save(); render(); }
+    return;
+  }
+  if(a === 'ws-edit'){
+    const w = (S.workStudy || []).find(x => x.id === el.dataset.id);
+    if(!w) return;
+    M = {type:'ws-edit', id:w.id};
+    openModal('Estudo profissional',
+      '<div class="field"><label>Tema</label><input class="inp" id="f_wsname" value="' + esc(w.name) + '"></div>' +
+      '<div class="field"><label>Categoria</label><input class="inp" id="f_wscat" value="' + esc(w.category || '') + '"></div>' +
+      '<div class="field"><label>Notas</label><textarea class="inp" id="f_wsnotes">' + esc(w.notes || '') + '</textarea></div>',
+      '<button class="btn btn-danger" data-action="ws-del">Excluir</button>' +
+      '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+      '<button class="btn btn-primary" data-action="ws-save">Salvar</button>');
+    return;
+  }
+  if(a === 'ws-save'){
+    const w = (S.workStudy || []).find(x => x.id === M.id);
+    if(w){ w.name = ($('#f_wsname').value || '').trim() || w.name; w.category = $('#f_wscat').value || ''; w.notes = $('#f_wsnotes').value || ''; }
+    save(); closeModal(); render(); return;
+  }
+  if(a === 'ws-del'){
+    S.workStudy = (S.workStudy || []).filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Tema excluído.'); return;
   }
   if(a === 'est-log'){
     M = { type:'est-log' };
@@ -3660,6 +3807,10 @@ document.addEventListener('keydown', e => {
     const btn = document.querySelector('[data-action="qadd-caixa"]');
     if(btn) btn.click(); return;
   }
+  if(e.key === 'Enter' && e.target.id === 'wsInp'){
+    const btn = document.querySelector('[data-action="qadd-ws"]');
+    if(btn) btn.click(); return;
+  }
   if(e.key === 'Enter' && e.target.id === 'f_newsub'){
     e.preventDefault();
     const btn = document.querySelector('[data-action="add-sub"]');
@@ -3668,6 +3819,7 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.target.id === 'ttDesc'){ startTimer(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'shopInp'){ quickAddShop(); return; }
+  if(e.key === 'Enter' && e.target.id === 'wsInp'){ document.querySelector('[data-action="qadd-ws"]').click(); return; }
 });
 
 $('#fileImp').addEventListener('change', e => {
