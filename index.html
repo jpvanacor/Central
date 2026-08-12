@@ -53,7 +53,7 @@ input,select,textarea{font:inherit; color:inherit}
   transition:width .2s ease;
 }
 .side.collapsed{width:56px; padding:20px 6px 16px}
-.side.collapsed .lb, .side.collapsed .navlab, .side.collapsed .side-hint, .side.collapsed .ver{display:none}
+.side.collapsed .lb, .side.collapsed .navlab, .side.collapsed .side-hint, .side.collapsed .ver, .side.collapsed .brand .t{display:none}
 .side.collapsed .brand{justify-content:center; padding:4px 0 12px}
 .side.collapsed .nav-item{justify-content:center; padding:8px}
 .side.collapsed .nav-item .tag{display:none}
@@ -706,15 +706,12 @@ pre.fmt{
   <section class="view" id="view-estudos">
     <div class="vhead">
       <h1 class="vtitle">Estudos</h1>
-      <div class="grow"></div>
-      <button class="btn btn-ghost btn-sm" data-action="est-log">Registrar sessão</button>
+      <span class="vdate mono" id="estSemLabel"></span>
     </div>
-    <div class="sumrow" id="estResumo"></div>
     <div id="estQuestoes"></div>
     <div class="chips" id="estWeeks" style="margin-bottom:12px"></div>
     <div id="estPlano"></div>
     <div id="estTrabalho"></div>
-    <div id="estLista"></div>
   </section>
 
   <!-- ===== MERCADO ===== -->
@@ -2335,78 +2332,93 @@ function estPlanWeeks(){
   (S.studyPlan || []).forEach(s => ws.add(s.week));
   return [...ws].sort((a,b) => a - b);
 }
+function estCurrentWeek(){
+  /* calcula semana atual a partir de studyPlanStart */
+  const start = S.meta.studyPlanStart;
+  if(!start) return 1;
+  const diff = Math.floor((fromD(today()) - fromD(start)) / (7 * 864e5));
+  return Math.max(1, Math.min(diff + 1, 14));
+}
+function todayDayKey(){
+  const d = new Date().getDay();
+  return ['dom','seg','ter','qua','qui','sex','sab'][d];
+}
 function renderEstudos(){
   const plan = S.studyPlan || [];
   if(!plan.length){
-    $('#estResumo').innerHTML = '';
+    $('#estSemLabel').textContent = '';
+    $('#estQuestoes').innerHTML = '';
     $('#estWeeks').innerHTML = '';
-    $('#estPlano').innerHTML = '<div class="list"><div class="empty">Nenhum plano de estudo carregado. Cole o bloco do cronograma na aba Dados (Colar do Claude) para preencher.</div></div>';
-    $('#estLista').innerHTML = '';
+    $('#estPlano').innerHTML = '<div class="list"><div class="empty">Nenhum plano de estudo carregado. Cole o bloco do cronograma na aba Dados (Colar do Claude).</div></div>';
+    $('#estTrabalho').innerHTML = '';
     return;
   }
+  /* semana atual auto */
+  const autoWeek = estCurrentWeek();
+  if(!S.meta._estManual) EST_WEEK = autoWeek;
   const weeks = estPlanWeeks();
-  const totalSessions = plan.length;
-  const doneSessions = plan.filter(s => s.done).length;
-  const pct = totalSessions ? Math.round(doneSessions / totalSessions * 100) : 0;
 
-  /* questões do dia */
+  $('#estSemLabel').textContent = 'Semana ' + EST_WEEK + ' de ' + weeks.length;
+
+  /* questoes do dia: so a materia de hoje */
+  const dk = todayDayKey();
+  const todaySessions = plan.filter(ss => ss.week === EST_WEEK && (ss.day === dk || (dk === 'sab' && (ss.day === 'sab1' || ss.day === 'sab2'))));
+  const todaySubjects = [...new Set(todaySessions.map(ss => ss.subject))].filter(ss => ss !== 'Reda\u00e7\u00e3o');
   const t = today();
   const ql = S.questionLog || {};
   const todayQ = ql[t] || {};
-  const subjects = [...new Set(plan.map(s => s.subject))].filter(s => s !== 'Redação' && s !== 'Revisão' && s !== 'Simulado');
   const GOAL = 5;
-  let qh = '<div class="card" style="padding:12px 16px; margin-bottom:14px">';
-  qh += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px"><span style="font-weight:700; font-size:13px">Questões de hoje</span>';
-  const totalQ = subjects.reduce((s,k) => s + (todayQ[k] || 0), 0);
-  const metaQ = subjects.length * GOAL;
-  qh += '<span class="mono" style="font-size:12px; color:var(--muted); margin-left:auto">' + totalQ + '/' + metaQ + ' (meta: ' + GOAL + '/matéria)</span></div>';
-  subjects.forEach(subj => {
-    const n = todayQ[subj] || 0;
-    const done2 = n >= GOAL;
-    const colorKey = plan.find(s => s.subject === subj);
-    const c = colorKey ? (EST_COLORS[colorKey.color] || 'var(--muted)') : 'var(--muted)';
-    const bg2 = colorKey ? (EST_BG[colorKey.color] || 'var(--surface2)') : 'var(--surface2)';
-    qh += '<div class="qday-row">' +
-      '<span class="est-tag" style="background:' + bg2 + '; color:' + c + '; min-width:70px; text-align:center">' + esc(subj.substring(0,10)) + '</span>' +
-      '<div class="qday-bar"><div class="qday-fill" style="width:' + Math.min(100, Math.round(n / GOAL * 100)) + '%; background:' + (done2 ? 'var(--good)' : c) + '"></div></div>' +
-      '<span class="qday-n">' + n + '/' + GOAL + '</span>' +
-      '<button class="btn btn-ghost btn-sm" data-action="q-add" data-subj="' + esc(subj) + '" style="padding:2px 8px; font-size:12px">+</button></div>';
-  });
-  qh += '</div>';
-  $('#estQuestoes').innerHTML = qh;
+  if(todaySubjects.length){
+    let qh = '<div class="card" style="padding:12px 16px; margin-bottom:14px">';
+    qh += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px"><span style="font-weight:700; font-size:13px">Quest\u00f5es de hoje</span></div>';
+    todaySubjects.forEach(subj => {
+      const n = todayQ[subj] || 0;
+      const ok2 = n >= GOAL;
+      const ck = plan.find(ss => ss.subject === subj);
+      const c = ck ? (EST_COLORS[ck.color] || 'var(--muted)') : 'var(--muted)';
+      const bg2 = ck ? (EST_BG[ck.color] || 'var(--surface2)') : 'var(--surface2)';
+      qh += '<div class="qday-row">' +
+        '<span class="est-tag" style="background:' + bg2 + '; color:' + c + '; min-width:80px; text-align:center">' + esc(subj) + '</span>' +
+        '<div class="qday-bar"><div class="qday-fill" style="width:' + Math.min(100, Math.round(n / GOAL * 100)) + '%; background:' + (ok2 ? 'var(--good)' : c) + '"></div></div>' +
+        '<span class="qday-n">' + n + '/' + GOAL + '</span>' +
+        '<button class="btn btn-ghost btn-sm" data-action="q-add" data-subj="' + esc(subj) + '" style="padding:2px 8px; font-size:12px">+</button></div>';
+    });
+    qh += '</div>';
+    $('#estQuestoes').innerHTML = qh;
+  }else{
+    $('#estQuestoes').innerHTML = '';
+  }
 
-  $('#estResumo').innerHTML =
-    '<div class="card sum"><div class="k">Progresso geral</div><div class="v">' + doneSessions + '/' + totalSessions + ' (' + pct + '%)</div>' +
-    '<div class="bar-track" style="margin-top:6px; height:6px"><div class="bar-fill" style="width:' + pct + '%; background:var(--accent); border-radius:3px"></div></div></div>' +
-    '<div class="card sum"><div class="k">Semana atual</div><div class="v">' + EST_WEEK + ' de ' + weeks.length + '</div></div>';
-
+  /* chips de semana */
   $('#estWeeks').innerHTML = weeks.map(w => {
-    const ws = plan.filter(s => s.week === w);
-    const wd = ws.filter(s => s.done).length;
-    return '<button class="chip' + (EST_WEEK === w ? ' on' : '') + '" data-action="est-week" data-w="' + w + '">' + w +
-      '<span class="c">' + wd + '/' + ws.length + '</span></button>';
+    const ws2 = plan.filter(ss => ss.week === w);
+    const wd2 = ws2.filter(ss => ss.done).length;
+    const isCur = w === autoWeek;
+    return '<button class="chip' + (EST_WEEK === w ? ' on' : '') + '" data-action="est-week" data-w="' + w + '"' +
+      (isCur ? ' style="border-color:var(--accent)"' : '') + '>' + w +
+      '<span class="c">' + wd2 + '/' + ws2.length + '</span></button>';
   }).join('');
 
-  const weekSessions = plan.filter(s => s.week === EST_WEEK);
-  const dayOrder = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, 'sab1':6, 'sab2':7, sab:6};
+  /* sessoes da semana */
+  const weekSessions = plan.filter(ss => ss.week === EST_WEEK);
+  const dayOrder = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, sab1:6, sab2:7, sab:6};
   weekSessions.sort((a,b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
-
-  const weekDone = weekSessions.filter(s => s.done).length;
+  const weekDone = weekSessions.filter(ss => ss.done).length;
   const weekPct = weekSessions.length ? Math.round(weekDone / weekSessions.length * 100) : 0;
-  let html = secHTML('Semana ' + EST_WEEK + (EST_WEEK === weeks[weeks.length-1] ? ' (revis\u00e3o)' : ''), weekDone + '/' + weekSessions.length);
+
+  let html = secHTML('Semana ' + EST_WEEK, weekDone + '/' + weekSessions.length);
   html += '<div class="bar-track" style="height:6px; margin-bottom:12px"><div class="bar-fill" style="width:' + weekPct + '%; background:var(--accent); border-radius:3px"></div></div>';
   html += '<div class="list">';
-  weekSessions.forEach(s => {
-    const color = EST_COLORS[s.color] || 'var(--muted)';
-    const bg = EST_BG[s.color] || 'var(--surface2)';
-    const q = s.questions || 0;
-    const qcls = q >= 5 ? 'ok' : q > 0 ? 'low' : '';
-    html += '<div class="est-session' + (s.done ? ' done' : '') + '">' +
-      '<button class="ck' + (s.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + s.id + '" style="margin-top:2px"></button>' +
-      '<span class="est-day">' + esc(s.day) + '</span>' +
-      '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(s.subject) + '</span>' +
-      '<span class="est-topic" data-action="est-edit" data-id="' + s.id + '">' + esc(s.topic) + '</span>' +
-      (q || s.done ? '<span class="est-q ' + qcls + '" data-action="est-edit" data-id="' + s.id + '">' + q + 'q</span>' : '') +
+  weekSessions.forEach(ss => {
+    const color = EST_COLORS[ss.color] || 'var(--muted)';
+    const bg = EST_BG[ss.color] || 'var(--surface2)';
+    const q = ss.questions || 0;
+    html += '<div class="est-session' + (ss.done ? ' done' : '') + '">' +
+      '<button class="ck' + (ss.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + ss.id + '"></button>' +
+      '<span class="est-day">' + esc(ss.day) + '</span>' +
+      '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(ss.subject) + '</span>' +
+      '<span class="est-topic" data-action="est-edit" data-id="' + ss.id + '">' + esc(ss.topic) + '</span>' +
+      (q ? '<span class="est-q">' + q + 'q</span>' : '') +
       '</div>';
   });
   html += '</div>';
@@ -2417,31 +2429,30 @@ function renderEstudos(){
 
   /* estudo profissional */
   const ws = S.workStudy || [];
-  let wh = '';
-  wh += '<div style="margin-top:20px">';
-  wh += '<div class="seclab" style="cursor:pointer" data-action="toggle-work-study"><span>Estudo profissional</span><span class="n">' + ws.filter(w => w.done).length + '/' + ws.length + '</span><span class="rule"></span>' +
+  let wh = '<div style="margin-top:20px">';
+  wh += '<div class="seclab" style="cursor:pointer" data-action="toggle-work-study"><span>Estudo profissional</span><span class="n">' + ws.filter(w2 => w2.done).length + '/' + ws.length + '</span><span class="rule"></span>' +
     '<span style="font-size:12px; color:var(--muted)">' + (WORK_STUDY_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
   if(WORK_STUDY_OPEN){
+    wh += '<p style="font-size:12.5px; color:var(--muted); margin:0 0 8px">Temas espec\u00edficos do trabalho: improbidade, patrim\u00f4nio p\u00fablico, NF, PP, IC, ACP, licita\u00e7\u00e3o. Funciona como uma disciplina a parte.</p>';
     if(ws.length){
       wh += '<div class="list">';
-      ws.forEach(w => {
-        wh += '<div class="trow' + (w.done ? ' done' : '') + '">' +
-          '<button class="ck' + (w.done ? ' on' : '') + '" data-action="ws-toggle" data-id="' + w.id + '"></button>' +
-          '<span class="tt" data-action="ws-edit" data-id="' + w.id + '" style="cursor:pointer">' + esc(w.name) + '</span>' +
-          '<span class="tmeta">' + (w.category ? '<span class="tag-chip">' + esc(w.category) + '</span>' : '') + '</span></div>';
+      ws.forEach(w2 => {
+        wh += '<div class="est-session' + (w2.done ? ' done' : '') + '">' +
+          '<button class="ck' + (w2.done ? ' on' : '') + '" data-action="ws-toggle" data-id="' + w2.id + '"></button>' +
+          (w2.category ? '<span class="est-tag" style="background:#F3E2E5; color:#7C1D2E">' + esc(w2.category) + '</span>' : '') +
+          '<span class="est-topic" data-action="ws-edit" data-id="' + w2.id + '">' + esc(w2.name) + '</span></div>';
       });
       wh += '</div>';
     }
     wh += '<div class="qadd" style="margin:8px 0"><input class="inp" type="text" id="wsInp" placeholder="Novo tema profissional e Enter...">' +
       '<select class="inp" id="wsCat" style="width:auto; font-size:12.5px">' +
-      '<option value="">Sem cat.</option><option value="improbidade">improbidade</option><option value="patrimônio">patr. público</option>' +
+      '<option value="">Sem cat.</option><option value="improbidade">improbidade</option><option value="patrim\u00f4nio">patr. p\u00fablico</option>' +
       '<option value="NF">NF</option><option value="PP">PP</option><option value="IC">IC</option><option value="ACP">ACP</option>' +
-      '<option value="licitação">licitação</option><option value="outro">outro</option></select>' +
+      '<option value="licita\u00e7\u00e3o">licita\u00e7\u00e3o</option><option value="outro">outro</option></select>' +
       '<button class="btn" data-action="qadd-ws">+</button></div>';
   }
   wh += '</div>';
   $('#estTrabalho').innerHTML = wh;
-  $('#estLista').innerHTML = '';
   refreshIcons();
 }
 
@@ -2952,6 +2963,7 @@ function doPaste(){
       done:false, doneAt:null});
     nsp++;
   });
+  if(nsp && !S.meta.studyPlanStart) S.meta.studyPlanStart = today();
     (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
     if(!x || !x.title || !x.amount) return;
     const tp = (x.type === 'receita' || x.type === 'income') ? 'receita' : 'despesa';
@@ -3640,7 +3652,7 @@ document.addEventListener('click', e => {
 
   /* estudos */
   /* estudos */
-  if(a === 'est-week'){ EST_WEEK = +el.dataset.w; renderEstudos(); return; }
+  if(a === 'est-week'){ EST_WEEK = +el.dataset.w; S.meta._estManual = true; renderEstudos(); return; }
   if(a === 'est-toggle'){
     e.stopPropagation();
     const s2 = (S.studyPlan || []).find(x => x.id === el.dataset.id);
@@ -3724,31 +3736,7 @@ document.addEventListener('click', e => {
     S.workStudy = (S.workStudy || []).filter(x => x.id !== M.id);
     save(); closeModal(); render(); toast('Tema excluído.'); return;
   }
-  if(a === 'est-log'){
-    M = { type:'est-log' };
-    const subs = [...new Set((S.studyPlan || []).map(s => s.subject))].sort();
-    const body =
-      '<div class="field"><label>Matéria</label><select class="inp" id="f_elsubj">' +
-        subs.map(s => '<option>' + esc(s) + '</option>').join('') +
-        '<option value="__other">Outra…</option></select></div>' +
-      '<div class="frow">' +
-        '<div class="field"><label>Duração (min)</label><input class="inp mono" type="number" id="f_elmin" value="75" min="1" style="width:100%"></div>' +
-        '<div class="field"><label>Data</label><input class="inp" type="date" id="f_eldate" value="' + today() + '" style="width:100%"></div>' +
-      '</div>' +
-      '<div class="field"><label>Notas</label><textarea class="inp" id="f_elnotes" placeholder="Temas, questões, observações"></textarea></div>';
-    openModal('Registrar sessão de estudo', body,
-      '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-      '<button class="btn btn-primary" data-action="salvar-est-log">Salvar</button>');
-    return;
-  }
-  if(a === 'salvar-est-log'){
-    const subj = $('#f_elsubj').value === '__other' ? prompt('Matéria:') : $('#f_elsubj').value;
-    if(!subj){ toast('Escolha a matéria.'); return; }
-    S.studySessions.push({id:uid(), subject:subj, minutes:parseInt($('#f_elmin').value) || 75,
-      date:$('#f_eldate').value || today(), notes:$('#f_elnotes').value || '', createdAt:new Date().toISOString()});
-    save(); closeModal(); render(); toast('Sessão registrada.');
-    return;
-  }
+
 
   /* mercado */
   if(a === 'ir-mercado'){ setView('mercado'); return; }
