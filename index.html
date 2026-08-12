@@ -10,7 +10,6 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230F62B4'/><text x='50' y='72' font-size='62' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>C</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ===== Tokens ===== */
@@ -106,11 +105,19 @@ input,select,textarea{font:inherit; color:inherit}
 .seclab{
   font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em;
   text-transform:uppercase; color:var(--muted);
-  display:flex; align-items:center; gap:8px; margin:26px 0 10px;
+  display:flex; align-items:center; gap:8px; margin:28px 0 10px;
 }
 .seclab:first-child{margin-top:0}
 .seclab .n{color:var(--ink); font-weight:600}
 .seclab .rule{flex:1; height:1px; background:var(--line)}
+
+/* Separação visual entre blocos */
+.list{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:14px}
+.view > .vhead{margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--line)}
+.qadd{margin-bottom:14px}
+.sumrow{margin-bottom:16px; gap:12px}
+.card.sum{border:1px solid var(--line)}
+.view section, .view .list + .seclab{margin-top:6px}
 .seclab.danger, .seclab.danger .n{color:var(--danger)}
 
 /* ===== Buttons / inputs ===== */
@@ -512,31 +519,31 @@ pre.fmt{
 <body>
 
 <aside class="side">
-  <button class="collapse-btn" id="collapseBtn" title="Recolher/expandir"><i data-lucide="panel-left-close"></i></button>
+  <button class="collapse-btn" id="collapseBtn" title="Recolher/expandir"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></button>
   <div class="brand"><span class="t">Central</span> <span class="ver">V4</span></div>
 
-  <button class="nav-item active" data-view="hoje"><span class="ic"><i data-lucide="layout-dashboard"></i></span><span class="lb">Hoje</span></button>
+  <button class="nav-item active" data-view="hoje"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span class="lb">Hoje</span></button>
 
   <div class="navlab">Módulos</div>
-  <button class="nav-item" data-view="calendario"><span class="ic"><i data-lucide="calendar"></i></span><span class="lb">Calendário</span></button>
-  <button class="nav-item" data-view="conhecimento"><span class="ic"><i data-lucide="book-open"></i></span><span class="lb">Conhecimento</span></button>
-  <button class="nav-item" data-view="estudos"><span class="ic"><i data-lucide="graduation-cap"></i></span><span class="lb">Estudos</span></button>
-  <button class="nav-item" data-view="financas"><span class="ic"><i data-lucide="wallet"></i></span><span class="lb">Finanças</span></button>
-  <button class="nav-item" data-view="habitos"><span class="ic"><i data-lucide="target"></i></span><span class="lb">Hábitos</span></button>
-  <button class="nav-item" data-view="lembretes"><span class="ic"><i data-lucide="bell"></i></span><span class="lb">Lembretes</span></button>
-  <button class="nav-item" data-view="lugares"><span class="ic"><i data-lucide="map-pin"></i></span><span class="lb">Lugares</span></button>
-  <button class="nav-item" data-view="mercado"><span class="ic"><i data-lucide="shopping-cart"></i></span><span class="lb">Mercado</span></button>
-  <button class="nav-item" data-view="pessoas"><span class="ic"><i data-lucide="users"></i></span><span class="lb">Pessoas</span></button>
-  <button class="nav-item" data-view="rotina"><span class="ic"><i data-lucide="list-checks"></i></span><span class="lb">Rotina</span></button>
-  <button class="nav-item" data-view="tarefas"><span class="ic"><i data-lucide="clipboard-list"></i></span><span class="lb">Tarefas</span></button>
-  <button class="nav-item" data-view="tempo"><span class="ic"><i data-lucide="clock"></i></span><span class="lb">Time track</span></button>
+  <button class="nav-item" data-view="calendario"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span><span class="lb">Calendário</span></button>
+  <button class="nav-item" data-view="conhecimento"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="lb">Conhecimento</span></button>
+  <button class="nav-item" data-view="estudos"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span><span class="lb">Estudos</span></button>
+  <button class="nav-item" data-view="financas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span><span class="lb">Finanças</span></button>
+  <button class="nav-item" data-view="habitos"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="lb">Hábitos</span></button>
+  <button class="nav-item" data-view="lembretes"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lb">Lembretes</span></button>
+  <button class="nav-item" data-view="lugares"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="lb">Lugares</span></button>
+  <button class="nav-item" data-view="mercado"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span><span class="lb">Mercado</span></button>
+  <button class="nav-item" data-view="pessoas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="lb">Pessoas</span></button>
+  <button class="nav-item" data-view="rotina"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span><span class="lb">Rotina</span></button>
+  <button class="nav-item" data-view="tarefas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span class="lb">Tarefas</span></button>
+  <button class="nav-item" data-view="tempo"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="lb">Time track</span></button>
 
   <div class="spacer"></div>
-  <button class="nav-item" id="globalSearchBtn" style="margin-bottom:4px"><span class="ic"><i data-lucide="search"></i></span><span class="lb">Buscar tudo</span></button>
+  <button class="nav-item" id="globalSearchBtn" style="margin-bottom:4px"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><span class="lb">Buscar tudo</span></button>
   <div class="side-foot">
-    <button class="nav-item" data-view="dados"><span class="ic"><i data-lucide="settings"></i></span><span class="lb">Dados</span></button>
-    <button class="nav-item" id="sideSync"><span class="ic"><i data-lucide="cloud"></i></span><span class="lb">Entrar (sincronizar)</span></button>
-    <button class="nav-item" id="themeBtn"><span class="ic"><i data-lucide="moon"></i></span><span class="lb">Tema escuro</span></button>
+    <button class="nav-item" data-view="dados"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="lb">Dados</span></button>
+    <button class="nav-item" id="sideSync"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></span><span class="lb">Entrar (sincronizar)</span></button>
+    <button class="nav-item" id="themeBtn"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span><span class="lb">Tema escuro</span></button>
     <div class="side-hint" id="sideHint"></div>
   </div>
 </aside>
@@ -546,7 +553,7 @@ pre.fmt{
   <!-- ===== HOJE ===== -->
   <section class="view on" id="view-hoje">
     <div class="vhead">
-      <h1 class="vtitle">Hoje</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Hoje</h1>
       <span class="vdate mono" id="hojeDate"></span>
       <div class="grow"></div>
       <span class="vdate" id="hojeResumo"></span>
@@ -559,7 +566,7 @@ pre.fmt{
   <!-- ===== TAREFAS ===== -->
   <section class="view" id="view-tarefas">
     <div class="vhead">
-      <h1 class="vtitle">Tarefas</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>Tarefas</h1>
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="projetos">Projetos</button>
       <button class="btn btn-primary btn-sm" data-action="nova-tarefa">+ Nova tarefa</button>
@@ -576,7 +583,7 @@ pre.fmt{
   <!-- ===== HÁBITOS ===== -->
   <section class="view" id="view-habitos">
     <div class="vhead">
-      <h1 class="vtitle">Hábitos</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Hábitos</h1>
       <span class="vdate mono" id="habRange"></span>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="novo-habito">+ Novo hábito</button>
@@ -588,7 +595,7 @@ pre.fmt{
   <!-- ===== TIME TRACK ===== -->
   <section class="view" id="view-tempo">
     <div class="vhead">
-      <h1 class="vtitle">Time track</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time track</h1>
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="lanc-manual">+ Lançamento manual</button>
     </div>
@@ -604,7 +611,7 @@ pre.fmt{
   <!-- ===== PESSOAS ===== -->
   <section class="view" id="view-pessoas">
     <div class="vhead">
-      <h1 class="vtitle">Pessoas</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Pessoas</h1>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="nova-pessoa">+ Nova pessoa</button>
     </div>
@@ -618,7 +625,7 @@ pre.fmt{
   <!-- ===== CALENDÁRIO ===== -->
   <section class="view" id="view-calendario">
     <div class="vhead">
-      <h1 class="vtitle" id="calTitle"></h1>
+      <h1 class="vtitle" id="calTitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></h1>
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="cal-prev">←</button>
       <button class="btn btn-ghost btn-sm" data-action="cal-today">Hoje</button>
@@ -631,7 +638,7 @@ pre.fmt{
   <!-- ===== LEMBRETES ===== -->
   <section class="view" id="view-lembretes">
     <div class="vhead">
-      <h1 class="vtitle">Lembretes</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Lembretes</h1>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="novo-lembrete">+ Novo lembrete</button>
     </div>
@@ -647,7 +654,7 @@ pre.fmt{
   <!-- ===== ROTINA ===== -->
   <section class="view" id="view-rotina">
     <div class="vhead">
-      <h1 class="vtitle">Rotina</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>Rotina</h1>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="novo-bloco">+ Novo bloco</button>
     </div>
@@ -659,7 +666,7 @@ pre.fmt{
   <!-- ===== CONHECIMENTO ===== -->
   <section class="view" id="view-conhecimento">
     <div class="vhead">
-      <h1 class="vtitle">Conhecimento</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Conhecimento</h1>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="nova-nota">+ Nova nota</button>
     </div>
@@ -673,7 +680,7 @@ pre.fmt{
   <!-- ===== LUGARES ===== -->
   <section class="view" id="view-lugares">
     <div class="vhead">
-      <h1 class="vtitle">Lugares</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Lugares</h1>
       <div class="grow"></div>
       <button class="btn btn-primary btn-sm" data-action="novo-lugar">+ Novo lugar</button>
     </div>
@@ -687,7 +694,7 @@ pre.fmt{
   <!-- ===== FINANÇAS ===== -->
   <section class="view" id="view-financas">
     <div class="vhead">
-      <h1 class="vtitle">Finanças</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Finanças</h1>
       <span class="vdate mono" id="finMes"></span>
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="fin-prev">←</button>
@@ -705,7 +712,7 @@ pre.fmt{
   <!-- ===== ESTUDOS ===== -->
   <section class="view" id="view-estudos">
     <div class="vhead">
-      <h1 class="vtitle">Estudos</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>Estudos</h1>
       <span class="vdate mono" id="estSemLabel"></span>
     </div>
     <div id="estQuestoes"></div>
@@ -717,7 +724,7 @@ pre.fmt{
   <!-- ===== MERCADO ===== -->
   <section class="view" id="view-mercado">
     <div class="vhead">
-      <h1 class="vtitle">Mercado</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>Mercado</h1>
       <span class="vdate mono" id="shopCount"></span>
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="reset-compras">↺ Nova ida ao mercado</button>
@@ -740,7 +747,7 @@ pre.fmt{
   <!-- ===== DADOS ===== -->
   <section class="view" id="view-dados">
     <div class="vhead">
-      <h1 class="vtitle">Dados</h1>
+      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Dados</h1>
       <div class="grow"></div>
     </div>
     <p class="vsub">Tudo fica salvo no localStorage deste navegador, neste computador. O navegador pode limpar esse espaço em situações raras, então exporte um backup com frequência.</p>
@@ -1053,8 +1060,13 @@ const TABS = {
   dados:{ic:'settings',lb:'Dados'}, financas:{ic:'wallet',lb:'Finanças'}, estudos:{ic:'graduation-cap',lb:'Estudos'},
   mercado:{ic:'shopping-cart',lb:'Mercado'}, calendario:{ic:'calendar',lb:'Calendário'}
 };
-const licn = n => '<i data-lucide="' + n + '"></i>';
-function refreshIcons(){ if(window.lucide) try{ lucide.createIcons(); }catch(e){} }
+const LICN={"layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>", "calendar": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>", "book-open": "<path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/>", "graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>", "wallet": "<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/>", "map-pin": "<path d=\"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>", "shopping-cart": "<circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/>", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>", "list-checks": "<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>", "clipboard-list": "<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>", "settings": "<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>", "cloud": "<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>", "moon": "<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>", "menu": "<line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\"/><line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\"/><line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\"/>", "panel-left-close": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m16 15-3-3 3-3\"/>", "panel-left-open": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m14 9 3 3-3 3\"/>", "circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/>", "alert-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/>", "calendar-check": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>", "calendar-clock": "<path d=\"M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5\"/><path d=\"M16 2v4\"/><path d=\"M8 2v4\"/><path d=\"M3 10h5\"/><path d=\"M17.5 17.5 16 16.3V14\"/><circle cx=\"16\" cy=\"16\" r=\"6\"/>", "calendar-plus": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M10 16h4\"/><path d=\"M12 14v4\"/>", "inbox": "<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>", "archive": "<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>", "repeat": "<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>", "user": "<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>", "flag": "<path d=\"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\"/><line x1=\"4\" x2=\"4\" y1=\"22\" y2=\"15\"/>", "square-check": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"m9 12 2 2 4-4\"/>", "pencil": "<path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/><path d=\"m15 5 4 4\"/>", "play": "<polygon points=\"6 3 20 12 6 21 6 3\"/>"};
+function licn(n){
+  const p = LICN[n];
+  if(!p) return '<span style="width:18px;height:18px;display:inline-block"></span>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+}
+function refreshIcons(){}
 function renderBottomNav(){
   const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
   const bn = document.getElementById('bottomNav');
@@ -1082,8 +1094,8 @@ function taskRowHTML(t){
     meta += '<span class="sub-n">' + ok + '/' + t.subtasks.length + '</span>';
   }
   (t.tags || []).slice(0,3).forEach(tg => meta += '<span class="tag-chip">' + esc(tg) + '</span>');
-  if(t.recurrence && t.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
-  (t.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">◌ ' + esc(p.name) + '</span>'; });
+  if(t.recurrence && t.recurrence.type) meta += '<span class="tag-chip">' + licn('repeat') + '</span>';
+  (t.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">' + licn('user') + ' ' + esc(p.name) + '</span>'; });
   meta += projChipHTML(t);
   if(t.due){
     const [txt, cls] = fmtDue(t.due);
@@ -1093,7 +1105,7 @@ function taskRowHTML(t){
     + '<button class="ck p' + (t.priority || 0) + (done ? ' on' : '') + '" data-action="ck" data-id="' + t.id + '" aria-label="Concluir"></button>'
     + '<span class="tt">' + esc(t.title) + '</span>'
     + '<span class="tmeta">' + meta
-    + (done ? '' : '<button class="btn btn-ghost btn-sm" data-action="timer-task" data-id="' + t.id + '" title="Iniciar timer" style="padding:2px 6px; font-size:12px">◷</button>')
+    + (done ? '' : '<button class="btn btn-ghost btn-sm" data-action="timer-task" data-id="' + t.id + '" title="Iniciar timer" style="padding:2px 6px">' + licn('timer') + '</button>')
     + '</span></div>';
 }
 function listHTML(items, emptyMsg){
@@ -1130,7 +1142,7 @@ function renderHoje(){
     '<div class="list" style="margin-bottom:16px">' + lemsHoje.map(r => {
       const late = r.date < t;
       return '<div class="trow" data-action="edit-lembrete" data-id="' + r.id + '">' +
-        '<span class="lem-flag">⚑</span><span class="tt">' + esc(r.title) + '</span>' +
+        '<span class="lem-flag">' + licn('flag') + '</span><span class="tt">' + esc(r.title) + '</span>' +
         '<span class="tmeta">' + (late ? '<span class="due late">' + fmtDue(r.date)[0] + '</span>' : '') +
         '<button class="btn btn-sm" data-action="ack-lem" data-id="' + r.id + '">OK</button></span></div>';
     }).join('') + '</div>';
@@ -1640,7 +1652,7 @@ function renderPessoaModal(){
     if(vTasks.length || vLems.length){
       vinculos = '<div class="field"><label>Tarefas e lembretes vinculados</label>';
       vTasks.forEach(x => vinculos += '<div class="int-row"><span class="ci-type">☑</span><span class="nt">' + esc(x.title) + '</span>' + (x.due ? '<span class="dt">' + fmtCurto(x.due) + '</span>' : '') + '</div>');
-      vLems.forEach(x => vinculos += '<div class="int-row"><span class="ci-type">⚑</span><span class="nt">' + esc(x.title) + '</span>' + (x.date ? '<span class="dt">' + fmtCurto(x.date) + '</span>' : '') + '</div>');
+      vLems.forEach(x => vinculos += '<div class="int-row"><span class="ci-type">' + licn('flag') + '</span><span class="nt">' + esc(x.title) + '</span>' + (x.date ? '<span class="dt">' + fmtCurto(x.date) + '</span>' : '') + '</div>');
       vinculos += '</div>';
     }
     const ints = S.interactions.filter(i => i.personId === M.id).sort((a,b) => b.date.localeCompare(a.date));
@@ -1799,25 +1811,26 @@ function renderLembretes(){
     const ack = r.dismissed;
     let meta = '';
     if(r.category) meta += '<span class="tag-chip">' + esc(r.category) + '</span>';
-    if(r.recurrence && r.recurrence.type) meta += '<span class="tag-chip">🔄</span>';
-    (r.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">◌ ' + esc(p.name) + '</span>'; });
+    if(r.recurrence && r.recurrence.type) meta += '<span class="tag-chip">' + licn('repeat') + '</span>';
+    (r.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">' + licn('user') + ' ' + esc(p.name) + '</span>'; });
     if(r.date){
       const [txt, cls] = fmtDue(r.date);
       meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
     }
     return '<div class="trow' + (ack ? ' lem-ack' : '') + '" data-action="edit-lembrete" data-id="' + r.id + '">' +
-      '<span class="lem-flag">⚑</span>' +
+      '<span class="lem-flag">' + licn('flag') + '</span>' +
       '<span class="tt">' + esc(r.title) + '</span>' +
       '<span class="tmeta">' + meta +
       '<button class="btn btn-sm" data-action="ack-lem" data-id="' + r.id + '">' + (ack ? 'Restaurar' : 'OK') + '</button>' +
       '</span></div>';
   }
   function lemList(arr){ return '<div class="list">' + arr.map(lemRow).join('') + '</div>'; }
-  function foldSec(key, label, arr, cls, emptyMsg){
+  function foldSec(key, label, arr, cls, emptyMsg, icon){
     if(!arr.length && !emptyMsg) return '';
     const open = LEM_FOLDS[key] !== false;
-    let h = '<div class="seclab ' + (cls || '') + '" style="cursor:pointer" data-action="lem-fold" data-k="' + key + '">' +
-      '<span>' + label + '</span><span class="n">' + arr.length + '</span><span class="rule"></span>' +
+    const ic = icon ? '<span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn(icon) + '</span>' : '';
+    let h = '<div class="seclab ' + (cls || '') + '" style="cursor:pointer; padding:10px 0" data-action="lem-fold" data-k="' + key + '">' +
+      ic + '<span>' + label + '</span><span class="n">' + arr.length + '</span><span class="rule"></span>' +
       '<span style="font-size:12px; color:var(--muted)">' + (open ? '▼' : '▶') + '</span></div>';
     if(open){
       if(arr.length) h += lemList(arr);
@@ -1826,13 +1839,13 @@ function renderLembretes(){
     return h;
   }
   let out = '';
-  if(atras.length) out += foldSec('passados', 'Passados', atras, 'danger');
-  out += foldSec('hoje', 'Hoje', hoje, '', !atras.length ? 'Nenhum lembrete para hoje.' : '');
-  if(prox.length) out += foldSec('prox', 'Próximos 7 dias', prox);
-  if(depois.length) out += foldSec('futuros', 'Futuros', depois);
-  if(semd.length) out += foldSec('semdata', 'Sem data', semd);
+  if(atras.length) out += foldSec('passados', 'Passados', atras, 'danger', '', 'alert-circle');
+  out += foldSec('hoje', 'Hoje', hoje, '', !atras.length ? 'Nenhum lembrete para hoje.' : '', 'calendar-check');
+  if(prox.length) out += foldSec('prox', 'Próximos 7 dias', prox, '', '', 'calendar-clock');
+  if(depois.length) out += foldSec('futuros', 'Futuros', depois, '', '', 'calendar-plus');
+  if(semd.length) out += foldSec('semdata', 'Sem data', semd, '', '', 'inbox');
   if(feitos.length){
-    out += foldSec('dispensados', 'Dispensados', feitos);
+    out += foldSec('dispensados', 'Dispensados', feitos, '', '', 'archive');
     if(LEM_FOLDS.dispensados !== false)
       out += '<div style="display:flex; justify-content:flex-end; margin-bottom:8px">' +
         '<button class="btn btn-danger btn-sm" data-action="limpar-lems">Apagar dispensados (' + feitos.length + ')</button></div>';
@@ -2476,7 +2489,7 @@ function renderMercado(){
     return '<div class="shop-row' + (i.bought ? ' bought' : '') + '">' +
       '<button class="ck' + (i.bought ? ' on' : '') + '" data-action="shop-ck" data-id="' + i.id + '"></button>' +
       '<span class="tt">' + esc(i.name) + (i.qty ? ' <span class="tag-chip">' + esc(i.qty) + '</span>' : '') + '</span>' +
-      '<button class="btn btn-ghost btn-sm" data-action="edit-shop" data-id="' + i.id + '" style="padding:2px 6px">✎</button></div>';
+      '<button class="btn btn-ghost btn-sm" data-action="edit-shop" data-id="' + i.id + '" style="padding:2px 6px">' + licn('pencil') + '</button></div>';
   }
   let out = '';
   if(!total){
