@@ -785,6 +785,12 @@ pre.fmt{
       </div>
 
       <div class="card dcard">
+        <h3>Manutenção</h3>
+        <p>Ferramentas para limpar dados.</p>
+        <button class="btn" data-action="dedup-fin">Remover lançamentos financeiros duplicados</button>
+      </div>
+
+      <div class="card dcard">
         <h3>Números</h3>
         <div id="stats"></div>
       </div>
@@ -3000,10 +3006,15 @@ function doPaste(){
     (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
     if(!x || !x.title || !x.amount) return;
     const tp = (x.type === 'receita' || x.type === 'income') ? 'receita' : 'despesa';
-    S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
-      amount:Math.abs(parseFloat(x.amount) || 0),
-      category:String(x.category || '').trim(), date:x.date || today(),
-      installment:String(x.installment || '').trim(),
+    const tit = String(x.title).trim();
+    const amt = Math.abs(parseFloat(x.amount) || 0);
+    const dt = x.date || today();
+    const inst = String(x.installment || '').trim();
+    /* duplicata: mesmo título, valor, data e parcela */
+    if(S.finances.some(f => f.title === tit && f.amount === amt && f.date === dt && (f.installment || '') === inst)){ pulados++; return; }
+    S.finances.push({id:uid(), title:tit, type:tp, amount:amt,
+      category:String(x.category || '').trim(), date:dt,
+      installment:inst, fixed:!!x.fixed,
       notes:String(x.notes || ''), createdAt:new Date().toISOString()});
     nfin++;
   });
@@ -3269,6 +3280,20 @@ document.addEventListener('click', e => {
   if(a === 'edit-habit'){ openHabit(el.dataset.id); return; }
   if(a === 'projetos'){ openProjetos(); return; }
   if(a === 'colar'){ openPaste(); return; }
+  if(a === 'dedup-fin'){
+    const seen = new Set();
+    const before = S.finances.length;
+    S.finances = S.finances.filter(f => {
+      const key = (f.title || '') + '|' + f.amount + '|' + (f.date || '') + '|' + (f.installment || '');
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    const removed = before - S.finances.length;
+    if(removed){ save(); render(); toast(removed + ' duplicata(s) removida(s).'); }
+    else toast('Nenhuma duplicata encontrada.');
+    return;
+  }
   if(a === 'exportar'){ doExport(); return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'fechar-modal'){ closeModal(); return; }
