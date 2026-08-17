@@ -2174,12 +2174,27 @@ const FIN_CATS = ['alimentação','transporte','moradia','saúde','lazer','educa
 let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear(), FIN_CAT = '', FIN_PARC_OPEN = false, FIN_BARS_OPEN = false;
 function fmtR(v){ return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 function finOfMonth(){ return S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === FIN_MES && d.getFullYear() === FIN_ANO; }); }
+function finCompMonth(f){
+  /* retorna {m, y} do mês de competência */
+  const d = new Date(f.date);
+  let m = d.getMonth(), y = d.getFullYear();
+  if(f.competencia === 'prev'){ m--; if(m < 0){ m = 11; y--; } }
+  return {m, y};
+}
+function finOfMonthComp(){
+  /* lançamentos cuja competência cai no mês visualizado */
+  return S.finances.filter(f => {
+    const c = finCompMonth(f);
+    return c.m === FIN_MES && c.y === FIN_ANO;
+  });
+}
 function renderFinancas(){
   const isCurrentMonth = FIN_MES === new Date().getMonth() && FIN_ANO === new Date().getFullYear();
   $('#finMes').innerHTML = licn('calendar') + ' ' + MES[FIN_MES] + ' ' + FIN_ANO + (isCurrentMonth ? '<span style="font-size:11px; color:var(--accent); margin-left:8px; font-weight:400">atual</span>' : '');
-  const fs = finOfMonth();
-  const receitas = fs.filter(f => f.type === 'receita').reduce((s,f) => s + f.amount, 0);
-  const despesas = fs.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
+  const fs = finOfMonth(); /* caixa: pagamentos no mês */
+  const fComp = finOfMonthComp(); /* competência: orçamento do mês */
+  const receitas = fComp.filter(f => f.type === 'receita').reduce((s,f) => s + f.amount, 0);
+  const despesas = fComp.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
   const saldo = receitas - despesas;
   $('#finResumo').innerHTML =
     '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
@@ -2216,7 +2231,7 @@ function renderFinancas(){
   let fixHtml = '';
   if(fixList.length){
     fixHtml += secHTML('Despesas fixas', fixList.length, '', 'credit-card');
-    fixHtml += '<p style="font-size:12px; color:var(--muted); margin:-10px 0 8px">Marque quando pagar. Para despesas do m\u00eas anterior (aluguel, luz), ajuste a data no lan\u00e7amento.</p>';
+    fixHtml += '<p style="font-size:12px; color:var(--muted); margin:-10px 0 8px">Marque quando pagar. Despesas com compet\u00eancia "m\u00eas anterior" contam no or\u00e7amento do m\u00eas correto automaticamente.</p>';
     fixHtml += '<div class="list">';
     fixList.forEach(fx => {
       const match = fs.find(f => f.fixed && f.title === fx.title);
@@ -2242,8 +2257,9 @@ function renderFinancas(){
       let type = 'info', label = f.installment + ' (faltam ' + (tot - cur) + ')';
       if(cur === tot){ type = 'last'; label = '\u00faltima parcela (' + f.installment + ')'; }
       else if(cur === tot - 1){ type = 'near'; label = 'pen\u00faltima (' + f.installment + ')'; }
-      alertas.push({text: f.title + ' \u2013 ' + label, type, amount: f.amount});
+      alertas.push({text: f.title + ' \u2013 ' + label, type, amount: f.amount, remaining: tot - cur, title: f.title});
     });
+    alertas.sort((a,b) => a.remaining - b.remaining || a.title.localeCompare(b.title));
     const totalParc = alertas.reduce((s2, a) => s2 + a.amount, 0);
     parcHtml += '<div class="seclab" style="cursor:pointer; padding:14px 0 6px" data-action="toggle-fin-parc">' +
       '<span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn('receipt') + '</span>' +
@@ -2266,7 +2282,7 @@ function renderFinancas(){
   $('#finParcelas').innerHTML = parcHtml;
 
   const porCat = {};
-  fs.filter(f => f.type === 'despesa').forEach(f => { const c = f.category || 'outro'; porCat[c] = (porCat[c] || 0) + f.amount; });
+  fComp.filter(f => f.type === 'despesa').forEach(f => { const c = f.category || 'outro'; porCat[c] = (porCat[c] || 0) + f.amount; });
   const ks = Object.keys(porCat).sort((a,b) => porCat[b] - porCat[a]);
   const maxC = ks.length ? porCat[ks[0]] : 0;
   let barsHtml = '';
@@ -2296,6 +2312,7 @@ function renderFinancas(){
       '<span class="tt">' + esc(f.title) + (f.installment ? ' <span class="tag-chip">' + esc(f.installment) + '</span>' : '') + '</span><span class="tmeta">' +
       (f.category ? '<span class="tag-chip">' + esc(f.category) + '</span>' : '') +
       '<span class="due">' + f.date.slice(8,10) + '/' + f.date.slice(5,7) + '</span>' +
+      (f.competencia === 'prev' ? '<span class="tag-chip" style="font-size:9px; opacity:.7">comp. ant.</span>' : '') +
       '<span class="amt ' + (f.type === 'receita' ? 'fin-in' : 'fin-out') + '">' + (f.type === 'receita' ? '+' : '-') + fmtR(f.amount) + '</span>' +
       '</span></div>').join('') + '</div>';
 }
@@ -2321,7 +2338,11 @@ function renderFinModal(){
     '<div class="field"><label>Categoria</label><input class="inp" id="f_fcat" value="' + esc(d.category || '') + '" list="fincatlist" placeholder="alimentação, transporte…"></div>' +
     '<datalist id="fincatlist">' + FIN_CATS.map(c => '<option value="' + c + '">').join('') + '</datalist>' +
     '<div class="field"><label>Notas</label><textarea class="inp" id="f_fnotes" placeholder="Detalhes">' + esc(d.notes || '') + '</textarea></div>' +
-    '<div class="field"><label style="display:flex; align-items:center; gap:8px; cursor:pointer"><input type="checkbox" id="f_ffixed"' + (d.fixed ? ' checked' : '') + '> Despesa fixa mensal (repete todo mês)</label></div>';
+    '<div class="field"><label style="display:flex; align-items:center; gap:8px; cursor:pointer"><input type="checkbox" id="f_ffixed"' + (d.fixed ? ' checked' : '') + '> Despesa fixa mensal</label></div>' +
+    '<div class="field"><label>Competência</label><div class="seg" style="flex-wrap:wrap">' +
+      '<button data-action="fin-comp" data-v="" class="' + (!d.competencia ? 'on' : '') + '">Mesmo mês</button>' +
+      '<button data-action="fin-comp" data-v="prev" class="' + (d.competencia === 'prev' ? 'on' : '') + '">Mês anterior</button>' +
+    '</div><p class="vsub" style="margin:4px 0 0; font-size:11.5px; color:var(--muted)">Aluguel e contas: pagos no mês seguinte ao consumo. Use "Mês anterior" para o orçamento ficar correto.</p></div>';
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-fin">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
     '<button class="btn btn-primary" data-action="salvar-fin">Salvar</button>';
@@ -2335,6 +2356,7 @@ function salvarFin(){
   d.category = ($('#f_fcat').value || '').trim();
   d.installment = ($('#f_finst').value || '').trim();
   d.fixed = !!$('#f_ffixed').checked;
+  d.competencia = M.draft.competencia || '';
   d.notes = $('#f_fnotes').value || '';
   if(!d.title){ toast('Descreva o lançamento.'); return; }
   if(!d.amount){ toast('Informe o valor.'); return; }
@@ -3633,6 +3655,7 @@ document.addEventListener('click', e => {
   if(a === 'edit-fin'){ openTransacao(el.dataset.id); return; }
   if(a === 'salvar-fin'){ salvarFin(); return; }
   if(a === 'fin-tipo'){ M.draft.type = el.dataset.v; renderFinModal(); return; }
+  if(a === 'fin-comp'){ M.draft.competencia = el.dataset.v || ''; renderFinModal(); return; }
   if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } FIN_CAT = ''; renderFinancas(); return; }
   if(a === 'fin-next'){
     const now = new Date(), curM = now.getMonth(), curA = now.getFullYear();
@@ -3647,9 +3670,12 @@ document.addEventListener('click', e => {
     const title = el.dataset.title, amt = parseFloat(el.dataset.amt), cat = el.dataset.cat;
     const exists = finOfMonth().some(f => f.fixed && f.title === title);
     if(exists){ toast('Já registrado neste mês.'); return; }
+    /* herdar competência do lançamento original */
+    const orig = S.finances.find(f => f.fixed && f.title === title);
+    const comp = orig ? (orig.competencia || '') : '';
     const dt = FIN_ANO + '-' + pad(FIN_MES + 1) + '-' + pad(new Date().getDate());
     S.finances.push({id:uid(), title, type:'despesa', amount:amt, category:cat,
-      date:dt, installment:'', notes:'', fixed:true, createdAt:new Date().toISOString()});
+      date:dt, installment:'', notes:'', fixed:true, competencia:comp, createdAt:new Date().toISOString()});
     save(); render(); playDing(); toast(title + ' registrado.');
     return;
   }
