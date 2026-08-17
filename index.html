@@ -2182,37 +2182,40 @@ function renderFinancas(){
   const receitas = fs.filter(f => f.type === 'receita').reduce((s,f) => s + f.amount, 0);
   const despesas = fs.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
   const saldo = receitas - despesas;
-  $('#finResumo').innerHTML =
-    '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
-    '<div class="card sum"><div class="k">Despesas</div><div class="v fin-out">- ' + fmtR(despesas) + '</div></div>' +
-    '<div class="card sum"><div class="k">Saldo do mês</div><div class="v fin-bal" style="color:' + (saldo >= 0 ? 'var(--good)' : 'var(--danger)') + '">' + (saldo >= 0 ? '+' : '-') + fmtR(saldo) + '</div></div>';
 
-  /* meta de economia: 10% da receita do mês anterior */
-  const prevM = FIN_MES === 0 ? 11 : FIN_MES - 1;
-  const prevA = FIN_MES === 0 ? FIN_ANO - 1 : FIN_ANO;
-  const recAnterior = S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === prevM && d.getFullYear() === prevA && f.type === 'receita'; }).reduce((s2,f) => s2 + f.amount, 0);
-  const meta10 = recAnterior * 0.10;
-  const disponivel = recAnterior > 0 ? recAnterior - despesas : 0;
-  const pctGasto = recAnterior > 0 ? Math.round(despesas / recAnterior * 100) : 0;
-  if(recAnterior > 0){
-    const ok = disponivel >= meta10;
-    $('#finMeta').innerHTML =
-      '<div class="card" style="padding:12px 16px; margin-bottom:14px">' +
-      '<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">' +
-      '<span style="font-weight:700; font-size:13px">Meta 10%</span>' +
-      '<span class="mono" style="font-size:12px; color:var(--muted)">Poupar ' + fmtR(meta10) + ' (base: ' + MES[prevM] + ')</span>' +
-      '<span class="mono" style="font-size:12px; margin-left:auto; color:' + (ok ? 'var(--good)' : 'var(--danger)') + '">' +
-      (ok ? '\u2713 ' + fmtR(disponivel) + ' dispon\u00edvel' : '\u26a0 ' + fmtR(Math.abs(disponivel)) + (disponivel < 0 ? ' acima' : ' restam')) +
-      '</span></div>' +
-      '<div class="bar-track" style="margin-top:8px; height:6px"><div class="bar-fill" style="width:' + Math.min(100, pctGasto) + '%; background:' + (pctGasto <= 90 ? 'var(--accent)' : 'var(--danger)') + '; border-radius:3px"></div></div>' +
-      '<div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:3px">' +
-      '<span>' + pctGasto + '% gasto</span><span>limite 90%</span></div></div>';
-  }else{ $('#finMeta').innerHTML = ''; }
-
-  /* despesas fixas: derivadas de lançamentos marcados como fixed */
+  /* compromissos do próximo mês: soma das despesas fixas deste mês (que se repetem) */
   const allFixed = S.finances.filter(f => f.fixed && f.type === 'despesa');
   const uniqueFixed = {};
   allFixed.forEach(f => { if(!uniqueFixed[f.title] || f.date > uniqueFixed[f.title].date) uniqueFixed[f.title] = f; });
+  const reservaProxMes = Object.values(uniqueFixed).reduce((s2,f) => s2 + f.amount, 0);
+  const meta10 = receitas * 0.10;
+  const disponivel = saldo - reservaProxMes - meta10;
+
+  $('#finResumo').innerHTML =
+    '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
+    '<div class="card sum"><div class="k">Despesas</div><div class="v fin-out">- ' + fmtR(despesas) + '</div></div>' +
+    '<div class="card sum"><div class="k">Saldo</div><div class="v" style="color:' + (saldo >= 0 ? 'var(--good)' : 'var(--danger)') + '">' + (saldo >= 0 ? '+' : '-') + fmtR(saldo) + '</div></div>';
+
+  /* card de planejamento */
+  let metaHtml = '<div class="card" style="padding:14px 18px; margin-bottom:16px">';
+  metaHtml += '<div style="font-weight:700; font-size:13px; margin-bottom:10px">' + licn('trending-down') + ' Planejamento</div>';
+  if(reservaProxMes > 0){
+    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line)">' +
+      '<span>Saldo do m\u00eas</span><span class="mono">' + fmtR(saldo) + '</span></div>';
+    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--danger)">' +
+      '<span>\u2212 Fixas pr\u00f3x. m\u00eas (aluguel, contas)</span><span class="mono">' + fmtR(reservaProxMes) + '</span></div>';
+  }
+  metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--accent)">' +
+    '<span>\u2212 Poupan\u00e7a 10%</span><span class="mono">' + fmtR(meta10) + '</span></div>';
+  metaHtml += '<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; font-weight:700; color:' + (disponivel >= 0 ? 'var(--good)' : 'var(--danger)') + '">' +
+    '<span>Dispon\u00edvel real</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
+  if(disponivel < 0){
+    metaHtml += '<div style="font-size:12px; color:var(--danger); margin-top:4px">\u26a0 Or\u00e7amento estourado. Reduza gastos ou revise as fixas.</div>';
+  }
+  metaHtml += '</div>';
+  $('#finMeta').innerHTML = metaHtml;
+
+  /* despesas fixas: derivadas de lançamentos marcados como fixed */
   const fixList = Object.values(uniqueFixed).sort((a,b) => a.title.localeCompare(b.title));
   let fixHtml = '';
   if(fixList.length){
