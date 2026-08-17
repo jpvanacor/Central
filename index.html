@@ -2192,12 +2192,17 @@ function renderFinancas(){
   const allFixed = S.finances.filter(f => f.fixed && f.type === 'despesa');
   const uniqueFixed = {};
   allFixed.forEach(f => { if(!uniqueFixed[f.title] || f.date > uniqueFixed[f.title].date) uniqueFixed[f.title] = f; });
-  const totalFixas = Object.values(uniqueFixed).reduce((s2,f) => s2 + f.amount, 0);
-  const fixasNoMes = fs.filter(f => f.fixed && f.type === 'despesa').reduce((s2,f) => s2 + f.amount, 0);
-  const fixasFaltam = Object.values(uniqueFixed).filter(fx => !fs.some(f => f.fixed && f.title === fx.title));
-  const fixasFaltamTotal = fixasFaltam.reduce((s2,f) => s2 + f.amount, 0);
+  /* fixas: separar pagas de pendentes */
+  const norm = s2 => (s2 || '').toLowerCase().replace(/[;\s]+/g,' ').trim();
+  const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
+  const totalFixas = fixArr.reduce((s2,f) => s2 + f.amount, 0);
+  const fixasPendTotal = fixArr.filter(fx => {
+    const n = norm(fx.title);
+    return !fs.some(f => f.type === 'despesa' && (norm(f.title).includes(n) || n.includes(norm(f.title))));
+  }).reduce((s2,f) => s2 + f.amount, 0);
+
   const meta10 = receitas * 0.10;
-  const disponivel = saldo - meta10;
+  const disponivel = saldo - meta10 - fixasPendTotal;
 
   $('#finResumo').innerHTML =
     '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
@@ -2214,22 +2219,50 @@ function renderFinancas(){
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--accent)">' +
     '<span>\u2212 Poupan\u00e7a 10%</span><span class="mono">' + fmtR(meta10) + '</span></div>';
 
+  if(fixasPendTotal > 0){
+    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--warn)">' +
+      '<span>\u2212 Fixas que ainda v\u00e3o sair</span><span class="mono">' + fmtR(fixasPendTotal) + '</span></div>';
+  }
+
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; font-weight:700; color:' + (disponivel >= 0 ? 'var(--good)' : 'var(--danger)') + '">' +
     '<span>Dispon\u00edvel</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
 
   if(Object.keys(uniqueFixed).length){
+    /* cruzar fixas com lançamentos do mês pelo nome (case-insensitive) */
+    const norm = s2 => (s2 || '').toLowerCase().replace(/[;\s]+/g,' ').trim();
+    const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
+    const pagas = [], pendentes = [];
+    fixArr.forEach(fx => {
+      const n = norm(fx.title);
+      const found = fs.some(f => f.type === 'despesa' && norm(f.title).includes(n) || n.includes(norm(f.title)));
+      if(found) pagas.push(fx); else pendentes.push(fx);
+    });
+    const pendTotal = pendentes.reduce((s2,f) => s2 + f.amount, 0);
+
     metaHtml += '<div style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px">';
     metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); cursor:pointer" data-action="toggle-fixas-detalhe">' +
       '<span>' + licn('credit-card') + ' Despesas fixas mensais</span><span class="mono">' + fmtR(totalFixas) + '/m\u00eas ' + (FIN_FIXAS_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
     if(FIN_FIXAS_OPEN){
-      Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount).forEach(fx => {
-        const pago = fs.some(f => f.fixed && f.title === fx.title);
-        metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:3px 0 3px 20px; color:' + (pago ? 'var(--muted)' : 'var(--ink)') + '">' +
-          '<span>' + (pago ? '\u2713 ' : '\u2022 ') + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
-      });
-    }
-    if(fixasFaltam.length){
-      metaHtml += '<div style="font-size:11px; color:var(--warn); margin-top:4px">\u26a0 ' + fixasFaltam.length + ' fixa(s) ainda n\u00e3o apareceu neste m\u00eas (' + fmtR(fixasFaltamTotal) + ')</div>';
+      if(pagas.length){
+        metaHtml += '<div style="font-size:11px; color:var(--good); padding:4px 0 2px 20px; font-weight:600">J\u00e1 pagas neste m\u00eas</div>';
+        pagas.forEach(fx => {
+          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--muted); text-decoration:line-through">' +
+            '<span>\u2713 ' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
+        });
+      }
+      if(pendentes.length){
+        metaHtml += '<div style="font-size:11px; color:var(--warn); padding:4px 0 2px 20px; font-weight:600">Ainda v\u00e3o sair (' + fmtR(pendTotal) + ')</div>';
+        pendentes.forEach(fx => {
+          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--ink)">' +
+            '<span>\u2022 ' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
+        });
+      }
+      if(!pagas.length && !pendentes.length){
+        fixArr.forEach(fx => {
+          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--muted)">' +
+            '<span>' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
+        });
+      }
     }
     metaHtml += '</div>';
   }
@@ -3284,7 +3317,9 @@ document.addEventListener('click', e => {
     const seen = new Set();
     const before = S.finances.length;
     S.finances = S.finances.filter(f => {
-      const key = (f.title || '') + '|' + f.amount + '|' + (f.date || '') + '|' + (f.installment || '');
+      const key = f.installment
+        ? (f.title || '') + '|' + (f.installment || '') + '|' + (f.date || '').slice(0,7)
+        : (f.title || '') + '|' + f.amount + '|' + (f.date || '');
       if(seen.has(key)) return false;
       seen.add(key);
       return true;
