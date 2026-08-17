@@ -708,7 +708,6 @@ pre.fmt{
     </div>
     <div class="sumrow" id="finResumo"></div>
     <div id="finMeta"></div>
-    <div id="finFixas"></div>
     <div id="finBars"></div>
     <div id="finParcelas"></div>
     <div id="finLista"></div>
@@ -2171,7 +2170,7 @@ function salvarLugar(){
 
 /* ===================== Finanças ===================== */
 const FIN_CATS = ['alimentação','transporte','moradia','saúde','lazer','educação','assinatura','pessoal','trabalho','outro'];
-let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear(), FIN_CAT = '', FIN_PARC_OPEN = false, FIN_BARS_OPEN = false;
+let FIN_MES = new Date().getMonth(), FIN_ANO = new Date().getFullYear(), FIN_CAT = '', FIN_PARC_OPEN = false, FIN_BARS_OPEN = false, FIN_FIXAS_OPEN = false;
 function fmtR(v){ return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 function finOfMonth(){ return S.finances.filter(f => { const d = new Date(f.date); return d.getMonth() === FIN_MES && d.getFullYear() === FIN_ANO; }); }
 
@@ -2183,13 +2182,16 @@ function renderFinancas(){
   const despesas = fs.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
   const saldo = receitas - despesas;
 
-  /* compromissos do próximo mês: soma das despesas fixas deste mês (que se repetem) */
+  /* identificar fixas para info */
   const allFixed = S.finances.filter(f => f.fixed && f.type === 'despesa');
   const uniqueFixed = {};
   allFixed.forEach(f => { if(!uniqueFixed[f.title] || f.date > uniqueFixed[f.title].date) uniqueFixed[f.title] = f; });
-  const reservaProxMes = Object.values(uniqueFixed).reduce((s2,f) => s2 + f.amount, 0);
+  const totalFixas = Object.values(uniqueFixed).reduce((s2,f) => s2 + f.amount, 0);
+  const fixasNoMes = fs.filter(f => f.fixed && f.type === 'despesa').reduce((s2,f) => s2 + f.amount, 0);
+  const fixasFaltam = Object.values(uniqueFixed).filter(fx => !fs.some(f => f.fixed && f.title === fx.title));
+  const fixasFaltamTotal = fixasFaltam.reduce((s2,f) => s2 + f.amount, 0);
   const meta10 = receitas * 0.10;
-  const disponivel = saldo - reservaProxMes - meta10;
+  const disponivel = saldo - meta10;
 
   $('#finResumo').innerHTML =
     '<div class="card sum"><div class="k">Receitas</div><div class="v fin-in">+ ' + fmtR(receitas) + '</div></div>' +
@@ -2199,42 +2201,40 @@ function renderFinancas(){
   /* card de planejamento */
   let metaHtml = '<div class="card" style="padding:14px 18px; margin-bottom:16px">';
   metaHtml += '<div style="font-weight:700; font-size:13px; margin-bottom:10px">' + licn('trending-down') + ' Planejamento</div>';
-  if(reservaProxMes > 0){
-    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line)">' +
-      '<span>Saldo do m\u00eas</span><span class="mono">' + fmtR(saldo) + '</span></div>';
-    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--danger)">' +
-      '<span>\u2212 Fixas pr\u00f3x. m\u00eas (aluguel, contas)</span><span class="mono">' + fmtR(reservaProxMes) + '</span></div>';
-  }
+
+  metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line)">' +
+    '<span>Saldo do m\u00eas</span><span class="mono">' + (saldo >= 0 ? '' : '-') + fmtR(saldo) + '</span></div>';
+
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--accent)">' +
     '<span>\u2212 Poupan\u00e7a 10%</span><span class="mono">' + fmtR(meta10) + '</span></div>';
+
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; font-weight:700; color:' + (disponivel >= 0 ? 'var(--good)' : 'var(--danger)') + '">' +
-    '<span>Dispon\u00edvel real</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
+    '<span>Dispon\u00edvel</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
+
+  if(Object.keys(uniqueFixed).length){
+    metaHtml += '<div style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px">';
+    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); cursor:pointer" data-action="toggle-fixas-detalhe">' +
+      '<span>' + licn('credit-card') + ' Despesas fixas mensais</span><span class="mono">' + fmtR(totalFixas) + '/m\u00eas ' + (FIN_FIXAS_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
+    if(FIN_FIXAS_OPEN){
+      Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount).forEach(fx => {
+        const pago = fs.some(f => f.fixed && f.title === fx.title);
+        metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:3px 0 3px 20px; color:' + (pago ? 'var(--muted)' : 'var(--ink)') + '">' +
+          '<span>' + (pago ? '\u2713 ' : '\u2022 ') + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
+      });
+    }
+    if(fixasFaltam.length){
+      metaHtml += '<div style="font-size:11px; color:var(--warn); margin-top:4px">\u26a0 ' + fixasFaltam.length + ' fixa(s) ainda n\u00e3o apareceu neste m\u00eas (' + fmtR(fixasFaltamTotal) + ')</div>';
+    }
+    metaHtml += '</div>';
+  }
+
   if(disponivel < 0){
-    metaHtml += '<div style="font-size:12px; color:var(--danger); margin-top:4px">\u26a0 Or\u00e7amento estourado. Reduza gastos ou revise as fixas.</div>';
+    metaHtml += '<div style="font-size:12px; color:var(--danger); margin-top:6px">\u26a0 Or\u00e7amento no limite.</div>';
   }
   metaHtml += '</div>';
   $('#finMeta').innerHTML = metaHtml;
 
-  /* despesas fixas: derivadas de lançamentos marcados como fixed */
-  const fixList = Object.values(uniqueFixed).sort((a,b) => a.title.localeCompare(b.title));
-  let fixHtml = '';
-  if(fixList.length){
-    fixHtml += secHTML('Despesas fixas', fixList.length, '', 'credit-card');
-    fixHtml += '<p style="font-size:12px; color:var(--muted); margin:-10px 0 8px">Marque quando pagar neste m\u00eas. Tudo conta no m\u00eas em que o dinheiro sai.</p>';
-    fixHtml += '<div class="list">';
-    fixList.forEach(fx => {
-      const match = fs.find(f => f.fixed && f.title === fx.title);
-      const exists = !!match;
-      fixHtml += '<div class="trow' + (exists ? ' done' : '') + '">' +
-        '<button class="ck' + (exists ? ' on' : '') + '" data-action="fix-clone" data-title="' + esc(fx.title) + '" data-amt="' + fx.amount + '" data-cat="' + esc(fx.category || '') + '"></button>' +
-        '<span class="tt"' + (exists ? ' data-action="edit-fin" data-id="' + match.id + '" style="cursor:pointer"' : '') + '>' + esc(fx.title) + '</span><span class="tmeta">' +
-        (fx.category ? '<span class="tag-chip">' + esc(fx.category) + '</span>' : '') +
-        '<span class="amt fin-out">' + fmtR(fx.amount) + '</span>' +
-        '</span></div>';
-    });
-    fixHtml += '</div>';
-  }
-  $('#finFixas').innerHTML = fixHtml;
+
 
   /* alertas de parcelas */
   const parcelas = fs.filter(f => f.installment && /^\d+\/\d+$/.test(f.installment));
@@ -3647,19 +3647,9 @@ document.addEventListener('click', e => {
   if(a === 'fin-cat'){ FIN_CAT = FIN_CAT === el.dataset.c ? '' : el.dataset.c; renderFinancas(); return; }
 
   /* despesas fixas */
-  if(a === 'fix-clone'){
-    e.stopPropagation();
-    const title = el.dataset.title, amt = parseFloat(el.dataset.amt), cat = el.dataset.cat;
-    const exists = finOfMonth().some(f => f.fixed && f.title === title);
-    if(exists){ toast('Já registrado neste mês.'); return; }
-    const dt = FIN_ANO + '-' + pad(FIN_MES + 1) + '-' + pad(new Date().getDate());
-    S.finances.push({id:uid(), title, type:'despesa', amount:amt, category:cat,
-      date:dt, installment:'', notes:'', fixed:true, createdAt:new Date().toISOString()});
-    save(); render(); playDing(); toast(title + ' registrado.');
-    return;
-  }
   if(a === 'toggle-fin-parc'){ FIN_PARC_OPEN = !FIN_PARC_OPEN; renderFinancas(); return; }
   if(a === 'toggle-fin-bars'){ FIN_BARS_OPEN = !FIN_BARS_OPEN; renderFinancas(); return; }
+  if(a === 'toggle-fixas-detalhe'){ FIN_FIXAS_OPEN = !FIN_FIXAS_OPEN; renderFinancas(); return; }
   if(a === 'excluir-fin'){
     if(!confirm('Excluir este lançamento?')) return;
     S.finances = S.finances.filter(x => x.id !== M.id);
