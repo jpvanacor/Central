@@ -3999,26 +3999,38 @@ try{
       try{
         const snap = await getDoc(ref);
         const local = window.__central.get();
+        const localCount = (local.tasks||[]).length + (local.reminders||[]).length + (local.finances||[]).length + (local.habits||[]).length + (local.people||[]).length;
         if(!snap.exists()){
           await setDoc(ref, local);
           setSt('Nuvem criada com os dados deste aparelho');
         }else{
           const remote = snap.data();
+          const remoteCount = (remote.tasks||[]).length + (remote.reminders||[]).length + (remote.finances||[]).length + (remote.habits||[]).length + (remote.people||[]).length;
           const lu = (local.meta && local.meta.updatedAt) || '';
           const ru = (remote.meta && remote.meta.updatedAt) || '';
-          if(ru > lu){ applying = true; window.__central.set(remote); applying = false; setSt('Dados da nuvem carregados'); }
-          else if(lu > ru){ await setDoc(ref, local); setSt('Nuvem atualizada com os dados deste aparelho'); }
+          if(remoteCount > 5 && localCount === 0){
+            /* aparelho novo: puxar da nuvem sem perguntar */
+            applying = true; window.__central.set(remote); applying = false; setSt('Dados carregados da nuvem (' + remoteCount + ' itens)');
+          }else if(localCount > 5 && remoteCount === 0){
+            if(confirm('A nuvem est\u00e1 vazia mas este aparelho tem ' + localCount + ' itens. Enviar para a nuvem?')){
+              await setDoc(ref, local); setSt('Nuvem atualizada');
+            }else setSt('Sync cancelado');
+          }else if(ru > lu){ applying = true; window.__central.set(remote); applying = false; setSt('Dados da nuvem carregados'); }
+          else if(lu > ru){ await setDoc(ref, local); setSt('Nuvem atualizada'); }
           else setSt('Sincronizado');
         }
         onSnapshot(ref, sn => {
           if(sn.metadata.hasPendingWrites || !sn.exists()) return;
           const r = sn.data();
           const cur = window.__central.get();
+          const curC = (cur.tasks||[]).length + (cur.reminders||[]).length + (cur.finances||[]).length;
+          const rC = (r.tasks||[]).length + (r.reminders||[]).length + (r.finances||[]).length;
           if(r.meta && cur.meta && r.meta.updatedAt > cur.meta.updatedAt){
+            if(curC > 5 && rC === 0){ setSt('Sync bloqueado: dados remotos vazios'); return; }
             applying = true; window.__central.set(r); applying = false;
-            setSt('Atualizado do outro aparelho · ' + new Date().toTimeString().slice(0,5));
+            setSt('Atualizado \u00b7 ' + new Date().toTimeString().slice(0,5));
           }
-        }, e => setSt('Erro de conexão: ' + (e.code || e.message)));
+        }, e => setSt('Erro: ' + (e.code || e.message)));
       }catch(e){ setSt('Erro: ' + (e.code || e.message)); }
     });
   }
