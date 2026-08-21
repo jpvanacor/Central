@@ -3941,12 +3941,13 @@ try{
     try{ db = fsm.initializeFirestore(app, { localCache: fsm.persistentLocalCache() }); }
     catch(e){ db = fsm.getFirestore(app); }
 
-    let ref = null, timer = null, applying = false;
+    let ref = null, timer = null, applying = false, lastPush = 0;
     const enviar = () => {
       if(!ref) return;
       clearTimeout(timer);
       timer = setTimeout(async () => {
         try{
+          lastPush = Date.now();
           await setDoc(ref, window.__central.get());
           setSt('Sincronizado · ' + new Date().toTimeString().slice(0,5));
         }catch(e){ setSt('Erro ao enviar: ' + (e.code || e.message)); }
@@ -4021,6 +4022,7 @@ try{
         }
         onSnapshot(ref, sn => {
           if(sn.metadata.hasPendingWrites || !sn.exists()) return;
+          if(Date.now() - lastPush < 3000) return;
           const r = sn.data();
           const cur = window.__central.get();
           const curC = (cur.tasks||[]).length + (cur.reminders||[]).length + (cur.finances||[]).length;
