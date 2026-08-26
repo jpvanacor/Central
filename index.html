@@ -266,14 +266,18 @@ pre.fmt{
 /* ===== Modal ===== */
 .mback{
   position:fixed; inset:0; background:rgba(12,16,20,.45); display:none;
-  align-items:flex-start; justify-content:center; padding:7vh 16px; z-index:50;
-  backdrop-filter:blur(2px);
+  align-items:flex-start; justify-content:center; padding:4vh 16px; z-index:50;
+  backdrop-filter:blur(2px); overflow-y:auto;
 }
 .mback.on{display:flex}
 .modal{
   background:var(--surface); border:1px solid var(--line); border-radius:14px;
   width:100%; max-width:560px; box-shadow:0 20px 60px rgba(0,0,0,.25);
-  animation:min .18s cubic-bezier(.2,1,.3,1); max-height:86vh; display:flex; flex-direction:column;
+  animation:min .18s cubic-bezier(.2,1,.3,1); max-height:88vh; display:flex; flex-direction:column;
+}
+@media(max-width:760px){
+  .mback{padding:0; align-items:flex-end}
+  .modal{max-width:100%; max-height:96vh; border-radius:16px 16px 0 0; min-height:50vh}
 }
 @keyframes min{from{opacity:0; transform:translateY(10px) scale(.98)}to{opacity:1; transform:none}}
 .mhead{display:flex; align-items:center; padding:16px 20px 0; gap:10px}
@@ -507,9 +511,6 @@ pre.fmt{
   .vhead{gap:10px; margin-bottom:16px}
   .qadd{flex-wrap:wrap}
   .qadd .inp[type="text"]{min-width:100%}
-  .dgrid{grid-template-columns:1fr}
-  .mback{padding:0; align-items:flex-end}
-  .modal{max-width:100%; max-height:94vh; border-radius:16px 16px 0 0}
   .bar-lab{width:90px}
   .clock{font-size:24px}
   .trow .tmeta .tag-chip, .trow .tmeta .pchip, .trow .tmeta .sub-n, .trow .tmeta .recur{display:none}
@@ -2196,9 +2197,16 @@ function renderFinancas(){
   const norm = s2 => (s2 || '').toLowerCase().replace(/[;\s]+/g,' ').trim();
   const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
   const totalFixas = fixArr.reduce((s2,f) => s2 + f.amount, 0);
+  const normFix2 = s2 => (s2 || '').toLowerCase().replace(/[^a-záàâãéêíóôõúüç0-9\s]/g,'').replace(/\s+/g,' ').trim();
+  const wordsOf2 = s2 => normFix2(s2).split(' ').filter(w => w.length > 1);
   const fixasPendTotal = fixArr.filter(fx => {
-    const n = norm(fx.title);
-    return !fs.some(f => f.type === 'despesa' && (norm(f.title).includes(n) || n.includes(norm(f.title))));
+    const fxW = wordsOf2(fx.title);
+    return !fs.some(f => {
+      if(f.type !== 'despesa') return false;
+      const tW = wordsOf2(f.title);
+      const common = fxW.filter(w => tW.includes(w));
+      return common.length >= 2 || (fxW[0] && tW[0] && fxW[0] === tW[0] && fxW[0].length > 3) || fxW.some(w => tW.includes(w) && w.length >= 3);
+    });
   }).reduce((s2,f) => s2 + f.amount, 0);
 
   const meta10 = receitas * 0.10;
@@ -2228,13 +2236,20 @@ function renderFinancas(){
     '<span>Dispon\u00edvel</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
 
   if(Object.keys(uniqueFixed).length){
-    /* cruzar fixas com lançamentos do mês pelo nome (case-insensitive) */
-    const norm = s2 => (s2 || '').toLowerCase().replace(/[;\s]+/g,' ').trim();
+    /* cruzar fixas com lançamentos do mês pelo nome (fuzzy) */
+    const normFix = s2 => (s2 || '').toLowerCase().replace(/[^a-záàâãéêíóôõúüç0-9\s]/g,'').replace(/\s+/g,' ').trim();
+    const wordsOf = s2 => normFix(s2).split(' ').filter(w => w.length > 1);
     const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
     const pagas = [], pendentes = [];
     fixArr.forEach(fx => {
-      const n = norm(fx.title);
-      const found = fs.some(f => f.type === 'despesa' && norm(f.title).includes(n) || n.includes(norm(f.title)));
+      const fxWords = wordsOf(fx.title);
+      const found = fs.some(f => {
+        if(f.type !== 'despesa') return false;
+        const tWords = wordsOf(f.title);
+        /* match se pelo menos 2 palavras coincidem, ou a primeira palavra principal coincide */
+        const common = fxWords.filter(w => tWords.includes(w));
+        return common.length >= 2 || (fxWords[0] && tWords[0] && fxWords[0] === tWords[0] && fxWords[0].length > 3) || fxWords.some(w => tWords.includes(w) && w.length >= 3);
+      });
       if(found) pagas.push(fx); else pendentes.push(fx);
     });
     const pendTotal = pendentes.reduce((s2,f) => s2 + f.amount, 0);
@@ -3307,7 +3322,7 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'cal-add-lem'){ openLembrete(null); M.draft.date = CAL_SEL; renderLembreteModal(); return; }
-  if(a === 'nova-tarefa'){ openTask(null); return; }
+  if(a === 'nova-tarefa'){ openTask(null, TF === 'hoje' ? {due:today()} : {}); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
   if(a === 'edit-habit'){ openHabit(el.dataset.id); return; }
