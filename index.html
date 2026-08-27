@@ -3058,8 +3058,9 @@ function doPaste(){
     const amt = Math.abs(parseFloat(x.amount) || 0);
     const dt = x.date || today();
     const inst = String(x.installment || '').trim();
-    /* duplicata: mesmo título, valor, data e parcela */
-    if(S.finances.some(f => f.title === tit && f.amount === amt && f.date === dt && (f.installment || '') === inst)){ pulados++; return; }
+    /* duplicata: mesmo nome normalizado, valor e data */
+    const normP = s3 => s3.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+    if(S.finances.some(f => normP(f.title) === normP(tit) && f.amount === amt && f.date === dt && (f.installment || '') === inst)){ pulados++; return; }
     S.finances.push({id:uid(), title:tit, type:tp, amount:amt,
       category:String(x.category || '').trim(), date:dt,
       installment:inst, fixed:!!x.fixed,
@@ -3329,18 +3330,23 @@ document.addEventListener('click', e => {
   if(a === 'projetos'){ openProjetos(); return; }
   if(a === 'colar'){ openPaste(); return; }
   if(a === 'dedup-fin'){
-    const seen = new Set();
+    const normD = s2 => (s2 || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
     const before = S.finances.length;
-    S.finances = S.finances.filter(f => {
-      const key = f.installment
-        ? (f.title || '') + '|' + (f.installment || '') + '|' + (f.date || '').slice(0,7)
-        : (f.title || '') + '|' + f.amount + '|' + (f.date || '');
-      if(seen.has(key)) return false;
-      seen.add(key);
-      return true;
+    const keep = [];
+    S.finances.forEach(f => {
+      const n = normD(f.title);
+      const dup = keep.some(k => {
+        if(k.amount !== f.amount) return false;
+        if((k.date || '').slice(0,7) !== (f.date || '').slice(0,7)) return false;
+        const kn = normD(k.title);
+        const shorter = Math.min(kn.length, n.length);
+        const prefixLen = Math.max(6, Math.floor(shorter * 0.5));
+        return kn === n || kn.includes(n) || n.includes(kn) || (shorter > 5 && kn.slice(0,prefixLen) === n.slice(0,prefixLen));
+      });
+      if(!dup) keep.push(f);
     });
-    const removed = before - S.finances.length;
-    if(removed){ save(); render(); toast(removed + ' duplicata(s) removida(s).'); }
+    const removed = before - keep.length;
+    if(removed){ S.finances = keep; save(); render(); toast(removed + ' duplicata(s) removida(s).'); }
     else toast('Nenhuma duplicata encontrada.');
     return;
   }
