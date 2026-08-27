@@ -3055,16 +3055,10 @@ function doPaste(){
     (Array.isArray(o.finances) ? o.finances : []).forEach(x => {
     if(!x || !x.title || !x.amount) return;
     const tp = (x.type === 'receita' || x.type === 'income') ? 'receita' : 'despesa';
-    const tit = String(x.title).trim();
-    const amt = Math.abs(parseFloat(x.amount) || 0);
-    const dt = x.date || today();
-    const inst = String(x.installment || '').trim();
-    /* duplicata: mesmo nome normalizado, valor e data */
-    const normP = s3 => s3.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
-    if(S.finances.some(f => normP(f.title) === normP(tit) && f.amount === amt && f.date === dt && (f.installment || '') === inst)){ pulados++; return; }
-    S.finances.push({id:uid(), title:tit, type:tp, amount:amt,
-      category:String(x.category || '').trim(), date:dt,
-      installment:inst, fixed:!!x.fixed,
+    S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
+      amount:Math.abs(parseFloat(x.amount) || 0),
+      category:String(x.category || '').trim(), date:x.date || today(),
+      installment:String(x.installment || '').trim(), fixed:!!x.fixed,
       notes:String(x.notes || ''), createdAt:new Date().toISOString()});
     nfin++;
   });
@@ -3732,7 +3726,7 @@ document.addEventListener('click', e => {
   if(a === 'fin-prev'){ FIN_MES--; if(FIN_MES < 0){ FIN_MES = 11; FIN_ANO--; } FIN_CAT = ''; renderFinancas(); return; }
   if(a === 'fin-next'){
     const now = new Date(), curM = now.getMonth(), curA = now.getFullYear();
-    if(FIN_ANO > curA || (FIN_ANO === curA && FIN_MES >= curM)){ toast('Não é possível avançar além do mês atual.'); return; }
+    if(FIN_ANO > curA || (FIN_ANO === curA && FIN_MES >= curM)){ toast('Mês atual é o limite.'); return; }
     FIN_MES++; if(FIN_MES > 11){ FIN_MES = 0; FIN_ANO++; } FIN_CAT = ''; renderFinancas(); return;
   }
   if(a === 'fin-cat'){ FIN_CAT = FIN_CAT === el.dataset.c ? '' : el.dataset.c; renderFinancas(); return; }
