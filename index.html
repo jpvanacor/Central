@@ -339,6 +339,15 @@ pre.fmt{
 
 /* ===== Time track ===== */
 .timer-card{padding:16px 18px; display:flex; flex-direction:column; gap:12px; margin-bottom:18px}
+.pomo-ring{width:180px; height:180px; border-radius:50%; margin:0 auto 12px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column}
+.pomo-ring svg{position:absolute; top:0; left:0; transform:rotate(-90deg)}
+.pomo-time{font-family:'IBM Plex Mono',monospace; font-size:36px; font-weight:700; z-index:1}
+.pomo-label{font-size:12px; color:var(--muted); z-index:1; margin-top:2px}
+.pomo-dots{display:flex; gap:8px; justify-content:center; margin:10px 0}
+.pomo-dot{width:12px; height:12px; border-radius:50%; border:2px solid var(--line)}
+.pomo-dot.done{background:var(--accent); border-color:var(--accent)}
+.pomo-dot.active{border-color:var(--accent); box-shadow:0 0 6px var(--accent)}
+.pomo-btns{display:flex; gap:10px; justify-content:center; margin-top:8px}
 .tt-form{display:flex; gap:8px; flex-wrap:wrap}
 .tt-form .inp[type="text"]{flex:1; min-width:180px}
 .clockrow{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
@@ -604,6 +613,7 @@ pre.fmt{
       <button class="btn btn-ghost btn-sm" data-action="lanc-manual">+ Lançamento manual</button>
     </div>
     <div class="card timer-card" id="ttTimer"></div>
+    <div id="ttPomodoro"></div>
     <div class="sumrow">
       <div class="card sum"><div class="k">Hoje</div><div class="v" id="ttHoje">0min</div></div>
       <div class="card sum"><div class="k">Esta semana</div><div class="v" id="ttSemana">0min</div></div>
@@ -1541,6 +1551,7 @@ function renderTempo(){
         '<span class="due"' + (e.end ? '' : ' data-tick-dur="' + e.start + '"') + '>' + fmtDur(durSec(e)) + '</span></span></div>').join('') + '</div>';
   }
   $('#ttLista').innerHTML = out;
+  renderPomodoro();
 }
 function openEntry(id){
   const e0 = id ? S.timeEntries.find(x => x.id === id) : null;
@@ -2542,6 +2553,78 @@ function renderEstudos(){
   wh += '</div>';
   $('#estTrabalho').innerHTML = wh;
   refreshIcons();
+}
+
+/* ===================== Pomodoro ===================== */
+const POMO = {running:false, paused:false, phase:'work', round:1, totalRounds:4, elapsed:0, duration:25*60,
+  workMin:25, shortBreak:5, longBreak:15, interval:null, startedAt:null};
+
+function pomoReset(){
+  clearInterval(POMO.interval); POMO.interval = null;
+  POMO.running = false; POMO.paused = false; POMO.elapsed = 0;
+}
+function pomoDuration(){
+  if(POMO.phase === 'work') return POMO.workMin * 60;
+  if(POMO.phase === 'short') return POMO.shortBreak * 60;
+  return POMO.longBreak * 60;
+}
+function pomoTick(){
+  POMO.elapsed++;
+  const dur = pomoDuration();
+  if(POMO.elapsed >= dur){
+    playDing();
+    if(POMO.phase === 'work'){
+      if(POMO.round >= POMO.totalRounds){
+        POMO.phase = 'long'; POMO.elapsed = 0;
+      }else{
+        POMO.phase = 'short'; POMO.elapsed = 0;
+      }
+    }else{
+      if(POMO.phase === 'long') POMO.round = 1; else POMO.round++;
+      POMO.phase = 'work'; POMO.elapsed = 0;
+    }
+  }
+  renderPomodoro();
+}
+function renderPomodoro(){
+  const el = document.getElementById('ttPomodoro');
+  if(!el) return;
+  const dur = pomoDuration();
+  const rem = Math.max(0, dur - POMO.elapsed);
+  const min = Math.floor(rem / 60), sec = rem % 60;
+  const pct = dur > 0 ? (POMO.elapsed / dur) : 0;
+  const r = 82, circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct);
+  const color = POMO.phase === 'work' ? 'var(--accent)' : POMO.phase === 'short' ? 'var(--good)' : 'var(--warn)';
+  const label = POMO.phase === 'work' ? 'Foco' : POMO.phase === 'short' ? 'Pausa curta' : 'Pausa longa';
+
+  let dots = '';
+  for(let i = 1; i <= POMO.totalRounds; i++){
+    const cls = i < POMO.round ? 'done' : i === POMO.round && POMO.phase === 'work' ? 'active' : '';
+    dots += '<span class="pomo-dot ' + cls + '"></span>';
+  }
+
+  let h = '<div class="card" style="padding:18px; text-align:center">';
+  h += '<div style="font-weight:700; font-size:13px; margin-bottom:12px">' + licn('clock') + ' Pomodoro</div>';
+  h += '<div class="pomo-ring">';
+  h += '<svg width="180" height="180" viewBox="0 0 180 180"><circle cx="90" cy="90" r="' + r + '" fill="none" stroke="var(--line)" stroke-width="6"/>';
+  h += '<circle cx="90" cy="90" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="6" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '" stroke-linecap="round"/></svg>';
+  h += '<span class="pomo-time">' + String(min).padStart(2,'0') + ':' + String(sec).padStart(2,'0') + '</span>';
+  h += '<span class="pomo-label">' + label + ' \u00b7 Round ' + POMO.round + '/' + POMO.totalRounds + '</span>';
+  h += '</div>';
+  h += '<div class="pomo-dots">' + dots + '</div>';
+  h += '<div class="pomo-btns">';
+  if(!POMO.running){
+    h += '<button class="btn btn-primary" data-action="pomo-start">Iniciar</button>';
+  }else if(POMO.paused){
+    h += '<button class="btn btn-primary" data-action="pomo-resume">Continuar</button>';
+    h += '<button class="btn btn-ghost" data-action="pomo-reset">Resetar</button>';
+  }else{
+    h += '<button class="btn" data-action="pomo-pause">Pausar</button>';
+    h += '<button class="btn btn-ghost" data-action="pomo-skip">Pular</button>';
+  }
+  h += '</div></div>';
+  el.innerHTML = h;
 }
 
 /* ===================== Mercado ===================== */
@@ -3832,6 +3915,37 @@ document.addEventListener('click', e => {
 
   /* mercado */
   if(a === 'ir-mercado'){ setView('mercado'); return; }
+
+  /* pomodoro */
+  if(a === 'pomo-start'){
+    POMO.running = true; POMO.paused = false; POMO.elapsed = 0; POMO.startedAt = Date.now();
+    POMO.interval = setInterval(pomoTick, 1000);
+    renderPomodoro(); return;
+  }
+  if(a === 'pomo-pause'){
+    POMO.paused = true; clearInterval(POMO.interval); POMO.interval = null;
+    renderPomodoro(); return;
+  }
+  if(a === 'pomo-resume'){
+    POMO.paused = false; POMO.interval = setInterval(pomoTick, 1000);
+    renderPomodoro(); return;
+  }
+  if(a === 'pomo-reset'){
+    pomoReset(); POMO.phase = 'work'; POMO.round = 1;
+    renderPomodoro(); return;
+  }
+  if(a === 'pomo-skip'){
+    clearInterval(POMO.interval);
+    if(POMO.phase === 'work'){
+      if(POMO.round >= POMO.totalRounds){ POMO.phase = 'long'; }
+      else{ POMO.phase = 'short'; }
+    }else{
+      if(POMO.phase === 'long') POMO.round = 1; else POMO.round++;
+      POMO.phase = 'work';
+    }
+    POMO.elapsed = 0; POMO.interval = setInterval(pomoTick, 1000);
+    renderPomodoro(); playDing(); return;
+  }
   if(a === 'qadd-shop'){ quickAddShop(); return; }
   if(a === 'edit-shop'){ e.stopPropagation(); openShopItem(el.dataset.id); return; }
   if(a === 'salvar-shop'){ salvarShop(); return; }
