@@ -730,11 +730,10 @@ pre.fmt{
   <section class="view" id="view-estudos">
     <div class="vhead">
       <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>Estudos</h1>
-      <span class="vdate mono" id="estSemLabel"></span>
     </div>
+    <div id="estHoje"></div>
+    <div id="estSemana"></div>
     <div id="estQuestoes"></div>
-    <div class="chips" id="estWeeks" style="margin-bottom:12px"></div>
-    <div id="estPlano"></div>
     <div id="estTrabalho"></div>
   </section>
 
@@ -1083,7 +1082,7 @@ const TABS = {
   dados:{ic:'settings',lb:'Dados'}, financas:{ic:'wallet',lb:'Finanças'}, estudos:{ic:'graduation-cap',lb:'Estudos'},
   mercado:{ic:'shopping-cart',lb:'Mercado'}, calendario:{ic:'calendar',lb:'Calendário'}
 };
-const LICN={"layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>", "calendar": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>", "book-open": "<path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/>", "graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>", "wallet": "<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/>", "map-pin": "<path d=\"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>", "shopping-cart": "<circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/>", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>", "list-checks": "<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>", "clipboard-list": "<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>", "settings": "<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>", "cloud": "<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>", "moon": "<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>", "menu": "<line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\"/><line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\"/><line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\"/>", "panel-left-close": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m16 15-3-3 3-3\"/>", "panel-left-open": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m14 9 3 3-3 3\"/>", "circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/>", "alert-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/>", "calendar-check": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>", "calendar-clock": "<path d=\"M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5\"/><path d=\"M16 2v4\"/><path d=\"M8 2v4\"/><path d=\"M3 10h5\"/><path d=\"M17.5 17.5 16 16.3V14\"/><circle cx=\"16\" cy=\"16\" r=\"6\"/>", "calendar-plus": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M10 16h4\"/><path d=\"M12 14v4\"/>", "inbox": "<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>", "archive": "<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>", "repeat": "<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>", "user": "<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>", "flag": "<path d=\"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\"/><line x1=\"4\" x2=\"4\" y1=\"22\" y2=\"15\"/>", "square-check": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"m9 12 2 2 4-4\"/>", "pencil": "<path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/><path d=\"m15 5 4 4\"/>", "play": "<polygon points=\"6 3 20 12 6 21 6 3\"/>", "calendar-days": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>", "check-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>", "credit-card": "<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>", "cake": "<path d=\"M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8\"/><path d=\"M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1\"/><path d=\"M2 21h20\"/><path d=\"M7 8v3\"/><path d=\"M12 8v3\"/><path d=\"M17 8v3\"/><path d=\"M7 4h0.01\"/><path d=\"M12 4h0.01\"/><path d=\"M17 4h0.01\"/>", "folder": "<path d=\"M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z\"/>", "file-text": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>", "trending-down": "<polyline points=\"22 17 13.5 8.5 8.5 13.5 2 7\"/><polyline points=\"16 17 22 17 22 11\"/>", "receipt": "<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"/><path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\"/><path d=\"M12 17.5v-11\"/>", "circle-minus": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/>", "shopping-bag": "<path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/>", "bar-chart": "<line x1=\"12\" x2=\"12\" y1=\"20\" y2=\"10\"/><line x1=\"18\" x2=\"18\" y1=\"20\" y2=\"4\"/><line x1=\"6\" x2=\"6\" y1=\"20\" y2=\"16\"/>", "list": "<line x1=\"8\" x2=\"21\" y1=\"6\" y2=\"6\"/><line x1=\"8\" x2=\"21\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"21\" y1=\"18\" y2=\"18\"/><line x1=\"3\" x2=\"3.01\" y1=\"6\" y2=\"6\"/><line x1=\"3\" x2=\"3.01\" y1=\"12\" y2=\"12\"/><line x1=\"3\" x2=\"3.01\" y1=\"18\" y2=\"18\"/>", "calendar-range": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M16 2v4\"/><path d=\"M3 10h18\"/><path d=\"M8 2v4\"/><path d=\"M17 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M7 14h.01\"/><path d=\"M17 18h.01\"/><path d=\"M12 18h.01\"/>", "pin": "<line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"22\"/><path d=\"M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z\"/>", "sparkles": "<path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"/><path d=\"M5 3v4\"/><path d=\"M19 17v4\"/><path d=\"M3 5h4\"/><path d=\"M17 19h4\"/>"};
+const LICN={"layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"/><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"/>", "calendar": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/>", "book-open": "<path d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/><path d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/>", "graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>", "wallet": "<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/>", "map-pin": "<path d=\"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>", "shopping-cart": "<circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/>", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>", "list-checks": "<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>", "clipboard-list": "<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"M12 11h4\"/><path d=\"M12 16h4\"/><path d=\"M8 11h.01\"/><path d=\"M8 16h.01\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>", "settings": "<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>", "cloud": "<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>", "moon": "<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>", "menu": "<line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\"/><line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\"/><line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\"/>", "panel-left-close": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m16 15-3-3 3-3\"/>", "panel-left-open": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M9 3v18\"/><path d=\"m14 9 3 3-3 3\"/>", "circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/>", "alert-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/>", "calendar-check": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>", "calendar-clock": "<path d=\"M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5\"/><path d=\"M16 2v4\"/><path d=\"M8 2v4\"/><path d=\"M3 10h5\"/><path d=\"M17.5 17.5 16 16.3V14\"/><circle cx=\"16\" cy=\"16\" r=\"6\"/>", "calendar-plus": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M10 16h4\"/><path d=\"M12 14v4\"/>", "inbox": "<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>", "archive": "<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>", "repeat": "<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>", "user": "<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>", "flag": "<path d=\"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\"/><line x1=\"4\" x2=\"4\" y1=\"22\" y2=\"15\"/>", "square-check": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"m9 12 2 2 4-4\"/>", "pencil": "<path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/><path d=\"m15 5 4 4\"/>", "play": "<polygon points=\"6 3 20 12 6 21 6 3\"/>", "calendar-days": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>", "check-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>", "credit-card": "<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>", "cake": "<path d=\"M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8\"/><path d=\"M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1\"/><path d=\"M2 21h20\"/><path d=\"M7 8v3\"/><path d=\"M12 8v3\"/><path d=\"M17 8v3\"/><path d=\"M7 4h0.01\"/><path d=\"M12 4h0.01\"/><path d=\"M17 4h0.01\"/>", "folder": "<path d=\"M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z\"/>", "file-text": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>", "trending-down": "<polyline points=\"22 17 13.5 8.5 8.5 13.5 2 7\"/><polyline points=\"16 17 22 17 22 11\"/>", "receipt": "<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"/><path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\"/><path d=\"M12 17.5v-11\"/>", "circle-minus": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/>", "shopping-bag": "<path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/>", "bar-chart": "<line x1=\"12\" x2=\"12\" y1=\"20\" y2=\"10\"/><line x1=\"18\" x2=\"18\" y1=\"20\" y2=\"4\"/><line x1=\"6\" x2=\"6\" y1=\"20\" y2=\"16\"/>", "list": "<line x1=\"8\" x2=\"21\" y1=\"6\" y2=\"6\"/><line x1=\"8\" x2=\"21\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"21\" y1=\"18\" y2=\"18\"/><line x1=\"3\" x2=\"3.01\" y1=\"6\" y2=\"6\"/><line x1=\"3\" x2=\"3.01\" y1=\"12\" y2=\"12\"/><line x1=\"3\" x2=\"3.01\" y1=\"18\" y2=\"18\"/>", "calendar-range": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M16 2v4\"/><path d=\"M3 10h18\"/><path d=\"M8 2v4\"/><path d=\"M17 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M7 14h.01\"/><path d=\"M17 18h.01\"/><path d=\"M12 18h.01\"/>", "pin": "<line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"22\"/><path d=\"M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z\"/>", "sparkles": "<path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"/><path d=\"M5 3v4\"/><path d=\"M19 17v4\"/><path d=\"M3 5h4\"/><path d=\"M17 19h4\"/>", "briefcase": "<rect width=\"20\" height=\"14\" x=\"2\" y=\"7\" rx=\"2\" ry=\"2\"/><path d=\"M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/>"};
 function licn(n){
   const p = LICN[n];
   if(!p) return '<span style="width:18px;height:18px;display:inline-block"></span>';
@@ -2436,7 +2435,6 @@ function estPlanWeeks(){
   return [...ws].sort((a,b) => a - b);
 }
 function estCurrentWeek(){
-  /* calcula semana atual a partir de studyPlanStart */
   const start = S.meta.studyPlanStart;
   if(!start) return 1;
   const diff = Math.floor((fromD(today()) - fromD(start)) / (7 * 864e5));
@@ -2446,34 +2444,113 @@ function todayDayKey(){
   const d = new Date().getDay();
   return ['dom','seg','ter','qua','qui','sex','sab'][d];
 }
+function todayDayLabel(){
+  const d = new Date();
+  return DOW[d.getDay()] + ', ' + fmtCurto(today());
+}
+let EST_WEEK_VIEW = false;
 function renderEstudos(){
   const plan = S.studyPlan || [];
   if(!plan.length){
-    $('#estSemLabel').textContent = '';
+    $('#estHoje').innerHTML = '<div class="list"><div class="empty">Nenhum plano carregado. Cole o cronograma na aba Dados (Colar do Claude).</div></div>';
+    $('#estSemana').innerHTML = '';
     $('#estQuestoes').innerHTML = '';
-    $('#estWeeks').innerHTML = '';
-    $('#estPlano').innerHTML = '<div class="list"><div class="empty">Nenhum plano de estudo carregado. Cole o bloco do cronograma na aba Dados (Colar do Claude).</div></div>';
     $('#estTrabalho').innerHTML = '';
     return;
   }
-  /* semana atual auto */
-  const autoWeek = estCurrentWeek();
-  if(!S.meta._estManual) EST_WEEK = autoWeek;
+  const week = estCurrentWeek();
   const weeks = estPlanWeeks();
-
-  $('#estSemLabel').textContent = 'Semana ' + EST_WEEK + ' de ' + weeks.length;
-
-  /* questoes do dia: so a materia de hoje */
   const dk = todayDayKey();
-  const todaySessions = plan.filter(ss => ss.week === EST_WEEK && (ss.day === dk || (dk === 'sab' && (ss.day === 'sab1' || ss.day === 'sab2'))));
-  const todaySubjects = [...new Set(todaySessions.map(ss => ss.subject))].filter(ss => ss !== 'Reda\u00e7\u00e3o');
+  const isSab = dk === 'sab';
+  const todayKeys = isSab ? ['sab1','sab2'] : [dk];
+  const todaySessions = plan.filter(ss => ss.week === week && todayKeys.includes(ss.day));
+  const weekSessions = plan.filter(ss => ss.week === week);
+  const weekDone = weekSessions.filter(ss => ss.done).length;
+  const weekPct = weekSessions.length ? Math.round(weekDone / weekSessions.length * 100) : 0;
+
+  /* === Card do dia === */
+  let h = '';
+  if(todaySessions.length){
+    h += '<div class="card" style="padding:20px">';
+    h += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:14px">';
+    h += '<span style="font-weight:700; font-size:15px">' + todayDayLabel() + '</span>';
+    h += '<span class="mono" style="font-size:12px; color:var(--muted); margin-left:auto">Semana ' + week + '/' + weeks.length + '</span></div>';
+    todaySessions.forEach(ss => {
+      const color = EST_COLORS[ss.color] || 'var(--muted)';
+      const bg = EST_BG[ss.color] || 'var(--surface2)';
+      h += '<div style="padding:14px 0; border-top:1px solid var(--line)">';
+      h += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">';
+      h += '<button class="ck' + (ss.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + ss.id + '" style="flex:none"></button>';
+      h += '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(ss.subject) + '</span>';
+      h += '<span style="font-size:12px; color:var(--muted)">' + (ss.ref || '') + '</span></div>';
+      h += '<div style="font-size:14px; padding-left:36px; line-height:1.5' + (ss.done ? '; text-decoration:line-through; color:var(--muted)' : '') + '">' + esc(ss.topic) + '</div>';
+      if(ss.notes) h += '<div style="font-size:12px; color:var(--warn); padding:4px 0 0 36px">' + licn('pin') + ' ' + esc(ss.notes) + '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }else{
+    const isDom = dk === 'dom';
+    const redacao = plan.find(ss => ss.week === week && ss.day === 'dom');
+    if(isDom && redacao){
+      h += '<div class="card" style="padding:20px; text-align:center">';
+      h += '<span style="font-size:15px; font-weight:700">' + todayDayLabel() + '</span><br>';
+      h += '<span class="est-tag" style="background:transparent; color:#7C1D2E; border:1px solid #7C1D2E; margin-top:10px; display:inline-block">REDA\u00c7\u00c3O</span>';
+      h += '<div style="margin-top:8px; color:var(--muted); font-size:13px">' + esc(redacao.topic) + '</div>';
+      h += '<button class="ck' + (redacao.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + redacao.id + '" style="margin-top:12px"></button>';
+      h += '</div>';
+    }else{
+      h += '<div class="card" style="padding:20px; text-align:center; color:var(--muted)">';
+      h += '<span style="font-size:15px; font-weight:700">' + todayDayLabel() + '</span><br>';
+      h += '<span style="font-size:13px">Sem sess\u00e3o agendada para hoje.</span></div>';
+    }
+  }
+  $('#estHoje').innerHTML = h;
+
+  /* === Resumo da semana (colaps\u00e1vel) === */
+  const dayOrder = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, sab1:6, sab2:7};
+  const sorted = weekSessions.slice().sort((a,b) => (dayOrder[a.day]||0) - (dayOrder[b.day]||0));
+  let wh = '<div style="margin-top:4px">';
+  wh += '<div class="seclab" style="cursor:pointer" data-action="toggle-est-week">' +
+    '<span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn('calendar-range') + '</span>' +
+    '<span>Semana ' + week + '</span><span class="n">' + weekDone + '/' + weekSessions.length + '</span><span class="rule"></span>' +
+    '<span style="font-size:12px; color:var(--muted)">' + (EST_WEEK_VIEW ? '\u25bc' : '\u25b6') + '</span></div>';
+  if(EST_WEEK_VIEW){
+    wh += '<div class="bar-track" style="height:5px; margin-bottom:12px"><div class="bar-fill" style="width:' + weekPct + '%; background:var(--accent); border-radius:3px"></div></div>';
+    wh += '<div class="list">';
+    sorted.forEach(ss => {
+      const color = EST_COLORS[ss.color] || 'var(--muted)';
+      const bg = EST_BG[ss.color] || 'var(--surface2)';
+      const isToday2 = todayKeys.includes(ss.day);
+      wh += '<div class="trow' + (ss.done ? ' done' : '') + '" style="' + (isToday2 && !ss.done ? 'background:var(--accent-soft)' : '') + '">' +
+        '<button class="ck' + (ss.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + ss.id + '"></button>' +
+        '<span class="est-day">' + esc(ss.day) + '</span>' +
+        '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(ss.subject) + '</span>' +
+        '<span class="est-topic" data-action="est-edit" data-id="' + ss.id + '">' + esc(ss.topic) + '</span></div>';
+    });
+    wh += '</div>';
+    wh += '<div class="chips" style="margin-top:10px">';
+    weeks.forEach(w => {
+      const ws2 = plan.filter(ss => ss.week === w);
+      const wd2 = ws2.filter(ss => ss.done).length;
+      const allDone = wd2 === ws2.length && ws2.length > 0;
+      wh += '<span class="chip' + (w === week ? ' on' : '') + '" style="cursor:default; font-size:11px' +
+        (allDone ? '; background:var(--good-soft); border-color:var(--good); color:var(--good)' : '') + '">' +
+        w + (allDone ? ' \u2713' : ' ' + wd2 + '/' + ws2.length) + '</span>';
+    });
+    wh += '</div>';
+  }
+  wh += '</div>';
+  $('#estSemana').innerHTML = wh;
+
+  /* === Quest\u00f5es do dia === */
+  const todaySubjects = [...new Set(todaySessions.map(ss => ss.subject))].filter(ss => ss !== 'Reda\u00e7\u00e3o' && ss !== 'Revis\u00e3o' && ss !== 'Simulado');
   const t = today();
   const ql = S.questionLog || {};
   const todayQ = ql[t] || {};
   const GOAL = 5;
   if(todaySubjects.length){
-    let qh = '<div class="card" style="padding:12px 16px; margin-bottom:14px">';
-    qh += '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px"><span style="font-weight:700; font-size:13px">Quest\u00f5es de hoje</span></div>';
+    let qh = '<div class="card" style="padding:14px 18px">';
+    qh += '<div style="font-weight:600; font-size:12px; color:var(--muted); margin-bottom:8px">' + licn('target') + ' Quest\u00f5es de hoje</div>';
     todaySubjects.forEach(subj => {
       const n = todayQ[subj] || 0;
       const ok2 = n >= GOAL;
@@ -2484,7 +2561,7 @@ function renderEstudos(){
         '<span class="est-tag" style="background:' + bg2 + '; color:' + c + '; min-width:80px; text-align:center">' + esc(subj) + '</span>' +
         '<div class="qday-bar"><div class="qday-fill" style="width:' + Math.min(100, Math.round(n / GOAL * 100)) + '%; background:' + (ok2 ? 'var(--good)' : c) + '"></div></div>' +
         '<span class="qday-n">' + n + '/' + GOAL + '</span>' +
-        '<button class="btn btn-ghost btn-sm" data-action="q-add" data-subj="' + esc(subj) + '" style="padding:2px 8px; font-size:12px">+</button></div>';
+        '<button class="btn btn-ghost btn-sm" data-action="q-add" data-subj="' + esc(subj) + '" style="padding:4px 8px; border:none; opacity:.6">+</button></div>';
     });
     qh += '</div>';
     $('#estQuestoes').innerHTML = qh;
@@ -2492,143 +2569,34 @@ function renderEstudos(){
     $('#estQuestoes').innerHTML = '';
   }
 
-  /* chips de semana */
-  $('#estWeeks').innerHTML = weeks.map(w => {
-    const ws2 = plan.filter(ss => ss.week === w);
-    const wd2 = ws2.filter(ss => ss.done).length;
-    const isCur = w === autoWeek;
-    return '<button class="chip' + (EST_WEEK === w ? ' on' : '') + '" data-action="est-week" data-w="' + w + '"' +
-      (isCur ? ' style="border-color:var(--accent)"' : '') + '>' + w +
-      '<span class="c">' + wd2 + '/' + ws2.length + '</span></button>';
-  }).join('');
-
-  /* sessoes da semana */
-  const weekSessions = plan.filter(ss => ss.week === EST_WEEK);
-  const dayOrder = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, sab1:6, sab2:7, sab:6};
-  weekSessions.sort((a,b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
-  const weekDone = weekSessions.filter(ss => ss.done).length;
-  const weekPct = weekSessions.length ? Math.round(weekDone / weekSessions.length * 100) : 0;
-
-  let html = secHTML('Semana ' + EST_WEEK, weekDone + '/' + weekSessions.length, '', 'calendar-range');
-  html += '<div class="bar-track" style="height:6px; margin-bottom:12px"><div class="bar-fill" style="width:' + weekPct + '%; background:var(--accent); border-radius:3px"></div></div>';
-  html += '<div class="list">';
-  weekSessions.forEach(ss => {
-    const color = EST_COLORS[ss.color] || 'var(--muted)';
-    const bg = EST_BG[ss.color] || 'var(--surface2)';
-    const q = ss.questions || 0;
-    html += '<div class="est-session' + (ss.done ? ' done' : '') + '">' +
-      '<button class="ck' + (ss.done ? ' on' : '') + '" data-action="est-toggle" data-id="' + ss.id + '"></button>' +
-      '<span class="est-day">' + esc(ss.day) + '</span>' +
-      '<span class="est-tag" style="background:' + bg + '; color:' + color + '">' + esc(ss.subject) + '</span>' +
-      '<span class="est-topic" data-action="est-edit" data-id="' + ss.id + '">' + esc(ss.topic) + '</span>' +
-      (q ? '<span class="est-q">' + q + 'q</span>' : '') +
-      '</div>';
-  });
-  html += '</div>';
-  if(weekDone === weekSessions.length && weekSessions.length > 0){
-    html += '<div class="empty" style="color:var(--good); font-weight:600; padding:14px">Semana ' + EST_WEEK + ' conclu\u00edda \u2713</div>';
-  }
-  $('#estPlano').innerHTML = html;
-
-  /* estudo profissional */
+  /* === Estudo profissional === */
   const ws = S.workStudy || [];
-  let wh = '<div style="margin-top:20px">';
-  wh += '<div class="seclab" style="cursor:pointer" data-action="toggle-work-study"><span>Estudo profissional</span><span class="n">' + ws.filter(w2 => w2.done).length + '/' + ws.length + '</span><span class="rule"></span>' +
+  let wsh = '<div style="margin-top:4px">';
+  wsh += '<div class="seclab" style="cursor:pointer" data-action="toggle-work-study">' +
+    '<span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn('briefcase') + '</span>' +
+    '<span>Estudo profissional</span><span class="n">' + ws.filter(w2 => w2.done).length + '/' + ws.length + '</span><span class="rule"></span>' +
     '<span style="font-size:12px; color:var(--muted)">' + (WORK_STUDY_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
   if(WORK_STUDY_OPEN){
-    wh += '<p style="font-size:12.5px; color:var(--muted); margin:0 0 8px">Temas espec\u00edficos do trabalho: improbidade, patrim\u00f4nio p\u00fablico, NF, PP, IC, ACP, licita\u00e7\u00e3o. Funciona como uma disciplina a parte.</p>';
     if(ws.length){
-      wh += '<div class="list">';
+      wsh += '<div class="list">';
       ws.forEach(w2 => {
-        wh += '<div class="est-session' + (w2.done ? ' done' : '') + '">' +
+        wsh += '<div class="trow' + (w2.done ? ' done' : '') + '">' +
           '<button class="ck' + (w2.done ? ' on' : '') + '" data-action="ws-toggle" data-id="' + w2.id + '"></button>' +
           (w2.category ? '<span class="est-tag" style="background:#F3E2E5; color:#7C1D2E">' + esc(w2.category) + '</span>' : '') +
           '<span class="est-topic" data-action="ws-edit" data-id="' + w2.id + '">' + esc(w2.name) + '</span></div>';
       });
-      wh += '</div>';
+      wsh += '</div>';
     }
-    wh += '<div class="qadd" style="margin:8px 0"><input class="inp" type="text" id="wsInp" placeholder="Novo tema profissional e Enter...">' +
+    wsh += '<div class="qadd" style="margin:8px 0"><input class="inp" type="text" id="wsInp" placeholder="Novo tema e Enter...">' +
       '<select class="inp" id="wsCat" style="width:auto; font-size:12.5px">' +
-      '<option value="">Sem cat.</option><option value="improbidade">improbidade</option><option value="patrim\u00f4nio">patr. p\u00fablico</option>' +
+      '<option value="">cat.</option><option value="improbidade">improbidade</option><option value="patrim\u00f4nio">patrim\u00f4nio</option>' +
       '<option value="NF">NF</option><option value="PP">PP</option><option value="IC">IC</option><option value="ACP">ACP</option>' +
       '<option value="licita\u00e7\u00e3o">licita\u00e7\u00e3o</option><option value="outro">outro</option></select>' +
       '<button class="btn" data-action="qadd-ws">+</button></div>';
   }
-  wh += '</div>';
-  $('#estTrabalho').innerHTML = wh;
+  wsh += '</div>';
+  $('#estTrabalho').innerHTML = wsh;
   refreshIcons();
-}
-
-/* ===================== Pomodoro ===================== */
-const POMO = {running:false, paused:false, phase:'work', round:1, totalRounds:4, elapsed:0, duration:25*60,
-  workMin:25, shortBreak:5, longBreak:15, interval:null, startedAt:null};
-
-function pomoReset(){
-  clearInterval(POMO.interval); POMO.interval = null;
-  POMO.running = false; POMO.paused = false; POMO.elapsed = 0;
-}
-function pomoDuration(){
-  if(POMO.phase === 'work') return POMO.workMin * 60;
-  if(POMO.phase === 'short') return POMO.shortBreak * 60;
-  return POMO.longBreak * 60;
-}
-function pomoTick(){
-  POMO.elapsed++;
-  const dur = pomoDuration();
-  if(POMO.elapsed >= dur){
-    playDing();
-    if(POMO.phase === 'work'){
-      if(POMO.round >= POMO.totalRounds){
-        POMO.phase = 'long'; POMO.elapsed = 0;
-      }else{
-        POMO.phase = 'short'; POMO.elapsed = 0;
-      }
-    }else{
-      if(POMO.phase === 'long') POMO.round = 1; else POMO.round++;
-      POMO.phase = 'work'; POMO.elapsed = 0;
-    }
-  }
-  renderPomodoro();
-}
-function renderPomodoro(){
-  const el = document.getElementById('ttPomodoro');
-  if(!el) return;
-  const dur = pomoDuration();
-  const rem = Math.max(0, dur - POMO.elapsed);
-  const min = Math.floor(rem / 60), sec = rem % 60;
-  const pct = dur > 0 ? (POMO.elapsed / dur) : 0;
-  const r = 82, circ = 2 * Math.PI * r;
-  const offset = circ * (1 - pct);
-  const color = POMO.phase === 'work' ? 'var(--accent)' : POMO.phase === 'short' ? 'var(--good)' : 'var(--warn)';
-  const label = POMO.phase === 'work' ? 'Foco' : POMO.phase === 'short' ? 'Pausa curta' : 'Pausa longa';
-
-  let dots = '';
-  for(let i = 1; i <= POMO.totalRounds; i++){
-    const cls = i < POMO.round ? 'done' : i === POMO.round && POMO.phase === 'work' ? 'active' : '';
-    dots += '<span class="pomo-dot ' + cls + '"></span>';
-  }
-
-  let h = '<div class="card" style="padding:18px; text-align:center">';
-  h += '<div style="font-weight:700; font-size:13px; margin-bottom:12px">' + licn('clock') + ' Pomodoro</div>';
-  h += '<div class="pomo-ring">';
-  h += '<svg width="180" height="180" viewBox="0 0 180 180"><circle cx="90" cy="90" r="' + r + '" fill="none" stroke="var(--line)" stroke-width="6"/>';
-  h += '<circle cx="90" cy="90" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="6" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '" stroke-linecap="round"/></svg>';
-  h += '<span class="pomo-time">' + String(min).padStart(2,'0') + ':' + String(sec).padStart(2,'0') + '</span>';
-  h += '<span class="pomo-label">' + label + ' \u00b7 Round ' + POMO.round + '/' + POMO.totalRounds + '</span>';
-  h += '</div>';
-  h += '<div class="pomo-dots">' + dots + '</div>';
-  h += '<div class="pomo-btns">';
-  if(!POMO.running){
-    h += '<button class="btn btn-primary" data-action="pomo-start">Iniciar</button>';
-  }else if(POMO.paused){
-    h += '<button class="btn btn-primary" data-action="pomo-resume">Continuar</button>';
-    h += '<button class="btn btn-ghost" data-action="pomo-reset">Resetar</button>';
-  }else{
-    h += '<button class="btn" data-action="pomo-pause">Pausar</button>';
-    h += '<button class="btn btn-ghost" data-action="pomo-skip">Pular</button>';
-  }
-  h += '</div></div>';
-  el.innerHTML = h;
 }
 
 /* ===================== Mercado ===================== */
@@ -3834,6 +3802,7 @@ document.addEventListener('click', e => {
   /* estudos */
   /* estudos */
   if(a === 'est-week'){ EST_WEEK = +el.dataset.w; S.meta._estManual = true; renderEstudos(); return; }
+  if(a === 'toggle-est-week'){ EST_WEEK_VIEW = !EST_WEEK_VIEW; renderEstudos(); return; }
   if(a === 'est-toggle'){
     e.stopPropagation();
     const s2 = (S.studyPlan || []).find(x => x.id === el.dataset.id);
