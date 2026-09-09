@@ -2204,25 +2204,22 @@ function renderFinancas(){
   const despesas = fs.filter(f => f.type === 'despesa').reduce((s,f) => s + f.amount, 0);
   const saldo = receitas - despesas;
 
-  /* identificar fixas para info */
-  const allFixed = S.finances.filter(f => f.fixed && f.type === 'despesa');
-  const uniqueFixed = {};
-  allFixed.forEach(f => { if(!uniqueFixed[f.title] || f.date > uniqueFixed[f.title].date) uniqueFixed[f.title] = f; });
-  /* fixas: separar pagas de pendentes */
-  const norm = s2 => (s2 || '').toLowerCase().replace(/[;\s]+/g,' ').trim();
-  const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
-  const totalFixas = fixArr.reduce((s2,f) => s2 + f.amount, 0);
-  const normFix2 = s2 => (s2 || '').toLowerCase().replace(/[^a-záàâãéêíóôõúüç0-9\s]/g,'').replace(/\s+/g,' ').trim();
-  const wordsOf2 = s2 => normFix2(s2).split(' ').filter(w => w.length > 1);
-  const fixasPendTotal = fixArr.filter(fx => {
-    const fxW = wordsOf2(fx.title);
-    return !fs.some(f => {
-      if(f.type !== 'despesa') return false;
-      const tW = wordsOf2(f.title);
-      const common = fxW.filter(w => tW.includes(w));
-      return common.length >= 2 || (fxW[0] && tW[0] && fxW[0] === tW[0] && fxW[0].length > 3) || fxW.some(w => tW.includes(w) && w.length >= 3);
-    });
-  }).reduce((s2,f) => s2 + f.amount, 0);
+  /* === DESPESAS FIXAS: lista independente, nunca apagada por Limpar mês === */
+  const fixList = (S.fixedExpenses || []).slice().sort((a,b) => b.amount - a.amount);
+  const totalFixas = fixList.reduce((s2,f) => s2 + f.amount, 0);
+  const normW = s2 => (s2 || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+  const wordsOf = s2 => normW(s2).split(' ').filter(w => w.length > 1);
+  const matchFix = (fx, tx) => {
+    const fxW = wordsOf(fx.name), tW = wordsOf(tx.title);
+    const common = fxW.filter(w => tW.includes(w));
+    return common.length >= 2 || (fxW[0] && tW[0] && fxW[0] === tW[0] && fxW[0].length > 3) || fxW.some(w => tW.includes(w) && w.length >= 3);
+  };
+  const pagas = [], pendentes = [];
+  fixList.forEach(fx => {
+    const found = fs.some(f => f.type === 'despesa' && matchFix(fx, f));
+    if(found) pagas.push(fx); else pendentes.push(fx);
+  });
+  const fixasPendTotal = pendentes.reduce((s2,f) => s2 + f.amount, 0);
 
   const meta10 = receitas * 0.10;
   const disponivel = saldo - meta10 - fixasPendTotal;
@@ -2235,67 +2232,45 @@ function renderFinancas(){
   /* card de planejamento */
   let metaHtml = '<div class="card" style="padding:14px 18px; margin-bottom:16px">';
   metaHtml += '<div style="font-weight:700; font-size:13px; margin-bottom:10px">' + licn('trending-down') + ' Planejamento</div>';
-
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line)">' +
     '<span>Saldo do m\u00eas</span><span class="mono">' + (saldo >= 0 ? '' : '-') + fmtR(saldo) + '</span></div>';
-
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--accent)">' +
     '<span>\u2212 Poupan\u00e7a 10%</span><span class="mono">' + fmtR(meta10) + '</span></div>';
-
   if(fixasPendTotal > 0){
     metaHtml += '<div style="display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--line); color:var(--warn)">' +
       '<span>\u2212 Fixas que ainda v\u00e3o sair</span><span class="mono">' + fmtR(fixasPendTotal) + '</span></div>';
   }
-
   metaHtml += '<div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0; font-weight:700; color:' + (disponivel >= 0 ? 'var(--good)' : 'var(--danger)') + '">' +
     '<span>Dispon\u00edvel</span><span class="mono">' + (disponivel >= 0 ? '' : '-') + fmtR(disponivel) + '</span></div>';
 
-  if(Object.keys(uniqueFixed).length){
-    /* cruzar fixas com lançamentos do mês pelo nome (fuzzy) */
-    const normFix = s2 => (s2 || '').toLowerCase().replace(/[^a-záàâãéêíóôõúüç0-9\s]/g,'').replace(/\s+/g,' ').trim();
-    const wordsOf = s2 => normFix(s2).split(' ').filter(w => w.length > 1);
-    const fixArr = Object.values(uniqueFixed).sort((a,b) => b.amount - a.amount);
-    const pagas = [], pendentes = [];
-    fixArr.forEach(fx => {
-      const fxWords = wordsOf(fx.title);
-      const found = fs.some(f => {
-        if(f.type !== 'despesa') return false;
-        const tWords = wordsOf(f.title);
-        /* match se pelo menos 2 palavras coincidem, ou a primeira palavra principal coincide */
-        const common = fxWords.filter(w => tWords.includes(w));
-        return common.length >= 2 || (fxWords[0] && tWords[0] && fxWords[0] === tWords[0] && fxWords[0].length > 3) || fxWords.some(w => tWords.includes(w) && w.length >= 3);
+  /* lista de fixas (gerenci\u00e1vel) */
+  metaHtml += '<div style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px">';
+  metaHtml += '<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--muted); cursor:pointer" data-action="toggle-fixas-detalhe">' +
+    '<span>' + licn('credit-card') + ' Despesas fixas</span>' +
+    '<span class="mono">' + (fixList.length ? fmtR(totalFixas) + '/m\u00eas ' : '') + (FIN_FIXAS_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
+  if(FIN_FIXAS_OPEN){
+    if(pagas.length){
+      metaHtml += '<div style="font-size:11px; color:var(--good); padding:6px 0 2px 20px; font-weight:600">\u2713 J\u00e1 pagas neste m\u00eas</div>';
+      pagas.forEach(fx => {
+        metaHtml += '<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0 3px 20px; color:var(--muted)">' +
+          '<span style="text-decoration:line-through; cursor:pointer" data-action="edit-fixa" data-id="' + fx.id + '">' + esc(fx.name) + '</span>' +
+          '<span class="mono">' + fmtR(fx.amount) + '</span></div>';
       });
-      if(found) pagas.push(fx); else pendentes.push(fx);
-    });
-    const pendTotal = pendentes.reduce((s2,f) => s2 + f.amount, 0);
-
-    metaHtml += '<div style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px">';
-    metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); cursor:pointer" data-action="toggle-fixas-detalhe">' +
-      '<span>' + licn('credit-card') + ' Despesas fixas mensais</span><span class="mono">' + fmtR(totalFixas) + '/m\u00eas ' + (FIN_FIXAS_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
-    if(FIN_FIXAS_OPEN){
-      if(pagas.length){
-        metaHtml += '<div style="font-size:11px; color:var(--good); padding:4px 0 2px 20px; font-weight:600">J\u00e1 pagas neste m\u00eas</div>';
-        pagas.forEach(fx => {
-          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--muted); text-decoration:line-through">' +
-            '<span>\u2713 ' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
-        });
-      }
-      if(pendentes.length){
-        metaHtml += '<div style="font-size:11px; color:var(--warn); padding:4px 0 2px 20px; font-weight:600">Ainda v\u00e3o sair (' + fmtR(pendTotal) + ')</div>';
-        pendentes.forEach(fx => {
-          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--ink)">' +
-            '<span>\u2022 ' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
-        });
-      }
-      if(!pagas.length && !pendentes.length){
-        fixArr.forEach(fx => {
-          metaHtml += '<div style="display:flex; justify-content:space-between; font-size:12px; padding:2px 0 2px 20px; color:var(--muted)">' +
-            '<span>' + esc(fx.title) + '</span><span class="mono">' + fmtR(fx.amount) + '</span></div>';
-        });
-      }
     }
-    metaHtml += '</div>';
+    if(pendentes.length){
+      metaHtml += '<div style="font-size:11px; color:var(--warn); padding:6px 0 2px 20px; font-weight:600">\u2022 Ainda v\u00e3o sair</div>';
+      pendentes.forEach(fx => {
+        metaHtml += '<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0 3px 20px">' +
+          '<span style="cursor:pointer" data-action="edit-fixa" data-id="' + fx.id + '">' + esc(fx.name) + '</span>' +
+          '<span class="mono">' + fmtR(fx.amount) + '</span></div>';
+      });
+    }
+    if(!fixList.length){
+      metaHtml += '<div style="font-size:12px; color:var(--muted); padding:8px 0 4px 20px">Nenhuma despesa fixa cadastrada.</div>';
+    }
+    metaHtml += '<button class="btn btn-sm" data-action="nova-fixa" style="margin:8px 0 0 20px">+ Adicionar fixa</button>';
   }
+  metaHtml += '</div>';
 
   if(disponivel < 0){
     metaHtml += '<div style="font-size:12px; color:var(--danger); margin-top:6px">\u26a0 Or\u00e7amento no limite.</div>';
@@ -2394,8 +2369,7 @@ function renderFinModal(){
     '</div>' +
     '<div class="field"><label>Categoria</label><input class="inp" id="f_fcat" value="' + esc(d.category || '') + '" list="fincatlist" placeholder="alimentação, transporte…"></div>' +
     '<datalist id="fincatlist">' + FIN_CATS.map(c => '<option value="' + c + '">').join('') + '</datalist>' +
-    '<div class="field"><label>Notas</label><textarea class="inp" id="f_fnotes" placeholder="Detalhes">' + esc(d.notes || '') + '</textarea></div>' +
-    '<div class="field"><label style="display:flex; align-items:center; gap:8px; cursor:pointer"><input type="checkbox" id="f_ffixed"' + (d.fixed ? ' checked' : '') + '> Despesa fixa mensal</label></div>';
+    '<div class="field"><label>Notas</label><textarea class="inp" id="f_fnotes" placeholder="Detalhes">' + esc(d.notes || '') + '</textarea></div>';
   const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-fin">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
     '<button class="btn btn-primary" data-action="salvar-fin">Salvar</button>';
@@ -2408,13 +2382,30 @@ function salvarFin(){
   d.date = $('#f_fdate').value || today();
   d.category = ($('#f_fcat').value || '').trim();
   d.installment = ($('#f_finst').value || '').trim();
-  d.fixed = !!$('#f_ffixed').checked;
   d.notes = $('#f_fnotes').value || '';
   if(!d.title){ toast('Descreva o lançamento.'); return; }
   if(!d.amount){ toast('Informe o valor.'); return; }
   if(M.id) Object.assign(S.finances.find(x => x.id === M.id), d);
   else S.finances.push(Object.assign({id:uid(), createdAt:new Date().toISOString()}, d));
   save(); closeModal(); render(); toast('Lançamento salvo.');
+}
+
+/* ===================== Despesas fixas ===================== */
+function openFixa(id){
+  const f = id ? (S.fixedExpenses || []).find(x => x.id === id) : null;
+  M = { type:'fixa', id: id || null, draft: f ? JSON.parse(JSON.stringify(f)) : {name:'', amount:'', category:'moradia'} };
+  const d = M.draft;
+  const body =
+    '<div class="field"><label>Nome</label><input class="inp" id="f_fxname" value="' + esc(d.name) + '" placeholder="Ex.: Aluguel, Luz, Internet, Claude"></div>' +
+    '<div class="frow">' +
+      '<div class="field"><label>Valor mensal (R$)</label><input class="inp mono" id="f_fxamt" type="number" step="0.01" value="' + (d.amount || '') + '" style="width:100%"></div>' +
+      '<div class="field"><label>Categoria</label><input class="inp" id="f_fxcat" value="' + esc(d.category || '') + '" list="fincatlist" style="width:100%"></div>' +
+    '</div>' +
+    '<p class="vsub" style="margin:8px 0 0; font-size:11.5px">O nome é usado para cruzar com os lançamentos do mês. Use o nome que aparece no extrato.</p>';
+  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-fixa">Excluir</button>' : '') +
+    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
+    '<button class="btn btn-primary" data-action="salvar-fixa">Salvar</button>';
+  openModal(M.id ? 'Editar despesa fixa' : 'Nova despesa fixa', body, foot);
 }
 
 /* ===================== Estudos ===================== */
@@ -2905,8 +2896,57 @@ function salvarTask(){
 function openHabit(id){
   const h = id ? S.habits.find(x => x.id === id) : null;
   M = { type:'habit', id: id || null, draft: h ? JSON.parse(JSON.stringify(h)) :
-    {name:'', emoji:'', color:'azul', freq:{type:'daily', days:[1,2,3,4,5]}} };
+    {name:'', emoji:'', color:'azul', freq:{type:'daily', days:[1,2,3,4,5]}, notes:''} };
   renderHabitModal();
+}
+function openHabitDetail(id){
+  const h = S.habits.find(x => x.id === id);
+  if(!h) return;
+  M = { type:'habit-detail', id };
+  const sk = streak(h);
+  const logs = S.habitLogs[id] || {};
+  const t = today();
+  const startD = fromD(t);
+  startD.setDate(startD.getDate() - 41);
+  const dow = (startD.getDay() + 6) % 7;
+  startD.setDate(startD.getDate() - dow);
+  let grid = '<div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin:12px 0">';
+  grid += ['S','T','Q','Q','S','S','D'].map(d2 =>
+    '<div style="text-align:center; font-size:9px; color:var(--muted); font-family:var(--mono)">' + d2 + '</div>').join('');
+  for(let i = 0; i < 42; i++){
+    const d2 = new Date(startD); d2.setDate(d2.getDate() + i);
+    const ds = dstr(d2);
+    const sched = schedOn(h, ds);
+    const done = logs[ds];
+    const isFuture = ds > t;
+    const isToday2 = ds === t;
+    let bg = 'transparent', border = '1px solid transparent', clr = 'var(--muted)', cursor = 'default', opacity = '0.25';
+    if(isFuture){ opacity = '0.12'; }
+    else if(!sched){ opacity = '0.18'; }
+    else if(done){ bg = CORES[h.color] || 'var(--accent)'; clr = '#fff'; opacity = '1'; cursor = 'pointer'; }
+    else{ bg = 'var(--surface2)'; opacity = '1'; cursor = 'pointer'; border = '1px solid var(--line)'; clr = 'var(--muted)'; }
+    if(isToday2) border = '2px solid var(--accent)';
+    grid += '<div data-action="hab-hist" data-id="' + id + '" data-ds="' + ds + '" style="' +
+      'width:100%; aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center;' +
+      'font-size:10px; font-family:var(--mono); cursor:' + cursor + '; opacity:' + opacity + ';' +
+      'background:' + bg + '; color:' + clr + '; border:' + border + '">' +
+      d2.getDate() + '</div>';
+  }
+  grid += '</div>';
+  const body =
+    '<div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">' +
+      '<span style="font-size:28px">' + esc(h.emoji || '\u2726') + '</span>' +
+      '<div><div style="font-weight:700; font-size:16px">' + esc(h.name) + '</div>' +
+      '<div style="font-size:12px; color:var(--muted)">' + freqLabel(h) + ' \u00b7 \ud83d\udd25 ' + sk.count + (sk.forgiven ? ' \ud83d\udee1' + sk.forgiven : '') + '</div></div></div>' +
+    (h.notes ? '<div class="card" style="padding:10px 14px; font-size:13px; color:var(--warn)">' + licn('pin') + ' ' + esc(h.notes) + '</div>' : '') +
+    '<div style="font-size:11px; color:var(--muted); margin-bottom:4px">\u00daltimas 6 semanas (toque para editar)</div>' +
+    grid +
+    '<div style="display:flex; gap:8px; align-items:center; margin-top:8px; font-size:11px; color:var(--muted)">' +
+      '<span style="width:14px; height:14px; border-radius:4px; background:' + (CORES[h.color] || 'var(--accent)') + '"></span> feito ' +
+      '<span style="width:14px; height:14px; border-radius:4px; background:var(--surface2); border:1px solid var(--line)"></span> n\u00e3o feito ' +
+    '</div>';
+  const foot = '<button class="btn" data-action="hab-edit-from-detail">' + licn('pencil') + ' Editar</button><div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Fechar</button>';
+  openModal(esc(h.name), body, foot);
 }
 function renderHabitModal(){
   const d = M.draft;
@@ -3099,6 +3139,13 @@ function doPaste(){
       notes:String(x.notes || ''), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
     nrem++;
   });
+  (Array.isArray(o.fixedExpenses) ? o.fixedExpenses : []).forEach(x => {
+    if(!x || !x.name || !x.amount) return;
+    if(!S.fixedExpenses) S.fixedExpenses = [];
+    if(S.fixedExpenses.some(f => f.name.toLowerCase() === String(x.name).toLowerCase())){ pulados++; return; }
+    S.fixedExpenses.push({id:uid(), name:String(x.name).trim(), amount:Math.abs(parseFloat(x.amount) || 0), category:String(x.category || '').trim()});
+    nfin++;
+  });
   (Array.isArray(o.studyPlan) ? o.studyPlan : []).forEach(x => {
     if(!x || !x.subject || !x.topic) return;
     if(!S.studyPlan) S.studyPlan = [];
@@ -3115,7 +3162,7 @@ function doPaste(){
     S.finances.push({id:uid(), title:String(x.title).trim(), type:tp,
       amount:Math.abs(parseFloat(x.amount) || 0),
       category:String(x.category || '').trim(), date:x.date || today(),
-      installment:String(x.installment || '').trim(), fixed:!!x.fixed,
+      installment:String(x.installment || '').trim(),
       notes:String(x.notes || ''), createdAt:new Date().toISOString()});
     nfin++;
   });
@@ -3346,6 +3393,22 @@ document.addEventListener('click', e => {
   if(a === 'hcell'){
     toggleHabitDay(el.dataset.id, el.dataset.ds, '.hcell[data-id="' + el.dataset.id + '"][data-ds="' + el.dataset.ds + '"]'); return;
   }
+  if(a === 'hab-hist'){
+    const hid = el.dataset.id, ds = el.dataset.ds;
+    const h = S.habits.find(x => x.id === hid);
+    if(!h || ds > today() || !schedOn(h, ds)) return;
+    if(!S.habitLogs[hid]) S.habitLogs[hid] = {};
+    if(S.habitLogs[hid][ds]) delete S.habitLogs[hid][ds];
+    else S.habitLogs[hid][ds] = true;
+    save(); closeModal(); openHabitDetail(hid);
+    return;
+  }
+  if(a === 'hab-edit-from-detail'){
+    const hid = M.id;
+    closeModal();
+    openHabit(hid);
+    return;
+  }
   if(a === 'filtro'){ TF = el.dataset.f; TFILTROS_OPEN = false; renderTarefas(); return; }
   if(a === 'toggle-tfiltros'){ TFILTROS_OPEN = !TFILTROS_OPEN; renderTarefas(); return; }
   if(a === 'qadd'){ quickAdd(); return; }
@@ -3378,7 +3441,7 @@ document.addEventListener('click', e => {
   if(a === 'nova-tarefa'){ openTask(null, TF === 'hoje' ? {due:today()} : {}); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
-  if(a === 'edit-habit'){ openHabit(el.dataset.id); return; }
+  if(a === 'edit-habit'){ openHabitDetail(el.dataset.id); return; }
   if(a === 'projetos'){ openProjetos(); return; }
   if(a === 'colar'){ openPaste(); return; }
   if(a === 'dedup-fin'){
@@ -3792,6 +3855,26 @@ document.addEventListener('click', e => {
   if(a === 'toggle-fin-parc'){ FIN_PARC_OPEN = !FIN_PARC_OPEN; renderFinancas(); return; }
   if(a === 'toggle-fin-bars'){ FIN_BARS_OPEN = !FIN_BARS_OPEN; renderFinancas(); return; }
   if(a === 'toggle-fixas-detalhe'){ FIN_FIXAS_OPEN = !FIN_FIXAS_OPEN; renderFinancas(); return; }
+  if(a === 'nova-fixa'){ e.stopPropagation(); openFixa(null); return; }
+  if(a === 'edit-fixa'){ e.stopPropagation(); openFixa(el.dataset.id); return; }
+  if(a === 'salvar-fixa'){
+    const d = M.draft;
+    d.name = ($('#f_fxname').value || '').trim();
+    d.amount = Math.abs(parseFloat($('#f_fxamt').value) || 0);
+    d.category = ($('#f_fxcat').value || '').trim();
+    if(!d.name || !d.amount){ toast('Preencha nome e valor.'); return; }
+    if(!S.fixedExpenses) S.fixedExpenses = [];
+    if(M.id) Object.assign(S.fixedExpenses.find(x => x.id === M.id), d);
+    else S.fixedExpenses.push(Object.assign({id:uid()}, d));
+    save(); closeModal(); render(); toast('Despesa fixa salva.');
+    return;
+  }
+  if(a === 'excluir-fixa'){
+    if(!confirm('Excluir esta despesa fixa?')) return;
+    S.fixedExpenses = (S.fixedExpenses || []).filter(x => x.id !== M.id);
+    save(); closeModal(); render(); toast('Excluída.');
+    return;
+  }
   if(a === 'excluir-fin'){
     if(!confirm('Excluir este lançamento?')) return;
     S.finances = S.finances.filter(x => x.id !== M.id);
