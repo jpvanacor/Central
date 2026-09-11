@@ -192,8 +192,13 @@ input[type="date"].inp{width:auto; font-family:'IBM Plex Mono',monospace; font-s
 .empty{color:var(--muted); font-size:13.5px; padding:18px 16px; text-align:center}
 
 /* quick add */
-.qadd{display:flex; gap:8px; margin:12px 0 6px}
-.qadd .inp[type="text"]{flex:1}
+.qadd{display:flex; gap:8px; margin:12px 0 16px; align-items:center}
+.qadd .inp[type="text"]{flex:1; border-radius:99px; padding:11px 18px; border-color:var(--line); background:var(--surface)}
+.qadd .inp[type="date"]{width:auto; border-radius:99px; padding:10px 14px; font-size:12px; color:var(--muted); background:var(--surface); flex:none}
+.qadd .btn{border-radius:50%; width:42px; height:42px; padding:0; display:flex; align-items:center; justify-content:center; flex:none; font-size:20px; font-weight:400}
+.qadd .btn-primary{background:var(--accent); color:#fff; border-color:var(--accent)}
+.qadd .inp[type="text"]:focus{box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent)}
+@media(max-width:760px){.qadd .inp[type="date"]{display:none}}
 
 /* ===== Hábitos ===== */
 .hab{padding:14px 16px; display:flex; flex-direction:column; gap:10px}
@@ -587,9 +592,9 @@ pre.fmt{
     </div>
     <div class="chips" id="tFiltros"></div>
     <div class="qadd">
-      <input class="inp" type="text" id="qaTitle" placeholder="Adicionar tarefa e Enter…">
+      <input class="inp" type="text" id="qaTitle" placeholder="Adicionar tarefa…">
       <input class="inp" type="date" id="qaDue">
-      <button class="btn" data-action="qadd">Adicionar</button>
+      <button class="btn btn-primary" data-action="qadd">+</button>
     </div>
     <div id="tLista"></div>
   </section>
@@ -659,9 +664,9 @@ pre.fmt{
     </div>
     <div class="chips" id="rlCats"></div>
     <div class="qadd">
-      <input class="inp" type="text" id="rlTitle" placeholder="Lembrete rápido e Enter…">
+      <input class="inp" type="text" id="rlTitle" placeholder="Lembrete rápido…">
       <input class="inp" type="date" id="rlDate">
-      <button class="btn" data-action="qadd-lem">Adicionar</button>
+      <button class="btn btn-primary" data-action="qadd-lem">+</button>
     </div>
     <div id="rlLista"></div>
   </section>
@@ -746,8 +751,8 @@ pre.fmt{
       <button class="btn btn-ghost btn-sm" data-action="reset-compras">↺ Nova ida ao mercado</button>
     </div>
     <div class="qadd">
-      <input class="inp" type="text" id="shopInp" placeholder="Adicionar item e Enter…">
-      <select class="inp" id="shopCat" style="width:auto; font-size:12.5px">
+      <input class="inp" type="text" id="shopInp" placeholder="Adicionar item…">
+      <select class="inp" id="shopCat" style="width:auto; font-size:12px; border-radius:99px; padding:10px 14px">
         <option value="">Sem categoria</option>
         <option value="frutas">frutas</option><option value="verduras">verduras</option>
         <option value="carnes">carnes</option><option value="laticínios">laticínios</option>
@@ -755,7 +760,7 @@ pre.fmt{
         <option value="limpeza">limpeza</option><option value="higiene">higiene</option>
         <option value="outros">outros</option>
       </select>
-      <button class="btn" data-action="qadd-shop">Adicionar</button>
+      <button class="btn btn-primary" data-action="qadd-shop">+</button>
     </div>
     <div id="shopLista"></div>
   </section>
@@ -1241,7 +1246,7 @@ function renderHoje(){
   }
   th += '<div class="seclab"><span>Tarefas de hoje</span><span class="n">' + hoje.length + '</span><span class="rule"></span>' +
         '<button class="btn btn-ghost btn-sm" data-action="nova-hoje">+ para hoje</button></div>';
-  th += listHTML(hoje, atras.length ? 'Nada com prazo para hoje.' : 'Nada para hoje. Adicione uma tarefa ou aproveite o dia.');
+  th += listHTML(hoje, atras.length ? 'Nada para hoje.' : 'Nada para hoje. Adicione uma tarefa ou aproveite o dia.');
   const feitasHoje = S.tasks.filter(x => x.status === 'done' && x.completedAt && dstr(new Date(x.completedAt)) === t).length;
   if(feitasHoje) th += '<p class="vsub" style="margin-top:10px">' + feitasHoje + ' concluída' + (feitasHoje > 1 ? 's' : '') + ' hoje.</p>';
   $('#hojeTarefas').innerHTML = th;
@@ -1288,18 +1293,14 @@ function renderTarefas(){
   $('#tFiltros').innerHTML = ch;
   $('#qaDue').style.display = TF === 'hoje' ? 'none' : '';
 
-  /* caixa do dia */
+  /* caixa do dia: só aparece se tiver itens */
   let out = '';
   const cxTotal = inbox.length + inboxDone.length;
-  out += '<div class="seclab" style="cursor:pointer" data-action="toggle-caixa"><span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn('inbox') + '</span><span>Caixa do dia</span><span class="n">' + inbox.length + '</span><span class="rule"></span>' +
-    '<span style="font-size:12px; color:var(--muted)">' + (CAIXA_OPEN ? '▼' : '▶ ' + (cxTotal ? cxTotal + ' ite' + (cxTotal === 1 ? 'm' : 'ns') : '')) + '</span></div>';
-  if(CAIXA_OPEN){
-    out += '<div class="qadd" style="margin:0 0 8px"><input class="inp" type="text" id="qaCaixa" placeholder="O que apareceu para fazer? Enter…">' +
-      '<button class="btn" data-action="qadd-caixa">+</button></div>';
-    if(inbox.length || inboxDone.length){
+  if(cxTotal > 0){
+    out += '<div class="seclab" style="cursor:pointer" data-action="toggle-caixa"><span style="margin-right:6px; vertical-align:middle; opacity:.7">' + licn('inbox') + '</span><span>Caixa do dia</span><span class="n">' + inbox.length + '</span><span class="rule"></span>' +
+      '<span style="font-size:12px; color:var(--muted)">' + (CAIXA_OPEN ? '\u25bc' : '\u25b6') + '</span></div>';
+    if(CAIXA_OPEN){
       out += '<div class="list">' + inbox.map(taskRowHTML).join('') + inboxDone.map(taskRowHTML).join('') + '</div>';
-    }else{
-      out += '<div class="list"><div class="empty">Conforme coisas forem aparecendo, jogue aqui. O que não fizer hoje vira tarefa normal amanhã.</div></div>';
     }
   }
 
@@ -1324,7 +1325,7 @@ function renderTarefas(){
         '<span style="font-size:12px">' + (ATRASADAS_OPEN ? '▼' : '▶') + '</span></div>';
       if(ATRASADAS_OPEN) out += listHTML(atras);
     }
-    out += secHTML('Hoje', hoje.length, '', 'calendar-check') + listHTML(hoje, 'Nada com prazo para hoje.');
+    out += secHTML('Hoje', hoje.length, '', 'calendar-check') + listHTML(hoje, 'Nada para hoje.');
     if(TF !== 'hoje'){
       if(amanha.length) out += secHTML('Amanhã', amanha.length, '', 'calendar-days') + listHTML(amanha);
       if(prox.length) out += secHTML('Próximos 7 dias', prox.length, '', 'calendar-clock') + listHTML(prox);
@@ -2583,7 +2584,7 @@ function renderEstudos(){
       '<option value="">cat.</option><option value="improbidade">improbidade</option><option value="patrim\u00f4nio">patrim\u00f4nio</option>' +
       '<option value="NF">NF</option><option value="PP">PP</option><option value="IC">IC</option><option value="ACP">ACP</option>' +
       '<option value="licita\u00e7\u00e3o">licita\u00e7\u00e3o</option><option value="outro">outro</option></select>' +
-      '<button class="btn" data-action="qadd-ws">+</button></div>';
+      '<button class="btn btn-primary" data-action="qadd-ws">+</button></div>';
   }
   wsh += '</div>';
   $('#estTrabalho').innerHTML = wsh;
