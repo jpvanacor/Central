@@ -344,7 +344,7 @@ pre.fmt{
 
 /* ===== Time track ===== */
 .timer-card{padding:16px 18px; display:flex; flex-direction:column; gap:12px; margin-bottom:18px}
-.pomo-ring{width:180px; height:180px; border-radius:50%; margin:0 auto 12px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column}
+.pomo-ring{width:240px; height:240px; border-radius:50%; margin:20px auto 16px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column}
 .pomo-ring svg{position:absolute; top:0; left:0; transform:rotate(-90deg)}
 .pomo-time{font-family:'IBM Plex Mono',monospace; font-size:36px; font-weight:700; z-index:1}
 .pomo-label{font-size:12px; color:var(--muted); z-index:1; margin-top:2px}
@@ -622,14 +622,16 @@ pre.fmt{
       <div class="grow"></div>
       <button class="btn btn-ghost btn-sm" data-action="lanc-manual">+ Lançamento manual</button>
     </div>
-    <div class="card timer-card" id="ttTimer"></div>
     <div id="ttPomodoro"></div>
-    <div class="sumrow">
-      <div class="card sum"><div class="k">Hoje</div><div class="v" id="ttHoje">0min</div></div>
-      <div class="card sum"><div class="k">Esta semana</div><div class="v" id="ttSemana">0min</div></div>
+    <div id="ttStopwatch">
+      <div class="card timer-card" id="ttTimer"></div>
+      <div class="sumrow">
+        <div class="card sum"><div class="k">Hoje</div><div class="v" id="ttHoje">0min</div></div>
+        <div class="card sum"><div class="k">Esta semana</div><div class="v" id="ttSemana">0min</div></div>
+      </div>
+      <div id="ttBars"></div>
+      <div id="ttLista"></div>
     </div>
-    <div id="ttBars"></div>
-    <div id="ttLista"></div>
   </section>
 
   <!-- ===== PESSOAS ===== -->
@@ -1199,10 +1201,6 @@ function renderHoje(){
     (nb ? '<span class="due">depois: ' + esc(nb.name) + ' ' + nb.start + '</span>' : '') +
     '</div>';
 
-  const shopPend = S.shoppingItems.filter(i => !i.bought).length;
-  const shopTotal = S.shoppingItems.length;
-  const shopBanner = !shopPend ? '' :
-    '<div class="card runstrip" style="cursor:pointer" data-action="ir-mercado">🛒 <span class="clock-desc">' + shopPend + ' de ' + shopTotal + ' ite' + (shopTotal === 1 ? 'm' : 'ns') + ' faltam</span></div>';
   const nivers = S.people.filter(p => nextBday(p.birthday) === 0);
   const bd = !nivers.length ? '' :
     '<div class="bdays" style="margin-bottom:16px">' + nivers.map(p =>
@@ -1220,25 +1218,30 @@ function renderHoje(){
     (S.meta.lastBackupAt ? 'O último backup tem mais de 7 dias.' : 'Ainda não existe nenhum backup exportado.') +
     ' O localStorage pode ser limpo pelo navegador.</span>' +
     '<button class="btn btn-primary btn-sm" data-action="exportar">Exportar agora</button></div>';
-  $('#hojeBanner').innerHTML += strip + rot + shopBanner + lemBanner + bd;
+  $('#hojeBanner').innerHTML += strip + rot + lemBanner + bd;
 
   /* hábitos de hoje */
-  const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
-  const hsDone = hs.filter(h => habDone(h, t)).length;
-  const hsPend = hs.filter(h => !habDone(h, t));
-  let hh = secHTML('Hábitos de hoje', hsDone + '/' + hs.length, '', 'target');
-  if(!hs.length){
-    hh += '<div class="empty" style="text-align:left; padding:6px 2px">Nenhum hábito programado para hoje. Crie um na aba Hábitos.</div>';
-  }else if(!hsPend.length){
-    hh += '<div class="empty" style="text-align:left; padding:6px 2px">Todos feitos ✓</div>';
+  const hsAll = S.habits.filter(h => !h.archived);
+  const hsSched = hsAll.filter(h => schedOn(h, t));
+  const hsExtra = hsAll.filter(h => !schedOn(h, t));
+  const hsDone = hsSched.filter(h => habDone(h, t)).length;
+  const hsPendSched = hsSched.filter(h => !habDone(h, t));
+  const hsPendExtra = hsExtra.filter(h => !habDone(h, t));
+  const totalSched = hsSched.length;
+  let hh = secHTML('Hábitos', hsDone + '/' + totalSched, '', 'target');
+  if(!hsPendSched.length && !hsPendExtra.length){
+    hh += '<div class="empty" style="text-align:left; padding:6px 2px">Todos feitos \u2713</div>';
   }else{
-    hh += '<div class="today-habits">' + hsPend.map(h => {
-      return '<button class="thab" style="--hc:' + CORES[h.color] + '" data-action="thab" data-id="' + h.id + '"' +
+    const renderThab = (h, faded) =>
+      '<button class="thab" style="--hc:' + CORES[h.color] + (faded ? '; opacity:.45' : '') + '" data-action="thab" data-id="' + h.id + '"' +
         (h.notes ? ' title="' + esc(h.notes) + '"' : '') + '>' +
-        '<span class="dot">✓</span><span>' + esc((h.emoji ? h.emoji + ' ' : '') + h.name) + '</span>' +
+        '<span class="dot">\u2713</span><span>' + esc((h.emoji ? h.emoji + ' ' : '') + h.name) + '</span>' +
         (h.notes ? '<span class="st" style="color:var(--warn)">' + licn('pin') + '</span>' : '') +
-        '<span class="st">seq ' + streakN(h) + '</span></button>';
-    }).join('') + '</div>';
+        '<span class="st">\ud83d\udd25 ' + streakN(h) + '</span></button>';
+    hh += '<div class="today-habits">';
+    hh += hsPendSched.map(h => renderThab(h, false)).join('');
+    hh += hsPendExtra.map(h => renderThab(h, true)).join('');
+    hh += '</div>';
   }
   $('#hojeHabitos').innerHTML = hh;
 
@@ -1566,11 +1569,10 @@ function renderTempo(){
         '<span class="trange">' + hhmm(e.start) + '–' + (e.end ? hhmm(e.end) : 'agora') + '</span>' +
         '<span class="due"' + (e.end ? '' : ' data-tick-dur="' + e.start + '"') + '>' + fmtDur(durSec(e)) + '</span></span></div>').join('') + '</div>';
   }
-  $('#ttLista').innerHTML = TT_TAB === 'stopwatch' ? out : '';
-  $('#ttTimer').style.display = TT_TAB === 'stopwatch' ? '' : 'none';
-  $('#ttBars').style.display = TT_TAB === 'stopwatch' ? '' : 'none';
-  renderPomodoro();
+  $('#ttLista').innerHTML = out;
+  document.getElementById('ttStopwatch').style.display = TT_TAB === 'stopwatch' ? '' : 'none';
   document.getElementById('ttPomodoro').style.display = TT_TAB === 'pomo' ? '' : 'none';
+  renderPomodoro();
 }
 function openEntry(id){
   const e0 = id ? S.timeEntries.find(x => x.id === id) : null;
@@ -2614,6 +2616,68 @@ function renderEstudos(){
   refreshIcons();
 }
 
+/* ===================== Pomodoro ===================== */
+const POMO = {running:false, paused:false, phase:'work', round:1, totalRounds:4, elapsed:0,
+  workMin:25, shortBreak:5, longBreak:15, interval:null};
+function pomoReset(){ clearInterval(POMO.interval); POMO.interval = null; POMO.running = false; POMO.paused = false; POMO.elapsed = 0; }
+function pomoDuration(){
+  if(POMO.phase === 'work') return POMO.workMin * 60;
+  if(POMO.phase === 'short') return POMO.shortBreak * 60;
+  return POMO.longBreak * 60;
+}
+function pomoTick(){
+  POMO.elapsed++;
+  const dur = pomoDuration();
+  if(POMO.elapsed >= dur){
+    playDing();
+    if(POMO.phase === 'work'){
+      if(POMO.round >= POMO.totalRounds) POMO.phase = 'long'; else POMO.phase = 'short';
+    }else{
+      if(POMO.phase === 'long') POMO.round = 1; else POMO.round++;
+      POMO.phase = 'work';
+    }
+    POMO.elapsed = 0;
+  }
+  renderPomodoro();
+}
+function renderPomodoro(){
+  const el = document.getElementById('ttPomodoro');
+  if(!el) return;
+  const dur = pomoDuration();
+  const rem = Math.max(0, dur - POMO.elapsed);
+  const min = Math.floor(rem / 60), sec = rem % 60;
+  const pct = dur > 0 ? (POMO.elapsed / dur) : 0;
+  const r = 110, circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct);
+  const color = POMO.phase === 'work' ? 'var(--accent)' : POMO.phase === 'short' ? 'var(--good)' : 'var(--warn)';
+  const label = POMO.phase === 'work' ? 'Foco' : POMO.phase === 'short' ? 'Pausa curta' : 'Pausa longa';
+  let dots = '';
+  for(let i = 1; i <= POMO.totalRounds; i++){
+    const cls = i < POMO.round ? 'done' : i === POMO.round && POMO.phase === 'work' ? 'active' : '';
+    dots += '<span class="pomo-dot ' + cls + '"></span>';
+  }
+  let h = '<div style="text-align:center; padding:20px">';
+  h += '<div class="pomo-ring">';
+  h += '<svg width="240" height="240" viewBox="0 0 240 240"><circle cx="120" cy="120" r="' + r + '" fill="none" stroke="var(--line)" stroke-width="5"/>';
+  h += '<circle cx="120" cy="120" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="5" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '" stroke-linecap="round"/></svg>';
+  h += '<span class="pomo-time">' + String(min).padStart(2,'0') + ':' + String(sec).padStart(2,'0') + '</span>';
+  h += '<span class="pomo-label">' + label + '</span>';
+  h += '</div>';
+  h += '<div class="pomo-dots">' + dots + '</div>';
+  h += '<div class="pomo-btns">';
+  if(!POMO.running){
+    h += '<button class="btn btn-primary" data-action="pomo-start" style="min-width:120px; border-radius:99px; padding:12px 32px">Iniciar</button>';
+  }else if(POMO.paused){
+    h += '<button class="btn btn-primary" data-action="pomo-resume" style="border-radius:99px; padding:10px 24px">Continuar</button>';
+    h += '<button class="btn btn-ghost" data-action="pomo-reset" style="border-radius:99px; padding:10px 24px">Resetar</button>';
+  }else{
+    h += '<button class="btn" data-action="pomo-pause" style="border-radius:99px; padding:10px 24px">Pausar</button>';
+    h += '<button class="btn btn-ghost" data-action="pomo-skip" style="border-radius:99px; padding:10px 24px">Pular</button>';
+  }
+  h += '</div></div>';
+  el.innerHTML = h;
+}
+
 /* ===================== Mercado ===================== */
 const SHOP_CATS_ORDER = ['frutas','verduras','carnes','laticínios','padaria','bebidas','limpeza','higiene','outros',''];
 function renderMercado(){
@@ -3420,7 +3484,7 @@ document.addEventListener('click', e => {
   if(a === 'hab-hist'){
     const hid = el.dataset.id, ds = el.dataset.ds;
     const h = S.habits.find(x => x.id === hid);
-    if(!h || ds > today() || !schedOn(h, ds)) return;
+    if(!h || ds > today()) return;
     if(!S.habitLogs[hid]) S.habitLogs[hid] = {};
     if(S.habitLogs[hid][ds]) delete S.habitLogs[hid][ds];
     else S.habitLogs[hid][ds] = true;
