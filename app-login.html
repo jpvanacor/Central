@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F62B4">
+<title>Entrar no app Central</title>
+<style>
+:root{--bg:#F5F6F3; --surface:#FFFFFF; --ink:#151A20; --muted:#5D6773; --line:#E1E4DE; --accent:#0F62B4; --danger:#C23A3A; --good:#1F8A4C}
+@media (prefers-color-scheme: dark){:root{--bg:#10151B; --surface:#181F27; --ink:#E8EDF2; --muted:#93A0AE; --line:#26303B; --accent:#4D9EE8; --danger:#E06767; --good:#4CBB7F}}
+*{box-sizing:border-box}
+body{margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--ink);
+  font:16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding:24px}
+.box{width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:28px 24px; text-align:center}
+.mark{width:56px; height:56px; margin:0 auto 14px; border-radius:15px; background:#0F62B4; color:#fff; font-weight:800; font-size:30px; display:grid; place-items:center}
+h1{font-size:20px; margin:0 0 8px}
+p{margin:0 0 20px; color:var(--muted); font-size:14.5px}
+.btn{display:block; width:100%; border:0; border-radius:12px; padding:14px; font:inherit; font-weight:700; background:var(--accent); color:#fff; text-decoration:none; cursor:pointer}
+.btn[disabled]{opacity:.6}
+.link{margin-top:12px; border:0; background:none; color:var(--muted); font:inherit; font-size:13.5px; text-decoration:underline; cursor:pointer}
+.err{color:var(--danger); margin:14px 0 0; font-size:13.5px}
+.ok{color:var(--good)}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<main class="box">
+  <div class="mark" aria-hidden="true">C</div>
+  <h1>Entrar no app Central</h1>
+  <p id="msg">Entre com a mesma conta Google que você usa no Central. Depois, volte para o app.</p>
+  <button class="btn" id="go">Entrar com Google</button>
+  <a class="btn" id="back" hidden>Abrir o Central</a>
+  <button class="link" id="copy" hidden>Copiar código</button>
+  <p class="err" id="err" hidden></p>
+</main>
+<script type="module">
+const cfg = {
+  apiKey: "AIzaSyDJv-89xOQLNdxbTWAuCKo8qsQT3VIOmPw",
+  authDomain: "central-5d544.firebaseapp.com",
+  projectId: "central-5d544",
+  storageBucket: "central-5d544.firebasestorage.app",
+  messagingSenderId: "115807903370",
+  appId: "1:115807903370:web:547c5d7c60262192015773"
+};
+const $ = id => document.getElementById(id);
+const erro = t => { $('err').textContent = t; $('err').hidden = false; };
+try{
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getAuth, GoogleAuthProvider, signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const auth = getAuth(initializeApp(cfg));
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  const b64url = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  $('go').onclick = async () => {
+    $('err').hidden = true;
+    $('go').disabled = true;
+    try{
+      const res = await signInWithPopup(auth, provider);
+      const c = GoogleAuthProvider.credentialFromResult(res);
+      if(!c || !c.idToken) throw new Error('o Google não devolveu a credencial. Tente de novo.');
+      const code = b64url(JSON.stringify({i:c.idToken, a:c.accessToken || ''}));
+      const intent = 'intent://login?c=' + encodeURIComponent(code) + '#Intent;scheme=central;package=io.github.jpvanacor.central;end';
+      $('back').href = intent;
+      $('back').hidden = false;
+      $('go').hidden = true;
+      $('copy').hidden = false;
+      const ok = document.createElement('span');
+      ok.className = 'ok';
+      ok.textContent = 'Pronto, ' + (res.user.displayName || res.user.email) + '.';
+      $('msg').replaceChildren(ok, ' Toque em Abrir o Central. O código vale por uma hora.');
+      $('copy').onclick = async () => {
+        try{ await navigator.clipboard.writeText(code); $('copy').textContent = 'Código copiado. Cole em Dados, no app.'; }
+        catch(e){ prompt('Copie o código e cole em Dados, no app:', code); }
+      };
+      location.href = intent;
+    }catch(e){
+      $('go').disabled = false;
+      if(e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return;
+      if(e && e.code === 'auth/popup-blocked') erro('O navegador bloqueou a janela do Google. Permita pop-ups para este site e tente de novo.');
+      else erro('Não deu para entrar: ' + ((e && (e.code || e.message)) || e));
+    }
+  };
+}catch(e){
+  erro('Sem conexão com o Google agora. Verifique a internet e recarregue a página.');
+  $('go').disabled = true;
+}
+</script>
+</body>
+</html>

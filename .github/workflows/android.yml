@@ -1,0 +1,78 @@
+name: Android app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "manifest.webmanifest"
+      - "icons/**"
+      - "android/**"
+      - "scripts/**"
+      - "capacitor.config.json"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-app
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Install
+        run: npm ci
+
+      - name: Copy the web app into the Android project
+        run: npm run sync
+
+      - name: Read the app version
+        id: version
+        run: |
+          V=$(grep -oE 'const APP_VERSION = [0-9]+' index.html | grep -oE '[0-9]+$')
+          test -n "$V"
+          echo "number=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Build the APK
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: ${{ steps.version.outputs.number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/central.apk"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ steps.version.outputs.number }}
+          B: ${{ github.run_number }}
+        run: |
+          # O app compara o "build N" das notas com o build instalado para avisar que há versão nova.
+          NOTES="App Android, build $B. No celular, baixe central.apk e toque nele para instalar ou atualizar."
+          if gh release view "v$V" > /dev/null 2>&1; then
+            gh release upload "v$V" central.apk --clobber
+            gh release edit "v$V" --notes "$NOTES" --latest
+          else
+            gh release create "v$V" central.apk --title "Central $V" --notes "$NOTES" --latest
+          fi

@@ -1,0 +1,18 @@
+{
+  "appId": "io.github.jpvanacor.central",
+  "appName": "Central",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#F5F6F3"
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "initialViewportFitValueHint": "cover"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_central",
+      "iconColor": "#0F62B4"
+    }
+  }
+}

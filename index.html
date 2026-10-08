@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Central</title>
 <meta name="theme-color" content="#0F62B4">
 <link rel="manifest" href="manifest.webmanifest">
@@ -706,6 +706,100 @@ html[data-theme="dark"] .est-tag{filter:brightness(.8) saturate(1.1)}
   .vhead .hj-pills{margin-left:auto}
 }
 
+/* ===================== App Android, notificações, sons e animações ===================== */
+/* áreas seguras: o app Android desenha atrás das barras do sistema */
+:root{
+  --sat:var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab:var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --sal:var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --sar:var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+}
+body::before{content:''; position:fixed; top:0; left:0; right:0; height:var(--sat); background:var(--bg); z-index:45; pointer-events:none}
+.side, .side.collapsed{padding-top:calc(20px + var(--sat))}
+.wrap{padding-top:calc(38px + var(--sat))}
+.bottom-nav{padding-bottom:calc(6px + var(--sab)); padding-left:calc(8px + var(--sal)); padding-right:calc(8px + var(--sar))}
+.mback{padding-top:calc(4vh + var(--sat))}
+@media (max-width:760px){
+  .wrap{padding:calc(20px + var(--sat)) calc(14px + var(--sar)) calc(96px + var(--sab)) calc(14px + var(--sal))}
+  .toast{bottom:calc(86px + var(--sab))}
+  .mback{padding-top:var(--sat)}
+  .modal{padding-bottom:var(--sab); max-height:calc(96vh - var(--sat))}
+}
+.native-only{display:none}
+html.native .native-only{display:block}
+html.native.logged .native-only{display:none}
+
+/* aviso de nova versão do app */
+.upd-bar{display:flex; align-items:center; gap:10px; background:var(--accent-soft); color:var(--accent); border-radius:var(--r);
+  padding:10px 12px 10px 14px; margin:0 0 16px; font-size:13.5px; font-weight:600}
+.upd-bar span{flex:1}
+.upd-bar[hidden]{display:none}
+
+/* interruptores e linhas de configuração */
+.sw{width:42px; height:24px; border-radius:99px; border:0; background:var(--line2); position:relative; flex:none; padding:0; transition:background .18s}
+.sw span{position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .2s cubic-bezier(.3,1.4,.5,1)}
+.sw.on{background:var(--accent)}
+.sw.on span{transform:translateX(18px)}
+.nrow{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px}
+.nrow:last-child{border-bottom:0}
+.nrow .nl{flex:1; min-width:0}
+.nrow .nl small{display:block; color:var(--muted); font-size:11.5px; margin-top:1px}
+.nrow.nmaster{font-weight:700}
+.nlist.off{opacity:.45; pointer-events:none}
+.ntime{width:auto; padding:5px 8px; font-size:13px; border-radius:8px; flex:none}
+.nstat{font-size:12.5px !important; color:var(--muted)}
+.nbtns{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.nhint{font-size:12px !important; margin:10px 0 0 !important}
+.code-box{margin-top:10px}
+.code-row{display:flex; gap:8px; align-items:center; margin-top:6px}
+.code-row .inp{flex:1; min-width:0}
+a.btn{text-decoration:none; display:inline-flex; align-items:center}
+
+/* resposta ao toque */
+.btn, .icon-btn, .bn-item, .thab, .chip, .qa-caixa, .ck, .sw, .nav-item{transition:transform .09s ease, background .15s, color .15s, border-color .15s}
+.btn:active, .icon-btn:active, .bn-item:active, .thab:active, .chip:active, .qa-caixa:active, .nav-item:active{transform:scale(.95)}
+
+/* troca de aba: a tela sobe e as linhas entram em sequência */
+.view.on{animation:viewIn .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes viewIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+.view.entrando .list > .trow, .view.entrando .today-habits > .thab{animation:rowIn .34s cubic-bezier(.2,.8,.2,1) both}
+.view.entrando .list > .trow:nth-child(2), .view.entrando .today-habits > .thab:nth-child(2){animation-delay:.03s}
+.view.entrando .list > .trow:nth-child(3), .view.entrando .today-habits > .thab:nth-child(3){animation-delay:.06s}
+.view.entrando .list > .trow:nth-child(4), .view.entrando .today-habits > .thab:nth-child(4){animation-delay:.09s}
+.view.entrando .list > .trow:nth-child(5), .view.entrando .today-habits > .thab:nth-child(5){animation-delay:.12s}
+.view.entrando .list > .trow:nth-child(n+6){animation-delay:.15s}
+@keyframes rowIn{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+.bn-item.active .ic{animation:bnPop .32s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bnPop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+
+/* tarefa concluída: risca, fica verde e sai para o lado */
+.trow.completing{animation:rowDone .4s cubic-bezier(.4,0,.6,1) forwards; pointer-events:none}
+.trow.completing .tt{text-decoration:line-through; color:var(--muted); transition:color .15s}
+@keyframes rowDone{0%{background:var(--good-soft)}55%{background:var(--good-soft); opacity:1; transform:none}100%{opacity:0; transform:translateX(28px); background:var(--good-soft)}}
+.trow.novo{animation:rowNovo 1s ease}
+@keyframes rowNovo{0%{background:var(--accent-soft); opacity:0; transform:translateY(-6px)}25%{opacity:1; transform:none}100%{background:transparent}}
+.thab.saindo{animation:habOut .32s ease forwards; pointer-events:none}
+@keyframes habOut{0%{transform:scale(1)}35%{transform:scale(1.08)}100%{transform:scale(.6); opacity:0}}
+
+/* modal no celular sobe como uma folha */
+@media (max-width:760px){
+  .modal{animation:sheetUp .28s cubic-bezier(.2,.9,.3,1)}
+}
+@keyframes sheetUp{from{transform:translateY(48px); opacity:.5}to{transform:none; opacity:1}}
+
+/* Pomodoro: o anel pulsa quando a fase acaba */
+.pomo-ring.fim{animation:pomoFim .55s ease 3}
+@keyframes pomoFim{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* confete */
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:300; overflow:hidden}
+.confetti i{position:absolute; left:var(--x); top:var(--y); width:8px; height:12px; border-radius:2px; opacity:1;
+  animation:conf 1.3s cubic-bezier(.15,.7,.35,1) forwards}
+.confetti i:nth-child(3n){width:6px; height:6px; border-radius:50%}
+@keyframes conf{to{transform:translate(var(--dx), var(--dy)) rotate(var(--r)); opacity:0}}
+
+html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !important; transition:none !important}
+
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important}
 }
@@ -744,6 +838,7 @@ html[data-theme="dark"] .est-tag{filter:brightness(.8) saturate(1.1)}
 </aside>
 
 <main class="main"><div class="wrap">
+  <div id="updBar" class="upd-bar" hidden></div>
 
   <!-- ===== HOJE ===== -->
   <section class="view on" id="view-hoje">
@@ -983,7 +1078,15 @@ html[data-theme="dark"] .est-tag{filter:brightness(.8) saturate(1.1)}
         </div>
         <div style="margin-top:12px" class="stat-row"><span class="k">Status</span><span class="v" id="syncStatus">Local (nuvem não configurada)</span></div>
         <div class="stat-row"><span class="k">Conta</span><span class="v" id="syncInfo">–</span></div>
+        <div class="native-only code-box">
+          <p class="nhint">No app, o login abre no Chrome. Se o Central não abrir sozinho no fim, toque em Copiar código lá e cole aqui.</p>
+          <div class="code-row"><input class="inp" type="text" id="loginCodigo" placeholder="Colar código de login" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn" data-action="login-codigo">Entrar</button></div>
+        </div>
       </div>
+
+      <div class="card dcard" id="cardNotif"></div>
+      <div class="card dcard" id="cardSons"></div>
+      <div class="card dcard" id="cardApp" hidden></div>
 
       <div class="card dcard">
         <h3>Backup</h3>
@@ -1106,6 +1209,26 @@ const MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','
 const CORES = {azul:'#0F62B4', verde:'#1F8A4C', ambar:'#C7791B', vermelho:'#C23A3A', roxo:'#7A4BD6', ciano:'#0E8B8B', rosa:'#C24B85', grafite:'#5C6672'};
 const PRIO_TXT = {0:'Nenhuma', 1:'Baixa', 2:'Média', 3:'Alta'};
 
+
+/* ===================== App Android (Capacitor) ===================== */
+/* O mesmo index.html roda no navegador e dentro do app Android. No navegador, tudo daqui fica desligado. */
+const CAP = window.Capacitor;
+const NATIVE = !!(CAP && typeof CAP.isNativePlatform === 'function' && CAP.isNativePlatform());
+const APP_VERSION = 1;
+const APK_URL = 'https://github.com/jpvanacor/Central/releases/latest/download/central.apk';
+const LOGIN_URL = 'https://jpvanacor.github.io/Central/app-login.html';
+function capPlugin(n){
+  if(!NATIVE) return null;
+  try{ return (CAP.Plugins && CAP.Plugins[n]) || (typeof CAP.registerPlugin === 'function' ? CAP.registerPlugin(n) : null); }
+  catch(e){ return null; }
+}
+const LN = capPlugin('LocalNotifications'), HAP = capPlugin('Haptics'), CAPP = capPlugin('App'), LAUNCHER = capPlugin('AppLauncher'),
+  BARS = capPlugin('SystemBars'), FS = capPlugin('Filesystem'), SHARE = capPlugin('Share');
+const NOTIF = {perm:'?', exact:'?', count:0, next:null, err:'', busy:false, again:false, timer:null, sig:'', canais:false};
+const UPD = {v:0, lb:0, build:0, checked:0};
+let APP_ATIVO = true, POMO_CX = 0;
+if(NATIVE) document.documentElement.classList.add('native');
+
 /* ===================== Estado ===================== */
 function blank(){
   const n = new Date().toISOString();
@@ -1134,36 +1257,108 @@ function save(){
   /* o Firestore aceita no máximo 1 MiB por documento */
   if(json.length > 900 * 1024 && !save._aviso){ save._aviso = true; setTimeout(() => toast('Os dados estão perto do limite da nuvem (1 MB). Veja em Dados.'), 3000); }
   if(window.__push) window.__push();
+  notifSoon();
 }
 
 /* ===================== Helpers ===================== */
 const $ = sel => document.querySelector(sel);
-function playDing(){
+/* ===================== Sons, vibração e animações ===================== */
+let AC = null;
+function audioCtx(){
   try{
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const g = ctx.createGain();
-    g.connect(ctx.destination);
-    g.gain.setValueAtTime(0.3, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-    const o1 = ctx.createOscillator();
-    o1.type = 'sine';
-    o1.frequency.setValueAtTime(880, ctx.currentTime);
-    o1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.08);
-    o1.connect(g);
-    o1.start(ctx.currentTime);
-    o1.stop(ctx.currentTime + 0.4);
-    const o2 = ctx.createOscillator();
-    o2.type = 'sine';
-    o2.frequency.setValueAtTime(1320, ctx.currentTime + 0.06);
-    const g2 = ctx.createGain();
-    g2.connect(ctx.destination);
-    g2.gain.setValueAtTime(0.15, ctx.currentTime + 0.06);
-    g2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-    o2.connect(g2);
-    o2.start(ctx.currentTime + 0.06);
-    o2.stop(ctx.currentTime + 0.35);
+    if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if(AC.state === 'suspended') AC.resume();
+    return AC;
+  }catch(e){ return null; }
+}
+/* nota com timbre de sino suave: a fundamental dura mais, os harmônicos somem antes */
+function nota(ctx, freq, t0, dur, vol){
+  const out = ctx.createGain();
+  out.gain.setValueAtTime(0.0001, t0);
+  out.gain.exponentialRampToValueAtTime(vol, t0 + 0.008);
+  out.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  out.connect(ctx.destination);
+  [[1, 1], [2, 0.28], [3, 0.1]].forEach(([m, a]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(freq * m, t0);
+    g.gain.setValueAtTime(a, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur / m);
+    o.connect(g); g.connect(out);
+    o.start(t0); o.stop(t0 + dur + 0.03);
+  });
+}
+/* [frequência, atraso, duração] */
+const SFX = {
+  done:  [[784, 0, .45], [1175, .07, .55]],
+  habit: [[659, 0, .4], [988, .06, .5]],
+  all:   [[523, 0, .5], [659, .09, .5], [784, .18, .5], [1047, .27, .9]],
+  pomo:  [[784, 0, .9], [784, .32, .9], [1175, .64, 1.3]],
+  add:   [[1047, 0, .2]],
+  undo:  [[880, 0, .25], [659, .07, .35]],
+  tap:   [[1319, 0, .08]]
+};
+function sfx(kind){
+  if(S.meta.som === false) return;
+  const ctx = audioCtx(), seq = SFX[kind];
+  if(!ctx || !seq) return;
+  const t = ctx.currentTime + 0.01, vol = kind === 'tap' ? 0.05 : 0.16;
+  try{ seq.forEach(([f, dt, dur]) => nota(ctx, f, t + dt, dur, vol)); }catch(e){}
+}
+function playDing(){ sfx('done'); haptic('light'); }
+function haptic(kind){
+  if(S.meta.vibrar === false) return;
+  try{
+    if(HAP){
+      const p = kind === 'success' ? HAP.notification({type:'SUCCESS'}) : HAP.impact({style: kind === 'medium' ? 'MEDIUM' : 'LIGHT'});
+      if(p && p.catch) p.catch(() => {});
+    }else if(navigator.vibrate) navigator.vibrate(kind === 'success' ? [12, 60, 18] : 8);
   }catch(e){}
 }
+function animOn(){
+  return S.meta.animar !== false && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+/* confete leve, sem biblioteca: peças coloridas saem de um ponto e caem */
+function confete(fromEl){
+  if(!animOn()) return;
+  const r = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : null;
+  const x = r ? r.left + r.width / 2 : innerWidth / 2, y = r ? r.top + r.height / 2 : innerHeight / 3;
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  const cores = ['#0F62B4', '#1F8A4C', '#C7791B', '#C24B85', '#7A4BD6', '#0E8B8B'];
+  for(let i = 0; i < 34; i++){
+    const p = document.createElement('i'), ang = Math.random() * Math.PI * 2, dist = 80 + Math.random() * 170;
+    p.style.cssText = '--x:' + Math.round(x) + 'px;--y:' + Math.round(y) + 'px;--dx:' + Math.round(Math.cos(ang) * dist) + 'px;--dy:' +
+      Math.round(Math.sin(ang) * dist + 140) + 'px;--r:' + Math.round(Math.random() * 720 - 360) + 'deg;background:' + cores[i % cores.length] +
+      ';animation-delay:' + Math.round(Math.random() * 90) + 'ms';
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 1600);
+}
+let CELEB_TAR = '', CELEB_HAB = '';
+/* fecha o dia: nenhuma tarefa de hoje, da caixa do dia ou atrasada em aberto, e ao menos uma feita hoje */
+function celebraDia(){
+  const t = today();
+  if(CELEB_TAR === t) return;
+  const pend = S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= t) || (x.inbox && x.inboxDate === t))).length;
+  const feitas = S.tasks.filter(x => x.status === 'done' && x.completedAt && dstr(new Date(x.completedAt)) === t).length;
+  if(!pend && feitas){
+    CELEB_TAR = t;
+    setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Tarefas do dia concluídas.'); }, 140);
+  }
+}
+function celebraHabitos(){
+  const t = today();
+  if(CELEB_HAB === t) return;
+  const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
+  if(hs.length && hs.every(h => habDone(h, t))){
+    CELEB_HAB = t;
+    setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Hábitos do dia concluídos.'); }, 160);
+  }
+}
+/* ids com animação em andamento: um segundo toque no meio dela não desfaz o primeiro */
+const ANIM_PEND = new Set();
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad = n => String(n).padStart(2,'0');
@@ -1295,6 +1490,8 @@ function applyTheme(){
   const b = $('#themeBtn');
   b.querySelector('.ic').innerHTML = S.meta.theme === 'light' ? licn('moon') : licn('sun');
   b.querySelector('.lb').textContent = S.meta.theme === 'light' ? 'Tema escuro' : 'Tema claro';
+  document.documentElement.classList.toggle('no-anim', S.meta.animar === false);
+  if(BARS) capCall(BARS.setStyle({style: S.meta.theme === 'dark' ? 'DARK' : 'LIGHT'}));
 }
 let VIEW = 'hoje';
 let TF = 'hoje';      /* filtro de tarefas */
@@ -1330,11 +1527,21 @@ function renderBottomNav(){
   refreshIcons();
 }
 function setView(v){
+  const mudou = v !== VIEW;
   VIEW = v;
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
   renderBottomNav();
   render();
+  document.querySelectorAll('.view.entrando').forEach(x => x.classList.remove('entrando'));
+  if(mudou && animOn()){
+    const sec = document.getElementById('view-' + v);
+    if(sec){
+      sec.classList.add('entrando');
+      clearTimeout(setView._t);
+      setView._t = setTimeout(() => sec.classList.remove('entrando'), 700);
+    }
+  }
 }
 
 /* ===================== Linhas e blocos ===================== */
@@ -1445,7 +1652,7 @@ function renderHoje(){
       const late = r.date < t;
       return '<div class="trow" data-action="edit-lembrete" data-id="' + r.id + '">' +
         '<span class="lem-flag">' + licn('flag') + '</span><span class="tt">' + esc(r.title) + '</span>' +
-        '<span class="tmeta">' + (late ? '<span class="due late">' + fmtDue(r.date)[0] + '</span>' : '') +
+        '<span class="tmeta">' + (late ? '<span class="due late">' + fmtDue(r.date)[0] + '</span>' : '') + (r.time && !late ? '<span class="due">' + esc(r.time) + '</span>' : '') +
         '<button class="icon-btn sm" data-action="ack-lem" data-id="' + r.id + '" title="Dispensar" aria-label="Dispensar lembrete">' + licn('check') + '</button></span></div>';
     }).join('') + '</div>';
 
@@ -1656,6 +1863,7 @@ function renderDados(){
   $('#restoreBox').innerHTML = !rp ? '<div class="stat-row"><span class="k">Nenhuma cópia guardada ainda.</span></div>' :
     '<div class="stat-row"><span class="k">Cópia de ' + fmtDT(rp.at) + ', antes de ' + esc(rp.motivo) + '</span><span class="v">' + rp.itens + ' itens</span></div>' +
     '<button class="btn" data-action="restaurar-ponto" style="margin-top:10px">Restaurar esta cópia</button>';
+  renderNotifCard(); renderSonsCard(); renderAppCard();
 }
 function renderSide(){
   const b = S.meta.lastBackupAt;
@@ -1717,6 +1925,11 @@ function render(){
     const el = document.querySelector(sel);
     if(el) el.classList.add('stamp');
     window.__stamp = null;
+  }
+  if(window.__novo){
+    const nv = document.querySelector('.trow[data-id="' + window.__novo + '"]');
+    if(nv && animOn()) nv.classList.add('novo');
+    window.__novo = null;
   }
   refreshIcons();
 }
@@ -2128,7 +2341,7 @@ function renderLembretes(){
     (r.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">' + licn('user') + ' ' + esc(p.name) + '</span>'; });
     if(r.date){
       const [txt, cls] = fmtDue(r.date);
-      meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + '</span>';
+      meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + (r.time ? ' ' + esc(r.time) : '') + '</span>';
     }
     return '<div class="trow' + (ack ? ' lem-ack' : '') + '" data-action="edit-lembrete" data-id="' + r.id + '">' +
       '<span class="lem-flag">' + licn('flag') + '</span>' +
@@ -2170,8 +2383,10 @@ function quickAddLem(){
   const title = inp.value.trim();
   if(!title){ inp.focus(); return; }
   const date = $('#rlDate').value || null;
-  S.reminders.push({id:uid(), title, date, category:LCAT || '', notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+  const nr = {id:uid(), title, date, category:LCAT || '', notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()};
+  S.reminders.push(nr);
   inp.value = ''; $('#rlDate').value = '';
+  window.__novo = nr.id; sfx('add'); haptic('light');
   save(); render(); inp.focus();
 }
 function openLembrete(id){
@@ -2188,6 +2403,7 @@ function renderLembreteModal(){
     '<div class="frow">' +
       '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%">' +
       (d.date && d.date < today() ? '<span style="color:var(--danger); font-size:12px; margin-top:4px; display:block">' + fmtAtraso(d.date) + '</span>' : '') + '</div>' +
+      '<div class="field" style="flex:0 1 130px"><label>Hora (opcional)</label><input class="inp" type="time" id="f_ltime" value="' + esc(d.time || '') + '" style="width:100%"></div>' +
       '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
     '</div>' +
     '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
@@ -2203,6 +2419,7 @@ function salvarLembrete(){
   const d = M.draft;
   d.title = ($('#f_ltitle').value || '').trim();
   d.date = $('#f_ldate').value || null;
+  d.time = (document.getElementById('f_ltime') || {}).value || '';
   d.category = ($('#f_lcat').value || '').trim();
   d.notes = $('#f_lnotes').value || '';
   if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'lem');
@@ -2881,12 +3098,12 @@ function pomoStop(){ clearInterval(POMO.interval); POMO.interval = null; }
 function pomoStartPhase(){
   POMO.running = true; POMO.paused = false; POMO.remaining = 0;
   POMO.endsAt = Date.now() + pomoDuration() * 1000;
-  pomoEnsureTick(); pomoPersist(); pomoTitle();
+  pomoEnsureTick(); pomoPersist(); pomoTitle(); pomoNotify();
 }
 function pomoResetAll(){
   pomoStop();
   Object.assign(POMO, {phase:'work', round:1, running:false, paused:false, endsAt:0, remaining:0});
-  pomoPersist(); pomoTitle();
+  pomoPersist(); pomoTitle(); pomoNotifyCancel();
 }
 function pomoTitle(){
   const tn = document.querySelector('.side .nav-item[data-view="tempo"]');
@@ -2898,9 +3115,11 @@ function pomoTitle(){
 }
 function pomoTick(){
   if(!POMO.running || POMO.paused){ pomoStop(); return; }
+  /* app aberto na tela: o som sai daqui, então o aviso do Android sai da fila pouco antes do fim */
+  if(NATIVE && APP_ATIVO && POMO.endsAt - Date.now() < 2500 && POMO_CX !== POMO.endsAt){ POMO_CX = POMO.endsAt; pomoNotifyCancel(); }
   if(Date.now() >= POMO.endsAt){
     const atrasado = Date.now() - POMO.endsAt > 90000;
-    playDing();
+    if(!atrasado && (!NATIVE || APP_ATIVO)){ sfx('pomo'); haptic('success'); }
     pomoCompletePhase(POMO.endsAt);
     if(atrasado){
       /* o app ficou fechado/suspenso: fecha o ciclo e espera o próximo início */
@@ -2910,7 +3129,11 @@ function pomoTick(){
       pomoStartPhase();
       toast(pomoPhaseLabel() + ' come\u00e7ou.');
     }
-    if(VIEW === 'tempo') renderTempo();
+    if(VIEW === 'tempo'){
+      renderTempo();
+      const pr = document.querySelector('.pomo-ring');
+      if(pr && animOn()) pr.classList.add('fim');
+    }
     else renderSide();
   }
   pomoTitle();
@@ -3060,6 +3283,7 @@ function quickAddShop(){
   }
   S.shoppingItems.push({id:uid(), name, category:cat, qty:'', bought:false, createdAt:new Date().toISOString()});
   inp.value = '';
+  sfx('add'); haptic('light');
   save(); render(); inp.focus();
 }
 function openShopItem(id){
@@ -3607,6 +3831,12 @@ function doPaste(){
 
 /* ===================== Backup ===================== */
 function doExport(){
+  if(NATIVE && FS && SHARE){
+    exportarNoApp(JSON.stringify(S, null, 2), 'central-backup-' + today() + '.json')
+      .then(() => { S.meta.lastBackupAt = new Date().toISOString(); save(); render(); toast('Backup exportado.'); })
+      .catch(e => { const m = (e && e.message) || String(e); if(!/cancel/i.test(m)) toast('Não deu para exportar: ' + m); });
+    return;
+  }
   S.meta.lastBackupAt = new Date().toISOString();
   save();
   const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
@@ -3807,6 +4037,7 @@ function quickAdd(){
     if(TF === 'hoje' && base.due && base.due !== today()) toast('Criada para ' + fmtCurto(base.due) + '.');
   }
   inp.value = ''; $('#qaDue').value = '';
+  window.__novo = base.id; sfx('add'); haptic('light');
   save(); render(); inp.focus();
 }
 
@@ -3820,9 +4051,19 @@ document.addEventListener('click', e => {
 
   if(a === 'ck'){
     e.stopPropagation();
-    const tk = S.tasks.find(x => x.id === el.dataset.id);
-    if(tk && tk.status !== 'done'){ el.classList.add('pop'); playDing(); }
-    toggleTask(el.dataset.id);
+    const id = el.dataset.id, tk = S.tasks.find(x => x.id === id);
+    if(ANIM_PEND.has(id)) return;
+    const fecha = !!(tk && tk.status !== 'done');
+    if(fecha){ el.classList.add('pop'); playDing(); }
+    const row = el.closest('.trow');
+    if(fecha && row && animOn()){
+      ANIM_PEND.add(id);
+      row.classList.add('completing');
+      setTimeout(() => { ANIM_PEND.delete(id); toggleTask(id); celebraDia(); }, 380);
+      return;
+    }
+    toggleTask(id);
+    if(fecha) celebraDia();
     return;
   }
   if(a === 'timer-task'){
@@ -3838,11 +4079,24 @@ document.addEventListener('click', e => {
   }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
   if(a === 'thab'){
-    playDing();
-    toggleHabitDay(el.dataset.id, today(), '.thab[data-id="' + el.dataset.id + '"]'); return;
+    const id = el.dataset.id;
+    if(ANIM_PEND.has('h' + id)) return;
+    sfx('habit'); haptic('light');
+    if(animOn()){
+      ANIM_PEND.add('h' + id);
+      el.classList.add('saindo');
+      setTimeout(() => { ANIM_PEND.delete('h' + id); toggleHabitDay(id, today(), '.thab[data-id="' + id + '"]'); celebraHabitos(); }, 300);
+      return;
+    }
+    toggleHabitDay(id, today(), '.thab[data-id="' + id + '"]'); celebraHabitos(); return;
   }
   if(a === 'hcell'){
-    toggleHabitDay(el.dataset.id, el.dataset.ds, '.hcell[data-id="' + el.dataset.id + '"][data-ds="' + el.dataset.ds + '"]'); return;
+    const hh = S.habits.find(x => x.id === el.dataset.id);
+    const marca = !!(hh && el.dataset.ds <= today() && !habDone(hh, el.dataset.ds));
+    if(marca){ sfx('habit'); haptic('light'); }
+    toggleHabitDay(el.dataset.id, el.dataset.ds, '.hcell[data-id="' + el.dataset.id + '"][data-ds="' + el.dataset.ds + '"]');
+    if(marca) celebraHabitos();
+    return;
   }
   if(a === 'hab-hist'){
     const hid = el.dataset.id, ds = el.dataset.ds;
@@ -3850,7 +4104,7 @@ document.addEventListener('click', e => {
     if(!h || ds > today()) return;
     if(!S.habitLogs[hid]) S.habitLogs[hid] = {};
     if(S.habitLogs[hid][ds]) delete S.habitLogs[hid][ds];
-    else S.habitLogs[hid][ds] = true;
+    else{ S.habitLogs[hid][ds] = true; sfx('habit'); haptic('light'); }
     save(); closeModal(); openHabitDetail(hid);
     return;
   }
@@ -3918,6 +4172,39 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'exportar'){ doExport(); return; }
+  if(a === 'notif-sw'){
+    const k = el.dataset.k, c = notifCfg();
+    S.meta.notif = Object.assign({}, S.meta.notif || {}, {[k]: !c[k]});
+    save(); renderNotifCard(); notifSoon(true);
+    if(k === 'on' || k === 'pomodoro') pomoNotify();
+    sfx('tap'); haptic('light');
+    return;
+  }
+  if(a === 'pref-sw'){
+    const k = el.dataset.k;
+    S.meta[k] = S.meta[k] === false;
+    save(); applyTheme(); renderSonsCard();
+    if(k === 'som' && S.meta.som) sfx('done');
+    if(k === 'vibrar' && S.meta.vibrar) haptic('medium');
+    return;
+  }
+  if(a === 'notif-permitir'){
+    notifPermissao().then(ok => {
+      if(ok) notifSync(true);
+      else toast('Bloqueadas. Libere em Configurações > Apps > Central > Notificações.');
+    }).catch(() => {});
+    return;
+  }
+  if(a === 'notif-teste'){ notifTeste(); return; }
+  if(a === 'notif-exato'){
+    if(LN && LN.changeExactNotificationSetting) LN.changeExactNotificationSetting()
+      .then(x => { NOTIF.exact = (x && x.exact_alarm) || NOTIF.exact; renderNotifCard(); notifSync(true); }).catch(() => {});
+    return;
+  }
+  if(a === 'baixar-apk'){ abrirFora(APK_URL); toast('Baixando. Depois toque no arquivo para instalar.'); return; }
+  if(a === 'fechar-upd'){ try{ localStorage.setItem('central.updFechado', updChave()); }catch(_){} renderUpdBar(); return; }
+  if(a === 'checar-versao'){ checkUpdate(true); toast('Verificando…'); return; }
+  if(a === 'login-codigo'){ const i = $('#loginCodigo'); loginComCodigo(i ? i.value : ''); if(i) i.value = ''; return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'restaurar-ponto'){
     let rp = null;
@@ -4225,11 +4512,13 @@ document.addEventListener('click', e => {
     if(r){
       if(!r.dismissed && r.recurrence && r.recurrence.type && r.date){
         r.date = proximaFutura(r.date, r.recurrence);
+        playDing();
         save(); render();
         toast('OK. Próximo: ' + fmtCurto(r.date) + '.');
       }else{
         r.dismissed = !r.dismissed;
         r.dismissedAt = r.dismissed ? new Date().toISOString() : null;
+        if(r.dismissed) playDing();
         save(); render();
       }
     }
@@ -4491,8 +4780,8 @@ document.addEventListener('click', e => {
     POMO.label = lb ? lb.value.trim() : POMO.label; POMO.projectId = pj ? pj.value : POMO.projectId;
     pomoStartPhase(); renderPomodoro(); return;
   }
-  if(a === 'pomo-pause'){ POMO.paused = true; POMO.remaining = Math.max(0, POMO.endsAt - Date.now()); pomoStop(); pomoPersist(); pomoTitle(); renderPomodoro(); return; }
-  if(a === 'pomo-resume'){ POMO.paused = false; POMO.endsAt = Date.now() + POMO.remaining; pomoEnsureTick(); pomoPersist(); renderPomodoro(); return; }
+  if(a === 'pomo-pause'){ POMO.paused = true; POMO.remaining = Math.max(0, POMO.endsAt - Date.now()); pomoStop(); pomoPersist(); pomoTitle(); pomoNotifyCancel(); renderPomodoro(); return; }
+  if(a === 'pomo-resume'){ POMO.paused = false; POMO.endsAt = Date.now() + POMO.remaining; pomoEnsureTick(); pomoPersist(); pomoNotify(); renderPomodoro(); return; }
   if(a === 'pomo-reset'){ pomoResetAll(); renderPomodoro(); return; }
   if(a === 'pomo-skip'){
     pomoNextPhase();
@@ -4559,7 +4848,7 @@ document.addEventListener('click', e => {
     if(a === 'limpar-fin-mes' || a === 'dedup-fin') pontoRestauracao(a === 'limpar-fin-mes' ? 'limpar o mês' : 'remover duplicados', JSON.parse(antes));
     toast(a === 'limpar-fin-mes' ? 'Mês limpo.' : 'Excluído.', 'Desfazer', () => {
       const o = JSON.parse(antes);
-      S = o; save(); applyTheme(); render(); toast('Desfeito.');
+      S = o; save(); applyTheme(); render(); sfx('undo'); toast('Desfeito.');
     });
   }, 0);
 }, true);
@@ -4600,6 +4889,363 @@ $('#themeBtn').addEventListener('click', () => {
 });
 $('#mback').addEventListener('mousedown', e => { if(e.target === e.currentTarget) closeModal(); });
 
+/* ===================== Notificações (app Android) ===================== */
+/* Horários padrão definidos aqui; dá para mudar em Dados > Notificações. */
+const NOTIF_DEF = {on:true, lembretes:true, lemHora:'09:00', tarefas:true, tarHora:'07:30', habitos:true, habHora:'21:00',
+  aniversarios:true, anivHora:'09:00', pomodoro:true, rotina:false};
+function notifCfg(){ return Object.assign({}, NOTIF_DEF, S.meta.notif || {}); }
+/* Canais do Android: o som de cada canal fica fixo depois de criado, por isso o sufixo de versão no id. */
+const CANAIS = {
+  lembretes:{id:'lembretes_v1', name:'Lembretes', description:'Na data e na hora de cada lembrete', importance:4, sound:'central_lembrete.wav'},
+  tarefas:{id:'tarefas_v1', name:'Tarefas do dia', description:'Resumo da manhã com as tarefas do dia', importance:3, sound:'central_suave.wav'},
+  habitos:{id:'habitos_v1', name:'Hábitos', description:'Aviso à noite com os hábitos que faltam', importance:3, sound:'central_suave.wav'},
+  aniversarios:{id:'aniversarios_v1', name:'Aniversários', description:'No dia do aniversário de quem está em Pessoas', importance:3, sound:'central_suave.wav'},
+  pomodoro:{id:'pomodoro_v1', name:'Pomodoro', description:'No fim de cada foco e de cada pausa', importance:5, sound:'central_pomodoro.wav'},
+  rotina:{id:'rotina_v1', name:'Rotina', description:'No início de cada bloco da rotina', importance:4, sound:'central_rotina.wav'}
+};
+const POMO_NID = 900001, TESTE_NID = 900002;
+/* id estável por aviso (o Android exige inteiro de 32 bits); fica acima dos ids fixos */
+function nid(key){
+  let h = 2166136261;
+  for(let i = 0; i < key.length; i++){ h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) % 1999000000 + 1000000;
+}
+function quando(ds, hm){
+  const [y, m, d] = ds.split('-').map(Number);
+  const [hh, mm] = String(hm || '09:00').split(':').map(Number);
+  return new Date(y, m - 1, d, hh || 0, mm || 0, 0, 0);
+}
+function corta(s, n){ s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function quandoTxt(dt){
+  const ds = dstr(dt), t = today();
+  const dia = ds === t ? 'hoje' : ds === addD(t, 1) ? 'amanhã' : DOW[dt.getDay()] + ' ' + dt.getDate() + '/' + (dt.getMonth() + 1);
+  return dia + ' às ' + pad(dt.getHours()) + ':' + pad(dt.getMinutes());
+}
+/* datas de um item que se repete, a partir da data atual dele, dentro da janela [desde, ate] */
+function ocorrencias(ds, rec, desde, ate, max){
+  const out = [];
+  let d = ds, g = 0;
+  while(d && d <= ate && out.length < max && g++ < 800){
+    if(d >= desde) out.push(d);
+    if(!rec || !rec.type) break;
+    const n = nextRecDate(d, rec);
+    if(!n || n <= d) break;
+    d = n;
+  }
+  return out;
+}
+function notifPlan(now){
+  const c = notifCfg(), t = today(), out = [], limite = now.getTime() + 20000;
+  const add = (key, at, title, body, canal, view) => { if(at.getTime() > limite) out.push({id:nid(key), at, title, body, canal, view}); };
+  if(c.lembretes){
+    const ate = addD(t, 45);
+    S.reminders.forEach(r => {
+      if(r.dismissed || !r.date) return;
+      const hora = r.time || c.lemHora;
+      const corpo = r.notes ? corta(r.notes, 140) : (r.category ? 'Lembrete · ' + r.category : 'Lembrete');
+      ocorrencias(r.date, r.recurrence, t, ate, 8).forEach(ds =>
+        add('lem:' + r.id + ':' + ds + ':' + hora, quando(ds, hora), corta(r.title, 80), corpo, 'lembretes', 'lembretes'));
+    });
+  }
+  if(c.tarefas){
+    const abertas = S.tasks.filter(x => x.status !== 'done'), dias = {}, ate = addD(t, 6);
+    abertas.forEach(x => {
+      if(!x.due){ if(x.inbox && x.inboxDate === t) (dias[t] = dias[t] || []).push(x); return; }
+      /* tarefa atrasada que se repete: a de hoje já conta como atrasada */
+      ocorrencias(x.due, x.recurrence, x.due < t ? addD(t, 1) : t, ate, 7).forEach(ds => (dias[ds] = dias[ds] || []).push(x));
+    });
+    const atrasadas = abertas.filter(x => x.due && x.due < t).length;
+    for(let d = 0; d < 7; d++){
+      const ds = addD(t, d), doDia = sortTasks(dias[ds] || []), n = doDia.length, at = d === 0 ? atrasadas : 0;
+      if(!n && !at) continue;
+      const titulo = n ? (n === 1 ? '1 tarefa para hoje' : n + ' tarefas para hoje') : (at === 1 ? '1 tarefa atrasada' : at + ' tarefas atrasadas');
+      const corpo = n ? corta(doDia.slice(0, 4).map(x => x.title).join(' · '), 140) + (at ? ' · ' + at + (at === 1 ? ' atrasada' : ' atrasadas') : '')
+        : 'Resolva ou reagende hoje.';
+      add('tar:' + ds, quando(ds, c.tarHora), titulo, corpo, 'tarefas', 'tarefas');
+    }
+  }
+  for(let d = 0; d < 7; d++){
+    const ds = addD(t, d), dw = fromD(ds).getDay();
+    if(c.habitos){
+      const hs = S.habits.filter(h => !h.archived && schedOn(h, ds) && !habDone(h, ds));
+      if(hs.length) add('hab:' + ds, quando(ds, c.habHora), hs.length === 1 ? 'Falta 1 hábito hoje' : 'Faltam ' + hs.length + ' hábitos hoje',
+        corta(hs.map(h => (h.emoji ? h.emoji + ' ' : '') + h.name).join(', '), 140), 'habitos', 'hoje');
+    }
+    if(c.rotina){
+      blocksOn(dw).forEach(b => {
+        if(!b.start) return;
+        const corpo = b.twoMin ? 'Comece pelo mínimo: ' + b.twoMin : (b.cue || 'Hora de começar.');
+        add('rot:' + b.id + ':' + ds + ':' + b.start, quando(ds, b.start), 'Agora: ' + b.name, corta(corpo, 140), 'rotina', 'rotina');
+      });
+    }
+  }
+  if(c.aniversarios){
+    S.people.forEach(p => {
+      const n = nextBday(p.birthday);
+      if(n === null || n > 30) return;
+      const ds = addD(t, n);
+      add('niv:' + p.id + ':' + ds, quando(ds, c.anivHora), 'Aniversário de ' + p.name, 'Mande uma mensagem hoje.', 'aniversarios', 'pessoas');
+    });
+  }
+  out.sort((a, b) => a.at - b.at);
+  return out.slice(0, 200);
+}
+function notifNative(n){
+  return {id:n.id, title:n.title, body:n.body, largeBody:n.body, channelId:CANAIS[n.canal].id, smallIcon:'ic_stat_central', iconColor:'#0F62B4',
+    schedule:{at:n.at, allowWhileIdle:true}, extra:{view:n.view}, autoCancel:true, isExactNotification:NOTIF.exact === 'granted'};
+}
+function notifCanais(){
+  if(!LN || NOTIF.canais) return Promise.resolve();
+  return Promise.all(Object.values(CANAIS).map(c =>
+    LN.createChannel(Object.assign({visibility:1, vibration:true, lights:true, lightColor:'#0F62B4'}, c)).catch(() => {})
+  )).then(() => { NOTIF.canais = true; });
+}
+function notifExato(){
+  if(!LN || !LN.checkExactNotificationSetting) return Promise.resolve();
+  return LN.checkExactNotificationSetting().then(x => { NOTIF.exact = (x && x.exact_alarm) || 'granted'; }).catch(() => {});
+}
+function notifHash(n){ return [+n.at, n.title, n.body, n.canal, NOTIF.exact].join('|'); }
+/* Reprograma quando o plano muda: só agenda o que é novo ou mudou e cancela o que saiu do plano. */
+function notifSync(force){
+  if(!LN) return Promise.resolve();
+  if(NOTIF.busy){ NOTIF.again = true; return Promise.resolve(); }
+  const plan = notifCfg().on ? notifPlan(new Date()) : [];
+  const sig = JSON.stringify(plan.map(n => [n.id, +n.at, n.title, n.body])) + NOTIF.exact;
+  if(!force && sig === NOTIF.sig) return Promise.resolve();
+  NOTIF.busy = true; NOTIF.err = '';
+  return LN.checkPermissions().then(p => {
+    NOTIF.perm = p.display;
+    if(p.display !== 'granted') return null;
+    return notifCanais().then(notifExato).then(() => LN.getPending()).then(pend => {
+      const lista = (pend && pend.notifications) || [], tem = new Set(lista.map(n => n.id));
+      let antes = {};
+      try{ antes = JSON.parse(localStorage.getItem('central.notifMap') || '{}') || {}; }catch(e){}
+      const mapa = {}, agendar = [];
+      plan.forEach(n => {
+        const h = notifHash(n);
+        mapa[n.id] = h;
+        if(!tem.has(n.id) || antes[n.id] !== h) agendar.push(n);
+      });
+      const cancelar = lista.filter(n => n.id !== POMO_NID && n.id !== TESTE_NID && !(n.id in mapa)).map(n => ({id:n.id}));
+      return (cancelar.length ? LN.cancel({notifications:cancelar}) : Promise.resolve())
+        .then(() => agendar.length ? LN.schedule({notifications:agendar.map(notifNative)}) : null)
+        .then(() => {
+          try{ localStorage.setItem('central.notifMap', JSON.stringify(mapa)); }catch(e){}
+          NOTIF.sig = sig; NOTIF.count = plan.length; NOTIF.next = plan[0] || null;
+        });
+    });
+  }).catch(e => { NOTIF.err = (e && e.message) || String(e); })
+    .then(() => {
+      NOTIF.busy = false;
+      if(VIEW === 'dados') renderNotifCard();
+      if(NOTIF.again){ NOTIF.again = false; notifSoon(); }
+    });
+}
+function notifSoon(force){
+  if(!LN) return;
+  clearTimeout(NOTIF.timer);
+  NOTIF.timer = setTimeout(() => notifSync(force), 1200);
+}
+function notifPermissao(){
+  if(!LN) return Promise.resolve(false);
+  return LN.checkPermissions()
+    .then(p => p.display === 'granted' ? p : LN.requestPermissions())
+    .then(p => { NOTIF.perm = p.display; if(VIEW === 'dados') renderNotifCard(); return p.display === 'granted'; });
+}
+function notifTeste(){
+  if(!LN) return;
+  notifPermissao().then(ok => {
+    if(!ok){ toast('As notificações estão bloqueadas. Libere em Configurações > Apps > Central > Notificações.'); return; }
+    return notifCanais().then(notifExato).then(() => LN.schedule({notifications:[{id:TESTE_NID, title:'Central', body:'Teste: os avisos vão chegar assim.',
+      channelId:CANAIS.lembretes.id, smallIcon:'ic_stat_central', iconColor:'#0F62B4', schedule:{at:new Date(Date.now() + 5000), allowWhileIdle:true},
+      extra:{view:'dados'}, autoCancel:true, isExactNotification:NOTIF.exact === 'granted'}]}))
+      .then(() => { toast('Teste enviado. Chega em 5 segundos.'); notifSync(true); });
+  }).catch(e => toast('Não deu: ' + ((e && e.message) || e)));
+}
+/* Pomodoro: um aviso no fim da fase atual, refeito a cada início, pausa, retomada ou pulo */
+function pomoNotifyCancel(){ if(LN) LN.cancel({notifications:[{id:POMO_NID}]}).catch(() => {}); }
+function pomoNotify(){
+  if(!LN) return;
+  const c = notifCfg();
+  LN.cancel({notifications:[{id:POMO_NID}]}).catch(() => {}).then(() => {
+    if(!c.on || !c.pomodoro || !POMO.running || POMO.paused || !(POMO.endsAt > Date.now() + 1500) || NOTIF.perm !== 'granted') return;
+    const pc = pomoCfg(), fimFoco = POMO.phase === 'work';
+    const pausa = POMO.round >= POMO.totalRounds ? pc.long : pc.short;
+    const title = fimFoco ? 'Foco concluído' : 'Pausa encerrada';
+    const body = fimFoco ? 'Faça ' + pausa + ' min de pausa.' + (POMO.label ? ' ' + corta(POMO.label, 60) + ' entrou no seu tempo.' : '')
+      : 'Volte ao foco' + (POMO.label ? ': ' + corta(POMO.label, 70) : '.');
+    return notifCanais().then(() => LN.schedule({notifications:[{id:POMO_NID, title, body, channelId:CANAIS.pomodoro.id,
+      smallIcon:'ic_stat_central', iconColor:'#0F62B4', schedule:{at:new Date(POMO.endsAt), allowWhileIdle:true},
+      extra:{view:'tempo'}, autoCancel:true, isExactNotification:NOTIF.exact === 'granted'}]}));
+  }).catch(() => {});
+}
+function swHTML(action, key, on){
+  return '<button class="sw' + (on ? ' on' : '') + '" data-action="' + action + '" data-k="' + key + '" role="switch" aria-checked="' + (on ? 'true' : 'false') + '"><span></span></button>';
+}
+function renderNotifCard(){
+  const el = document.getElementById('cardNotif');
+  if(!el) return;
+  if(!NATIVE){
+    el.innerHTML = '<h3>App Android</h3><p>No app, o Central avisa na hora dos lembretes, de manhã com as tarefas do dia, à noite com os hábitos que faltam e no fim de cada Pomodoro.</p>' +
+      '<a class="btn btn-primary" href="' + APK_URL + '">Baixar o app (APK)</a>' +
+      '<p class="nhint">No celular, baixe o arquivo e toque nele para instalar. Os dados chegam pelo mesmo login do Google.</p>';
+    return;
+  }
+  const c = notifCfg();
+  let st;
+  if(NOTIF.err) st = 'Erro ao programar: ' + NOTIF.err;
+  else if(NOTIF.perm === 'denied') st = 'Notificações bloqueadas para o Central. Toque em Permitir ou libere em Configurações > Apps > Central.';
+  else if(NOTIF.perm !== 'granted') st = 'Toque em Permitir para receber os avisos.';
+  else if(!c.on) st = 'Avisos desligados.';
+  else if(NOTIF.busy) st = 'Programando os avisos…';
+  else if(NOTIF.next) st = 'Próximo: ' + quandoTxt(NOTIF.next.at) + ', ' + NOTIF.next.title + '. ' + NOTIF.count + (NOTIF.count === 1 ? ' aviso programado.' : ' avisos programados.');
+  else st = 'Nenhum aviso para os próximos dias.';
+  const row = (k, label, hk, sub) => '<div class="nrow"><span class="nl">' + label + (sub ? '<small>' + sub + '</small>' : '') + '</span>' +
+    (hk ? '<input type="time" class="inp ntime" data-nk="' + hk + '" value="' + esc(c[hk]) + '"' + (c[k] && c.on ? '' : ' disabled') + ' aria-label="Horário">' : '') +
+    swHTML('notif-sw', k, c[k]) + '</div>';
+  el.innerHTML = '<h3>Notificações</h3><p class="nstat">' + esc(st) + '</p>' +
+    '<div class="nrow nmaster"><span class="nl">Avisos do Central</span>' + swHTML('notif-sw', 'on', c.on) + '</div>' +
+    '<div class="nlist' + (c.on ? '' : ' off') + '">' +
+      row('lembretes', 'Lembretes', 'lemHora', 'horário dos que não têm hora') +
+      row('tarefas', 'Tarefas do dia', 'tarHora') +
+      row('habitos', 'Hábitos que faltam', 'habHora') +
+      row('aniversarios', 'Aniversários', 'anivHora') +
+      row('pomodoro', 'Fim do Pomodoro') +
+      row('rotina', 'Início dos blocos da rotina', '', 'desligado para não repetir o Orders of the Day') +
+    '</div>' +
+    '<div class="nbtns">' + (NOTIF.perm !== 'granted' ? '<button class="btn btn-primary" data-action="notif-permitir">Permitir</button>' : '') +
+      '<button class="btn" data-action="notif-teste">Enviar teste</button>' +
+      (NOTIF.exact === 'denied' ? '<button class="btn" data-action="notif-exato">Liberar horário exato</button>' : '') + '</div>' +
+    '<p class="nhint">Os avisos são recalculados sempre que você abre o app ou muda algo nele.</p>';
+}
+function renderSonsCard(){
+  const el = document.getElementById('cardSons');
+  if(!el) return;
+  const r = (k, label, sub) => '<div class="nrow"><span class="nl">' + label + (sub ? '<small>' + sub + '</small>' : '') + '</span>' + swHTML('pref-sw', k, S.meta[k] !== false) + '</div>';
+  el.innerHTML = '<h3>Sons e animações</h3><p>Som e vibração ao concluir, confete quando o dia fecha, transições entre as abas.</p>' +
+    r('som', 'Sons') + (NATIVE || (navigator.vibrate && window.matchMedia && matchMedia('(pointer: coarse)').matches) ? r('vibrar', 'Vibração') : '') +
+    r('animar', 'Animações', 'desliga também o confete');
+}
+/* ===================== App Android: versão, voltar, login ===================== */
+function temVersaoNova(){ return UPD.v > APP_VERSION || (UPD.build > 0 && UPD.lb > UPD.build); }
+function checkUpdate(force){
+  if(!NATIVE || navigator.onLine === false) return;
+  if(!force && Date.now() - UPD.checked < 3 * 3600 * 1000) return;
+  UPD.checked = Date.now();
+  fetch('https://api.github.com/repos/jpvanacor/Central/releases/latest', {cache:'no-store'})
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      if(!j || !j.tag_name) return;
+      UPD.v = parseInt(String(j.tag_name).replace(/\D/g, ''), 10) || 0;
+      const m = String(j.body || '').match(/build (\d+)/i);
+      UPD.lb = m ? parseInt(m[1], 10) : 0;
+      renderUpdBar();
+      if(VIEW === 'dados') renderAppCard();
+    }).catch(() => {});
+}
+function updChave(){ return UPD.v + '.' + UPD.lb; }
+function renderUpdBar(){
+  const b = document.getElementById('updBar');
+  if(!b) return;
+  let fechado = '';
+  try{ fechado = localStorage.getItem('central.updFechado') || ''; }catch(e){}
+  const show = NATIVE && temVersaoNova() && fechado !== updChave();
+  b.hidden = !show;
+  b.innerHTML = !show ? '' : licn('hard-drive-download') + '<span>Nova versão do app pronta.</span>' +
+    '<button class="btn btn-primary btn-sm" data-action="baixar-apk">Baixar</button>' +
+    '<button class="icon-btn sm" data-action="fechar-upd" aria-label="Agora não">' + licn('x') + '</button>';
+}
+function renderAppCard(){
+  const el = document.getElementById('cardApp');
+  if(!el) return;
+  if(!NATIVE){ el.hidden = true; return; }
+  el.hidden = false;
+  const inst = APP_VERSION + (UPD.build ? ' (build ' + UPD.build + ')' : '');
+  const pub = UPD.v ? UPD.v + (UPD.lb ? ' (build ' + UPD.lb + ')' : '') : '–';
+  el.innerHTML = '<h3>App Android</h3>' +
+    '<div class="stat-row"><span class="k">Versão instalada</span><span class="v">' + inst + '</span></div>' +
+    '<div class="stat-row"><span class="k">Última publicada</span><span class="v">' + pub + '</span></div>' +
+    '<div class="nbtns">' + (temVersaoNova() ? '<button class="btn btn-primary" data-action="baixar-apk">Baixar a nova versão</button>' : '<button class="btn" data-action="checar-versao">Verificar atualização</button>') + '</div>' +
+    '<p class="nhint">Para atualizar: baixe, toque no arquivo e confirme. Os dados ficam.</p>';
+}
+function abrirFora(url){
+  if(LAUNCHER && LAUNCHER.openUrl){
+    const p = LAUNCHER.openUrl({url});
+    if(p && p.catch) p.catch(() => { location.href = url; });
+  }else location.href = url;
+}
+/* Login no app: o Google não permite entrar dentro do app, então o login acontece no Chrome
+   (página app-login.html) e volta com central://login?c=<código>. */
+function loginNoChrome(){ abrirFora(LOGIN_URL); toast('Entre no Chrome e toque em Abrir o Central.'); }
+function loginPorLink(url){
+  if(!url || String(url).indexOf('central://login') !== 0) return;
+  const m = String(url).match(/[?&]c=([^&#]+)/);
+  if(m) loginComCodigo(decodeURIComponent(m[1]));
+}
+function loginComCodigo(code){
+  code = String(code || '').trim();
+  const m = code.match(/[?&]c=([^&#\s]+)/);
+  if(m) code = decodeURIComponent(m[1]);
+  if(!code) return;
+  if(typeof window.__loginCodigo === 'function') window.__loginCodigo(code);
+  else{ window.__loginPend = code; toast('Entrando…'); }
+}
+/* addListener do Capacitor sem bundler devolve um objeto, não uma Promise */
+function capOn(pl, ev, fn){
+  if(!pl || typeof pl.addListener !== 'function') return;
+  try{ const r = pl.addListener(ev, fn); if(r && typeof r.catch === 'function') r.catch(() => {}); }catch(e){}
+}
+function capCall(p){ if(p && typeof p.catch === 'function') p.catch(() => {}); return p; }
+function nativeInit(){
+  if(!NATIVE) return;
+  window.__nativeLogin = loginNoChrome;
+  if(CAPP){
+    capOn(CAPP, 'backButton', () => {
+      if($('#mback').classList.contains('on')){ closeModal(); return; }
+      if(VIEW !== 'hoje'){ setView('hoje'); return; }
+      if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
+    });
+    capOn(CAPP, 'appStateChange', s => {
+      APP_ATIVO = !!(s && s.isActive);
+      if(!APP_ATIVO) return;
+      render(); notifSoon(); checkUpdate();
+      if(POMO.running && !POMO.paused) pomoTick();
+    });
+    capOn(CAPP, 'appUrlOpen', d => loginPorLink(d && d.url));
+    if(CAPP.getLaunchUrl) capCall(CAPP.getLaunchUrl()).then(r => { if(r && r.url) loginPorLink(r.url); }).catch(() => {});
+    if(CAPP.getInfo) capCall(CAPP.getInfo()).then(i => {
+      UPD.build = parseInt(i && i.build, 10) || 0;
+      renderUpdBar();
+      if(VIEW === 'dados') renderAppCard();
+    }).catch(() => {});
+  }
+  if(LN){
+    capOn(LN, 'localNotificationActionPerformed', a => {
+      const v = a && a.notification && a.notification.extra && a.notification.extra.view;
+      if(v && TABS[v]) setView(v);
+    });
+    let pediu = false;
+    try{ pediu = localStorage.getItem('central.notifPedido') === '1'; }catch(e){}
+    notifCanais().then(notifExato)
+      .then(() => LN.checkPermissions())
+      .then(p => {
+        NOTIF.perm = p.display;
+        if(p.display !== 'granted' && !pediu){
+          try{ localStorage.setItem('central.notifPedido', '1'); }catch(e){}
+          return LN.requestPermissions().then(q => { NOTIF.perm = q.display; });
+        }
+      })
+      .catch(() => {})
+      .then(() => { notifSync(true); pomoNotify(); });
+  }
+  checkUpdate(true);
+}
+/* backup no app: o WebView não baixa arquivos, então o backup sai pelo menu de compartilhar do Android */
+function exportarNoApp(json, nome){
+  return FS.writeFile({path:nome, data:json, directory:'CACHE', encoding:'utf8'})
+    .then(r => SHARE.share({title:'Backup do Central', files:[r.uri], dialogTitle:'Salvar o backup'}));
+}
+
 /* ===================== Início ===================== */
 window.__central = {
   get: () => S,
@@ -4608,10 +5254,10 @@ window.__central = {
     const b = blank();
     S = Object.assign(b, o, {meta:Object.assign(b.meta, o.meta || {})});
     try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
-    applyTheme(); render();
+    applyTheme(); render(); notifSoon();
   }
 };
-if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+if(!NATIVE && 'serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 {
@@ -4662,7 +5308,16 @@ document.addEventListener('click', e => {
   const i = q.querySelector('input[type="date"]');
   if(i && typeof i.showPicker === 'function'){ try{ i.showPicker(); }catch(_){} }
 });
+/* horários das notificações (Dados) */
+document.addEventListener('change', e => {
+  const t = e.target;
+  if(t && t.classList && t.classList.contains('ntime') && t.value){
+    S.meta.notif = Object.assign({}, S.meta.notif || {}, {[t.dataset.nk]: t.value});
+    save(); renderNotifCard();
+  }
+});
 setView('hoje');
+nativeInit();
 </script>
 
 <script type="module">
@@ -4674,7 +5329,7 @@ try{
     setSt('Local (nuvem não configurada)');
   }else{
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } =
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCredential, onAuthStateChanged, signOut } =
       await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const fsm = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const { doc, getDoc, setDoc, onSnapshot } = fsm;
@@ -4699,8 +5354,25 @@ try{
     };
     window.__push = () => { if(!applying) enviar(); };
 
+    /* app Android: o login feito no Chrome volta como código com os tokens do Google */
+    window.__loginCodigo = async code => {
+      try{
+        const s64 = String(code).replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+        const o = JSON.parse(decodeURIComponent(escape(atob(s64 + '==='.slice((s64.length + 3) % 4)))));
+        if(!o || (!o.i && !o.a)) throw new Error('código vazio');
+        setSt('Entrando…');
+        const res = await signInWithCredential(auth, GoogleAuthProvider.credential(o.i || null, o.a || null));
+        toast('Conectado como ' + (res.user.displayName || res.user.email) + '.');
+      }catch(e){
+        setSt('Login não concluído: ' + ((e && (e.code || e.message)) || e));
+        toast('Código expirado ou inválido. Entre de novo pelo Chrome.');
+      }
+    };
+    if(window.__loginPend){ const lp = window.__loginPend; window.__loginPend = null; window.__loginCodigo(lp); }
+
     const provider = new GoogleAuthProvider();
     const doLogin = async () => {
+      if(window.__nativeLogin){ window.__nativeLogin(); return; }
       try{
         await signInWithPopup(auth, provider);
       }catch(e){
@@ -4725,6 +5397,7 @@ try{
     if(bSide) bSide.onclick = () => auth.currentUser ? doLogout() : doLogin();
 
     onAuthStateChanged(auth, async user => {
+      document.documentElement.classList.toggle('logged', !!user);
       const inf = document.getElementById('syncInfo');
       if(!user){
         ref = null;
