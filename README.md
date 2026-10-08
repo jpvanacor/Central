@@ -7,15 +7,19 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 
 ## Tarefas
 
-No topo, dois menus que abrem com um toque: o que mostrar (Hoje, Próximos 7 dias, Todas, Feitas) e de qual projeto, com o atalho para gerenciar projetos. No campo de adicionar, o prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
+Organizada em camadas, como no TickTick:
 
-- `Ligar para o cartório sexta #promotoria !!!` cria a tarefa para sexta, no projeto Promotoria, com prioridade alta;
-- datas: `hoje`, `amanhã`, `depois de amanhã`, dias da semana (`sexta`, `na segunda`, `quinta-feira`), `dia 15`, `15/10`, `próxima semana`, `fim de semana`, `em 3 dias`;
-- `#nome` escolhe o projeto pelo começo do nome; se nenhum projeto bater, vira etiqueta;
-- `!`, `!!`, `!!!` ou `!baixa`, `!média`, `!alta` definem a prioridade;
-- com o campo vazio, o **+** abre o formulário completo.
+- **Gaveta de listas** (☰ no celular; fixa ao lado no PC): Hoje, Próximos 7 dias, Todas, Feitas, etiquetas e os projetos. Projetos podem ter emoji, cor e pasta; projetos com a mesma pasta ficam juntos (por exemplo 1. Projetos, 2. Áreas). Para criar ou editar: botão **+ Projeto** ou a engrenagem no fim da gaveta.
+- **A lista** mostra só o nome no topo e as tarefas em cartões que abrem e fecham. O menu ⋮ escolhe agrupar por projeto, data ou prioridade, move as atrasadas para hoje e apaga as concluídas. A data fica à direita da tarefa (vermelha quando atrasada), com ícones para descrição, subtarefas, repetição e pessoas.
+- **Adicionar:** no celular, pelo botão + flutuante; no PC, pelo campo no topo da lista. O prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
+  - `Ligar para o cartório sexta #promotoria !!!` cria a tarefa para sexta, no projeto Promotoria, com prioridade alta;
+  - datas: `hoje`, `amanhã`, `depois de amanhã`, dias da semana (`sexta`, `na segunda`, `quinta-feira`), `dia 15`, `15/10`, `próxima semana`, `fim de semana`, `em 3 dias`;
+  - `#nome` escolhe o projeto pelo começo do nome; se nenhum projeto bater, vira etiqueta;
+  - `!`, `!!`, `!!!` ou `!baixa`, `!média`, `!alta` definem a prioridade;
+  - os ícones da folha (prazo, prioridade, projeto, caixa do dia) fazem o mesmo sem digitar; com o campo vazio, a seta abre o detalhe completo.
+- **Detalhe da tarefa:** projeto e bandeira de prioridade no topo, o círculo para concluir e a data com o atraso, título, descrição e subtarefas; embaixo, ícones para etiquetas, subtarefas, repetição, pessoas e foco. O ⋮ tem Focar, Lembrete, Duplicar e Excluir. Salva sozinho ao fechar.
 
-No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** leva ao campo de adicionar. No fim da lista de atrasadas fica **Mover para hoje**, e toda mudança de prazo pode ser desfeita no aviso.
+No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** abre o adicionar. Toda mudança de prazo pode ser desfeita no aviso.
 
 ## App Android
 

@@ -77,7 +77,7 @@ input,select,textarea{font:inherit; color:inherit}
 .nav-item.active{background:var(--accent-soft); color:var(--accent); font-weight:650}
 .nav-item .ic{width:18px; text-align:center; flex:none; display:flex; align-items:center; justify-content:center}
 .nav-item .ic svg, .bn-item .ic svg{width:18px; height:18px}
-.bn-item .ic svg{width:20px; height:20px}
+.bn-item .ic svg{width:23px; height:23px}
 .nav-item.soon{color:var(--muted); cursor:default; font-weight:400}
 .nav-item.soon:hover{background:none}
 .nav-item .tag{
@@ -827,71 +827,101 @@ html.tt-foco-on body{overflow:hidden}
 /* ===================== Tarefas ===================== */
 :root{--warn-soft:#F7EEDF}
 html[data-theme="dark"]{--warn-soft:#2E2617}
-/* barra com dois menus: o que mostrar e de qual projeto */
-.tk-bar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:0 0 12px}
-.tk-ddw{position:relative; min-width:0; max-width:100%}
-.tk-dd{display:inline-flex; align-items:center; gap:7px; height:36px; max-width:100%; padding:0 11px 0 14px; border:1px solid var(--line2); border-radius:99px;
-  background:var(--surface); color:var(--ink); font-size:13.5px; font-weight:650; white-space:nowrap; cursor:pointer;
-  transition:transform .09s ease, background .15s, border-color .15s}
-.tk-dd:hover{border-color:var(--muted)}
-.tk-dd:active{transform:scale(.96)}
-.tk-dd .l{overflow:hidden; text-overflow:ellipsis; min-width:0}
-.tk-dd .c{font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--accent); font-variant-numeric:tabular-nums}
-.tk-dd > svg{width:15px; height:15px; color:var(--muted); flex:none; transition:transform .18s}
-.tk-dd.open{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
-.tk-dd.open > svg{transform:rotate(180deg)}
-.tk-dd .pdot{width:8px; height:8px}
-.tk-menu{position:absolute; top:calc(100% + 6px); left:0; z-index:40; min-width:230px; max-width:min(300px, calc(100vw - 28px)); max-height:min(62vh, 440px); overflow-y:auto;
-  background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:5px; box-shadow:0 14px 36px rgba(21,26,32,.18), 0 2px 6px rgba(21,26,32,.08);
-  transform-origin:top left; animation:tkMenu .15s cubic-bezier(.2,.9,.3,1)}
-html[data-theme="dark"] .tk-menu{border-color:var(--line2); box-shadow:0 14px 40px rgba(0,0,0,.55)}
-@keyframes tkMenu{from{opacity:0; transform:translateY(-4px) scale(.97)}to{opacity:1; transform:none}}
-.tk-mi{display:flex; align-items:center; gap:11px; width:100%; min-height:42px; padding:9px 11px; border:0; border-radius:9px; background:none; color:var(--ink);
-  font-size:14px; font-weight:600; text-align:left; cursor:pointer}
-.tk-mi:hover{background:var(--surface2)}
-.tk-mi > svg{width:17px; height:17px; color:var(--muted); flex:none}
-.tk-mi .pdot{width:9px; height:9px; margin:0 4px}
-.tk-mi .l{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.tk-mi .c{font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums}
-.tk-mi .ok{display:inline-flex; color:var(--accent)}
-.tk-mi .ok svg{width:16px; height:16px}
-.tk-mi.on{color:var(--accent)}
-.tk-mi.on > svg{color:var(--accent)}
-.tk-mi.ger{color:var(--muted); font-weight:600}
-.tk-msep{height:1px; background:var(--line); margin:5px 8px}
-/* ação em lote no fim da lista, longe da seta de recolher */
-.tk-lote{display:flex; align-items:center; gap:9px; width:100%; padding:12px 16px; border:0; border-top:1px solid var(--line); background:none;
-  color:var(--accent); font-size:13.5px; font-weight:650; text-align:left; cursor:pointer}
-.tk-lote:hover{background:var(--accent-soft)}
-.tk-lote svg{width:16px; height:16px}
-/* adicionar: prévia do que foi entendido */
-.qa-prev{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:-8px 2px 14px; font-size:12.5px; line-height:1.3}
-.qa-prev:empty{display:none}
-.qa-tok{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:99px; background:var(--accent-soft); color:var(--accent); font-weight:650; white-space:nowrap}
-.qa-tok svg{width:13px; height:13px}
-.qa-tok.pr2{background:var(--warn-soft); color:var(--warn)}
-.qa-tok.pr3{background:var(--danger-soft); color:var(--danger)}
-.qa-titulo{color:var(--muted); min-width:0; flex:1 1 120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.qa-dica{color:var(--muted)}
-/* linha de tarefa: título e, embaixo, projeto e detalhes */
+/* a aba entra só com opacidade: transform faria o botão + e as folhas fixas pularem */
+#view-tarefas.on{animation:tkVin .22s ease}
+@keyframes tkVin{from{opacity:0}to{opacity:1}}
+.tk-main{min-width:0}
+
+/* topo: só o nome da lista */
+.tk-top{display:flex; align-items:center; gap:6px; margin:0 0 18px; min-height:46px}
+.tk-top .icon-btn{border:0; background:none; width:42px; height:42px; border-radius:12px; color:var(--ink)}
+.tk-top .icon-btn:hover{background:var(--surface2); color:var(--ink)}
+.tk-top .icon-btn svg{width:22px; height:22px}
+.tk-top .tk-burger{margin-left:-10px}
+.tk-tit{flex:1; min-width:0; margin:0; display:flex; align-items:center; gap:10px; white-space:nowrap; cursor:pointer}
+.tk-tit .nm{overflow:hidden; text-overflow:ellipsis}
+.tk-tit .em{font-size:.9em; line-height:1}
+#tResumo .hj-pill{margin-right:2px}
+
+/* gaveta de listas */
+.tk-nav{position:fixed; top:0; bottom:0; left:0; z-index:70; width:min(84vw, 320px); display:flex; flex-direction:column; gap:1px; overflow-y:auto;
+  padding:calc(16px + var(--sat)) 10px calc(14px + var(--sab)) calc(10px + var(--sal)); background:var(--surface); box-shadow:10px 0 34px rgba(0,0,0,.2);
+  transform:translateX(-104%); visibility:hidden; transition:transform .24s cubic-bezier(.2,.8,.2,1), visibility 0s linear .24s}
+.tk-nav.on{transform:none; visibility:visible; transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.tk-nav-fundo, .tk-add-fundo{position:fixed; inset:0; background:rgba(12,16,20,.4); opacity:0; pointer-events:none; transition:opacity .2s}
+.tk-nav-fundo{z-index:65}
+.tk-nav-fundo.on, .tk-add-fundo.on{opacity:1; pointer-events:auto}
+.tk-ni{display:flex; align-items:center; gap:12px; width:100%; min-height:44px; padding:8px 12px; border:0; border-radius:11px; background:none;
+  color:var(--ink); font-size:15px; font-weight:600; text-align:left; cursor:pointer; flex:none}
+.tk-ni:hover{background:var(--surface2)}
+.tk-ni.on{background:var(--accent-soft); color:var(--accent)}
+.tk-ni .ic{width:22px; display:inline-flex; align-items:center; justify-content:center; flex:none; color:var(--muted)}
+.tk-ni.on .ic{color:var(--accent)}
+.tk-ni .ic svg{width:20px; height:20px}
+.tk-ni .ic .em{font-size:18px; line-height:1}
+.tk-ni .ic .pdot{width:10px; height:10px}
+.tk-ni .ic .hash{font-weight:800; font-size:16px}
+.tk-ni .l{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tk-ni .c{font-family:var(--mono); font-size:12px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums}
+.tk-ni .chev{margin:0}
+.tk-ni.grupo{font-weight:700}
+.tk-ni.sub{padding-left:24px}
+.tk-ni.sub .ic{width:20px}
+.tk-nsep{height:1px; background:var(--line); margin:8px 12px; flex:none}
+.tk-nfoot{display:flex; align-items:center; gap:6px; margin-top:auto; padding:12px 2px 0; flex:none}
+.tk-nfoot .btn{gap:6px}
+.tk-nfoot .btn svg{width:16px; height:16px}
+.tk-nfoot .icon-btn{border:0; background:none}
+
+/* cartões dos grupos */
+.tk-g{background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); margin:0 0 12px; overflow:hidden}
+.tk-gh{display:flex; align-items:center; gap:11px; width:100%; min-height:52px; padding:12px 16px; border:0; background:none; color:var(--ink);
+  font-size:15.5px; font-weight:750; text-align:left; cursor:pointer}
+.tk-gh:hover{background:var(--surface2)}
+.tk-gi{display:inline-flex; width:22px; justify-content:center; align-items:center; flex:none; color:var(--muted)}
+.tk-gi svg{width:19px; height:19px}
+.tk-gi .em{font-size:19px; line-height:1}
+.tk-gi .pdot{width:11px; height:11px}
+.tk-gi.p3{color:var(--danger)} .tk-gi.p2{color:var(--warn)} .tk-gi.p1{color:var(--accent)}
+.tk-gn{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tk-gc{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums}
+.tk-gh > svg{width:17px; height:17px; color:var(--muted); flex:none}
+.tk-g.late .tk-gi, .tk-g.late .tk-gn{color:var(--danger)}
+.tk-g.ok .tk-gi{color:var(--good)}
+.tk-gl{padding:0 0 4px}
+.tk-g.cor .tk-gl::after{content:''; position:absolute; left:0; top:0; bottom:4px; width:3px; background:var(--gc); border-radius:0 2px 2px 0; z-index:2; pointer-events:none}
+.tk-gl .trow + .trow{border-top:0}
+.tk-vazio{display:flex; flex-direction:column; align-items:center; gap:10px; padding:44px 20px; color:var(--muted); text-align:center; font-size:14.5px}
+.tk-vazio > svg{width:40px; height:40px; opacity:.55}
+.tk-vazio p{margin:0}
+#tLista.troca{animation:tkTroca .2s ease}
+@keyframes tkTroca{from{opacity:.35; transform:translateY(5px)}to{opacity:1; transform:none}}
+
+/* linha de tarefa: título; embaixo projeto e etiquetas; à direita a data e os ícones */
 .tk-list{position:relative}
-.trow.tk{position:relative; align-items:flex-start; gap:12px; background:var(--surface); touch-action:pan-y; transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.trow.tk{position:relative; align-items:flex-start; gap:12px; padding:11px 16px; background:var(--surface); touch-action:pan-y; transition:transform .22s cubic-bezier(.2,.8,.2,1)}
 .trow.tk:hover{background:var(--surface2); border-radius:0}
-.trow.tk .ck{width:20px; height:20px; margin-top:0}
+.trow.tk .ck{width:20px; height:20px; margin-top:1px}
 .trow.tk .ck::before{content:''; position:absolute; inset:-11px}
 .tk-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px}
-.trow.tk .tt{flex:none}
-.tk-meta{display:flex; flex-wrap:wrap; align-items:center; gap:3px 11px; font-size:12px; color:var(--muted); line-height:1.35}
-.tk-meta > span{display:inline-flex; align-items:center; gap:4px; min-width:0}
-.tk-meta svg{width:13px; height:13px; flex:none}
+.trow.tk .tt{flex:none; font-size:15px}
+.tk-meta{display:flex; flex-wrap:wrap; align-items:center; gap:3px 10px; font-size:12px; color:var(--muted); line-height:1.35}
+.tk-meta > span{display:inline-flex; align-items:center; gap:5px; min-width:0}
 .tk-proj{font-weight:600; max-width:100%}
+.tk-proj .em{font-size:12.5px; line-height:1}
 .tk-proj .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.tk-m.ok{color:var(--good)}
-.tk-tag{font-family:var(--mono); font-size:11px}
-.tk-due{flex:none; font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap; margin-top:2px; font-variant-numeric:tabular-nums}
-.tk-due.today{color:var(--accent); font-weight:600}
-.tk-due.late{color:var(--danger); font-weight:600}
-/* ações no PC: aparecem por cima do prazo quando o mouse passa na linha */
+.tk-tag{color:var(--accent); font-weight:600}
+.tk-side{flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:5px; margin-top:2px; max-width:40%}
+.tk-due{font-size:13px; font-weight:600; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
+.tk-due.today{color:var(--accent)}
+.tk-due.late{color:var(--danger)}
+.tk-ics{display:flex; align-items:center; gap:7px; color:var(--muted)}
+.tk-ic{display:inline-flex; align-items:center; gap:3px}
+.tk-ic svg{width:14px; height:14px}
+.tk-ic .n{font-size:11.5px; font-weight:600; font-variant-numeric:tabular-nums}
+.tk-ic.ok{color:var(--good)}
+.trow.tk.done .tk-meta, .trow.tk.done .tk-side{opacity:.7}
+/* ações no PC: aparecem por cima da data quando o mouse passa na linha */
 .tk-acts{position:absolute; top:0; bottom:0; right:0; display:flex; align-items:center; gap:2px; padding:0 10px 0 44px;
   background:linear-gradient(to right, transparent, var(--surface2) 18px); opacity:0; pointer-events:none; transition:opacity .12s}
 .trow.tk:hover .tk-acts, .trow.tk:has(:focus-visible) .tk-acts{opacity:1; pointer-events:auto}
@@ -899,13 +929,14 @@ html[data-theme="dark"] .tk-menu{border-color:var(--line2); box-shadow:0 14px 40
 .tk-acts .icon-btn{border-color:transparent; background:none}
 .tk-acts .icon-btn:hover{background:var(--surface); border-color:var(--line)}
 @media (hover:none), (pointer:coarse){ .tk-acts{display:none} }
-.trow.tk.done .tk-meta{opacity:.75}
-/* seções */
+@media (hover:none), (pointer:coarse){ .trow.tk:hover, .tk-gh:hover, .tk-lote:hover, .tk-ni:not(.on):hover, .tk-mi:hover, .tkd-tool:not(.ab):hover{background:none} .trow.tk:hover{background:var(--surface)} }
+/* ação em lote no fim das atrasadas */
+.tk-lote{display:flex; align-items:center; gap:9px; width:100%; padding:12px 16px; border:0; border-top:1px solid var(--line); background:none;
+  color:var(--accent); font-size:13.5px; font-weight:650; text-align:left; cursor:pointer}
+.tk-lote:hover{background:var(--accent-soft)}
+.tk-lote svg{width:16px; height:16px}
 .seclab.feitas .sec-ic{color:var(--good)}
-.tk-feitas-topo{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 12px; font-size:13px; color:var(--muted)}
-#tLista.troca{animation:tkTroca .2s ease}
-@keyframes tkTroca{from{opacity:.35; transform:translateY(5px)}to{opacity:1; transform:none}}
-#tLista .list .empty .btn{margin-left:6px}
+
 /* arrastar no celular */
 .tk-swbg{position:absolute; left:0; right:0; z-index:0; display:flex; align-items:center; justify-content:space-between; padding:0 24px;
   background:var(--surface2); pointer-events:none; transition:background .15s}
@@ -916,61 +947,169 @@ html[data-theme="dark"] .tk-menu{border-color:var(--line2); box-shadow:0 14px 40
 .tk-swbg.dir.pronto{background:var(--good)} .tk-swbg.esq.pronto{background:var(--accent)}
 .tk-swbg.pronto span{color:#fff; transform:scale(1.18)}
 .trow.tk.sw-ativo{z-index:1; transition:none; background:var(--surface)}
-/* reagendar */
-.rs-de{margin:0; font-weight:650; font-size:14.5px; display:flex; flex-direction:column; gap:2px; overflow-wrap:anywhere}
-.rs-de span{font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--muted)}
-.rs-ops{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px}
-.rs-op{position:relative; display:grid; grid-template-columns:auto 1fr; column-gap:10px; row-gap:1px; align-items:center; text-align:left;
-  padding:11px 13px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); cursor:pointer; font:inherit; min-width:0}
-.rs-op svg{grid-row:1 / span 2; width:19px; height:19px; color:var(--accent)}
-.rs-op span{font-weight:650; font-size:14px}
-.rs-op small{font-family:var(--mono); font-size:11px; color:var(--muted); min-height:1.2em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.rs-op:hover{border-color:var(--accent); background:var(--accent-soft)}
-.rs-op:active{transform:scale(.97)}
-.rs-op input[type="date"]{position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; margin:0; cursor:pointer}
-/* modal da tarefa */
-.inp.tk-titulo{border:0; border-bottom:1px solid var(--line); border-radius:0; padding:2px 0 9px; font-size:18px; font-weight:700; line-height:1.35;
-  background:none; resize:none; min-height:0; overflow:hidden}
-.inp.tk-titulo:focus{outline:none; border-bottom-color:var(--accent)}
-.tk-pills{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
-.tk-pill{position:relative; display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 13px; border:1px solid var(--line2); border-radius:99px;
-  background:var(--surface); color:var(--muted); font-size:13px; font-weight:650; cursor:pointer; max-width:100%; white-space:nowrap}
-.tk-pill svg{width:15px; height:15px; flex:none}
-.tk-pill:hover{color:var(--ink); border-color:var(--muted)}
-.tk-pill.set{color:var(--ink)}
-.tk-pill.dt.set{color:var(--accent); background:var(--accent-soft); border-color:transparent}
-.tk-pill.dt.late{color:var(--danger); background:var(--danger-soft); border-color:transparent}
-.tk-pill input[type="date"]{position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; margin:0; cursor:pointer}
-.tk-pill.x{width:36px; padding:0; justify-content:center}
-.tk-pill.q{padding:0 12px; border-style:dashed}
-.tk-pill select{appearance:none; -webkit-appearance:none; border:0; background:none; font:inherit; color:inherit; padding:0; cursor:pointer; max-width:190px; overflow:hidden; text-overflow:ellipsis}
-.tk-pill select:focus{outline:none}
-.tk-pill:focus-within{outline:2px solid var(--accent); outline-offset:1px}
-.tk-pill .pdot{width:9px; height:9px}
-.tk-prio{display:flex; gap:6px; flex-wrap:wrap}
-.tk-flag{flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:6px; height:34px; padding:0 10px; border:1px solid var(--line2);
-  border-radius:10px; background:var(--surface); color:var(--muted); font-size:12.5px; font-weight:650; cursor:pointer; --pc:var(--ink)}
-.tk-flag svg{width:14px; height:14px; color:var(--pc)}
-.tk-flag.p0 svg{display:none}
-.tk-flag.p1{--pc:var(--muted)} .tk-flag.p2{--pc:var(--warn)} .tk-flag.p3{--pc:var(--danger)}
-.tk-flag:hover{border-color:var(--muted); color:var(--ink)}
-.tk-flag.on{border-color:var(--pc); color:var(--pc); box-shadow:inset 0 0 0 1px var(--pc); background:var(--surface2)}
-.tk-flag.p2.on{background:var(--warn-soft)} .tk-flag.p3.on{background:var(--danger-soft)}
-.tk-subn{font-family:var(--mono); font-weight:500; color:var(--muted); margin-left:4px}
-.tk-subs .subs:empty{display:none}
-.tk-subadd{display:flex; gap:8px; margin-top:8px}
-.tk-subs .subs:empty + .tk-subadd{margin-top:0}
-.tk-mais-btn{display:flex; align-items:center; gap:8px; border:0; background:none; padding:4px 0; color:var(--muted); font-size:13px; font-weight:650; cursor:pointer; align-self:flex-start}
-.tk-mais-btn:hover{color:var(--ink)}
-.tk-mais{display:flex; flex-direction:column; gap:13px; padding:0 0 4px}
-.mfoot .icon-btn.del:hover{color:var(--danger); border-color:var(--danger)}
+
+/* adicionar: no PC uma linha no topo; no celular uma folha que sobe pelo botão + */
+.tk-add{display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin:0 0 16px; padding:5px 6px 5px 16px; background:var(--surface);
+  border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
+.tk-add:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.tk-add #qaTitle{flex:1 1 220px; min-width:0; width:auto; border:0; background:none; padding:9px 0; font-size:15px; outline:none; box-shadow:none}
+.tk-ferr{display:flex; align-items:center; gap:2px}
+.tk-tool{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:5px; min-width:38px; height:38px; padding:0 8px; border:0;
+  border-radius:10px; background:none; color:var(--muted); font-size:12.5px; font-weight:650; cursor:pointer; white-space:nowrap}
+.tk-tool:hover{background:var(--surface2); color:var(--ink)}
+.tk-tool svg{width:19px; height:19px; flex:none}
+.tk-tool .em{font-size:17px; line-height:1}
+.tk-tool .pdot{width:10px; height:10px}
+.tk-tool.on{color:var(--accent); background:var(--accent-soft)}
+.tk-tool.p3{color:var(--danger); background:var(--danger-soft)} .tk-tool.p2{color:var(--warn); background:var(--warn-soft)} .tk-tool.p1{color:var(--accent); background:var(--accent-soft)}
+.tk-add .qdate{height:38px; min-width:38px; padding:0 8px; border:0; border-radius:10px; background:none; gap:5px}
+.tk-add .qdate.set{background:var(--accent-soft); color:var(--accent)}
+.tk-add .qa-caixa{width:38px; height:38px; border:0; border-radius:10px; background:none}
+.tk-add .qa-caixa.on{background:var(--accent-soft); color:var(--accent)}
+.tk-send{width:38px; height:38px; flex:none; border:0; border-radius:50%; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; cursor:pointer}
+.tk-send svg{width:20px; height:20px; stroke-width:2.4}
+.tk-send:active{transform:scale(.92)}
+.tk-add .qa-prev{flex-basis:100%; order:5; margin:0 0 6px; padding-right:10px}
+.qa-prev{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12.5px; line-height:1.3}
+.qa-prev:empty{display:none}
+.qa-tok{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:99px; background:var(--accent-soft); color:var(--accent); font-weight:650; white-space:nowrap}
+.qa-tok svg{width:13px; height:13px}
+.qa-tok .em{line-height:1}
+.qa-tok.pr2{background:var(--warn-soft); color:var(--warn)}
+.qa-tok.pr3{background:var(--danger-soft); color:var(--danger)}
+.qa-titulo{color:var(--muted); min-width:0; flex:1 1 120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.qa-dica{color:var(--muted)}
+.tk-fab{display:none}
+.tk-add-fundo{z-index:74; display:none}
+
+/* menus que abrem no toque */
+.tk-pop{position:fixed; z-index:300; min-width:224px; max-width:min(320px, calc(100vw - 24px)); max-height:min(72vh, 480px); overflow-y:auto;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:6px; box-shadow:0 16px 40px rgba(21,26,32,.2), 0 2px 6px rgba(21,26,32,.08);
+  animation:tkMenu .15s cubic-bezier(.2,.9,.3,1)}
+html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44px rgba(0,0,0,.6)}
+@keyframes tkMenu{from{opacity:0; transform:translateY(-4px) scale(.97)}to{opacity:1; transform:none}}
+.tk-mi{position:relative; display:flex; align-items:center; gap:11px; width:100%; min-height:42px; padding:9px 11px; border:0; border-radius:9px; background:none;
+  color:var(--ink); font-size:14px; font-weight:600; text-align:left; cursor:pointer}
+.tk-mi:hover{background:var(--surface2)}
+.tk-mi > svg{width:18px; height:18px; color:var(--muted); flex:none}
+.tk-mi .em{width:18px; text-align:center; font-size:17px; line-height:1; flex:none}
+.tk-mi .pdot{width:10px; height:10px; margin:0 4px}
+.tk-mi .l{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tk-mi small{font-size:12px; color:var(--muted); font-weight:500; white-space:nowrap}
+.tk-mi .c{font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--muted)}
+.tk-mi .ok{display:inline-flex; color:var(--accent)}
+.tk-mi .ok svg{width:16px; height:16px}
+.tk-mi.on{color:var(--accent)}
+.tk-mi.on > svg{color:var(--accent)}
+.tk-mi.del, .tk-mi.del > svg{color:var(--danger)}
+.tk-mi.f3 > svg{color:var(--danger)} .tk-mi.f2 > svg{color:var(--warn)} .tk-mi.f1 > svg{color:var(--accent)}
+.tk-mi input[type="date"]{position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; margin:0; cursor:pointer}
+.tk-mh{padding:8px 11px 4px; font-size:11.5px; font-weight:700; color:var(--muted); letter-spacing:.02em}
+.tk-msep{height:1px; background:var(--line); margin:5px 8px}
+.tk-tiles{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; padding:2px}
+.tk-tile{display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 4px 10px; border:0; border-radius:12px; background:var(--surface2);
+  color:var(--ink); font-size:12px; font-weight:600; cursor:pointer}
+.tk-tile svg{width:22px; height:22px; color:var(--accent)}
+.tk-tile.del svg{color:var(--danger)}
+.tk-tile:hover{filter:brightness(.97)}
+.tk-pop.tiles{min-width:300px}
+
+/* detalhe da tarefa */
+#mback.tk-det .mhead{display:none}
+#mback.tk-det .mbody{padding-top:12px; gap:10px}
+#mback.tk-det .mfoot{padding:8px 12px 10px; border-top:1px solid var(--line); gap:2px}
+.tkd-top{display:flex; align-items:center; gap:2px; margin:0 -8px 0 -6px}
+.tkd-proj{display:inline-flex; align-items:center; gap:8px; min-width:0; max-width:72%; height:40px; padding:0 10px; border:0; border-radius:11px; background:none;
+  color:var(--ink); font-size:15px; font-weight:700; cursor:pointer}
+.tkd-proj:hover{background:var(--surface2)}
+.tkd-proj span:not(.pdot):not(.em){overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tkd-proj .em{font-size:18px; line-height:1}
+.tkd-proj .pdot{width:10px; height:10px}
+.tkd-proj > svg{width:17px; height:17px; color:var(--muted); flex:none}
+.tkd-top .icon-btn{border:0; background:none; width:40px; height:40px; border-radius:11px}
+.tkd-top .icon-btn:hover{background:var(--surface2)}
+.tkd-top .icon-btn svg{width:20px; height:20px}
+.tkd-flag{color:var(--muted)} .tkd-flag.p1{color:var(--accent)} .tkd-flag.p2{color:var(--warn)} .tkd-flag.p3{color:var(--danger)}
+.tkd-flag.p0 svg path{fill:none; stroke:currentColor; stroke-width:1.6}
+.tkd-data{display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-height:38px}
+.tkd-data .ck{width:22px; height:22px}
+.tkd-due, .tkd-rep{display:inline-flex; align-items:center; gap:7px; border:0; background:none; padding:6px 8px; margin-left:-6px; border-radius:9px;
+  font-size:14.5px; font-weight:600; color:var(--muted); cursor:pointer}
+.tkd-due svg, .tkd-rep svg{width:17px; height:17px}
+.tkd-due.set{color:var(--accent)}
+.tkd-due.late{color:var(--danger)}
+.tkd-due:hover, .tkd-rep:hover{background:var(--surface2)}
+.tkd-rep{font-size:13px}
+#mback.tk-det .inp.tk-titulo{border:0; padding:2px 0; font-size:21px; font-weight:800; line-height:1.3; background:none; resize:none; min-height:0; overflow:hidden}
+.inp.tk-titulo:focus{outline:none}
+.inp.tkd-notas{border:0; padding:2px 0; background:none; resize:none; min-height:0; overflow:hidden; font-size:15px; line-height:1.5; color:var(--ink)}
+.inp.tkd-notas:focus{outline:none}
+.tkd-subs .subs{gap:2px}
+.tkd-subs .sub .inp{border:0; background:none; padding:6px 0; font-size:14.5px}
+.tkd-subs .sub .inp:focus{outline:none; box-shadow:inset 0 -1px 0 var(--accent)}
+.tkd-subs .sub .ck{width:18px; height:18px}
+.tk-subadd{display:flex; align-items:center; gap:8px; padding-left:1px; color:var(--muted)}
+.tk-subadd > svg{width:17px; height:17px; flex:none}
+.tk-subadd .inp{border:0; background:none; padding:6px 0; font-size:14.5px}
+.tk-subadd .inp:focus{outline:none; box-shadow:inset 0 -1px 0 var(--accent)}
+.tk-subadd .icon-btn{border:0; background:none}
+.tkd-chips{display:flex; flex-wrap:wrap; gap:6px}
+.tkd-chip{display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border:0; border-radius:99px; background:var(--surface2); color:var(--ink);
+  font-size:12.5px; font-weight:600; cursor:pointer}
+.tkd-chip svg{width:13px; height:13px}
+.tkd-chip.tag{color:var(--accent); background:var(--accent-soft)}
+.tkd-ed{border-top:1px solid var(--line); padding-top:12px; display:flex; flex-direction:column; gap:12px}
+.tkd-tool{width:42px; height:42px; flex:none; border:0; border-radius:11px; background:none; color:var(--muted); display:inline-flex; align-items:center; justify-content:center; cursor:pointer}
+.tkd-tool svg{width:21px; height:21px}
+.tkd-tool:hover{background:var(--surface2); color:var(--ink)}
+.tkd-tool.tem{color:var(--accent)}
+.tkd-tool.ab{background:var(--accent-soft); color:var(--accent)}
+.tkd-ok{width:42px; height:42px; flex:none; border:0; border-radius:50%; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; margin-left:4px}
+.tkd-ok svg{width:21px; height:21px; stroke-width:2.6}
+
+/* gerenciar projetos */
+.pjc{display:flex; flex-direction:column; gap:8px; padding:10px 0; border-bottom:1px solid var(--line)}
+.pjc.arq{opacity:.55}
+.pjc-l1, .pjc-l2{display:flex; align-items:center; gap:8px}
+.pjc .inp.pj-em{width:46px; flex:none; text-align:center; font-size:18px; padding:5px 4px}
+.pjc .inp{min-width:0}
+.pjc-l1 .inp:not(.pj-em){flex:1}
+.pjc .icon-btn{border:0; background:none}
+.pjc .icon-btn.del:hover{color:var(--danger)}
+.pj-cores{display:flex; gap:5px; flex-wrap:wrap}
+.pj-cor{width:22px; height:22px; border-radius:50%; border:2px solid transparent; padding:0; cursor:pointer}
+.pj-cor.on{border-color:var(--ink); box-shadow:inset 0 0 0 2px var(--surface)}
+.pjc-l2 .pj-pasta{flex:1; font-size:13px; padding:6px 10px}
+
 @media (max-width:760px){
-  .trow.tk{padding:12px 14px}
+  .tk-top{margin-bottom:12px}
+  .trow.tk{padding:11px 14px}
+  .tk-gh{padding:12px 14px}
   .tk-lote{padding:12px 14px}
+  .tk-fab{display:flex; position:fixed; right:calc(18px + var(--sar)); bottom:calc(82px + var(--sab)); z-index:45; width:58px; height:58px; border-radius:50%;
+    border:0; background:var(--accent); color:#fff; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(15,98,180,.35); cursor:pointer}
+  .tk-fab svg{width:28px; height:28px; stroke-width:2.3}
+  .tk-fab:active{transform:scale(.92)}
+  html[data-view="tarefas"] .toast{bottom:calc(152px + var(--sab))}
+  .tk-add{position:fixed; left:0; right:0; bottom:0; z-index:75; margin:0; padding:14px calc(12px + var(--sar)) calc(10px + var(--sab)) calc(16px + var(--sal));
+    border:0; border-radius:20px 20px 0 0; box-shadow:0 -10px 34px rgba(0,0,0,.2); transform:translateY(110%); visibility:hidden;
+    transition:transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s}
+  .tk-add:focus-within{border:0; box-shadow:0 -10px 34px rgba(0,0,0,.2)}
+  .tk-add.on{transform:none; visibility:visible; transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+  .tk-add #qaTitle{flex-basis:100%; font-size:16px; padding:6px 0 8px}
+  .tk-add .qa-prev{order:2; margin:0 0 4px}
+  .tk-ferr{order:3; flex:1}
+  .tk-send{order:4}
+  .tk-add-fundo{display:block}
 }
-.tk-flag, .tk-pill{transition:transform .09s ease, background .15s, color .15s, border-color .15s, box-shadow .15s}
-.tk-flag:active, .tk-pill:active{transform:scale(.96)}
-@media (hover:none){ .trow.tk:hover{background:var(--surface)} }
+@media (min-width:1100px){
+  .wrap:has(#view-tarefas.on){max-width:1180px}
+  #view-tarefas.on{display:grid; grid-template-columns:244px minmax(0, 1fr); gap:30px; align-items:start}
+  .tk-nav{position:sticky; top:calc(24px + var(--sat)); transform:none; visibility:visible; transition:none; box-shadow:none; background:none; width:auto;
+    max-height:calc(100vh - 48px); padding:4px 0 8px; z-index:auto}
+  .tk-nav-fundo, .tk-top .tk-burger{display:none}
+  .tk-ni{min-height:40px; font-size:14.5px}
+}
 
 /* ===================== App Android, notificações, sons e animações ===================== */
 /* áreas seguras: o app Android desenha atrás das barras do sistema */
@@ -1122,20 +1261,31 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
 
   <!-- ===== TAREFAS ===== -->
   <section class="view" id="view-tarefas">
-    <div class="vhead">
-      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>Tarefas</h1>
-      <div class="grow"></div>
-      <span id="tResumo"></span>
+    <aside class="tk-nav" id="tkNav" aria-label="Listas de tarefas"></aside>
+    <div class="tk-nav-fundo" data-action="tk-nav-fechar"></div>
+    <div class="tk-main">
+      <div class="tk-top">
+        <button class="icon-btn tk-burger" data-action="tk-nav" aria-label="Listas" title="Listas"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <h1 class="vtitle tk-tit" id="tTitulo" data-action="tk-nav"></h1>
+        <span id="tResumo"></span>
+        <button class="icon-btn" data-action="tk-opcoes" aria-haspopup="menu" aria-label="Opções da lista" title="Opções da lista"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+      </div>
+      <div class="tk-add" id="tkAdd">
+        <input class="inp" type="text" id="qaTitle" placeholder="Adicionar tarefa…" autocomplete="off" enterkeyhint="send">
+        <div class="tk-ferr">
+          <button class="tk-tool" id="qaDueBtn" data-action="qa-data" aria-haspopup="menu" title="Prazo"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span class="qd-lab"></span></button>
+          <input type="date" id="qaDue" hidden tabindex="-1" aria-hidden="true">
+          <button class="tk-tool" id="qaPrioBtn" data-action="qa-prio" aria-haspopup="menu" title="Prioridade"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg></button>
+          <button class="tk-tool" id="qaProjBtn" data-action="qa-proj" aria-haspopup="menu" title="Projeto"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></button>
+          <button class="tk-tool qa-caixa" data-action="qa-caixa" title="Caixa do dia: o que apareceu hoje" aria-label="Caixa do dia" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></button>
+        </div>
+        <button class="tk-send" data-action="qadd" aria-label="Adicionar" title="Adicionar (com o campo vazio, abre o detalhe)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+        <div class="qa-prev" id="qaPrev" aria-live="polite"></div>
+      </div>
+      <div class="tk-add-fundo" data-action="qa-fechar"></div>
+      <div id="tLista"></div>
     </div>
-    <div class="tk-bar" id="tBar"></div>
-    <div class="qadd">
-      <button class="qa-caixa" data-action="qa-caixa" title="Caixa do dia: o que apareceu hoje" aria-label="Caixa do dia" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></button>
-      <input class="inp" type="text" id="qaTitle" placeholder="Adicionar tarefa…" autocomplete="off" enterkeyhint="done">
-      <label class="qdate" title="Data"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span class="qd-lab"></span><input type="date" id="qaDue" aria-label="Data"></label>
-      <button class="btn btn-primary" data-action="qadd" aria-label="Adicionar" title="Adicionar (com o campo vazio, abre o formulário completo)">+</button>
-    </div>
-    <div class="qa-prev" id="qaPrev" aria-live="polite"></div>
-    <div id="tLista"></div>
+    <button class="tk-fab" data-action="qa-abrir" aria-label="Nova tarefa" title="Nova tarefa"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
   </section>
 
   <!-- ===== HÁBITOS ===== -->
@@ -1770,13 +1920,16 @@ function renderBottomNav(){
   if(!bn) return;
   bn.innerHTML = bt.map(v => {
     const t = TABS[v] || {ic:'circle',lb:v};
-    return '<button class="bn-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '"><span class="ic">' + licn(t.ic) + '</span>' + t.lb + '</button>';
-  }).join('') + '<button class="bn-item' + (!bt.includes(VIEW) && VIEW !== 'hoje' ? ' active' : '') + '" data-action="mais"><span class="ic">' + licn('menu') + '</span>Mais</button>';
+    return '<button class="bn-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '" aria-label="' + t.lb + '" title="' + t.lb + '"><span class="ic">' + licn(t.ic) + '</span></button>';
+  }).join('') + '<button class="bn-item' + (!bt.includes(VIEW) && VIEW !== 'hoje' ? ' active' : '') + '" data-action="mais" aria-label="Mais" title="Mais"><span class="ic">' + licn('menu') + '</span></button>';
   refreshIcons();
 }
 function setView(v){
   const mudou = v !== VIEW;
   VIEW = v;
+  document.documentElement.dataset.view = v;
+  popFechar();
+  if(v !== 'tarefas'){ TK_ADD = false; TK_NAV = false; }
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
   renderBottomNav();
@@ -1794,6 +1947,12 @@ function setView(v){
 
 /* ===================== Linhas e blocos ===================== */
 LICN['trash-2'] = '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
+LICN['more-vertical'] = '<circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/>';
+LICN['chevrons-up-down'] = '<path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>';
+LICN['copy'] = '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+LICN['tag'] = '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>';
+LICN['arrow-up'] = '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>';
+LICN['coffee'] = '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>';
 const DOW_LONGO_T = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 /* data com dia da semana: qui, 8 out */
@@ -1809,39 +1968,44 @@ function tkDataTxt(ds){
   if(ds === addD(t, -1)) return 'ontem';
   return tkDataAbs(ds);
 }
-/* o prazo só aparece na linha quando a seção ainda não diz qual é o dia */
+/* ícone do projeto: o emoji dele ou a bolinha da cor */
+function projIco(p){
+  if(p && p.emoji) return '<span class="em">' + esc(p.emoji) + '</span>';
+  return '<span class="pdot" style="background:' + CORES[(p && p.color) || 'grafite'] + '"></span>';
+}
+/* contexto da linha: palavras separadas por espaço (hoje, dia, feita, semproj) */
+const tkCtx = (ctx, w) => (' ' + (ctx || '') + ' ').indexOf(' ' + w + ' ') >= 0;
+/* a data só aparece quando o grupo ainda não diz qual é o dia; atrasada fica vermelha */
 function tkDueLabel(t, ctx){
-  if(t.status === 'done') return ctx === 'feita' && t.completedAt ? '<span class="tk-due">' + hhmm(t.completedAt) + '</span>' : '';
+  if(t.status === 'done') return tkCtx(ctx, 'feita') && t.completedAt ? '<span class="tk-due">' + hhmm(t.completedAt) + '</span>' : '';
   if(!t.due) return '';
   const td = today();
-  if(t.due < td){
-    const n = Math.round((fromD(td) - fromD(t.due)) / 864e5);
-    return '<span class="tk-due late">' + (n === 1 ? 'ontem' : 'há ' + n + ' dias') + '</span>';
-  }
-  if(ctx === 'hoje' || ctx === 'dia') return '';
+  if(t.due < td) return '<span class="tk-due late">' + (t.due === addD(td, -1) ? 'ontem' : fmtCurto(t.due)) + '</span>';
+  if(tkCtx(ctx, 'dia') || (t.due === td && tkCtx(ctx, 'hoje'))) return '';
   if(t.due === td) return '<span class="tk-due today">hoje</span>';
   if(t.due === addD(td, 1)) return '<span class="tk-due">amanhã</span>';
   if(t.due <= addD(td, 6)) return '<span class="tk-due">' + DOW[fromD(t.due).getDay()] + '</span>';
   return '<span class="tk-due">' + fmtCurto(t.due) + '</span>';
 }
-/* linha de tarefa: título em cima; projeto, subtarefas, repetição, notas, pessoas e etiquetas embaixo */
+/* linha de tarefa: título; embaixo projeto e etiquetas; à direita a data e os ícones do que ela tem */
 function taskRowHTML(t, ctx){
   const done = t.status === 'done';
   const p = projById(t.projectId);
-  let meta = '';
-  if(p && !(VIEW === 'tarefas' && TPROJ)) meta += '<span class="tk-proj"><span class="pdot" style="background:' + CORES[p.color] + '"></span><span class="nm">' + esc(p.name) + '</span></span>';
+  let meta = '', ics = '';
+  if(p && !tkCtx(ctx, 'semproj')) meta += '<span class="tk-proj">' + projIco(p) + '<span class="nm">' + esc(p.name) + '</span></span>';
+  (t.tags || []).slice(0, 3).forEach(tg => meta += '<span class="tk-tag">#' + esc(tg) + '</span>');
   if(t.subtasks && t.subtasks.length){
     const ok = t.subtasks.filter(s => s.done).length;
-    meta += '<span class="tk-m' + (ok === t.subtasks.length ? ' ok' : '') + '" title="Subtarefas feitas">' + licn('square-check') + ok + '/' + t.subtasks.length + '</span>';
+    ics += '<span class="tk-ic' + (ok === t.subtasks.length ? ' ok' : '') + '" title="Subtarefas feitas">' + licn('square-check') + '<span class="n">' + ok + '/' + t.subtasks.length + '</span></span>';
   }
-  if(t.recurrence && t.recurrence.type) meta += '<span class="tk-m" title="Repete">' + licn('repeat') + '</span>';
-  if(t.notes && String(t.notes).trim()) meta += '<span class="tk-m" title="Tem notas">' + licn('file-text') + '</span>';
-  (t.personIds || []).slice(0, 2).forEach(pid => { const pp = S.people.find(x => x.id === pid); if(pp) meta += '<span class="tk-m">' + licn('user') + esc(pp.name) + '</span>'; });
-  (t.tags || []).slice(0, 3).forEach(tg => meta += '<span class="tk-tag">#' + esc(tg) + '</span>');
+  if(t.notes && String(t.notes).trim()) ics += '<span class="tk-ic" title="Tem descrição">' + licn('file-text') + '</span>';
+  if(t.recurrence && t.recurrence.type) ics += '<span class="tk-ic" title="Repete">' + licn('repeat') + '</span>';
+  if((t.personIds || []).length) ics += '<span class="tk-ic" title="Pessoas">' + licn('user') + '</span>';
+  const due = tkDueLabel(t, ctx);
   return '<div class="trow tk' + (done ? ' done' : '') + '" data-action="open-task" data-id="' + t.id + '">' +
     '<button class="ck p' + (t.priority || 0) + (done ? ' on' : '') + '" data-action="ck" data-id="' + t.id + '" aria-label="' + (done ? 'Reabrir' : 'Concluir') + '"></button>' +
     '<span class="tk-body"><span class="tt">' + esc(t.title) + '</span>' + (meta ? '<span class="tk-meta">' + meta + '</span>' : '') + '</span>' +
-    tkDueLabel(t, ctx) +
+    (due || ics ? '<span class="tk-side">' + due + (ics ? '<span class="tk-ics">' + ics + '</span>' : '') + '</span>' : '') +
     (done ? '' : '<span class="tk-acts">' +
       '<button class="icon-btn sm" data-action="timer-task" data-id="' + t.id + '" title="Focar nesta tarefa" aria-label="Focar nesta tarefa">' + licn('timer') + '</button>' +
       '<button class="icon-btn sm" data-action="tk-reagendar" data-id="' + t.id + '" title="Reagendar" aria-label="Reagendar">' + licn('calendar') + '</button></span>') +
@@ -1851,7 +2015,7 @@ function listHTML(items, emptyMsg, ctx, rodape){
   if(!items.length) return emptyMsg ? '<div class="list"><div class="empty">' + emptyMsg + '</div></div>' : '';
   return '<div class="list tk-list">' + items.map(x => taskRowHTML(x, ctx)).join('') + (rodape || '') + '</div>';
 }
-/* cabeçalho de seção com contagem, ação à direita e dobra opcional */
+/* cabeçalho de seção da aba Hoje: contagem e dobra opcional */
 function tkSecHTML(label, n, o){
   o = o || {};
   return '<div class="seclab' + (o.cls ? ' ' + o.cls : '') + '"' + (o.fold ? ' data-action="' + o.fold + '"' : '') + '>' +
@@ -1989,131 +2153,299 @@ function renderHoje(){
 }
 
 /* ===================== Render: Tarefas ===================== */
-/* o que mostrar: chave, nome no botão, nome no menu, ícone */
-const TK_TABS = [['hoje', 'Hoje', 'Hoje', 'calendar-check'], ['prox', 'Próximos', 'Próximos 7 dias', 'calendar-days'],
-  ['todas', 'Todas', 'Todas em aberto', 'list'], ['feitas', 'Feitas', 'Feitas', 'check-circle']];
-let TK_FEITAS_OPEN = false;  /* concluídas hoje, no fim da aba Hoje */
-let TK_MENU = '';            /* menu aberto na barra: 'filtro', 'proj' ou nenhum */
-function tkBarHTML(cnt){
-  const f = TK_TABS.find(x => x[0] === TF) || TK_TABS[0];
-  const projs = S.projects.filter(p => !p.archived);
-  const pj = projById(TPROJ);
-  const abertasPj = id => S.tasks.filter(x => x.status !== 'done' && (!id || x.projectId === id)).length;
-  const conta = k => k !== 'feitas' && cnt[k] ? '<span class="c">' + cnt[k] + '</span>' : '';
-  const mark = on => on ? '<span class="ok">' + licn('check') + '</span>' : '';
-  let h = '<div class="tk-ddw"><button class="tk-dd' + (TK_MENU === 'filtro' ? ' open' : '') + '" data-action="tk-menu" data-m="filtro" aria-haspopup="menu" aria-expanded="' + (TK_MENU === 'filtro') + '">' +
-    '<span class="l">' + f[1] + '</span>' + conta(f[0]) + licn('chevron-down') + '</button>';
-  if(TK_MENU === 'filtro') h += '<div class="tk-menu" role="menu" aria-label="Mostrar">' + TK_TABS.map(([k, , longo, ic]) =>
-    '<button class="tk-mi' + (TF === k ? ' on' : '') + '" role="menuitemradio" aria-checked="' + (TF === k) + '" data-action="filtro" data-f="' + k + '">' +
-      licn(ic) + '<span class="l">' + longo + '</span>' + conta(k) + mark(TF === k) + '</button>').join('') + '</div>';
-  h += '</div><div class="tk-ddw"><button class="tk-dd' + (TK_MENU === 'proj' ? ' open' : '') + '" data-action="tk-menu" data-m="proj" aria-haspopup="menu" aria-expanded="' + (TK_MENU === 'proj') + '">' +
-    (pj ? '<span class="pdot" style="background:' + CORES[pj.color] + '"></span><span class="l">' + esc(pj.name) + '</span>' : '<span class="l">' + (projs.length ? 'Todos os projetos' : 'Projetos') + '</span>') +
-    licn('chevron-down') + '</button>';
-  if(TK_MENU === 'proj') h += '<div class="tk-menu" role="menu" aria-label="Projeto">' +
-    (projs.length ? '<button class="tk-mi' + (!TPROJ ? ' on' : '') + '" role="menuitemradio" aria-checked="' + !TPROJ + '" data-action="tk-proj" data-id="">' + licn('folder') +
-      '<span class="l">Todos os projetos</span><span class="c">' + abertasPj('') + '</span>' + mark(!TPROJ) + '</button>' : '') +
-    projs.map(p => '<button class="tk-mi' + (TPROJ === p.id ? ' on' : '') + '" role="menuitemradio" aria-checked="' + (TPROJ === p.id) + '" data-action="tk-proj" data-id="' + p.id + '">' +
-      '<span class="pdot" style="background:' + CORES[p.color] + '"></span><span class="l">' + esc(p.name) + '</span><span class="c">' + abertasPj(p.id) + '</span>' + mark(TPROJ === p.id) + '</button>').join('') +
-    (projs.length ? '<div class="tk-msep"></div>' : '') +
-    '<button class="tk-mi ger" role="menuitem" data-action="projetos">' + licn(projs.length ? 'settings' : 'plus') + '<span class="l">' + (projs.length ? 'Gerenciar projetos' : 'Criar projeto') + '</span></button></div>';
-  return h + '</div>';
+/* Camadas: gaveta de listas (Hoje, Próximos 7 dias, Todas, Feitas, etiquetas, pastas e projetos),
+   a lista escolhida em cartões (por projeto, data ou prioridade) e o detalhe da tarefa. */
+let TTAG = '';                 /* etiqueta aberta, quando TF === 'tag' */
+let TK_NAV = false;            /* gaveta aberta (celular e tela média) */
+let TK_ADD = false;            /* folha de adicionar aberta (celular) */
+const TK_LISTAS = {hoje:'Hoje', prox:'Próximos 7 dias', todas:'Todas', feitas:'Feitas'};
+const TK_GRUPO_PAD = {hoje:'projeto', prox:'data', todas:'projeto', proj:'data', tag:'data'};
+function tkLS(k, pad){ try{ const v = JSON.parse(localStorage.getItem('central.' + k) || 'null'); return v == null ? pad : v; }catch(e){ return pad; } }
+function tkLSset(k, v){ try{ localStorage.setItem('central.' + k, JSON.stringify(v)); }catch(e){} }
+let TK_GRUPO = tkLS('tkGrupo', {});    /* como cada lista agrupa */
+let TK_DOBRA = tkLS('tkDobra', {});    /* cartões abertos (true) ou fechados (false) */
+let TK_PASTAS = tkLS('tkPastas', {});  /* pastas e etiquetas abertas ('a') ou fechadas ('f') na gaveta */
+(() => { const l = tkLS('tkLista', null); if(l && l.f){ TF = l.f; TPROJ = l.p || ''; TTAG = l.t || ''; } })();
+
+/* ícone do Hoje: calendário com o número do dia */
+function tkIcoHoje(){
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/>' +
+    '<text x="12" y="18.2" text-anchor="middle" font-size="9.5" font-weight="800" fill="currentColor" stroke="none" font-family="Archivo, system-ui, sans-serif">' + fromD(today()).getDate() + '</text></svg>';
 }
-/* o menu não passa da borda direita da tela */
-function tkMenuAjusta(){
-  const m = document.querySelector('#tBar .tk-menu');
-  if(!m) return;
-  const r = m.getBoundingClientRect(), sobra = r.right - (window.innerWidth - 12);
-  if(sobra > 0) m.style.left = -sobra + 'px';
+/* projetos ativos na ordem da gaveta: pastas em ordem (1. Projetos, 2. Áreas...), depois os soltos */
+function tkProjsOrdenados(comArquivados){
+  const ps = S.projects.filter(p => comArquivados || !p.archived);
+  const pasta = p => (p.pasta || '').trim();
+  return ps.slice().sort((a, b) => {
+    const pa = pasta(a), pb = pasta(b);
+    if(pa !== pb){ if(!pa) return 1; if(!pb) return -1; return pa.localeCompare(pb, 'pt', {numeric:true}); }
+    return (a.order || 0) - (b.order || 0) || a.name.localeCompare(b.name, 'pt');
+  });
+}
+function tkValida(){
+  if(TF === 'semdata') TF = 'todas';
+  if(!['hoje', 'prox', 'todas', 'feitas', 'proj', 'tag'].includes(TF)) TF = 'hoje';
+  if(TF === 'proj' && !projById(TPROJ)){ TF = 'hoje'; TPROJ = ''; }
+  if(TF !== 'proj') TPROJ = '';
+  if(TF === 'tag' && !S.tasks.some(x => (x.tags || []).includes(TTAG))){ TF = 'hoje'; TTAG = ''; }
+  if(TF !== 'tag') TTAG = '';
+}
+function tkIrPara(f, p, t){
+  TF = f; TPROJ = f === 'proj' ? (p || '') : ''; TTAG = f === 'tag' ? (t || '') : '';
+  tkValida();
+  tkLSset('tkLista', {f:TF, p:TPROJ, t:TTAG});
+}
+const tkEhCaixa = (x, t) => !!(x.inbox && x.inboxDate === (t || today()));
+/* tarefas em aberto da lista atual */
+function tkBase(){
+  const t = today();
+  const abertas = S.tasks.filter(x => x.status !== 'done');
+  if(TF === 'hoje') return abertas.filter(x => tkEhCaixa(x, t) || (x.due && x.due <= t));
+  if(TF === 'prox') return abertas.filter(x => !tkEhCaixa(x, t) && x.due && x.due <= addD(t, 7));
+  if(TF === 'todas') return abertas;
+  if(TF === 'proj') return abertas.filter(x => x.projectId === TPROJ);
+  if(TF === 'tag') return abertas.filter(x => (x.tags || []).includes(TTAG));
+  return [];
+}
+/* concluídas que aparecem no fim da lista */
+function tkFeitasDaLista(){
+  const t = today();
+  const feitas = S.tasks.filter(x => x.status === 'done');
+  if(TF === 'hoje') return feitas.filter(x => x.completedAt && dstr(new Date(x.completedAt)) === t);
+  if(TF === 'proj') return feitas.filter(x => x.projectId === TPROJ);
+  if(TF === 'tag') return feitas.filter(x => (x.tags || []).includes(TTAG));
+  return [];
+}
+function tkModo(){
+  if(TF === 'feitas') return 'dia';
+  const m = TK_GRUPO[TF] || TK_GRUPO_PAD[TF] || 'data';
+  return TF === 'proj' && m === 'projeto' ? 'data' : m;
+}
+/* chave do cartão para lembrar se está aberto: vale por lista */
+const tkChave = k => TF + (TF === 'proj' ? ':' + TPROJ : TF === 'tag' ? ':' + TTAG : '') + '|' + k;
+function tkAberto(k, pad){ const c = tkChave(k); return c in TK_DOBRA ? !!TK_DOBRA[c] : pad; }
+function tkGrupos(){
+  const t = today(), modo = tkModo(), gs = [];
+  const sp = TF === 'proj' ? ' semproj' : '';
+  const ctxHoje = (TF === 'hoje' ? 'hoje' : '') + sp;
+  if(modo === 'dia'){
+    const porDia = {};
+    S.tasks.filter(x => x.status === 'done').sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''))
+      .forEach(x => { const k = x.completedAt ? dstr(new Date(x.completedAt)) : ''; (porDia[k] = porDia[k] || []).push(x); });
+    Object.keys(porDia).sort().reverse().slice(0, 60).forEach(k =>
+      gs.push({k:'f:' + k, ic:'check-circle', nome:k ? cap1(tkDataTxt(k)) : 'Sem data de conclusão', itens:porDia[k], ctx:'feita', cls:'ok'}));
+    return gs;
+  }
+  const base = tkBase();
+  const cx = sortTasks(base.filter(x => tkEhCaixa(x, t)));
+  const resto = base.filter(x => !tkEhCaixa(x, t));
+  if(cx.length) gs.push({k:'cx', ic:'inbox', nome:'Caixa do dia', itens:cx, ctx:sp.trim()});
+  if(modo === 'projeto'){
+    const porPj = {}, sem = [];
+    resto.forEach(x => { const p = projById(x.projectId); if(p) (porPj[p.id] = porPj[p.id] || []).push(x); else sem.push(x); });
+    tkProjsOrdenados(true).forEach(p => {
+      if(porPj[p.id]) gs.push({k:'p:' + p.id, proj:p, nome:p.name, itens:sortTasks(porPj[p.id]), ctx:(ctxHoje + ' semproj').trim()});
+    });
+    if(sem.length) gs.push({k:'p:', ic:'circle-minus', nome:'Sem projeto', itens:sortTasks(sem), ctx:ctxHoje.trim()});
+  }else if(modo === 'prioridade'){
+    [[3, 'Alta'], [2, 'Média'], [1, 'Baixa'], [0, 'Sem prioridade']].forEach(([p, nome]) => {
+      const xs = sortTasks(resto.filter(x => (x.priority || 0) === p));
+      if(xs.length) gs.push({k:'pr:' + p, flag:p, nome, itens:xs, ctx:ctxHoje.trim()});
+    });
+  }else{
+    const atras = sortTasks(resto.filter(x => x.due && x.due < t));
+    if(atras.length) gs.push({k:'d:atras', ic:'alert-circle', nome:'Atrasadas', itens:atras, ctx:sp.trim(), cls:'late', rodape:tkMoverBtn(atras.length)});
+    if(TF === 'prox'){
+      for(let i = 0; i <= 7; i++){
+        const ds = addD(t, i), xs = sortTasks(resto.filter(x => x.due === ds));
+        if(!xs.length) continue;
+        const d = fromD(ds);
+        gs.push({k:'d:' + i, ic:i ? 'calendar-days' : 'calendar-check', itens:xs, ctx:('dia' + sp).trim(),
+          nome:i === 0 ? 'Hoje' : i === 1 ? 'Amanhã' : cap1(DOW_LONGO_T[d.getDay()]) + ', ' + d.getDate() + ' ' + MES[d.getMonth()]});
+      }
+    }else{
+      [['hoje', 'Hoje', 'calendar-check', x => x.due === t, 'hoje'], ['amanha', 'Amanhã', 'calendar-days', x => x.due === addD(t, 1), 'dia'],
+       ['semana', 'Esta semana', 'calendar-range', x => x.due > addD(t, 1) && x.due <= addD(t, 7), ''], ['depois', 'Depois', 'calendar-plus', x => x.due > addD(t, 7), ''],
+       ['sem', 'Sem data', 'circle-minus', x => !x.due, '']].forEach(([k, nome, ic, f, ctx]) => {
+        const xs = sortTasks(resto.filter(x => (!x.due || x.due >= t) && f(x)));
+        if(xs.length) gs.push({k:'d:' + k, ic, nome, itens:xs, ctx:(ctx + sp).trim()});
+      });
+    }
+  }
+  const feitas = tkFeitasDaLista().sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
+  if(feitas.length) gs.push({k:'feitas', ic:'check-circle', nome:'Concluídas', itens:feitas.slice(0, 100), n:feitas.length, ctx:('feita' + sp).trim(), cls:'ok', aberto:false});
+  return gs;
+}
+function tkGrupoHTML(g){
+  const ab = tkAberto(g.k, g.aberto !== false);
+  const ico = g.proj ? projIco(g.proj) : g.flag != null ? TK_FLAG : licn(g.ic);
+  return '<section class="tk-g' + (g.cls ? ' ' + g.cls : '') + (g.proj ? ' cor' : '') + '"' + (g.proj ? ' style="--gc:' + CORES[g.proj.color] + '"' : '') + '>' +
+    '<button class="tk-gh" data-action="tk-fold" data-k="' + esc(tkChave(g.k)) + '" aria-expanded="' + ab + '">' +
+      '<span class="tk-gi' + (g.flag != null ? ' p' + g.flag : '') + '">' + ico + '</span><span class="tk-gn">' + esc(g.nome) + '</span>' +
+      '<span class="tk-gc">' + (g.n || g.itens.length) + '</span>' + licn(ab ? 'chevron-down' : 'chevron-right') + '</button>' +
+    (ab ? '<div class="tk-gl tk-list">' + g.itens.map(x => taskRowHTML(x, g.ctx)).join('') + (g.rodape || '') + '</div>' : '') +
+  '</section>';
+}
+/* gaveta: listas inteligentes, etiquetas, pastas e projetos */
+function renderTkNav(){
+  const el = $('#tkNav');
+  if(!el) return;
+  const t = today();
+  const abertas = S.tasks.filter(x => x.status !== 'done');
+  const cnt = {hoje:abertas.filter(x => tkEhCaixa(x, t) || (x.due && x.due <= t)).length,
+    prox:abertas.filter(x => !tkEhCaixa(x, t) && x.due && x.due <= addD(t, 7)).length, todas:abertas.length};
+  const item = (on, attrs, ico, nome, c, cls) => '<button class="tk-ni' + (on ? ' on' : '') + (cls ? ' ' + cls : '') + '" ' + attrs + '>' +
+    '<span class="ic">' + ico + '</span><span class="l">' + nome + '</span>' + (c ? '<span class="c">' + c + '</span>' : '') + '</button>';
+  const aberta = k => TK_PASTAS[k] ? TK_PASTAS[k] === 'a' : k.charAt(0) !== '#';
+  let h = item(TF === 'hoje', 'data-action="tk-lista" data-f="hoje"', tkIcoHoje(), 'Hoje', cnt.hoje) +
+    item(TF === 'prox', 'data-action="tk-lista" data-f="prox"', licn('calendar-days'), 'Próximos 7 dias', cnt.prox) +
+    item(TF === 'todas', 'data-action="tk-lista" data-f="todas"', licn('list'), 'Todas', cnt.todas) +
+    item(TF === 'feitas', 'data-action="tk-lista" data-f="feitas"', licn('check-circle'), 'Feitas', '');
+  const tags = {};
+  abertas.forEach(x => (x.tags || []).forEach(g => tags[g] = (tags[g] || 0) + 1));
+  const nomes = Object.keys(tags).sort((a, b) => a.localeCompare(b, 'pt'));
+  if(nomes.length){
+    h += '<button class="tk-ni grupo" data-action="tk-pasta" data-k="#" aria-expanded="' + aberta('#') + '"><span class="ic">' + licn('tag') + '</span><span class="l">Etiquetas</span>' + chevHTML(aberta('#')) + '</button>';
+    if(aberta('#')) h += nomes.map(g => item(TF === 'tag' && TTAG === g, 'data-action="tk-lista" data-f="tag" data-t="' + esc(g) + '"', '<span class="hash">#</span>', esc(g), tags[g], 'sub')).join('');
+  }
+  h += '<div class="tk-nsep"></div>';
+  const cntPj = id => abertas.filter(x => x.projectId === id).length;
+  const pastas = {}, soltos = [];
+  tkProjsOrdenados().forEach(p => { const k = (p.pasta || '').trim(); if(k) (pastas[k] = pastas[k] || []).push(p); else soltos.push(p); });
+  const pjItem = (p, cls) => item(TF === 'proj' && TPROJ === p.id, 'data-action="tk-lista" data-f="proj" data-p="' + p.id + '"', projIco(p), esc(p.name), cntPj(p.id), cls);
+  Object.keys(pastas).sort((a, b) => a.localeCompare(b, 'pt', {numeric:true})).forEach(k => {
+    const ab = aberta('p:' + k), tot = pastas[k].reduce((s, p) => s + cntPj(p.id), 0);
+    h += '<button class="tk-ni grupo" data-action="tk-pasta" data-k="p:' + esc(k) + '" aria-expanded="' + ab + '"><span class="ic">' + licn('folder') + '</span>' +
+      '<span class="l">' + esc(k) + '</span>' + (tot ? '<span class="c">' + tot + '</span>' : '') + chevHTML(ab) + '</button>';
+    if(ab) h += pastas[k].map(p => pjItem(p, 'sub')).join('');
+  });
+  h += soltos.map(p => pjItem(p)).join('');
+  h += '<div class="tk-nfoot"><button class="btn btn-ghost btn-sm" data-action="tk-proj-novo">' + licn('plus') + 'Projeto</button><span class="grow"></span>' +
+    '<button class="icon-btn" data-action="projetos" title="Gerenciar projetos e pastas" aria-label="Gerenciar projetos e pastas">' + licn('settings') + '</button></div>';
+  el.innerHTML = h;
+}
+function tkNavSync(){
+  const n = $('#tkNav'), f = document.querySelector('.tk-nav-fundo');
+  if(n) n.classList.toggle('on', TK_NAV);
+  if(f) f.classList.toggle('on', TK_NAV);
+}
+function tkAddSync(){
+  const a = $('#tkAdd'), f = document.querySelector('.tk-add-fundo');
+  if(a) a.classList.toggle('on', TK_ADD);
+  if(f) f.classList.toggle('on', TK_ADD);
 }
 function renderTarefas(){
+  tkValida();
   const t = today();
-  if(TF === 'semdata') TF = 'todas';
-  if(!TK_TABS.some(([k]) => k === TF)) TF = 'hoje';
-  if(TPROJ && !S.projects.find(p => p.id === TPROJ && !p.archived)) TPROJ = '';
-  const ehCaixa = x => x.inbox && x.inboxDate === t;
-  const feitaHoje = x => !!x.completedAt && dstr(new Date(x.completedAt)) === t;
-  const all = S.tasks.filter(x => !TPROJ || x.projectId === TPROJ);
-  const caixa = sortTasks(all.filter(x => ehCaixa(x) && x.status !== 'done'));
-  const open = all.filter(x => !ehCaixa(x) && x.status !== 'done');
-  const atras = sortTasks(open.filter(x => x.due && x.due < t));
-  const hojeL = sortTasks(open.filter(x => x.due === t));
-  const feitas = all.filter(x => x.status === 'done').sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
-  const feitasHoje = feitas.filter(feitaHoje);
-  const cnt = {hoje:caixa.length + atras.length + hojeL.length, prox:open.filter(x => x.due && x.due <= addD(t, 7)).length,
-    todas:open.length + caixa.length, feitas:feitas.length};
-
-  /* o que mostrar e de qual projeto: dois menus que só abrem no toque */
-  $('#tBar').innerHTML = tkBarHTML(cnt);
-  tkMenuAjusta();
-  /* progresso do dia no cabeçalho, sem o filtro de projeto */
-  const pend = S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= t) || ehCaixa(x))).length;
-  const fh = S.tasks.filter(x => x.status === 'done' && feitaHoje(x)).length;
-  $('#tResumo').innerHTML = !(pend + fh) ? '' : '<span class="hj-pill' + (!pend ? ' ok' : '') + '" title="Concluídas hoje: ' + fh + ' de ' + (pend + fh) + '">' +
-    licn('check') + fh + '/' + (pend + fh) + '</span>';
-
-  let out = '';
-  const secCaixa = () => !caixa.length ? '' : tkSecHTML('Caixa do dia', caixa.length, {icon:'inbox', fold:'toggle-caixa', aberto:CAIXA_OPEN}) + (CAIXA_OPEN ? listHTML(caixa, '', 'caixa') : '');
-  const secAtras = () => !atras.length ? '' : tkSecHTML('Atrasadas', atras.length, {icon:'alert-circle', cls:'danger', fold:'toggle-atrasadas', aberto:ATRASADAS_OPEN}) +
-    (ATRASADAS_OPEN ? listHTML(atras, '', 'atras', tkMoverBtn(atras.length)) : '');
+  /* topo: só o nome da lista */
+  let nome = TK_LISTAS[TF] || '', ico = '';
+  if(TF === 'proj'){ const p = projById(TPROJ); nome = p ? p.name : ''; if(p && p.emoji) ico = '<span class="em">' + esc(p.emoji) + '</span>'; }
+  if(TF === 'tag') nome = '#' + TTAG;
+  $('#tTitulo').innerHTML = ico + '<span class="nm">' + esc(nome) + '</span>';
   if(TF === 'hoje'){
-    out += secCaixa() + secAtras();
-    out += tkSecHTML('Hoje', hojeL.length, {icon:'calendar-check'});
-    if(hojeL.length) out += listHTML(hojeL, '', 'hoje');
-    else{
-      const amanha = open.filter(x => x.due === addD(t, 1)).length;
-      out += '<div class="list"><div class="empty">' + (cnt.hoje ? 'Nada com prazo para hoje.' : feitasHoje.length ? 'Tudo feito por hoje.' : 'Nada para hoje.') +
-        (amanha ? '<button class="btn btn-sm" data-action="filtro" data-f="prox">' + amanha + ' para amanhã</button>' : '') + '</div></div>';
-    }
-    if(feitasHoje.length){
-      out += tkSecHTML('Concluídas hoje', feitasHoje.length, {icon:'check-circle', cls:'feitas', fold:'tk-feitas', aberto:TK_FEITAS_OPEN});
-      if(TK_FEITAS_OPEN) out += listHTML(feitasHoje, '', 'feita');
-    }
-  }else if(TF === 'prox'){
-    out += secAtras();
-    let algum = false;
-    for(let i = 0; i <= 7; i++){
-      const ds = addD(t, i), doDia = sortTasks(open.filter(x => x.due === ds));
-      if(!doDia.length) continue;
-      algum = true;
-      const d = fromD(ds);
-      const lab = i === 0 ? 'Hoje' : i === 1 ? 'Amanhã' : cap1(DOW_LONGO_T[d.getDay()]) + ', ' + d.getDate() + ' ' + MES[d.getMonth()];
-      out += tkSecHTML(lab, doDia.length, {icon:i === 0 ? 'calendar-check' : 'calendar-days',
-        extra:'<button class="icon-btn sm" data-action="tk-nova-dia" data-ds="' + ds + '" title="Nova tarefa neste dia" aria-label="Nova tarefa neste dia">' + licn('plus') + '</button>'}) +
-        listHTML(doDia, '', 'dia');
-    }
-    if(!algum) out += '<div class="list"><div class="empty">Nada marcado para os próximos 7 dias.</div></div>';
-  }else if(TF === 'todas'){
-    out += secCaixa() + secAtras();
-    const grupos = [
-      ['Hoje', 'calendar-check', x => x.due === t, 'hoje'],
-      ['Amanhã', 'calendar-days', x => x.due === addD(t, 1), 'dia'],
-      ['Esta semana', 'calendar-range', x => x.due > addD(t, 1) && x.due <= addD(t, 7), ''],
-      ['Depois', 'calendar-plus', x => x.due > addD(t, 7), ''],
-      ['Sem data', 'circle-minus', x => !x.due, '']
-    ];
-    grupos.forEach(([lab, ic, f, ctx]) => {
-      const xs = sortTasks(open.filter(x => (!x.due || x.due >= t) && f(x)));
-      if(xs.length) out += tkSecHTML(lab, xs.length, {icon:ic}) + listHTML(xs, '', ctx);
-    });
-    if(!open.length && !caixa.length) out += '<div class="list"><div class="empty">Nenhuma tarefa em aberto.</div></div>';
-  }else{
-    if(feitas.length) out += '<div class="tk-feitas-topo"><span>' + feitas.length + (feitas.length === 1 ? ' concluída' : ' concluídas') + '</span>' +
-      '<button class="btn btn-danger btn-sm" data-action="apagar-feitas">Apagar concluídas</button></div>';
-    const porDia = {};
-    feitas.forEach(x => { const k = x.completedAt ? dstr(new Date(x.completedAt)) : ''; (porDia[k] = porDia[k] || []).push(x); });
-    Object.keys(porDia).sort().reverse().forEach(k => {
-      out += tkSecHTML(k ? cap1(tkDataTxt(k)) : 'Sem data de conclusão', porDia[k].length, {icon:'check-circle', cls:'feitas'}) + listHTML(porDia[k], '', 'feita');
-    });
-    if(!feitas.length) out += '<div class="list"><div class="empty">Nenhuma tarefa concluída ainda.</div></div>';
+    const pend = S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= t) || tkEhCaixa(x, t))).length;
+    const fh = S.tasks.filter(x => x.status === 'done' && x.completedAt && dstr(new Date(x.completedAt)) === t).length;
+    $('#tResumo').innerHTML = !(pend + fh) ? '' : '<span class="hj-pill' + (!pend ? ' ok' : '') + '" title="Concluídas hoje: ' + fh + ' de ' + (pend + fh) + '">' +
+      licn('check') + fh + '/' + (pend + fh) + '</span>';
+  }else $('#tResumo').innerHTML = '';
+  renderTkNav(); tkNavSync(); tkAddSync(); qaFerrSync();
+  /* cartões */
+  const gs = tkGrupos();
+  let out = gs.map(tkGrupoHTML).join('');
+  if(!gs.length){
+    const prox = S.tasks.filter(x => x.status !== 'done' && x.due && x.due > t && x.due <= addD(t, 7)).length;
+    const v = {
+      hoje:[S.tasks.some(x => x.status === 'done' && x.completedAt && dstr(new Date(x.completedAt)) === t) ? 'check-circle' : 'coffee',
+        S.tasks.some(x => x.status === 'done' && x.completedAt && dstr(new Date(x.completedAt)) === t) ? 'Tudo feito por hoje.' : 'Nada para hoje.'],
+      prox:['calendar-days', 'Nada nos próximos 7 dias.'], todas:['list', 'Nenhuma tarefa em aberto.'],
+      proj:['folder', 'Nada neste projeto.'], tag:['tag', 'Nenhuma tarefa com essa etiqueta.'], feitas:['check-circle', 'Nenhuma tarefa concluída ainda.']
+    }[TF];
+    out = '<div class="tk-vazio">' + licn(v[0]) + '<p>' + v[1] + '</p>' +
+      (TF === 'hoje' && prox ? '<button class="btn btn-sm" data-action="tk-lista" data-f="prox">Ver os próximos 7 dias (' + prox + ')</button>' : '') + '</div>';
   }
   $('#tLista').innerHTML = out;
   qaPreview();
   /* dica única no celular: arrastar a linha */
-  if(open.length && window.matchMedia && matchMedia('(pointer: coarse)').matches){
+  if(window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#tLista .trow.tk:not(.done)')){
     let visto = true;
     try{ visto = localStorage.getItem('central.dicaArrastar') === '1'; if(!visto) localStorage.setItem('central.dicaArrastar', '1'); }catch(e){}
     if(!visto) setTimeout(() => toast('Dica: arraste uma tarefa para a direita para concluir, para a esquerda para reagendar.'), 700);
   }
+}
+/* menu ⋮ da lista */
+function tkOpcoesHTML(){
+  const modo = tkModo(), t = today();
+  let h = '';
+  if(TF !== 'feitas'){
+    const ops = [['projeto', 'Projeto', 'folder'], ['data', 'Data', 'calendar'], ['prioridade', 'Prioridade', 'flag']].filter(([k]) => !(TF === 'proj' && k === 'projeto'));
+    h += '<div class="tk-mh">Agrupar por</div>' + ops.map(([k, nome, ic]) =>
+      '<button class="tk-mi' + (modo === k ? ' on' : '') + '" role="menuitemradio" aria-checked="' + (modo === k) + '" data-action="tk-grupo" data-g="' + k + '">' + licn(ic) +
+      '<span class="l">' + nome + '</span>' + (modo === k ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>').join('');
+  }
+  const atras = TF === 'feitas' ? 0 : tkBase().filter(x => x.due && x.due < t && !tkEhCaixa(x, t)).length;
+  const feitas = TF === 'feitas' ? S.tasks.filter(x => x.status === 'done').length : TF === 'proj' ? tkFeitasDaLista().length : 0;
+  let ac = '';
+  if(atras) ac += '<button class="tk-mi" role="menuitem" data-action="tk-mover-atrasadas">' + licn('calendar-check') + '<span class="l">Mover ' + (atras > 1 ? 'as ' + atras + ' atrasadas' : 'a atrasada') + ' para hoje</span></button>';
+  if(feitas) ac += '<button class="tk-mi del" role="menuitem" data-action="apagar-feitas">' + licn('trash-2') + '<span class="l">Apagar concluídas</span><span class="c">' + feitas + '</span></button>';
+  ac += TF === 'proj' ? '<button class="tk-mi" role="menuitem" data-action="projetos">' + licn('pencil') + '<span class="l">Editar projeto</span></button>' :
+    '<button class="tk-mi" role="menuitem" data-action="projetos">' + licn('settings') + '<span class="l">Gerenciar projetos</span></button>';
+  return h + (h ? '<div class="tk-msep"></div>' : '') + ac;
+}
+
+/* ===================== Menus que abrem no toque ===================== */
+let POP = null;
+function popAbrir(anchor, html, o){
+  popFechar();
+  o = o || {};
+  const el = document.createElement('div');
+  el.className = 'tk-pop' + (o.cls ? ' ' + o.cls : '');
+  el.setAttribute('role', 'menu');
+  el.innerHTML = html;
+  document.body.appendChild(el);
+  const r = anchor.getBoundingClientRect(), w = el.offsetWidth, hgt = el.offsetHeight, m = 12;
+  let left = o.direita ? r.right - w : r.left;
+  left = Math.max(m, Math.min(left, window.innerWidth - w - m));
+  let top = r.bottom + 6;
+  if(top + hgt > window.innerHeight - m && r.top - 6 - hgt >= m) top = r.top - 6 - hgt;
+  top = Math.max(m, Math.min(top, window.innerHeight - hgt - m));
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+  anchor.setAttribute('aria-expanded', 'true');
+  POP = {el, anchor};
+  return el;
+}
+function popFechar(){
+  if(!POP) return;
+  POP.el.remove();
+  if(POP.anchor) POP.anchor.setAttribute('aria-expanded', 'false');
+  POP = null;
+}
+/* tocar fora fecha o menu e não faz mais nada */
+document.addEventListener('click', e => {
+  if(!POP || POP.el.contains(e.target)) return;
+  popFechar();
+  e.stopPropagation(); e.preventDefault();
+}, true);
+window.addEventListener('scroll', e => { if(POP && !(e.target && e.target.nodeType === 1 && POP.el.contains(e.target))) popFechar(); }, true);
+window.addEventListener('resize', () => popFechar());
+/* lista de projetos para escolher (pastas como títulos) */
+function tkProjMenuHTML(atual, acao){
+  let h = '<button class="tk-mi' + (!atual ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-id="">' + licn('circle-minus') + '<span class="l">Sem projeto</span>' +
+    (!atual ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  let pasta = null;
+  tkProjsOrdenados().forEach(p => {
+    const k = (p.pasta || '').trim();
+    if(k !== pasta){ pasta = k; h += k ? '<div class="tk-mh">' + esc(k) + '</div>' : '<div class="tk-msep"></div>'; }
+    h += '<button class="tk-mi' + (atual === p.id ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-id="' + p.id + '">' + projIco(p) +
+      '<span class="l">' + esc(p.name) + '</span>' + (atual === p.id ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  });
+  return h + '<div class="tk-msep"></div><button class="tk-mi" role="menuitem" data-action="' + acao + '-novo">' + licn('plus') + '<span class="l">Novo projeto</span></button>';
+}
+function tkPrioMenuHTML(atual, acao){
+  return [[3, 'Alta'], [2, 'Média'], [1, 'Baixa'], [0, 'Nenhuma']].map(([p, nome]) =>
+    '<button class="tk-mi f' + p + (atual === p ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-v="' + p + '">' + (p ? TK_FLAG : licn('flag')) +
+    '<span class="l">' + nome + '</span>' + (atual === p ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>').join('');
 }
 
 /* ===================== Render: Hábitos ===================== */
@@ -2263,7 +2595,7 @@ function render(){
     window.__stamp = null;
   }
   if(window.__novo){
-    const nv = document.querySelector('.trow[data-id="' + window.__novo + '"]');
+    const nv = document.querySelector('.view.on .trow[data-id="' + window.__novo + '"]') || document.querySelector('.trow[data-id="' + window.__novo + '"]');
     if(nv && animOn()) nv.classList.add('novo');
     window.__novo = null;
   }
@@ -4089,74 +4421,115 @@ function openModal(title, body, foot, o){
   const f = !(o && o.semFoco) && $('#mBody').querySelector('input, textarea');
   if(f) setTimeout(() => f.focus(), 30);
 }
-function closeModal(){ $('#mback').classList.remove('on'); M = null; }
+function closeModal(){
+  /* o detalhe da tarefa salva sozinho ao fechar */
+  const mudou = !!(M && M.type === 'task') && tkAutoSalvar();
+  $('#mback').classList.remove('on', 'tk-det');
+  M = null;
+  popFechar();
+  if(mudou) render();
+}
 
-/* ===================== Modal: tarefa ===================== */
+/* ===================== Detalhe da tarefa ===================== */
+/* Folha com o projeto e a bandeira no topo, a data com o atraso, título, descrição, subtarefas e uma barra de ícones.
+   Salva sozinha ao fechar (tocar fora, voltar, Esc ou ✓). Tarefa nova sem título é descartada. */
 function openTask(id, preset){
   const t = id ? S.tasks.find(x => x.id === id) : null;
+  if(id && !t) return;
+  popFechar();
+  const naLista = VIEW === 'tarefas';
   const draft = t ? JSON.parse(JSON.stringify(t)) :
-    {title:'', notes:'', projectId:(preset && preset.projectId) || TPROJ || '', priority:0, due:(preset && preset.due) || '', tags:[], subtasks:[]};
-  M = {type:'task', id:id || null, draft, aberto:false,
-    mais:!!((draft.recurrence && draft.recurrence.type) || (draft.tags && draft.tags.length) || (draft.personIds && draft.personIds.length))};
+    {title:'', notes:'', projectId:(preset && preset.projectId) || (naLista && TF === 'proj' ? TPROJ : '') || '', priority:0, due:(preset && preset.due) || '',
+     tags:(naLista && TF === 'tag' && TTAG ? [TTAG] : []), subtasks:[]};
+  M = {type:'task', id:id || null, draft, aberto:false, abrir:''};
   renderTaskModal();
 }
 const TK_FLAG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5 2.75a.75.75 0 0 0-.75.75v17.75a.75.75 0 0 0 1.5 0V15h12.6a.75.75 0 0 0 .62-1.17L16.4 9.5l2.57-4.33A.75.75 0 0 0 18.35 4H5.75v-.5A.75.75 0 0 0 5 2.75z"/></svg>';
-/* prazo e projeto em pílulas: tocar abre o calendário ou a lista */
-function tkPillsHTML(d){
-  const t = today(), pj = projById(d.projectId);
-  const projs = S.projects.filter(p => !p.archived || p.id === d.projectId);
-  const late = d.due && d.due < t;
-  return '<label class="tk-pill dt' + (d.due ? ' set' : '') + (late ? ' late' : '') + '" title="Prazo">' + licn('calendar') +
-      '<span>' + (d.due ? cap1(tkDataTxt(d.due)) + (late ? ', ' + fmtAtraso(d.due) : '') : 'Sem prazo') + '</span>' +
-      '<input type="date" id="f_due" value="' + esc(d.due || '') + '" aria-label="Prazo"></label>' +
-    (d.due ? '<button class="tk-pill x" data-action="tk-sem-data" title="Tirar o prazo" aria-label="Tirar o prazo">' + licn('x') + '</button>' :
-      '<button class="tk-pill q" data-action="tk-due-rapido" data-ds="' + t + '">Hoje</button>' +
-      '<button class="tk-pill q" data-action="tk-due-rapido" data-ds="' + addD(t, 1) + '">Amanhã</button>') +
-    '<label class="tk-pill pj' + (pj ? ' set' : '') + '" title="Projeto"><span class="pdot" style="background:' + (pj ? CORES[pj.color] : 'var(--line2)') + '"></span>' +
-      '<select id="f_proj" aria-label="Projeto"><option value="">Sem projeto</option>' +
-      projs.map(p => '<option value="' + p.id + '"' + (d.projectId === p.id ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') +
-      '<option value="__new">+ Novo projeto…</option></select>' + licn('chevron-down') + '</label>';
+function recResumo(r){
+  if(!r || !r.type) return '';
+  if(r.type === 'daily') return 'Todo dia';
+  if(r.type === 'weekly') return 'Toda semana' + ((r.days || []).length ? ': ' + r.days.slice().sort((a, b) => (a || 7) - (b || 7)).map(d => DOW[d]).join(', ') : '');
+  if(r.type === 'monthly') return 'Todo mês' + (r.dayOfMonth ? ', dia ' + r.dayOfMonth : '');
+  if(r.type === 'yearly') return 'Todo ano';
+  if(r.type === 'interval') return 'A cada ' + (r.interval || 1) + ' dias';
+  if(r.type === 'monthly_weekday') return (ORD_LABELS[r.nth || 2] || '') + ' ' + DOW[r.weekday != null ? r.weekday : 0] + (r.month != null ? ' de ' + MES[r.month] : ' do mês');
+  return 'Repete';
 }
-function tkPillsRender(){
-  const el = document.getElementById('tkPills');
-  if(el && M && M.type === 'task') el.innerHTML = tkPillsHTML(M.draft);
+/* menu de prazo: atalhos, calendário e tirar o prazo */
+function tkDataMenuHTML(atual, acao){
+  return tkOpcoesData().map(([ic, lab, ds]) =>
+    '<button class="tk-mi' + (atual === ds ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-ds="' + ds + '">' + licn(ic) +
+    '<span class="l">' + lab + '</span><small>' + tkDataAbs(ds) + '</small></button>').join('') +
+    '<label class="tk-mi" role="menuitem">' + licn('calendar') + '<span class="l">Escolher data</span><small>' + (atual ? tkDataAbs(atual) : '') + '</small>' +
+      '<input type="date" class="tk-dataesc" data-acao="' + acao + '" value="' + esc(atual || '') + '" aria-label="Escolher data"></label>' +
+    (atual ? '<div class="tk-msep"></div><button class="tk-mi del" role="menuitem" data-action="' + acao + '" data-ds="">' + licn('x') + '<span class="l">Tirar o prazo</span></button>' : '');
 }
-/* o título cresce com o texto */
-function tkTituloAjusta(){
-  const el = document.getElementById('f_title');
-  if(!el || !el.classList.contains('tk-titulo')) return;
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+function tkAplicarData(acao, ds){
+  popFechar();
+  if(acao === 'qa-data-set'){
+    const i = $('#qaDue');
+    if(i) i.value = ds || '';
+    qaFerrSync(); qaPreview();
+    const q = $('#qaTitle'); if(q) q.focus();
+    return;
+  }
+  if(M && M.type === 'task'){ syncTaskDraft(); M.draft.due = ds || ''; renderTaskModal(); }
 }
 function renderTaskModal(){
-  const d = M.draft;
+  const d = M.draft, t = today();
   const primeira = !M.aberto;
   M.aberto = true;
+  const orig = M.id ? S.tasks.find(x => x.id === M.id) : null;
+  const feita = !!(orig && orig.status === 'done');
+  const pj = projById(d.projectId);
   const subs = d.subtasks || [];
-  const okSub = subs.filter(s => s.done).length;
-  const body =
+  const late = !feita && d.due && d.due < t;
+  const rec = recResumo(d.recurrence);
+  const pr = d.priority || 0;
+  let body = '<div class="tkd-top">' +
+      '<button class="tkd-proj" data-action="tkd-proj" aria-haspopup="menu" title="Projeto">' + (pj ? projIco(pj) + '<span>' + esc(pj.name) + '</span>' : licn('folder') + '<span>Sem projeto</span>') + licn('chevrons-up-down') + '</button>' +
+      '<span class="grow"></span>' +
+      '<button class="icon-btn tkd-flag p' + pr + '" data-action="tkd-prio" aria-haspopup="menu" title="Prioridade: ' + PRIO_TXT[pr] + '" aria-label="Prioridade: ' + PRIO_TXT[pr] + '">' + TK_FLAG + '</button>' +
+      (M.id ? '<button class="icon-btn" data-action="tkd-mais" aria-haspopup="menu" title="Mais ações" aria-label="Mais ações">' + licn('more-vertical') + '</button>' : '') +
+    '</div>' +
+    '<div class="tkd-data">' +
+      (M.id ? '<button class="ck p' + pr + (feita ? ' on' : '') + '" data-action="tkd-ck" aria-label="' + (feita ? 'Reabrir' : 'Concluir') + '"></button>' : '') +
+      '<button class="tkd-due' + (d.due ? ' set' : '') + (late ? ' late' : '') + '" data-action="tkd-data" aria-haspopup="menu">' + licn('calendar') +
+        '<span>' + (d.due ? cap1(tkDataTxt(d.due)) + (late ? ', ' + fmtAtraso(d.due) : '') : 'Prazo') + '</span></button>' +
+      (rec ? '<button class="tkd-rep" data-action="tkd-abrir" data-q="rep" title="Repetição">' + licn('repeat') + '<span>' + esc(rec) + '</span></button>' : '') +
+    '</div>' +
     '<textarea class="inp tk-titulo" id="f_title" rows="1" placeholder="O que precisa ser feito" enterkeyhint="done">' + esc(d.title) + '</textarea>' +
-    '<div class="tk-pills" id="tkPills">' + tkPillsHTML(d) + '</div>' +
-    '<div class="tk-prio" role="group" aria-label="Prioridade">' + [0, 1, 2, 3].map(p =>
-      '<button data-action="seg-prio" data-v="' + p + '" class="tk-flag p' + p + (d.priority === p ? ' on' : '') + '" aria-pressed="' + (d.priority === p) + '">' + TK_FLAG + PRIO_TXT[p] + '</button>').join('') + '</div>' +
-    '<div class="field tk-subs"><label>Subtarefas' + (subs.length ? '<span class="tk-subn">' + okSub + '/' + subs.length + '</span>' : '') + '</label>' +
-      '<div class="subs" id="f_subs">' + (subs.length ? subsHTML(d) : '') + '</div>' +
-      '<div class="tk-subadd"><input class="inp" id="f_newsub" placeholder="Adicionar subtarefa" enterkeyhint="enter"><button class="btn btn-sm" data-action="add-sub">Adicionar</button></div></div>' +
-    '<div class="field"><label>Notas</label><textarea class="inp" id="f_notes" rows="3" placeholder="Detalhes, links, contexto">' + esc(d.notes || '') + '</textarea></div>' +
-    '<button type="button" class="tk-mais-btn" data-action="tk-mais" aria-expanded="' + !!M.mais + '">' + chevHTML(M.mais) + '<span>Repetição, etiquetas e pessoas</span></button>' +
-    (M.mais ? '<div class="tk-mais">' +
-      '<div class="field"><label>Etiquetas (separadas por vírgula)</label><input class="inp" id="f_tags" value="' + esc((d.tags || []).join(', ')) + '"></div>' +
-      recurrenceHTML(d.recurrence, 'tk') + peoplePickerHTML(d.personIds, 'tk') + '</div>' : '');
-  const foot =
-    (M.id ? '<button class="icon-btn del" data-action="excluir-task" title="Excluir tarefa" aria-label="Excluir tarefa">' + licn('trash-2') + '</button>' +
-      '<button class="icon-btn" data-action="task-to-lem" title="Transformar em lembrete" aria-label="Transformar em lembrete">' + licn('bell') + '</button>' +
-      '<button class="icon-btn" data-action="tk-focar" title="Salvar e focar nesta tarefa" aria-label="Focar nesta tarefa">' + licn('timer') + '</button>' : '') +
-    '<div class="grow"></div>' +
-    '<button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-task">Salvar</button>';
-  openModal(M.id ? 'Editar tarefa' : 'Nova tarefa', body, foot, {semFoco:!primeira || !!M.id});
-  tkTituloAjusta();
+    '<textarea class="inp tkd-notas" id="f_notes" rows="1" placeholder="Descrição">' + esc(d.notes || '') + '</textarea>';
+  if(subs.length || M.abrir === 'subs') body += '<div class="tkd-subs"><div class="subs" id="f_subs">' + (subs.length ? subsHTML(d) : '') + '</div>' +
+    '<div class="tk-subadd">' + licn('plus') + '<input class="inp" id="f_newsub" placeholder="Adicionar subtarefa" enterkeyhint="enter">' +
+    '<button class="icon-btn sm" data-action="add-sub" aria-label="Adicionar subtarefa">' + licn('check') + '</button></div></div>';
+  const chips = (d.tags || []).map(g => '<button class="tkd-chip tag" data-action="tkd-abrir" data-q="tags">#' + esc(g) + '</button>').join('') +
+    (d.personIds || []).map(pid => { const p = S.people.find(x => x.id === pid); return p ? '<button class="tkd-chip" data-action="tkd-abrir" data-q="pessoas">' + licn('user') + esc(p.name) + '</button>' : ''; }).join('');
+  if(chips) body += '<div class="tkd-chips">' + chips + '</div>';
+  if(M.abrir === 'tags') body += '<div class="tkd-ed"><input class="inp" id="f_tags" placeholder="Etiquetas, separadas por vírgula" value="' + esc((d.tags || []).join(', ')) + '"></div>';
+  if(M.abrir === 'rep') body += '<div class="tkd-ed">' + recurrenceHTML(d.recurrence, 'tk') + '</div>';
+  if(M.abrir === 'pessoas') body += '<div class="tkd-ed">' + peoplePickerHTML(d.personIds, 'tk') + '</div>';
+  const ferr = (q, ic, tem, rot) => '<button class="tkd-tool' + (tem ? ' tem' : '') + (M.abrir === q ? ' ab' : '') + '" data-action="tkd-abrir" data-q="' + q + '" title="' + rot + '" aria-label="' + rot + '">' + licn(ic) + '</button>';
+  const foot = ferr('tags', 'tag', (d.tags || []).length, 'Etiquetas') + ferr('subs', 'list-checks', subs.length, 'Subtarefas') +
+    ferr('rep', 'repeat', !!rec, 'Repetição') + ferr('pessoas', 'user', (d.personIds || []).length, 'Pessoas') +
+    '<span class="grow"></span>' +
+    (M.id && !feita ? '<button class="tkd-tool" data-action="tk-focar" title="Focar nesta tarefa" aria-label="Focar nesta tarefa">' + licn('timer') + '</button>' : '') +
+    '<button class="tkd-ok" data-action="fechar-modal" title="Pronto" aria-label="Pronto">' + licn('check') + '</button>';
+  openModal('', body, foot, {semFoco:!primeira || !!M.id});
+  $('#mback').classList.add('tk-det');
+  tkTituloAjusta(); tkNotasAjusta();
 }
+function tkMaisHTML(){
+  return '<div class="tk-tiles">' +
+    '<button class="tk-tile" data-action="tk-focar">' + licn('timer') + 'Focar</button>' +
+    '<button class="tk-tile" data-action="task-to-lem">' + licn('bell') + 'Lembrete</button>' +
+    '<button class="tk-tile" data-action="tk-duplicar">' + licn('copy') + 'Duplicar</button>' +
+    '<button class="tk-tile del" data-action="excluir-task">' + licn('trash-2') + 'Excluir</button></div>';
+}
+/* título e descrição crescem com o texto */
+function tkAltura(el){ if(!el) return; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+function tkTituloAjusta(){ const el = document.getElementById('f_title'); if(el && el.classList.contains('tk-titulo')) tkAltura(el); }
+function tkNotasAjusta(){ const el = document.getElementById('f_notes'); if(el && el.classList.contains('tkd-notas')) tkAltura(el); }
 function subsHTML(d){
   return (d.subtasks || []).map((s,i) =>
     '<div class="sub"><button class="ck' + (s.done ? ' on' : '') + '" data-action="sub-ck" data-i="' + i + '"></button>' +
@@ -4169,9 +4542,7 @@ function syncTaskDraft(){
   const d = M.draft;
   const g = id => $('#' + id);
   if(g('f_title')) d.title = g('f_title').value;
-  if(g('f_proj')) d.projectId = g('f_proj').value === '__new' ? d.projectId : g('f_proj').value;
-  if(g('f_due')) d.due = g('f_due').value || '';
-  if(g('f_tags')) d.tags = g('f_tags').value.split(',').map(x => x.trim()).filter(Boolean);
+  if(g('f_tags')) d.tags = g('f_tags').value.split(',').map(x => x.trim().replace(/^#/, '')).filter(Boolean);
   if(g('f_notes')) d.notes = g('f_notes').value;
   if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'tk');
   document.querySelectorAll('#f_subs input[data-sub]').forEach(inp => {
@@ -4179,21 +4550,35 @@ function syncTaskDraft(){
     if(d.subtasks[i]) d.subtasks[i].title = inp.value;
   });
 }
-function salvarTask(){
+/* grava o rascunho se algo mudou; devolve true quando gravou */
+function tkAutoSalvar(){
+  if(!M || M.type !== 'task' || M.salvo) return false;
   syncTaskDraft();
+  M.salvo = true;
   const d = M.draft;
-  d.title = d.title.trim();
-  if(!d.title){ toast('Dê um título para a tarefa.'); return; }
-  d.subtasks = (d.subtasks || []).filter(s => s.title.trim());
-  d.projectId = d.projectId || null;
-  d.due = d.due || null;
+  const title = (d.title || '').trim();
+  const limpo = Object.assign({}, d, {title, projectId:d.projectId || null, due:d.due || null,
+    subtasks:(d.subtasks || []).filter(s => (s.title || '').trim())});
   if(M.id){
     const t = S.tasks.find(x => x.id === M.id);
-    Object.assign(t, d);
+    if(!t) return false;
+    if(!title) limpo.title = t.title;
+    const novo = Object.assign({}, t, limpo);
+    if(JSON.stringify(novo) === JSON.stringify(t)) return false;
+    Object.assign(t, novo);
   }else{
-    S.tasks.push(Object.assign({id:uid(), status:'open', createdAt:new Date().toISOString(), completedAt:null}, d));
+    if(!title) return false;
+    const nt = Object.assign({id:uid(), status:'open', createdAt:new Date().toISOString(), completedAt:null}, limpo);
+    S.tasks.push(nt);
+    window.__novo = nt.id; sfx('add');
   }
-  save(); closeModal(); render(); toast('Tarefa salva.');
+  save();
+  return true;
+}
+function salvarTask(){
+  syncTaskDraft();
+  if(!(M.draft.title || '').trim()){ toast('Dê um título para a tarefa.'); return; }
+  closeModal();
 }
 
 /* ===================== Modal: hábito ===================== */
@@ -4304,25 +4689,39 @@ function openProjetos(){
   renderProjModal();
 }
 function renderProjModal(){
-  const rows = M.drafts.map((p,i) =>
-    '<div class="pj">' +
-    '<select class="inp" data-pj-cor="' + i + '" style="padding:6px 8px; font-size:12.5px">' +
-      Object.keys(CORES).map(c => '<option value="' + c + '"' + (p.color === c ? ' selected' : '') + '>' + c + '</option>').join('') +
-    '</select>' +
-    '<input class="inp" data-pj-nome="' + i + '" value="' + esc(p.name) + '">' +
-    '<button class="btn btn-sm" data-action="pj-arch" data-i="' + i + '">' + (p.archived ? 'Ativar' : 'Arquivar') + '</button>' +
-    '<button class="btn btn-danger btn-sm" data-action="pj-del" data-i="' + i + '">✕</button>' +
+  const pastas = [...new Set(M.drafts.map(p => (p.pasta || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt', {numeric:true}));
+  const rows = M.drafts.map((p, i) =>
+    '<div class="pjc' + (p.archived ? ' arq' : '') + '">' +
+      '<div class="pjc-l1">' +
+        '<input class="inp pj-em" data-pj-emoji="' + i + '" value="' + esc(p.emoji || '') + '" placeholder="🙂" aria-label="Emoji do projeto">' +
+        '<input class="inp" data-pj-nome="' + i + '" value="' + esc(p.name) + '" placeholder="Nome do projeto" aria-label="Nome do projeto">' +
+        '<button class="icon-btn" data-action="pj-arch" data-i="' + i + '" title="' + (p.archived ? 'Reativar' : 'Arquivar') + '" aria-label="' + (p.archived ? 'Reativar' : 'Arquivar') + '">' + licn(p.archived ? 'rotate-ccw' : 'archive') + '</button>' +
+        '<button class="icon-btn del" data-action="pj-del" data-i="' + i + '" title="Excluir" aria-label="Excluir projeto">' + licn('trash-2') + '</button>' +
+      '</div>' +
+      '<div class="pjc-l2">' +
+        '<div class="pj-cores">' + Object.keys(CORES).map(c => '<button class="pj-cor' + (p.color === c ? ' on' : '') + '" data-action="pj-cor" data-i="' + i + '" data-c="' + c + '" style="background:' + CORES[c] + '" aria-label="Cor ' + c + '"></button>').join('') + '</div>' +
+        '<input class="inp pj-pasta" data-pj-pasta="' + i + '" value="' + esc(p.pasta || '') + '" placeholder="Pasta (opcional)" list="pjPastas" aria-label="Pasta">' +
+      '</div>' +
     '</div>').join('') || '<div class="empty" style="text-align:left; padding:4px">Nenhum projeto ainda.</div>';
-  const body = rows + '<button class="btn btn-sm" data-action="pj-add" style="align-self:flex-start">+ Adicionar projeto</button>' +
-    '<p class="vsub" style="margin:2px 0 0">Excluir um projeto não apaga as tarefas dele, elas apenas ficam sem projeto.</p>';
+  const body = '<datalist id="pjPastas">' + pastas.map(x => '<option value="' + esc(x) + '">').join('') + '</datalist>' + rows +
+    '<button class="btn btn-sm" data-action="pj-add" style="align-self:flex-start">' + licn('plus') + 'Projeto</button>' +
+    '<p class="vsub" style="margin:2px 0 0">Projetos com a mesma pasta ficam juntos na lista (por exemplo 1. Projetos, 2. Áreas). Excluir um projeto não apaga as tarefas dele.</p>';
   const foot = '<div class="grow"></div>' +
     '<button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
     '<button class="btn btn-primary" data-action="salvar-proj">Salvar</button>';
-  openModal('Projetos', body, foot);
+  openModal('Projetos', body, foot, {semFoco:true});
+}
+/* primeiro emoji do campo (um emoji pode ter vários caracteres) */
+function umEmoji(v){
+  v = String(v || '').trim();
+  if(!v) return '';
+  try{ if(window.Intl && Intl.Segmenter) return [...new Intl.Segmenter('pt', {granularity:'grapheme'}).segment(v)][0].segment; }catch(e){}
+  return [...v][0];
 }
 function syncProjDrafts(){
   document.querySelectorAll('[data-pj-nome]').forEach(inp => { M.drafts[+inp.dataset.pjNome].name = inp.value; });
-  document.querySelectorAll('[data-pj-cor]').forEach(sel => { M.drafts[+sel.dataset.pjCor].color = sel.value; });
+  document.querySelectorAll('[data-pj-emoji]').forEach(inp => { M.drafts[+inp.dataset.pjEmoji].emoji = umEmoji(inp.value); });
+  document.querySelectorAll('[data-pj-pasta]').forEach(inp => { M.drafts[+inp.dataset.pjPasta].pasta = inp.value.trim(); });
 }
 function salvarProjetos(){
   syncProjDrafts();
@@ -4669,15 +5068,39 @@ function toggleHabitDay(hid, ds, sel){
   save(); render();
 }
 let QA_CAIXA = false;
+let QA_PRIO = null;   /* prioridade escolhida no botão (null = a do texto) */
+let QA_PROJ = '';     /* projeto escolhido no botão (vazio = o do texto ou o da lista) */
 function qaCaixaSync(){
-  const b = document.querySelector('.qa-caixa'), inp = $('#qaTitle'), qd = document.querySelector('#view-tarefas .qdate');
+  const b = document.querySelector('#tkAdd .qa-caixa'), inp = $('#qaTitle'), qd = $('#qaDueBtn');
   if(b){ b.classList.toggle('on', QA_CAIXA); b.setAttribute('aria-pressed', QA_CAIXA ? 'true' : 'false'); }
   if(inp) inp.placeholder = QA_CAIXA ? 'O que apareceu para fazer hoje?' : 'Adicionar tarefa…';
   if(qd) qd.style.display = QA_CAIXA ? 'none' : '';
 }
+/* botões da folha de adicionar mostram o que foi escolhido */
+function qaFerrSync(){
+  const db = $('#qaDueBtn'), due = $('#qaDue'), pb = $('#qaPrioBtn'), jb = $('#qaProjBtn');
+  if(db && due){
+    const v = due.value, t = today();
+    db.classList.toggle('on', !!v);
+    db.querySelector('.qd-lab').textContent = !v ? '' : v === t ? 'hoje' : v === addD(t, 1) ? 'amanhã' : v.slice(8, 10) + '/' + v.slice(5, 7);
+  }
+  if(pb){ pb.className = 'tk-tool' + (QA_PRIO ? ' p' + QA_PRIO : ''); pb.innerHTML = QA_PRIO ? TK_FLAG : licn('flag'); pb.title = 'Prioridade' + (QA_PRIO ? ': ' + PRIO_TXT[QA_PRIO] : ''); }
+  if(jb){ const p = projById(QA_PROJ); jb.className = 'tk-tool' + (p ? ' on' : ''); jb.innerHTML = p ? projIco(p) : licn('folder'); jb.title = 'Projeto' + (p ? ': ' + p.name : ''); }
+}
+function qaAbrir(){
+  TK_ADD = true; tkAddSync();
+  const i = $('#qaTitle');
+  if(i) i.focus();
+  qaPreview();
+}
+function qaFechar(){
+  TK_ADD = false; tkAddSync();
+  const i = $('#qaTitle');
+  if(i && document.activeElement === i) i.blur();
+}
 /* ===================== Adicionar rápido: entende data, projeto e prioridade no texto ===================== */
 const TK_DIAS = {domingo:0, dom:0, segunda:1, seg:1, terca:2, ter:2, quarta:3, qua:3, quinta:4, qui:4, sexta:5, sex:5, sabado:6, sab:6};
-const semAcento = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const semAcento = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 /* próximo dia da semana depois de hoje (de 1 a 7 dias) */
 function tkProxDia(dw){ const t = today(); return addD(t, ((dw - fromD(t).getDay() + 7) % 7) || 7); }
 /* "Ligar para o cartório amanhã #promotoria !!" vira título, prazo, projeto e prioridade.
@@ -4776,7 +5199,7 @@ function qaPreview(){
   let h = '';
   if(q.due) h += '<span class="qa-tok">' + licn('calendar') + tkDataTxt(q.due) + '</span>';
   const p = projById(q.projectId);
-  if(p) h += '<span class="qa-tok"><span class="pdot" style="background:' + CORES[p.color] + '"></span>' + esc(p.name) + '</span>';
+  if(p) h += '<span class="qa-tok">' + projIco(p) + esc(p.name) + '</span>';
   if(q.priority) h += '<span class="qa-tok pr' + q.priority + '">' + licn('flag') + PRIO_TXT[q.priority] + '</span>';
   q.tags.forEach(tg => h += '<span class="qa-tok">#' + esc(tg) + '</span>');
   el.innerHTML = h ? h + '<span class="qa-titulo">' + esc(q.title) + '</span>' : '';
@@ -4785,38 +5208,36 @@ function quickAdd(viaBotao){
   const inp = $('#qaTitle'), dueEl = $('#qaDue');
   const raw = inp.value.trim();
   if(!raw){
-    /* + com o campo vazio abre o formulário completo */
-    if(viaBotao) openTask(null, {due:dueEl.value || (TF === 'hoje' || TF === 'prox' ? today() : '')});
+    /* + com o campo vazio abre o detalhe de uma tarefa nova */
+    if(viaBotao){ const due = dueEl.value || (TF === 'hoje' || TF === 'prox' ? today() : ''); qaFechar(); openTask(null, {due, projectId:QA_PROJ}); }
     else inp.focus();
     return;
   }
   const q0 = qaParse(raw, {semData:!!dueEl.value});
   const q = q0.title ? q0 : {title:raw, due:null, priority:null, projectId:null, tags:[]};
   const td = today();
-  const base = {id:uid(), title:q.title, notes:'', projectId:q.projectId || TPROJ || null, priority:q.priority || 0, due:null,
-    tags:q.tags, subtasks:[], status:'open', createdAt:new Date().toISOString(), completedAt:null};
+  const tags = q.tags.slice();
+  if(TF === 'tag' && TTAG && !tags.includes(TTAG)) tags.push(TTAG);
+  const base = {id:uid(), title:q.title, notes:'', projectId:QA_PROJ || q.projectId || (TF === 'proj' ? TPROJ : '') || null,
+    priority:QA_PRIO != null ? QA_PRIO : (q.priority || 0), due:null, tags, subtasks:[], status:'open', createdAt:new Date().toISOString(), completedAt:null};
   const escolhida = dueEl.value || q.due || null;
-  if(QA_CAIXA && !escolhida){
-    S.tasks.push(Object.assign(base, {inbox:true, inboxDate:td}));
-    CAIXA_OPEN = true;
-    if(TF !== 'hoje' && TF !== 'todas') TF = 'hoje';
-  }else{
-    base.due = escolhida || (TF === 'hoje' || TF === 'prox' ? td : null);
-    S.tasks.push(base);
-    if(TF === 'feitas') TF = 'todas';
-  }
-  /* criou fora do que está na tela: avisa e oferece ir até ela */
-  const naAba = base.inbox || TF === 'todas' || (TF === 'hoje' && base.due && base.due <= td) || (TF === 'prox' && base.due && base.due <= addD(td, 7));
-  const noProj = !TPROJ || base.projectId === TPROJ;
-  if(!naAba || !noProj){
+  if(QA_CAIXA && !escolhida) Object.assign(base, {inbox:true, inboxDate:td});
+  else base.due = escolhida || (TF === 'hoje' || TF === 'prox' ? td : null);
+  S.tasks.push(base);
+  if(TF === 'feitas') tkIrPara('todas');
+  /* criou fora da lista que está na tela: avisa e oferece ir até ela */
+  const naLista = TF === 'todas' || TF === 'tag' || (TF === 'proj' && base.projectId === TPROJ) ||
+    (TF === 'hoje' && (base.inbox || (base.due && base.due <= td))) || (TF === 'prox' && !base.inbox && base.due && base.due <= addD(td, 7));
+  if(!naLista){
     const pj = projById(base.projectId);
-    toast('Criada ' + (!noProj ? 'em ' + (pj ? pj.name : 'outro projeto') : base.due ? 'para ' + tkDataTxt(base.due) : 'sem data') + '.', 'Ver', () => {
-      if(!noProj) TPROJ = base.projectId || '';
-      if(!naAba) TF = !base.due || base.due > addD(today(), 7) ? 'todas' : base.due <= today() ? 'hoje' : 'prox';
-      setView('tarefas');
+    const onde = TF === 'proj' ? (pj ? 'em ' + pj.name : 'sem projeto') : base.due ? 'para ' + tkDataTxt(base.due) : 'sem data';
+    toast('Criada ' + onde + '.', 'Ver', () => {
+      if(TF === 'proj' && pj) tkIrPara('proj', pj.id);
+      else tkIrPara(!base.due || base.due > addD(today(), 7) ? 'todas' : base.due <= today() ? 'hoje' : 'prox');
+      qaFechar(); setView('tarefas');
     });
   }
-  inp.value = ''; dueEl.value = '';
+  inp.value = ''; dueEl.value = ''; QA_PRIO = null; QA_PROJ = '';
   window.__novo = base.id; sfx('add'); haptic('light');
   save(); render(); inp.focus();
 }
@@ -4999,32 +5420,121 @@ document.addEventListener('click', e => {
     openHabit(hid);
     return;
   }
-  if(a === 'tk-menu'){ TK_MENU = TK_MENU === el.dataset.m ? '' : el.dataset.m; renderTarefas(); return; }
-  if(a === 'filtro'){
-    TF = el.dataset.f; TK_MENU = ''; renderTarefas();
+  if(a === 'tk-nav'){ TK_NAV = !TK_NAV; renderTkNav(); tkNavSync(); return; }
+  if(a === 'tk-nav-fechar'){ TK_NAV = false; tkNavSync(); return; }
+  if(a === 'tk-lista' || a === 'filtro'){
+    tkIrPara(el.dataset.f, el.dataset.p, el.dataset.t);
+    TK_NAV = false; popFechar();
+    renderTarefas();
+    const l = $('#tLista');
+    if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); }
+    if(window.scrollY > 0) window.scrollTo(0, 0);
+    const mn = document.querySelector('.main'); if(mn && mn.scrollTop > 0) mn.scrollTop = 0;
+    return;
+  }
+  if(a === 'tk-fold'){
+    const k = el.dataset.k, ab = el.getAttribute('aria-expanded') === 'true';
+    TK_DOBRA[k] = !ab;
+    const ks = Object.keys(TK_DOBRA);
+    if(ks.length > 300) ks.slice(0, ks.length - 300).forEach(x => delete TK_DOBRA[x]);
+    tkLSset('tkDobra', TK_DOBRA);
+    renderTarefas();
+    return;
+  }
+  if(a === 'tk-pasta'){
+    const k = el.dataset.k, ab = el.getAttribute('aria-expanded') === 'true';
+    TK_PASTAS[k] = ab ? 'f' : 'a';
+    tkLSset('tkPastas', TK_PASTAS);
+    renderTkNav();
+    return;
+  }
+  if(a === 'tk-opcoes'){ popAbrir(el, tkOpcoesHTML(), {direita:true}); return; }
+  if(a === 'tk-grupo'){
+    TK_GRUPO[TF] = el.dataset.g; tkLSset('tkGrupo', TK_GRUPO);
+    popFechar(); renderTarefas();
     const l = $('#tLista');
     if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); }
     return;
   }
-  if(a === 'tk-proj'){ TPROJ = el.dataset.id || ''; TK_MENU = ''; renderTarefas(); return; }
-  if(a === 'tk-feitas'){ TK_FEITAS_OPEN = !TK_FEITAS_OPEN; renderTarefas(); return; }
+  if(a === 'tk-proj-novo'){
+    TK_NAV = false; tkNavSync(); popFechar();
+    openProjetos();
+    M.drafts.push({id:uid(), name:'', emoji:'', color:'azul', pasta:'', order:M.drafts.length, archived:false});
+    renderProjModal();
+    const ns = document.querySelectorAll('[data-pj-nome]'); if(ns.length) ns[ns.length - 1].focus();
+    return;
+  }
+  if(a === 'qa-abrir'){ qaAbrir(); return; }
+  if(a === 'qa-fechar'){ qaFechar(); return; }
+  if(a === 'qa-data'){ popAbrir(el, tkDataMenuHTML($('#qaDue').value, 'qa-data-set')); return; }
+  if(a === 'qa-data-set' || a === 'tkd-data-set'){ tkAplicarData(a, el.dataset.ds); return; }
+  if(a === 'qa-prio'){ popAbrir(el, tkPrioMenuHTML(QA_PRIO || 0, 'qa-prio-set')); return; }
+  if(a === 'qa-prio-set'){ QA_PRIO = +el.dataset.v || null; popFechar(); qaFerrSync(); $('#qaTitle').focus(); return; }
+  if(a === 'qa-proj'){ popAbrir(el, tkProjMenuHTML(QA_PROJ, 'qa-proj-set')); return; }
+  if(a === 'qa-proj-set'){ QA_PROJ = el.dataset.id || ''; popFechar(); qaFerrSync(); $('#qaTitle').focus(); return; }
+  if(a === 'qa-proj-set-novo' || a === 'tkd-proj-set-novo'){
+    popFechar();
+    const nm = prompt('Nome do novo projeto:');
+    if(!nm || !nm.trim()) return;
+    if(a === 'tkd-proj-set-novo') syncTaskDraft();
+    const p = ensureProject(nm);
+    if(a === 'qa-proj-set-novo'){ QA_PROJ = p.id; save(); render(); }
+    else if(M && M.type === 'task'){ M.draft.projectId = p.id; save(); renderTaskModal(); }
+    return;
+  }
+  if(a === 'tkd-proj'){ popAbrir(el, tkProjMenuHTML(M.draft.projectId || '', 'tkd-proj-set')); return; }
+  if(a === 'tkd-proj-set'){ syncTaskDraft(); M.draft.projectId = el.dataset.id || ''; popFechar(); renderTaskModal(); return; }
+  if(a === 'tkd-prio'){ popAbrir(el, tkPrioMenuHTML(M.draft.priority || 0, 'tkd-prio-set'), {direita:true}); return; }
+  if(a === 'tkd-prio-set'){ syncTaskDraft(); M.draft.priority = +el.dataset.v; popFechar(); renderTaskModal(); return; }
+  if(a === 'tkd-data'){ popAbrir(el, tkDataMenuHTML(M.draft.due || '', 'tkd-data-set')); return; }
+  if(a === 'tkd-mais'){ popAbrir(el, tkMaisHTML(), {direita:true, cls:'tiles'}); return; }
+  if(a === 'tkd-abrir'){
+    syncTaskDraft();
+    const q = el.dataset.q;
+    M.abrir = M.abrir === q ? '' : q;
+    renderTaskModal();
+    const foco = {tags:'f_tags', subs:'f_newsub'}[M.abrir];
+    if(foco){ const i = document.getElementById(foco); if(i) i.focus(); }
+    return;
+  }
+  if(a === 'tkd-ck'){
+    const id = M.id;
+    closeModal();
+    const tk = S.tasks.find(x => x.id === id);
+    if(!tk) return;
+    if(tk.status !== 'done'){ playDing(); toggleTask(id); celebraDia(); }
+    else toggleTask(id);
+    return;
+  }
+  if(a === 'tk-duplicar'){
+    const id = M && M.id;
+    closeModal();
+    const t0 = S.tasks.find(x => x.id === id);
+    if(!t0) return;
+    const c = JSON.parse(JSON.stringify(t0));
+    Object.assign(c, {id:uid(), status:'open', completedAt:null, createdAt:new Date().toISOString()});
+    (c.subtasks || []).forEach(x => { x.id = uid(); x.done = false; });
+    S.tasks.push(c);
+    window.__novo = c.id;
+    save(); render();
+    toast('Tarefa duplicada.', 'Abrir', () => openTask(c.id));
+    return;
+  }
   if(a === 'tk-reagendar'){ tkReagendar(el.dataset.id); return; }
   if(a === 'tk-mover'){ if(M && M.type === 'resched') tkMover(M.ids, el.dataset.ds); return; }
   if(a === 'tk-mover-atrasadas'){
+    popFechar();
     const t = today();
-    const ids = S.tasks.filter(x => x.status !== 'done' && x.due && x.due < t && !(x.inbox && x.inboxDate === t) &&
-      (VIEW !== 'tarefas' || !TPROJ || x.projectId === TPROJ)).map(x => x.id);
+    const lista = VIEW === 'tarefas' ? tkBase() : S.tasks.filter(x => x.status !== 'done');
+    const ids = lista.filter(x => x.due && x.due < t && !tkEhCaixa(x, t)).map(x => x.id);
     if(ids.length) tkMover(ids, t);
     return;
   }
   if(a === 'tk-nova-dia'){ openTask(null, {due:el.dataset.ds}); return; }
-  if(a === 'tk-mais'){ syncTaskDraft(); M.mais = !M.mais; renderTaskModal(); return; }
-  if(a === 'tk-sem-data'){ syncTaskDraft(); M.draft.due = ''; tkPillsRender(); return; }
-  if(a === 'tk-due-rapido'){ syncTaskDraft(); M.draft.due = el.dataset.ds; tkPillsRender(); return; }
   if(a === 'tk-focar'){
     const id = M && M.id;
-    salvarTask();
-    const tk = !M && S.tasks.find(x => x.id === id);
+    closeModal();
+    const tk = S.tasks.find(x => x.id === id);
     if(tk){
       ttComecar(tk.title, tk.projectId || '', TT_MODO);
       toast((TT_MODO === 'pomo' ? 'Foco começou: ' : 'Cronômetro começou: ') + tk.title, 'Ver', () => setView('tempo'));
@@ -5063,7 +5573,7 @@ document.addEventListener('click', e => {
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
   if(a === 'edit-habit'){ openHabitDetail(el.dataset.id); return; }
-  if(a === 'projetos'){ if(TK_MENU){ TK_MENU = ''; renderTarefas(); } openProjetos(); return; }
+  if(a === 'projetos'){ popFechar(); if(TK_NAV){ TK_NAV = false; tkNavSync(); } openProjetos(); return; }
   if(a === 'colar'){ openPaste(); return; }
   if(a === 'dedup-fin'){
     const normD = s2 => (s2 || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
@@ -5331,7 +5841,15 @@ document.addEventListener('click', e => {
   }
 
   /* modal projetos */
-  if(a === 'pj-add'){ syncProjDrafts(); M.drafts.push({id:uid(), name:'', color:'azul', order:M.drafts.length, archived:false}); renderProjModal(); return; }
+  if(a === 'pj-add'){
+    syncProjDrafts();
+    const ult = M.drafts[M.drafts.length - 1];
+    M.drafts.push({id:uid(), name:'', emoji:'', color:'azul', pasta:ult ? ult.pasta || '' : '', order:M.drafts.length, archived:false});
+    renderProjModal();
+    const ns = document.querySelectorAll('[data-pj-nome]'); if(ns.length) ns[ns.length - 1].focus();
+    return;
+  }
+  if(a === 'pj-cor'){ syncProjDrafts(); M.drafts[+el.dataset.i].color = el.dataset.c; renderProjModal(); return; }
   if(a === 'pj-arch'){ syncProjDrafts(); const p = M.drafts[+el.dataset.i]; p.archived = !p.archived; renderProjModal(); return; }
   if(a === 'pj-del'){
     syncProjDrafts(); const p = M.drafts[+el.dataset.i];
@@ -5748,8 +6266,7 @@ document.addEventListener('click', e => {
 });
 
 document.addEventListener('change', e => {
-  if(e.target.id === 'f_due' && M && M.type === 'task'){ syncTaskDraft(); tkPillsRender(); }
-  if(e.target.id === 'f_proj' && e.target.value !== '__new' && M && M.type === 'task'){ syncTaskDraft(); tkPillsRender(); }
+  if(e.target.classList && e.target.classList.contains('tk-dataesc') && e.target.value) tkAplicarData(e.target.dataset.acao, e.target.value);
   if(e.target.id === 'f_rsd' && e.target.value && M && M.type === 'resched') tkMover(M.ids, e.target.value);
   if(e.target.id === 'qaDue') qaPreview();
   if(e.target.id === 'lKind'){ LK = e.target.value; renderLugares(); }
@@ -5768,20 +6285,11 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   if(e.target.id === 'qaTitle') qaPreview();
   if(e.target.id === 'f_title') tkTituloAjusta();
+  if(e.target.id === 'f_notes') tkNotasAjusta();
   if(e.target.id === 'pSearch'){ PQ = e.target.value; renderPessoas(); }
   if(e.target.id === 'nSearch'){ NQ = e.target.value; renderConhecimento(); }
   if(e.target.id === 'lSearch'){ LQ = e.target.value; renderLugares(); }
 });
-
-/* menu da barra de Tarefas: tocar fora fecha; dentro da aba, o toque só fecha e não abre outra coisa */
-document.addEventListener('click', e => {
-  if(!TK_MENU || (e.target.closest && e.target.closest('#tBar .tk-ddw'))) return;
-  /* olhar onde foi o toque antes de redesenhar: depois disso o alvo já saiu da página */
-  const dentro = !!(e.target.closest && e.target.closest('#view-tarefas'));
-  TK_MENU = '';
-  if(dentro){ e.stopPropagation(); e.preventDefault(); }
-  if(VIEW === 'tarefas') renderTarefas();
-}, true);
 
 /* dica do adicionar rápido aparece com o campo em foco */
 document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); });
@@ -5806,13 +6314,15 @@ document.addEventListener('click', e => {
 
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && ttFocoAberto()){ ttFocoFechar(); return; }
-  if(e.key === 'Escape' && TK_MENU){ TK_MENU = ''; renderTarefas(); return; }
+  if(e.key === 'Escape' && POP){ popFechar(); return; }
+  if(e.key === 'Escape' && TK_ADD && !$('#mback').classList.contains('on')){ qaFechar(); return; }
+  if(e.key === 'Escape' && TK_NAV){ TK_NAV = false; tkNavSync(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_title' && M && M.type === 'task'){ e.preventDefault(); salvarTask(); return; }
   if(e.key === 'n' && VIEW === 'tarefas' && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); $('#qaTitle').focus(); return; }
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); qaAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'pLogName'){ e.preventDefault(); const n = $('#pLogNotes'); if(n) n.focus(); return; }
@@ -6197,7 +6707,10 @@ function nativeInit(){
   if(CAPP){
     capOn(CAPP, 'backButton', () => {
       if(ttFocoAberto()){ ttFocoFechar(); return; }
+      if(POP){ popFechar(); return; }
       if($('#mback').classList.contains('on')){ closeModal(); return; }
+      if(TK_ADD){ qaFechar(); return; }
+      if(TK_NAV){ TK_NAV = false; tkNavSync(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
     });
@@ -6300,7 +6813,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => { if(e.target.closest && e.target.closest('.qdate')) qdSync(); });
 document.addEventListener('click', e => {
-  const q = e.target.closest ? e.target.closest('.qdate, .tk-pill.dt, .rs-op.dt') : null;
+  const q = e.target.closest ? e.target.closest('.qdate, .rs-op.dt, label.tk-mi') : null;
   if(!q) return;
   const i = q.querySelector('input[type="date"]');
   if(i && typeof i.showPicker === 'function'){ try{ i.showPicker(); }catch(_){} }
