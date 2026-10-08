@@ -5,6 +5,18 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 - Web: https://jpvanacor.github.io/Central/
 - Android: https://github.com/jpvanacor/Central/releases/latest/download/central.apk
 
+## Tarefas
+
+Abas Hoje, Próximos, Todas e Feitas, com os projetos em fila logo abaixo (um toque filtra). No campo de adicionar, o prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
+
+- `Ligar para o cartório sexta #promotoria !!!` cria a tarefa para sexta, no projeto Promotoria, com prioridade alta;
+- datas: `hoje`, `amanhã`, `depois de amanhã`, dias da semana (`sexta`, `na segunda`, `quinta-feira`), `dia 15`, `15/10`, `próxima semana`, `fim de semana`, `em 3 dias`;
+- `#nome` escolhe o projeto pelo começo do nome; se nenhum projeto bater, vira etiqueta;
+- `!`, `!!`, `!!!` ou `!baixa`, `!média`, `!alta` definem a prioridade;
+- com o campo vazio, o **+** abre o formulário completo.
+
+No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** leva ao campo de adicionar. As atrasadas têm **Mover para hoje**, e toda mudança de prazo pode ser desfeita no aviso.
+
 ## App Android
 
 **Instalar ou atualizar.** No celular, abra o link do APK, baixe e toque no arquivo. Na primeira vez o Android pede para permitir instalação pelo Chrome. Atualizar é igual: baixe o novo e instale por cima, os dados ficam.
