@@ -21,6 +21,23 @@ Organizada em camadas, como no TickTick:
 
 No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** abre o adicionar. Toda mudança de prazo pode ser desfeita no aviso.
 
+## Lembretes
+
+Mesma estrutura das Tarefas, pensada como agenda:
+
+- **Agenda:** cartões por dia (Atrasados, Hoje, Amanhã, os próximos dias e depois por mês), com a hora numa coluna à esquerda. No cartão de hoje, uma linha vermelha marca o agora e anda sozinha; o que já passou fica apagado. Os aniversários de Pessoas aparecem no dia (dá para tirar no ⋮).
+- **Gaveta** (☰ no celular; fixa ao lado no PC): Agenda, Sem data, Aniversários, Dispensados e as categorias. Na categoria, o ⋮ renomeia.
+- **Adicionar:** pelo + no celular ou pelo campo no topo no PC. A data, a hora, a repetição e a categoria podem ir no texto, e a linha de baixo mostra o que foi entendido:
+  - `Remédio todo dia 8h`, `Reunião toda segunda 9h30 #trabalho`, `Pagar aluguel todo dia 5`, `Ligar pro banco amanhã de manhã`, `Dentista 15/10 às 14:30`;
+  - hora: `8h`, `9h30`, `14:30`, `às 10`, `meio-dia`, `de manhã` (09:00), `à tarde` (15:00), `à noite` (20:00);
+  - repetição: `todo dia`, `dias úteis`, `de segunda a sexta`, `toda semana`, `toda segunda`, `todo dia 5`, `todo mês`, `todo ano`, `a cada 3 dias`, `a cada 2 semanas`;
+  - datas como nas tarefas; `#nome` é a categoria;
+  - sem data no texto, o que repete começa na próxima vez possível e o que só tem hora fica para hoje (ou amanhã, se a hora já passou);
+  - os ícones da folha (data, hora, repetição, categoria) fazem o mesmo sem digitar.
+- **Detalhe:** categoria no topo, o círculo para dispensar, data e hora em botões, título e descrição; embaixo, repetição, pessoas e adiar. O ⋮ tem Adiar, Tarefa, Duplicar e Excluir. Salva sozinho ao fechar. No app, diz quando o aviso vai tocar.
+- **Dispensar e adiar:** o círculo (ou arrastar para a direita no celular) dispensa; o que repete pula para a próxima vez. Arrastar para a esquerda (ou o relógio) abre o adiar: em 1 hora, hoje à noite, amanhã cedo, fim de semana, próxima semana ou outra data. No que repete, só aquela vez muda e a repetição continua. Tudo tem Desfazer.
+- **No aviso do Android:** os botões **Adiar 1 h** e **Feito** resolvem sem abrir a lista, e tocar no aviso abre o lembrete.
+
 ## App Android
 
 **Instalar ou atualizar.** No celular, abra o link do APK, baixe e toque no arquivo. Na primeira vez o Android pede para permitir instalação pelo Chrome. Atualizar é igual: baixe o novo e instale por cima, os dados ficam.
@@ -31,7 +48,7 @@ No celular, arraste a tarefa para a direita para concluir e para a esquerda para
 
 | Aviso | Quando |
 | --- | --- |
-| Lembretes | na data e hora do lembrete; sem hora, às 09:00 |
+| Lembretes | na data e hora do lembrete; sem hora, às 09:00. Com os botões Adiar 1 h e Feito |
 | Tarefas do dia | 07:30, com as tarefas do dia e as atrasadas |
 | Hábitos que faltam | 21:00, só se ainda faltar algum |
 | Aniversários | 09:00 do dia |

@@ -373,10 +373,8 @@ pre.fmt{
 .int-row .x{border:0; background:none; color:var(--muted); border-radius:6px; padding:2px 6px}
 .int-row .x:hover{color:var(--danger); background:var(--danger-soft)}
 
-/* ===== Lembretes ===== */
+/* marcador das parcelas em Finanças */
 .lem-flag{flex:none; width:18px; text-align:center; color:var(--warn); font-size:14px}
-.trow.lem-ack .tt{color:var(--muted); text-decoration:line-through}
-.lem-ack .lem-flag{color:var(--line2)}
 
 /* ===== Rotina ===== */
 .rt-cbar{width:4px; height:20px; border-radius:2px; flex:none}
@@ -828,7 +826,7 @@ html.tt-foco-on body{overflow:hidden}
 :root{--warn-soft:#F7EEDF}
 html[data-theme="dark"]{--warn-soft:#2E2617}
 /* a aba entra só com opacidade: transform faria o botão + e as folhas fixas pularem */
-#view-tarefas.on{animation:tkVin .22s ease}
+#view-tarefas.on, #view-lembretes.on{animation:tkVin .22s ease}
 @keyframes tkVin{from{opacity:0}to{opacity:1}}
 .tk-main{min-width:0}
 
@@ -841,7 +839,7 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-tit{flex:1; min-width:0; margin:0; display:flex; align-items:center; gap:10px; white-space:nowrap; cursor:pointer}
 .tk-tit .nm{overflow:hidden; text-overflow:ellipsis}
 .tk-tit .em{font-size:.9em; line-height:1}
-#tResumo .hj-pill{margin-right:2px}
+#tResumo .hj-pill, #lmResumo .hj-pill{margin-right:2px}
 
 /* gaveta de listas */
 .tk-nav{position:fixed; top:0; bottom:0; left:0; z-index:70; width:min(84vw, 320px); display:flex; flex-direction:column; gap:1px; overflow-y:auto;
@@ -894,7 +892,7 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-vazio{display:flex; flex-direction:column; align-items:center; gap:10px; padding:44px 20px; color:var(--muted); text-align:center; font-size:14.5px}
 .tk-vazio > svg{width:40px; height:40px; opacity:.55}
 .tk-vazio p{margin:0}
-#tLista.troca{animation:tkTroca .2s ease}
+#tLista.troca, #rlLista.troca{animation:tkTroca .2s ease}
 @keyframes tkTroca{from{opacity:.35; transform:translateY(5px)}to{opacity:1; transform:none}}
 
 /* linha de tarefa: título; embaixo projeto e etiquetas; à direita a data e os ícones */
@@ -947,12 +945,26 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-swbg.dir.pronto{background:var(--good)} .tk-swbg.esq.pronto{background:var(--accent)}
 .tk-swbg.pronto span{color:#fff; transform:scale(1.18)}
 .trow.tk.sw-ativo{z-index:1; transition:none; background:var(--surface)}
+/* reagendar e adiar: atalhos em grade */
+.rs-de{margin:0; font-weight:650; font-size:14.5px; display:flex; flex-direction:column; gap:2px; overflow-wrap:anywhere}
+.rs-de span{font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--muted)}
+.rs-ops{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px}
+.rs-op{position:relative; display:grid; grid-template-columns:auto 1fr; column-gap:10px; row-gap:1px; align-items:center; text-align:left;
+  padding:11px 13px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); cursor:pointer; font:inherit; min-width:0}
+.rs-op svg{grid-row:1 / span 2; width:19px; height:19px; color:var(--accent)}
+.rs-op span{font-weight:650; font-size:14px}
+.rs-op small{font-family:var(--mono); font-size:11px; color:var(--muted); min-height:1.2em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.rs-op:hover{border-color:var(--accent); background:var(--accent-soft)}
+.rs-op:active{transform:scale(.97)}
+.rs-op input[type="date"]{position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; margin:0; cursor:pointer}
+.rs-nota{display:flex; align-items:center; gap:7px; margin:0; font-size:12.5px; color:var(--muted)}
+.rs-nota svg{width:14px; height:14px; flex:none}
 
 /* adicionar: no PC uma linha no topo; no celular uma folha que sobe pelo botão + */
 .tk-add{display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin:0 0 16px; padding:5px 6px 5px 16px; background:var(--surface);
   border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow)}
 .tk-add:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
-.tk-add #qaTitle{flex:1 1 220px; min-width:0; width:auto; border:0; background:none; padding:9px 0; font-size:15px; outline:none; box-shadow:none}
+.tk-add .tk-add-inp{flex:1 1 220px; min-width:0; width:auto; border:0; background:none; padding:9px 0; font-size:15px; outline:none; box-shadow:none}
 .tk-ferr{display:flex; align-items:center; gap:2px}
 .tk-tool{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:5px; min-width:38px; height:38px; padding:0 8px; border:0;
   border-radius:10px; background:none; color:var(--muted); font-size:12.5px; font-weight:650; cursor:pointer; white-space:nowrap}
@@ -1016,7 +1028,7 @@ html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44p
 
 /* detalhe da tarefa */
 #mback.tk-det .mhead{display:none}
-#mback.tk-det .mbody{padding-top:12px; gap:10px}
+#mback.tk-det .mbody{padding-top:12px; gap:10px; flex:1 1 auto}
 #mback.tk-det .mfoot{padding:8px 12px 10px; border-top:1px solid var(--line); gap:2px}
 .tkd-top{display:flex; align-items:center; gap:2px; margin:0 -8px 0 -6px}
 .tkd-proj{display:inline-flex; align-items:center; gap:8px; min-width:0; max-width:72%; height:40px; padding:0 10px; border:0; border-radius:11px; background:none;
@@ -1090,25 +1102,61 @@ html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44p
     border:0; background:var(--accent); color:#fff; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(15,98,180,.35); cursor:pointer}
   .tk-fab svg{width:28px; height:28px; stroke-width:2.3}
   .tk-fab:active{transform:scale(.92)}
-  html[data-view="tarefas"] .toast{bottom:calc(152px + var(--sab))}
+  html[data-view="tarefas"] .toast, html[data-view="lembretes"] .toast{bottom:calc(152px + var(--sab))}
   .tk-add{position:fixed; left:0; right:0; bottom:0; z-index:75; margin:0; padding:14px calc(12px + var(--sar)) calc(10px + var(--sab)) calc(16px + var(--sal));
     border:0; border-radius:20px 20px 0 0; box-shadow:0 -10px 34px rgba(0,0,0,.2); transform:translateY(110%); visibility:hidden;
     transition:transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s}
   .tk-add:focus-within{border:0; box-shadow:0 -10px 34px rgba(0,0,0,.2)}
   .tk-add.on{transform:none; visibility:visible; transition:transform .22s cubic-bezier(.2,.8,.2,1)}
-  .tk-add #qaTitle{flex-basis:100%; font-size:16px; padding:6px 0 8px}
+  .tk-add .tk-add-inp{flex-basis:100%; font-size:16px; padding:6px 0 8px}
   .tk-add .qa-prev{order:2; margin:0 0 4px}
   .tk-ferr{order:3; flex:1}
   .tk-send{order:4}
   .tk-add-fundo{display:block}
 }
 @media (min-width:1100px){
-  .wrap:has(#view-tarefas.on){max-width:1180px}
-  #view-tarefas.on{display:grid; grid-template-columns:244px minmax(0, 1fr); gap:30px; align-items:start}
+  .wrap:has(#view-tarefas.on), .wrap:has(#view-lembretes.on){max-width:1180px}
+  #view-tarefas.on, #view-lembretes.on{display:grid; grid-template-columns:244px minmax(0, 1fr); gap:30px; align-items:start}
   .tk-nav{position:sticky; top:calc(24px + var(--sat)); transform:none; visibility:visible; transition:none; box-shadow:none; background:none; width:auto;
     max-height:calc(100vh - 48px); padding:4px 0 8px; z-index:auto}
   .tk-nav-fundo, .tk-top .tk-burger{display:none}
   .tk-ni{min-height:40px; font-size:14.5px}
+}
+
+/* ===================== Lembretes ===================== */
+/* usa a mesma estrutura das Tarefas (gaveta, cartões, folha de adicionar, detalhe); aqui só o que é próprio da agenda */
+/* coluna da hora: a agenda se lê de cima para baixo pelo horário */
+.lm-hora{flex:none; width:46px; margin:0 -4px 0 0; font-size:13.5px; font-weight:750; line-height:20px; color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; letter-spacing:-.01em}
+.lm-hora.dt{font-size:12px; font-weight:650; color:var(--muted)}
+.lm-hora.late{color:var(--danger)}
+.lm-hora.passou{color:var(--muted); font-weight:600}
+.trow.tk.lm.done .lm-hora{color:var(--muted); font-weight:600}
+.tk-list.semhora .lm-hora{display:none}
+.lm-hm, .lm-cat{white-space:nowrap}
+.lm-cat{max-width:100%; overflow:hidden; text-overflow:ellipsis}
+.lm-hm svg, .lm-cat svg{width:12px; height:12px; flex:none}
+.lm-bolo{flex:none; width:20px; height:20px; margin-top:1px; display:inline-flex; align-items:center; justify-content:center; color:var(--warn)}
+.lm-bolo svg{width:18px; height:18px}
+/* linha do agora: a hora atual em vermelho, entre o que já passou e o que vem */
+.lm-agora{position:relative; z-index:1; display:flex; align-items:center; height:0; padding:0 16px 0 44px; pointer-events:none}
+.lm-agora span{flex:none; padding:1px 6px; border-radius:7px; background:var(--danger); color:#fff; font-size:11px; font-weight:750; line-height:15px; font-variant-numeric:tabular-nums}
+.lm-agora::after{content:''; flex:1; height:2px; background:var(--danger); border-radius:1px}
+.tk-gl > .lm-agora:last-child{margin-bottom:12px}
+/* detalhe */
+.lmd-aviso{display:flex; align-items:center; gap:7px; margin:2px 0 0; font-size:12.5px; color:var(--muted)}
+.lmd-aviso svg{width:14px; height:14px; flex:none}
+/* hora no menu: atalhos e um campo com OK */
+.lm-hesc{display:flex; align-items:center; gap:10px; min-height:46px; padding:5px 6px 5px 11px}
+.lm-hesc > svg{width:18px; height:18px; color:var(--muted); flex:none}
+.lm-horainp{flex:1; min-width:0; font:inherit; font-size:15px; font-weight:650; color:var(--ink); background:var(--surface2); border:1px solid var(--line); border-radius:9px; padding:6px 9px}
+.lm-horainp:focus{outline:none; border-color:var(--accent)}
+.lm-hok{width:34px; height:34px; flex:none; border:0; border-radius:50%; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; cursor:pointer}
+.lm-hok svg{width:17px; height:17px; stroke-width:2.6}
+/* botões da folha de adicionar com o que foi escolhido */
+.tk-tool .qd-lab:empty{display:none}
+.tk-tool .qd-lab{max-width:96px; overflow:hidden; text-overflow:ellipsis}
+@media (max-width:760px){
+  .lm-agora{padding:0 14px 0 42px}
 }
 
 /* ===================== App Android, notificações, sons e animações ===================== */
@@ -1271,7 +1319,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
         <button class="icon-btn" data-action="tk-opcoes" aria-haspopup="menu" aria-label="Opções da lista" title="Opções da lista"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
       </div>
       <div class="tk-add" id="tkAdd">
-        <input class="inp" type="text" id="qaTitle" placeholder="Adicionar tarefa…" autocomplete="off" enterkeyhint="send">
+        <input class="inp tk-add-inp" type="text" id="qaTitle" placeholder="Adicionar tarefa…" autocomplete="off" enterkeyhint="send">
         <div class="tk-ferr">
           <button class="tk-tool" id="qaDueBtn" data-action="qa-data" aria-haspopup="menu" title="Prazo"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span class="qd-lab"></span></button>
           <input type="date" id="qaDue" hidden tabindex="-1" aria-hidden="true">
@@ -1356,18 +1404,31 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
 
   <!-- ===== LEMBRETES ===== -->
   <section class="view" id="view-lembretes">
-    <div class="vhead">
-      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Lembretes</h1>
-      <div class="grow"></div>
-      <button class="btn btn-primary btn-sm" data-action="novo-lembrete">+ Novo lembrete</button>
+    <aside class="tk-nav" id="lmNav" aria-label="Listas de lembretes"></aside>
+    <div class="tk-nav-fundo" data-action="lm-nav-fechar"></div>
+    <div class="tk-main">
+      <div class="tk-top">
+        <button class="icon-btn tk-burger" data-action="lm-nav" aria-label="Listas" title="Listas"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <h1 class="vtitle tk-tit" id="lmTitulo" data-action="lm-nav"></h1>
+        <span id="lmResumo"></span>
+        <button class="icon-btn" data-action="lm-opcoes" aria-haspopup="menu" aria-label="Opções da lista" title="Opções da lista"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+      </div>
+      <div class="tk-add" id="lmAdd">
+        <input class="inp tk-add-inp" type="text" id="rlTitle" placeholder="Lembrar de…" autocomplete="off" enterkeyhint="send">
+        <div class="tk-ferr">
+          <button class="tk-tool" id="lmDataBtn" data-action="lm-qa-data" aria-haspopup="menu" title="Data"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span class="qd-lab"></span></button>
+          <input type="date" id="rlDate" hidden tabindex="-1" aria-hidden="true">
+          <button class="tk-tool" id="lmHoraBtn" data-action="lm-qa-hora" aria-haspopup="menu" title="Hora"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" id="lmRepBtn" data-action="lm-qa-rep" aria-haspopup="menu" title="Repetição"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+          <button class="tk-tool" id="lmCatBtn" data-action="lm-qa-cat" aria-haspopup="menu" title="Categoria"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg><span class="qd-lab"></span></button>
+        </div>
+        <button class="tk-send" data-action="qadd-lem" aria-label="Adicionar" title="Adicionar (com o campo vazio, abre o detalhe)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+        <div class="qa-prev" id="lmPrev" aria-live="polite"></div>
+      </div>
+      <div class="tk-add-fundo" data-action="lm-qa-fechar"></div>
+      <div id="rlLista"></div>
     </div>
-    <div class="chips" id="rlCats"></div>
-    <div class="qadd">
-      <input class="inp" type="text" id="rlTitle" placeholder="Lembrete rápido…">
-      <label class="qdate" title="Data"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span class="qd-lab"></span><input type="date" id="rlDate" aria-label="Data"></label>
-      <button class="btn btn-primary" data-action="qadd-lem" aria-label="Adicionar">+</button>
-    </div>
-    <div id="rlLista"></div>
+    <button class="tk-fab" data-action="lm-qa-abrir" aria-label="Novo lembrete" title="Novo lembrete"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
   </section>
 
   <!-- ===== ROTINA ===== -->
@@ -1628,7 +1689,7 @@ function capPlugin(n){
 }
 const LN = capPlugin('LocalNotifications'), HAP = capPlugin('Haptics'), CAPP = capPlugin('App'), LAUNCHER = capPlugin('AppLauncher'),
   BARS = capPlugin('SystemBars'), FS = capPlugin('Filesystem'), SHARE = capPlugin('Share'), FOCO = capPlugin('Foco');
-const NOTIF = {perm:'?', exact:'?', count:0, next:null, err:'', busy:false, again:false, timer:null, sig:'', canais:false};
+const NOTIF = {perm:'?', exact:'?', count:0, next:null, err:'', busy:false, again:false, timer:null, sig:'', canais:false, acoes:false};
 const UPD = {v:0, lb:0, build:0, checked:0};
 let APP_ATIVO = true, POMO_CX = 0, TT_AVISO = '';
 if(NATIVE) document.documentElement.classList.add('native');
@@ -1899,7 +1960,6 @@ let M = null;          /* estado do modal */
 let CAIXA_OPEN = true; /* caixa do dia aberta */
 let WORK_STUDY_OPEN = true; /* estudo profissional */
 let ATRASADAS_OPEN = true; /* atrasadas aberta */
-const LEM_FOLDS = {passados:false, hoje:true, prox:false, futuros:false, semdata:false, dispensados:false};
 const TABS = {
   hoje:{ic:'layout-dashboard',lb:'Hoje'}, tarefas:{ic:'clipboard-list',lb:'Tarefas'}, habitos:{ic:'target',lb:'Hábitos'},
   tempo:{ic:'clock',lb:'Tempo'}, lembretes:{ic:'bell',lb:'Lembretes'}, pessoas:{ic:'users',lb:'Pessoas'},
@@ -1930,6 +1990,7 @@ function setView(v){
   document.documentElement.dataset.view = v;
   popFechar();
   if(v !== 'tarefas'){ TK_ADD = false; TK_NAV = false; }
+  if(v !== 'lembretes'){ LM_ADD = false; LM_NAV = false; }
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
   renderBottomNav();
@@ -2096,18 +2157,11 @@ function renderHoje(){
   if(feitasHoje) th += '<p class="hj-done">' + licn('check') + feitasHoje + (feitasHoje > 1 ? ' concluídas' : ' concluída') + ' hoje</p>';
   $('#hojeTarefas').innerHTML = th;
 
-  /* lembretes de hoje e atrasados */
-  const lemsHoje = S.reminders.filter(r => !r.dismissed && r.date && r.date <= t).sort((a,b) => a.date.localeCompare(b.date));
+  /* lembretes de hoje e atrasados, com a mesma linha da agenda */
+  const lemsHoje = S.reminders.filter(r => !r.dismissed && r.date && r.date <= t).sort(lmOrd);
   $('#hojeLembretes').innerHTML = !lemsHoje.length ? '' :
-    '<div class="seclab"><span class="sec-ic">' + licn('bell') + '</span><span>Lembretes</span><span class="n">' + lemsHoje.length + '</span><span class="rule"></span>' +
-    '<button class="btn btn-ghost btn-sm" data-action="ir-lembretes">Ver todos</button></div>' +
-    '<div class="list">' + lemsHoje.map(r => {
-      const late = r.date < t;
-      return '<div class="trow" data-action="edit-lembrete" data-id="' + r.id + '">' +
-        '<span class="lem-flag">' + licn('flag') + '</span><span class="tt">' + esc(r.title) + '</span>' +
-        '<span class="tmeta">' + (late ? '<span class="due late">' + fmtDue(r.date)[0] + '</span>' : '') + (r.time && !late ? '<span class="due">' + esc(r.time) + '</span>' : '') +
-        '<button class="icon-btn sm" data-action="ack-lem" data-id="' + r.id + '" title="Dispensar" aria-label="Dispensar lembrete">' + licn('check') + '</button></span></div>';
-    }).join('') + '</div>';
+    tkSecHTML('Lembretes', lemsHoje.length, {icon:'bell', extra:'<button class="btn btn-ghost btn-sm" data-action="ir-lembretes">Ver todos</button>'}) +
+    '<div class="list tk-list' + (lemsHoje.some(r => lmCol(r, '').txt) ? '' : ' semhora') + '">' + lemsHoje.map(r => lmRowHTML(r, '')).join('') + '</div>';
 
   /* hábitos: todos aparecem; os fora da frequência de hoje ficam mais claros */
   const hsAll = S.habits.filter(h => !h.archived);
@@ -2326,12 +2380,12 @@ function renderTkNav(){
   el.innerHTML = h;
 }
 function tkNavSync(){
-  const n = $('#tkNav'), f = document.querySelector('.tk-nav-fundo');
+  const n = $('#tkNav'), f = document.querySelector('#view-tarefas .tk-nav-fundo');
   if(n) n.classList.toggle('on', TK_NAV);
   if(f) f.classList.toggle('on', TK_NAV);
 }
 function tkAddSync(){
-  const a = $('#tkAdd'), f = document.querySelector('.tk-add-fundo');
+  const a = $('#tkAdd'), f = document.querySelector('#view-tarefas .tk-add-fundo');
   if(a) a.classList.toggle('on', TK_ADD);
   if(f) f.classList.toggle('on', TK_ADD);
 }
@@ -3114,6 +3168,7 @@ function tick(){
     /* a faixa do dia acompanha o cronômetro a cada minuto */
     if(VIEW === 'tempo' && running() && new Date().getSeconds() === 0) renderTTDia();
   }
+  if(VIEW === 'lembretes') lmAgoraSync();
 }
 
 /* ===================== Pessoas ===================== */
@@ -3343,118 +3398,636 @@ function renderCalendario(){
 }
 
 /* ===================== Lembretes ===================== */
-let LCAT = '';
-function renderLembretes(){
+/* Agenda por dia, com a hora à esquerda e a linha do agora; gaveta com Agenda, Sem data, Aniversários, Dispensados e categorias;
+   adicionar que entende data, hora, repetição e #categoria; dispensar e adiar com gesto ou pelos botões do aviso;
+   detalhe em folha que salva sozinho. */
+const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+let LCAT = '';                /* categoria aberta, quando LV === 'cat' */
+let LV = 'agenda';            /* lista: agenda, semdata, aniv, feitos ou cat */
+let LM_NAV = false, LM_ADD = false;
+let LM_QA = {hora:'', rep:'', cat:''};        /* escolhas feitas nos botões da folha de adicionar */
+let LM_DOBRA = tkLS('lmDobra', {});            /* cartões abertos (true) ou fechados (false) */
+let LM_ANIV = tkLS('lmAniv', true);            /* aniversários de Pessoas na agenda */
+(() => { const l = tkLS('lmLista', null); if(l && l.v){ LV = l.v; LCAT = l.c || ''; } })();
+const LM_LISTAS = {agenda:'Agenda', semdata:'Sem data', aniv:'Aniversários', feitos:'Dispensados'};
+/* funções (e não constantes) porque a aba Hoje também desenha lembretes */
+function lmOrd(a, b){ return (a.date || '9999').localeCompare(b.date || '9999') || (a.time || '').localeCompare(b.time || '') || (a.createdAt || '').localeCompare(b.createdAt || ''); }
+function lmAgora(){ const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function lmRepete(r){ return !!(r && r.recurrence && r.recurrence.type); }
+function lmDiaMes(ds){ const d = fromD(ds); return d.getDate() + ' ' + MES[d.getMonth()]; }
+function lmValida(){
+  if(!LM_LISTAS[LV] && LV !== 'cat') LV = 'agenda';
+  if(LV === 'cat' && !(LCAT && S.reminders.some(r => (r.category || '') === LCAT))){ LV = 'agenda'; LCAT = ''; }
+  if(LV !== 'cat') LCAT = '';
+}
+function lmIrPara(v, c){ LV = v; LCAT = v === 'cat' ? (c || '') : ''; lmValida(); tkLSset('lmLista', {v:LV, c:LCAT}); }
+/* quando avisa, em texto curto: "amanhã, 09:00" */
+function lmQuando(r){ return r.date ? tkDataTxt(r.date) + (r.time ? ', ' + r.time : '') : 'sem data'; }
+
+/* coluna da esquerda: a hora; nos atrasados, na lista por mês e nos dispensados, a data */
+function lmCol(r, ctx){
   const t = today();
-  const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))].sort();
-  $('#rlCats').innerHTML = !cats.length ? '' :
-    '<button class="chip' + (!LCAT ? ' on' : '') + '" data-action="lcat" data-c="">Todos</button>' +
-    cats.map(c => '<button class="chip' + (LCAT === c ? ' on' : '') + '" data-action="lcat" data-c="' + esc(c) + '">' + esc(c) +
-      '<span class="c">' + S.reminders.filter(r => !r.dismissed && (r.category || '') === c).length + '</span></button>').join('');
-
-  const base = S.reminders.filter(r => !LCAT || (r.category || '') === LCAT);
-  const ativos = base.filter(r => !r.dismissed);
-  const feitos = base.filter(r => r.dismissed);
-  const atras = ativos.filter(r => r.date && r.date < t).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
-  const hoje = ativos.filter(r => r.date === t).sort((a,b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
-  const prox = ativos.filter(r => r.date && r.date > t && r.date <= addD(t,7)).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
-  const depois = ativos.filter(r => r.date && r.date > addD(t,7)).sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || '').localeCompare(b.createdAt || ''));
-  const semd = ativos.filter(r => !r.date).sort((a,b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
-
-  function lemRow(r){
-    const ack = r.dismissed;
-    let meta = '';
-    if(r.category) meta += '<span class="tag-chip">' + esc(r.category) + '</span>';
-    if(r.recurrence && r.recurrence.type) meta += '<span class="tag-chip">' + licn('repeat') + '</span>';
-    (r.personIds || []).slice(0,2).forEach(pid => { const p = S.people.find(x => x.id === pid); if(p) meta += '<span class="tag-chip">' + licn('user') + ' ' + esc(p.name) + '</span>'; });
-    if(r.date){
-      const [txt, cls] = fmtDue(r.date);
-      meta += '<span class="due ' + (ack ? '' : cls) + '">' + txt + (r.time ? ' ' + esc(r.time) : '') + '</span>';
-    }
-    return '<div class="trow' + (ack ? ' lem-ack' : '') + '" data-action="edit-lembrete" data-id="' + r.id + '">' +
-      '<span class="lem-flag">' + licn('flag') + '</span>' +
-      '<span class="tt">' + esc(r.title) + '</span>' +
-      '<span class="tmeta">' + meta +
-      '<button class="icon-btn sm" data-action="ack-lem" data-id="' + r.id + '" title="' + (ack ? 'Restaurar' : 'Dispensar') + '" aria-label="' + (ack ? 'Restaurar lembrete' : 'Dispensar lembrete') + '">' + licn(ack ? 'undo-2' : 'check') + '</button>' +
-      '</span></div>';
+  const late = !r.dismissed && r.date && r.date < t;
+  if(late || tkCtx(ctx, 'data')){
+    if(!r.date) return {txt:'', cls:' dt'};
+    const txt = r.date === addD(t, -1) ? 'ontem' : r.date === t ? 'hoje' : r.date === addD(t, 1) ? 'amanhã' : lmDiaMes(r.date);
+    return {txt, cls:' dt' + (late ? ' late' : ''), comData:true};
   }
-  function lemList(arr){ return '<div class="list">' + arr.map(lemRow).join('') + '</div>'; }
-  function foldSec(key, label, arr, cls, emptyMsg, icon){
-    if(!arr.length && !emptyMsg) return '';
-    const open = LEM_FOLDS[key] !== false;
-    const ic = icon ? '<span class="sec-ic">' + licn(icon) + '</span>' : '';
-    let h = '<div class="seclab ' + (cls || '') + '" style="cursor:pointer" data-action="lem-fold" data-k="' + key + '">' +
-      ic + '<span>' + label + '</span><span class="n">' + arr.length + '</span><span class="rule"></span>' +
-      chevHTML(open) + '</div>';
-    if(open){
-      if(arr.length) h += lemList(arr);
-      else if(emptyMsg) h += '<div class="list"><div class="empty">' + emptyMsg + '</div></div>';
-    }
-    return h;
+  return {txt:r.time || '', cls:tkCtx(ctx, 'agora') && r.date === t && r.time && r.time <= lmAgora() ? ' passou' : ''};
+}
+/* linha: círculo para dispensar, hora, título; embaixo a categoria; à direita os ícones do que ele tem */
+function lmRowHTML(r, ctx){
+  const ack = !!r.dismissed, col = lmCol(r, ctx);
+  let meta = '', ics = '';
+  if(col.comData && r.time) meta += '<span class="lm-hm">' + licn('clock') + esc(r.time) + '</span>';
+  if(r.category && !tkCtx(ctx, 'semcat')) meta += '<span class="lm-cat">' + licn('tag') + esc(r.category) + '</span>';
+  if(lmRepete(r)) ics += '<span class="tk-ic" title="' + esc(recResumo(r.recurrence)) + '">' + licn('repeat') + '</span>';
+  if((r.personIds || []).length) ics += '<span class="tk-ic" title="Pessoas">' + licn('user') + '</span>';
+  if(r.notes && String(r.notes).trim()) ics += '<span class="tk-ic" title="Tem descrição">' + licn('file-text') + '</span>';
+  return '<div class="trow tk lm' + (ack ? ' done' : '') + '" data-action="edit-lembrete" data-id="' + r.id + '"' + (tkCtx(ctx, 'agora') && r.time ? ' data-h="' + esc(r.time) + '"' : '') + '>' +
+    '<button class="ck' + (ack ? ' on' : '') + '" data-action="ack-lem" data-id="' + r.id + '" aria-label="' + (ack ? 'Restaurar lembrete' : 'Dispensar lembrete') + '"></button>' +
+    '<span class="lm-hora' + col.cls + '">' + esc(col.txt) + '</span>' +
+    '<span class="tk-body"><span class="tt">' + esc(r.title) + '</span>' + (meta ? '<span class="tk-meta">' + meta + '</span>' : '') + '</span>' +
+    (ics ? '<span class="tk-side"><span class="tk-ics">' + ics + '</span></span>' : '') +
+    (ack ? '' : '<span class="tk-acts"><button class="icon-btn sm" data-action="lm-adiar" data-id="' + r.id + '" title="Adiar" aria-label="Adiar">' + licn('clock') + '</button></span>') +
+  '</div>';
+}
+/* aniversário vindo de Pessoas: só leitura, abre a pessoa */
+function lmIdade(p, ds){ const a = +String(p.birthday).slice(0, 4); return a > 1900 ? +ds.slice(0, 4) - a : 0; }
+function lmProxAniv(p){ const n = nextBday(p.birthday); return n == null ? null : addD(today(), n); }
+function lmAnivDoDia(ds){ return S.people.filter(p => lmProxAniv(p) === ds); }
+function lmAnivRowHTML(p, ds, ctx){
+  const anos = lmIdade(p, ds), t = today();
+  const col = tkCtx(ctx, 'data') ? (ds === t ? 'hoje' : ds === addD(t, 1) ? 'amanhã' : lmDiaMes(ds)) : '';
+  return '<div class="trow tk lm aniv" data-action="edit-pessoa" data-id="' + p.id + '">' +
+    '<span class="lm-bolo" aria-hidden="true">' + licn('cake') + '</span>' +
+    '<span class="lm-hora' + (col ? ' dt' : '') + '">' + esc(col) + '</span>' +
+    '<span class="tk-body"><span class="tt">Aniversário de ' + esc(p.name) + '</span>' + (anos > 0 ? '<span class="tk-meta"><span>' + anos + ' anos</span></span>' : '') + '</span></div>';
+}
+function lmAgoraHTML(h){ return '<div class="lm-agora" role="presentation"><span>' + h + '</span></div>'; }
+/* a linha do agora anda sozinha; na virada do dia a lista é refeita */
+function lmAgoraSync(){
+  const agora = lmAgora();
+  if(agora === lmAgoraSync.min) return;
+  lmAgoraSync.min = agora;
+  if(lmAgoraSync.dia && lmAgoraSync.dia !== today()){
+    if(!$('#mback').classList.contains('on') && !POP && !LM_ADD) renderLembretes();
+    return;
   }
-  let out = '';
-  if(atras.length) out += foldSec('passados', 'Passados', atras, 'danger', '', 'alert-circle');
-  out += foldSec('hoje', 'Hoje', hoje, '', !atras.length ? 'Nenhum lembrete para hoje.' : '', 'calendar-check');
-  if(prox.length) out += foldSec('prox', 'Próximos 7 dias', prox, '', '', 'calendar-clock');
-  if(depois.length) out += foldSec('futuros', 'Futuros', depois, '', '', 'calendar-plus');
-  if(semd.length) out += foldSec('semdata', 'Sem data', semd, '', '', 'inbox');
-  if(feitos.length){
-    out += foldSec('dispensados', 'Dispensados', feitos, '', '', 'archive');
-    if(LEM_FOLDS.dispensados !== false)
-      out += '<div style="display:flex; justify-content:flex-end; margin-bottom:8px">' +
-        '<button class="btn btn-danger btn-sm" data-action="limpar-lems">Apagar dispensados (' + feitos.length + ')</button></div>';
+  const el = document.querySelector('#rlLista .lm-agora');
+  if(!el || document.querySelector('#rlLista .sw-ativo')) return;
+  const lista = el.parentElement, rows = [...lista.querySelectorAll('.trow[data-h]')];
+  const prox = rows.find(r => r.dataset.h > agora);
+  if(prox){ if(el.nextElementSibling !== prox) lista.insertBefore(el, prox); }
+  else if(rows.length) rows[rows.length - 1].after(el);
+  el.firstChild.textContent = agora;
+  rows.forEach(r => { const h = r.querySelector('.lm-hora'); if(h) h.classList.toggle('passou', r.dataset.h <= agora); });
+}
+
+function lmGrupos(){
+  const t = today(), gs = [], ano = fromD(t).getFullYear();
+  const nomeMes = k => { const d = fromD(k + '-01'); return cap1(MESES_LONGOS[d.getMonth()]) + (d.getFullYear() !== ano ? ' de ' + d.getFullYear() : ''); };
+  if(LV === 'aniv'){
+    const porMes = {};
+    S.people.map(p => [lmProxAniv(p), p]).filter(x => x[0]).sort((a, b) => a[0].localeCompare(b[0]) || a[1].name.localeCompare(b[1].name, 'pt'))
+      .forEach(x => { const k = x[0].slice(0, 7); (porMes[k] = porMes[k] || []).push(x); });
+    Object.keys(porMes).sort().forEach(k => gs.push({k:'m:' + k.slice(5), ic:'cake', nome:nomeMes(k), itens:[], anivs:porMes[k], ctx:'data'}));
+    return gs;
+  }
+  if(LV === 'feitos'){
+    const porDia = {};
+    S.reminders.filter(r => r.dismissed).sort((a, b) => (b.dismissedAt || '').localeCompare(a.dismissedAt || ''))
+      .forEach(r => { const k = r.dismissedAt ? dstr(new Date(r.dismissedAt)) : ''; (porDia[k] = porDia[k] || []).push(r); });
+    Object.keys(porDia).sort().reverse().slice(0, 60).forEach(k =>
+      gs.push({k:'f:' + k, ic:'check-circle', nome:k ? cap1(tkDataTxt(k)) : 'Antes', itens:porDia[k], ctx:'data', cls:'ok'}));
+    return gs;
+  }
+  const ativos = S.reminders.filter(r => !r.dismissed && (LV !== 'cat' || (r.category || '') === LCAT));
+  const sc = LV === 'cat' ? ' semcat' : '';
+  const sem = ativos.filter(r => !r.date).sort(lmOrd);
+  if(LV === 'semdata'){
+    if(sem.length) gs.push({k:'sem', ic:'inbox', nome:'Sem data', itens:sem, ctx:sc.trim()});
+    return gs;
+  }
+  const atras = ativos.filter(r => r.date && r.date < t).sort(lmOrd);
+  if(atras.length) gs.push({k:'atras', ic:'alert-circle', nome:'Atrasados', itens:atras, ctx:sc.trim(), cls:'late',
+    rodape:atras.length > 1 ? '<button class="tk-lote" data-action="lm-dispensar-atrasados">' + licn('check-circle') + 'Dispensar os ' + atras.length + '</button>' : ''});
+  for(let i = 0; i <= 7; i++){
+    const ds = addD(t, i), xs = ativos.filter(r => r.date === ds).sort(lmOrd);
+    const an = LV === 'agenda' && LM_ANIV ? lmAnivDoDia(ds) : [];
+    if(!xs.length && !an.length) continue;
+    const d = fromD(ds);
+    gs.push({k:'d:' + i, ic:i ? 'calendar-days' : 'sun', itens:xs, anivs:an.map(p => [ds, p]), ctx:((i === 0 ? 'agora' : '') + sc).trim(), agora:i === 0,
+      nome:i === 0 ? 'Hoje' : i === 1 ? 'Amanhã' : cap1(DOW_LONGO_T[d.getDay()]) + ', ' + d.getDate() + ' ' + MES[d.getMonth()]});
+  }
+  const porMes = {};
+  ativos.filter(r => r.date && r.date > addD(t, 7)).sort(lmOrd).forEach(r => { const k = r.date.slice(0, 7); (porMes[k] = porMes[k] || []).push(r); });
+  Object.keys(porMes).sort().forEach(k => gs.push({k:'m:' + k, ic:'calendar-range', nome:nomeMes(k), itens:porMes[k], ctx:('data' + sc).trim()}));
+  if(sem.length) gs.push({k:'sem', ic:'inbox', nome:'Sem data', itens:sem, ctx:sc.trim(), aberto:LV === 'cat'});
+  return gs;
+}
+function lmGrupoHTML(g){
+  const k = 'lm:' + LV + (LV === 'cat' ? ':' + LCAT : '') + '|' + g.k;
+  const ab = k in LM_DOBRA ? !!LM_DOBRA[k] : g.aberto !== false;
+  const anivs = g.anivs || [], n = g.itens.length + anivs.length;
+  let corpo = '';
+  if(ab){
+    const agora = lmAgora();
+    /* a linha do agora entra antes do primeiro lembrete com hora depois de agora */
+    const pos = g.agora && g.itens.some(r => r.time) ? g.itens.findIndex(r => r.time && r.time > agora) : -2;
+    corpo = anivs.map(([ds, p]) => lmAnivRowHTML(p, ds, g.ctx)).join('') +
+      g.itens.map((r, i) => (i === pos ? lmAgoraHTML(agora) : '') + lmRowHTML(r, g.ctx)).join('') + (pos === -1 ? lmAgoraHTML(agora) : '') + (g.rodape || '');
+    const semCol = !g.itens.some(r => lmCol(r, g.ctx).txt) && !(tkCtx(g.ctx, 'data') && anivs.length);
+    corpo = '<div class="tk-gl tk-list' + (semCol ? ' semhora' : '') + '">' + corpo + '</div>';
+  }
+  return '<section class="tk-g' + (g.cls ? ' ' + g.cls : '') + '">' +
+    '<button class="tk-gh" data-action="lm-fold" data-k="' + esc(k) + '" aria-expanded="' + ab + '"><span class="tk-gi">' + licn(g.ic) + '</span>' +
+      '<span class="tk-gn">' + esc(g.nome) + '</span><span class="tk-gc">' + n + '</span>' + licn(ab ? 'chevron-down' : 'chevron-right') + '</button>' +
+    corpo + '</section>';
+}
+/* gaveta: agenda, sem data, aniversários, dispensados e as categorias */
+function renderLmNav(){
+  const el = $('#lmNav');
+  if(!el) return;
+  const at = S.reminders.filter(r => !r.dismissed);
+  const cats = {};
+  at.forEach(r => { if(r.category) cats[r.category] = (cats[r.category] || 0) + 1; });
+  const item = (on, attrs, ico, nome, c) => '<button class="tk-ni' + (on ? ' on' : '') + '" ' + attrs + '><span class="ic">' + ico + '</span><span class="l">' + nome + '</span>' +
+    (c ? '<span class="c">' + c + '</span>' : '') + '</button>';
+  const nAniv = S.people.filter(p => lmProxAniv(p)).length;
+  let h = item(LV === 'agenda', 'data-action="lm-lista" data-v="agenda"', tkIcoHoje(), 'Agenda', at.filter(r => r.date).length) +
+    item(LV === 'semdata', 'data-action="lm-lista" data-v="semdata"', licn('inbox'), 'Sem data', at.filter(r => !r.date).length) +
+    (nAniv ? item(LV === 'aniv', 'data-action="lm-lista" data-v="aniv"', licn('cake'), 'Aniversários', nAniv) : '') +
+    item(LV === 'feitos', 'data-action="lm-lista" data-v="feitos"', licn('check-circle'), 'Dispensados', '');
+  const ks = Object.keys(cats).sort((a, b) => a.localeCompare(b, 'pt'));
+  if(ks.length) h += '<div class="tk-nsep"></div><div class="tk-mh">Categorias</div>' +
+    ks.map(c => item(LV === 'cat' && LCAT === c, 'data-action="lm-lista" data-v="cat" data-c="' + esc(c) + '"', licn('tag'), esc(c), cats[c])).join('');
+  el.innerHTML = h;
+}
+function lmNavSync(){
+  const n = $('#lmNav'), f = document.querySelector('#view-lembretes .tk-nav-fundo');
+  if(n) n.classList.toggle('on', LM_NAV);
+  if(f) f.classList.toggle('on', LM_NAV);
+}
+function lmAddSync(){
+  const a = $('#lmAdd'), f = document.querySelector('#view-lembretes .tk-add-fundo');
+  if(a) a.classList.toggle('on', LM_ADD);
+  if(f) f.classList.toggle('on', LM_ADD);
+}
+function renderLembretes(){
+  lmValida();
+  const t = today();
+  $('#lmTitulo').innerHTML = '<span class="nm">' + esc(LV === 'cat' ? LCAT : LM_LISTAS[LV]) + '</span>';
+  const hj = S.reminders.filter(r => !r.dismissed && r.date && r.date <= t), atr = hj.filter(r => r.date < t).length;
+  $('#lmResumo').innerHTML = LV === 'agenda' && hj.length ? '<span class="hj-pill' + (atr ? ' late' : '') + '" title="Para hoje e atrasados">' + licn('bell') + hj.length + '</span>' : '';
+  renderLmNav(); lmNavSync(); lmAddSync(); lmQaSync();
+  const gs = lmGrupos();
+  let out = gs.map(lmGrupoHTML).join('');
+  if(!gs.length){
+    const v = {agenda:['bell', 'Nenhum lembrete pela frente.'], semdata:['inbox', 'Nenhum lembrete sem data.'], aniv:['cake', 'Ninguém com aniversário em Pessoas.'],
+      feitos:['check-circle', 'Nenhum lembrete dispensado.'], cat:['tag', 'Nada nesta categoria.']}[LV];
+    out = '<div class="tk-vazio">' + licn(v[0]) + '<p>' + v[1] + '</p></div>';
   }
   $('#rlLista').innerHTML = out;
+  lmAgoraSync.min = lmAgora(); lmAgoraSync.dia = t;
+  lmPreview();
+  /* dica única no celular: arrastar a linha */
+  if(window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#rlLista .trow.lm:not(.done):not(.aniv)')){
+    let visto = true;
+    try{ visto = localStorage.getItem('central.dicaArrastarLem') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarLem', '1'); }catch(e){}
+    if(!visto) setTimeout(() => toast('Dica: arraste um lembrete para a direita para dispensar, para a esquerda para adiar.'), 700);
+  }
 }
-function quickAddLem(){
-  const inp = $('#rlTitle');
-  const title = inp.value.trim();
-  if(!title){ inp.focus(); return; }
-  const date = $('#rlDate').value || null;
-  const nr = {id:uid(), title, date, category:LCAT || '', notes:'', dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()};
+/* menu ⋮ da lista */
+function lmOpcoesHTML(){
+  const t = today();
+  let h = '';
+  if(LV === 'agenda') h += '<button class="tk-mi' + (LM_ANIV ? ' on' : '') + '" role="menuitemcheckbox" aria-checked="' + !!LM_ANIV + '" data-action="lm-aniv">' + licn('cake') +
+    '<span class="l">Aniversários na agenda</span>' + (LM_ANIV ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  const atras = S.reminders.filter(r => !r.dismissed && r.date && r.date < t && (LV !== 'cat' || r.category === LCAT)).length;
+  if(atras && (LV === 'agenda' || LV === 'cat')) h += '<button class="tk-mi" role="menuitem" data-action="lm-dispensar-atrasados">' + licn('check-circle') +
+    '<span class="l">Dispensar ' + (atras > 1 ? 'os ' + atras + ' atrasados' : 'o atrasado') + '</span></button>';
+  if(LV === 'cat') h += '<button class="tk-mi" role="menuitem" data-action="lm-cat-renomear">' + licn('pencil') + '<span class="l">Renomear categoria</span></button>';
+  const feitos = S.reminders.filter(r => r.dismissed).length;
+  if(feitos && LV === 'feitos') h += '<button class="tk-mi del" role="menuitem" data-action="limpar-lems">' + licn('trash-2') + '<span class="l">Apagar dispensados</span><span class="c">' + feitos + '</span></button>';
+  if(LV === 'aniv') h += '<button class="tk-mi" role="menuitem" data-action="lm-ir-pessoas">' + licn('users') + '<span class="l">Abrir Pessoas</span></button>';
+  return h || '<div class="tk-mh">Nada para ajustar nesta lista.</div>';
+}
+
+/* ---------- dispensar, adiar e desfazer ---------- */
+/* primeira data da repetição depois de lim, andando a partir da data atual do lembrete */
+function lmDepoisDe(r, lim){
+  let d = r.date, g = 0;
+  while(d && d <= lim && g++ < 3000){ const n = nextRecDate(d, r.recurrence); if(!n || n <= d) break; d = n; }
+  return d;
+}
+/* desfazer volta só os lembretes que a ação mexeu e tira os que ela criou; o resto fica como está */
+function lmFoto(ids){ return ids.map(id => S.reminders.find(x => x.id === id)).filter(Boolean).map(r => JSON.stringify(r)); }
+function lmDesfazer(fotos, criados){
+  return () => {
+    if(criados && criados.length) S.reminders = S.reminders.filter(x => !criados.includes(x.id));
+    fotos.forEach(j => { const o = JSON.parse(j), i = S.reminders.findIndex(x => x.id === o.id); if(i >= 0) S.reminders[i] = o; else S.reminders.push(o); });
+    save(); render(); sfx('undo');
+  };
+}
+/* dispensa; o que repete pula para a próxima vez (atrasado vai para a primeira a partir de hoje) */
+function lmDispensar(id){
+  const r = S.reminders.find(x => x.id === id);
+  if(!r) return;
+  const fotos = lmFoto([id]), t = today();
+  if(!r.dismissed && lmRepete(r) && r.date){
+    r.date = lmDepoisDe(r, r.date < t ? addD(t, -1) : r.date);
+    playDing(); save(); render();
+    toast('Próximo: ' + lmQuando(r) + '.', 'Desfazer', lmDesfazer(fotos));
+    return;
+  }
+  r.dismissed = !r.dismissed;
+  r.dismissedAt = r.dismissed ? new Date().toISOString() : null;
+  save(); render();
+  if(r.dismissed){ playDing(); toast('Dispensado.', 'Desfazer', lmDesfazer(fotos)); }
+  else toast('Lembrete de volta.');
+}
+/* daqui a uma hora, em múltiplo de 5 minutos */
+function lmMais1h(){
+  const d = new Date(Date.now() + 3600000);
+  d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0);
+  return [dstr(d), pad(d.getHours()) + ':' + pad(d.getMinutes())];
+}
+function lmAdiarOps(){
+  const t = today(), ops = [], [d1, h1] = lmMais1h();
+  if(d1 === t) ops.push(['timer', 'Em 1 hora', t, h1]);
+  if(new Date().getHours() < 19) ops.push(['moon', 'Hoje à noite', t, '20:00']);
+  ops.push(['sun', 'Amanhã cedo', addD(t, 1), '09:00']);
+  const dw = fromD(t).getDay();
+  ops.push(['calendar-range', dw === 6 || dw === 0 ? 'Próximo fim de semana' : 'Fim de semana', dw === 6 ? addD(t, 7) : tkProxDia(6), '10:00']);
+  ops.push(['calendar-plus', 'Próxima semana', tkProxDia(1), '09:00']);
+  return ops;
+}
+function lmAdiar(id){
+  const r = S.reminders.find(x => x.id === id);
+  if(!r) return;
+  popFechar();
+  const t = today(), devido = !r.date || r.date <= t;
+  M = {type:'lm-adiar', id};
+  const body = '<p class="rs-de">' + esc(r.title) + '<span>' + (r.date ? 'Marcado para ' + esc(lmQuando(r)) : 'Sem data') + '</span></p>' +
+    '<div class="rs-ops">' + lmAdiarOps().map(([ic, lab, ds, hr]) =>
+      '<button class="rs-op" data-action="lm-adiar-set" data-ds="' + ds + '" data-hr="' + hr + '">' + licn(ic) + '<span>' + lab + '</span><small>' + (ds === t ? 'hoje' : ds === addD(t, 1) ? 'amanhã' : DOW[fromD(ds).getDay()] + ' ' + fromD(ds).getDate()) + ', ' + hr + '</small></button>').join('') +
+      '<label class="rs-op dt">' + licn('calendar') + '<span>Escolher data</span><small>' + (r.time ? 'às ' + esc(r.time) : 'calendário') + '</small>' +
+        '<input type="date" id="f_lmadiar" value="' + esc(r.date || '') + '" aria-label="Escolher data"></label>' +
+    '</div>' +
+    (lmRepete(r) && r.date ? '<p class="rs-nota">' + licn('repeat') + 'Só desta vez. A repetição continua.</p>' : '');
+  openModal(devido ? 'Adiar' : 'Reagendar', body, '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>', {semFoco:true});
+}
+/* muda a data e a hora; no que repete, só esta vez vira um lembrete avulso e a série segue para a próxima
+   (o atrasado guarda a vez de hoje, como no dispensar). ref é o dia do aviso, quando o adiar vem dele. */
+function lmMover(id, ds, hr, ref){
+  const r = S.reminders.find(x => x.id === id);
+  if(!r) return;
+  const fotos = lmFoto([id]), criados = [], t = today(), devido = !r.date || r.date <= t;
+  let alvo = r;
+  if(lmRepete(r) && r.date){
+    alvo = Object.assign(JSON.parse(JSON.stringify(r)), {id:uid(), recurrence:null, createdAt:new Date().toISOString()});
+    S.reminders.push(alvo);
+    criados.push(alvo.id);
+    r.date = lmDepoisDe(r, ref || (r.date < t ? addD(t, -1) : r.date));
+  }
+  alvo.date = ds || null;
+  if(hr != null) alvo.time = hr;
+  if(lmRepete(alvo) && alvo.date) lmRepFixa(alvo.recurrence, alvo.date);
+  alvo.dismissed = false; alvo.dismissedAt = null;
+  if(M && M.type === 'lm-adiar') closeModal();
+  haptic('light'); save(); render();
+  toast((devido ? 'Adiado para ' : 'Reagendado para ') + lmQuando(alvo) + '.', 'Desfazer', lmDesfazer(fotos, criados));
+}
+/* botões do aviso no Android: Feito e Adiar 1 h. ds é o dia daquele aviso. */
+function lmAcaoNotif(id, acao, ds){
+  lmIrPara('agenda');
+  if(VIEW !== 'lembretes') setView('lembretes'); else render();
+  const r = S.reminders.find(x => x.id === id);
+  if(!r || r.dismissed) return;
+  /* o aviso continua na bandeja depois de resolvido no app: se aquela vez já passou, não mexe em nada */
+  if(ds && r.date && (lmRepete(r) ? ds < r.date : ds !== r.date)){ toast('Esse aviso já tinha sido resolvido.'); return; }
+  if(acao === 'adiar'){ const [d1, h1] = lmMais1h(); lmMover(id, d1, h1, ds); return; }
+  if(lmRepete(r) && r.date){
+    const fotos = lmFoto([id]);
+    r.date = lmDepoisDe(r, ds && ds > r.date ? ds : r.date);
+    playDing(); save(); render();
+    toast('Feito. Próximo: ' + lmQuando(r) + '.', 'Desfazer', lmDesfazer(fotos));
+    return;
+  }
+  lmDispensar(id);
+}
+
+/* ---------- adicionar: entende data, hora, repetição e #categoria ---------- */
+/* "Remédio todo dia 8h", "Reunião toda segunda 9h30 #trabalho", "Pagar aluguel todo dia 5", "Ligar pro banco amanhã de manhã".
+   Hora: 8h, 9h30, 14:30, às 10, meio-dia, de manhã (09:00), à tarde (15:00), à noite (20:00).
+   Repetição: todo dia, dias úteis, de segunda a sexta, toda semana, toda segunda, todo dia 5, todo mês, todo ano, a cada 3 dias, a cada 2 semanas.
+   O resto (datas e título) passa pelo mesmo leitor das tarefas. */
+function lmParse(txt, o){
+  o = o || {};
+  const toks = String(txt || '').trim().split(/\s+/).filter(Boolean);
+  const nt = toks.map(x => semAcento(x).replace(/[.,;:!?]+$/, ''));
+  const usado = toks.map(() => false);
+  const r = {time:'', rec:null, cat:''};
+  const tem = (obj, k) => Object.prototype.hasOwnProperty.call(obj, k);
+  const marca = (i, k) => { for(let j = i; j < i + k; j++) usado[j] = true; };
+  /* "às 10h", "pelas 9h": a preposição sai junto com a hora */
+  const prep = i => { if(i > 0 && !usado[i - 1] && /^(as|a|pelas|ate)$/.test(nt[i - 1])) usado[i - 1] = true; };
+  const dia = w => { const b = w.replace(/-feira$/, ''); return tem(TK_DIAS, b) ? TK_DIAS[b] : tem(TK_DIAS, b.replace(/s$/, '')) ? TK_DIAS[b.replace(/s$/, '')] : null; };
+  const hora = (h, m) => +h < 24 && +m < 60 ? pad(+h) + ':' + pad(+m) : '';
+  for(let i = 0; i < toks.length; i++){
+    if(usado[i]) continue;
+    const w = nt[i], w1 = nt[i + 1] || '', w2 = nt[i + 2] || '', w3 = nt[i + 3] || '';
+    if(!r.cat && /^#[^\d#\s]/.test(toks[i])){ r.cat = toks[i].slice(1).replace(/[.,;:!?]+$/, ''); marca(i, 1); continue; }
+    if(!r.time){
+      const m = w.match(/^(\d{1,2})(?:h(\d{2})?|:(\d{2})h?)$/);
+      if(m && hora(m[1], m[2] || m[3] || 0)){ r.time = hora(m[1], m[2] || m[3] || 0); marca(i, 1); prep(i); continue; }
+      /* "às 10"; sem crase, só quando o número fecha o texto ("as 10" também é "as 10 contas") */
+      if(/^(às|as)$/i.test(toks[i]) && /^\d{1,2}$/.test(w1) && +w1 < 24 && (toks[i].toLowerCase() === 'às' || i + 2 >= toks.length || /^[#!]/.test(toks[i + 2]))){
+        r.time = hora(w1, 0); marca(i, 2); continue;
+      }
+      if(w === 'meio-dia' || (w === 'meio' && w1 === 'dia')){ r.time = '12:00'; marca(i, w === 'meio' ? 2 : 1); prep(i); continue; }
+      if(w === 'meia-noite'){ r.time = '00:00'; marca(i, 1); prep(i); continue; }
+      if(/^(de|pela|a|na|nesta|esta|hoje)$/.test(w) && /^(manha|tarde|noite)$/.test(w1)){
+        r.time = {manha:'09:00', tarde:'15:00', noite:'20:00'}[w1];
+        if(w === 'hoje') marca(i + 1, 1); else marca(i, 2);
+        continue;
+      }
+    }
+    if(!r.rec){
+      if((w === 'dias' && w1 === 'uteis') || ((w === 'em' || w === 'nos') && w1 === 'dias' && w2 === 'uteis') || (w === 'todo' && w1 === 'dia' && w2 === 'util')){
+        r.rec = {type:'weekly', days:[1, 2, 3, 4, 5]}; marca(i, w === 'dias' ? 2 : 3); continue;
+      }
+      if(w === 'de' && dia(w1) != null && (w2 === 'a' || w2 === 'ate') && dia(w3) != null){
+        const ds = [], fim = dia(w3);
+        for(let d = dia(w1), k = 0; k < 7; k++, d = (d + 1) % 7){ ds.push(d); if(d === fim) break; }
+        r.rec = {type:'weekly', days:ds}; marca(i, 4); continue;
+      }
+      if(w === 'todo' && w1 === 'dia' && /^\d{1,2}$/.test(w2) && +w2 >= 1 && +w2 <= 31){ r.rec = {type:'monthly', dayOfMonth:+w2}; marca(i, 3); continue; }
+      if(w === 'diariamente' || ((w === 'todo' || w === 'toda') && w1 === 'dia')){ r.rec = {type:'daily'}; marca(i, w === 'diariamente' ? 1 : 2); continue; }
+      if(w === 'todos' && w1 === 'os' && w2 === 'dias'){ r.rec = {type:'daily'}; marca(i, 3); continue; }
+      if((w === 'toda' && w1 === 'semana') || w === 'semanalmente'){ r.rec = {type:'weekly', days:[]}; marca(i, w === 'toda' ? 2 : 1); continue; }
+      if((w === 'todo' && w1 === 'mes') || w === 'mensalmente'){ r.rec = {type:'monthly'}; marca(i, w === 'todo' ? 2 : 1); continue; }
+      if((w === 'todo' && w1 === 'ano') || w === 'anualmente'){ r.rec = {type:'yearly'}; marca(i, w === 'todo' ? 2 : 1); continue; }
+      if((w === 'toda' || w === 'todo') && dia(w1) != null){ r.rec = {type:'weekly', days:[dia(w1)]}; marca(i, 2); continue; }
+      if((w === 'todas' || w === 'todos') && (w1 === 'as' || w1 === 'os') && dia(w2) != null){ r.rec = {type:'weekly', days:[dia(w2)]}; marca(i, 3); continue; }
+      if(w === 'a' && w1 === 'cada' && /^\d{1,3}$/.test(w2) && /^dias?$/.test(w3)){ r.rec = {type:'interval', interval:Math.max(1, +w2)}; marca(i, 4); continue; }
+      if(w === 'a' && w1 === 'cada' && /^\d{1,2}$/.test(w2) && /^semanas?$/.test(w3)){ r.rec = {type:'interval', interval:7 * Math.max(1, +w2)}; marca(i, 4); continue; }
+    }
+  }
+  const q = qaParse(toks.filter((_, i) => !usado[i]).join(' '), {semData:o.semData});
+  return {title:q.title, date:q.due, time:r.time, rec:r.rec, cat:r.cat};
+}
+/* primeira data de um lembrete que repete e veio sem data */
+function lmPrimeiraData(rec, hora){
+  const t = today(), cabeHoje = !hora || hora > lmAgora();
+  if(rec.type === 'weekly' && (rec.days || []).length){
+    for(let i = 0; i <= 7; i++){ const ds = addD(t, i); if(rec.days.includes(fromD(ds).getDay()) && (i > 0 || cabeHoje)) return ds; }
+  }
+  if(rec.type === 'monthly' && rec.dayOfMonth){
+    const d0 = fromD(t);
+    for(let m = 0; m < 3; m++){
+      const fim = new Date(d0.getFullYear(), d0.getMonth() + m + 1, 0).getDate();
+      const ds = dstr(new Date(d0.getFullYear(), d0.getMonth() + m, Math.min(rec.dayOfMonth, fim), 12));
+      if(ds > t || (ds === t && cabeHoje)) return ds;
+    }
+  }
+  return cabeHoje ? t : addD(t, 1);
+}
+const LM_REPS = [['', 'Não repete', 'x'], ['daily', 'Todo dia', 'repeat'], ['uteis', 'Dias úteis', 'briefcase'], ['weekly', 'Toda semana', 'calendar-days'],
+  ['monthly', 'Todo mês', 'calendar'], ['yearly', 'Todo ano', 'cake']];
+function lmRepDe(v){
+  if(!v) return null;
+  if(v === 'uteis') return {type:'weekly', days:[1, 2, 3, 4, 5]};
+  if(v === 'weekly') return {type:'weekly', days:[]};
+  return {type:v};
+}
+/* semanal sem dia e mensal sem dia pegam o dia da data */
+function lmRepFixa(rec, ds){
+  if(rec.type === 'weekly' && !(rec.days || []).length) rec.days = [fromD(ds).getDay()];
+  if(rec.type === 'monthly' && !rec.dayOfMonth) rec.dayOfMonth = fromD(ds).getDate();
+  return rec;
+}
+function lmRepMenuHTML(atual, acao){
+  return LM_REPS.map(([v, lab, ic]) => '<button class="tk-mi' + (atual === v ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-v="' + v + '">' + licn(ic) +
+    '<span class="l">' + lab + '</span>' + (atual === v ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>').join('');
+}
+const LM_HORAS = [['sun', 'Manhã', '09:00'], ['coffee', 'Meio-dia', '12:00'], ['briefcase', 'Tarde', '15:00'], ['clock', 'Fim do dia', '18:00'], ['moon', 'Noite', '20:00']];
+/* menu de hora: atalhos e um campo com OK (no PC a hora se digita em partes, então só vale no OK) */
+function lmHoraMenuHTML(atual, acao){
+  return LM_HORAS.map(([ic, lab, h]) => '<button class="tk-mi' + (atual === h ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-hr="' + h + '">' + licn(ic) +
+    '<span class="l">' + lab + '</span><small>' + h + '</small></button>').join('') +
+    '<div class="lm-hesc">' + licn('clock') + '<input type="time" class="lm-horainp" data-acao="' + acao + '" value="' + esc(atual || '') + '" aria-label="Outra hora">' +
+      '<button class="lm-hok" data-action="lm-hora-ok" data-acao="' + acao + '" title="Usar esta hora" aria-label="Usar esta hora">' + licn('check') + '</button></div>' +
+    (atual ? '<div class="tk-msep"></div><button class="tk-mi del" role="menuitem" data-action="' + acao + '" data-hr="">' + licn('x') + '<span class="l">Sem hora</span></button>' : '');
+}
+function lmCatMenuHTML(atual, acao){
+  const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt'));
+  return '<button class="tk-mi' + (!atual ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-c="">' + licn('circle-minus') + '<span class="l">Sem categoria</span>' +
+    (!atual ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>' +
+    cats.map(c => '<button class="tk-mi' + (atual === c ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-c="' + esc(c) + '">' + licn('tag') +
+      '<span class="l">' + esc(c) + '</span>' + (atual === c ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>').join('') +
+    '<div class="tk-msep"></div><button class="tk-mi" role="menuitem" data-action="' + acao + '-nova">' + licn('plus') + '<span class="l">Nova categoria</span></button>';
+}
+/* botões da folha mostram o que foi escolhido */
+function lmQaSync(){
+  const db = $('#lmDataBtn'), d = $('#rlDate'), hb = $('#lmHoraBtn'), rb = $('#lmRepBtn'), cb = $('#lmCatBtn');
+  if(db && d){
+    const v = d.value, t = today();
+    db.classList.toggle('on', !!v);
+    db.querySelector('.qd-lab').textContent = !v ? '' : v === t ? 'hoje' : v === addD(t, 1) ? 'amanhã' : v.slice(8, 10) + '/' + v.slice(5, 7);
+  }
+  if(hb){ hb.classList.toggle('on', !!LM_QA.hora); hb.querySelector('.qd-lab').textContent = LM_QA.hora || ''; }
+  if(rb){ const x = LM_REPS.find(o => o[0] === LM_QA.rep); rb.classList.toggle('on', !!LM_QA.rep); rb.title = LM_QA.rep && x ? 'Repete: ' + x[1] : 'Repetição'; }
+  if(cb){ cb.classList.toggle('on', !!LM_QA.cat); cb.querySelector('.qd-lab').textContent = LM_QA.cat || ''; }
+}
+function lmQaAbrir(){ LM_ADD = true; lmAddSync(); const i = $('#rlTitle'); if(i) i.focus(); lmPreview(); }
+function lmQaFechar(){ LM_ADD = false; lmAddSync(); const i = $('#rlTitle'); if(i && document.activeElement === i) i.blur(); }
+/* junta o texto com as escolhas dos botões: data, hora, repetição e categoria finais */
+function lmMontar(raw, cru){
+  const dEl = $('#rlDate'), dv = dEl ? dEl.value : '';
+  let q = lmParse(raw, {semData:!!dv});
+  if(!q.title){ if(!cru) return null; q = {title:raw, date:null, time:'', rec:null, cat:''}; }
+  const time = LM_QA.hora || q.time || '';
+  const rec = LM_QA.rep ? lmRepDe(LM_QA.rep) : q.rec;
+  let date = dv || q.date || null;
+  if(!date && (rec || time)) date = rec ? lmPrimeiraData(rec, time) : (time > lmAgora() ? today() : addD(today(), 1));
+  if(rec && date) lmRepFixa(rec, date);
+  return {title:q.title, date, time, rec, cat:LM_QA.cat || q.cat || (LV === 'cat' ? LCAT : '')};
+}
+/* mostra embaixo do campo o que foi entendido, antes de salvar */
+function lmPreview(){
+  const el = document.getElementById('lmPrev'), inp = document.getElementById('rlTitle');
+  if(!el || !inp) return;
+  const v = inp.value.trim();
+  if(!v){
+    el.innerHTML = document.activeElement !== inp ? '' : '<span class="qa-dica">Use no texto: amanhã 9h, sexta às 14:30, todo dia 8h, toda segunda, #trabalho</span>';
+    return;
+  }
+  const q = lmMontar(v);
+  if(!q){ el.innerHTML = ''; return; }
+  let h = '';
+  if(q.date) h += '<span class="qa-tok">' + licn('calendar') + tkDataTxt(q.date) + '</span>';
+  if(q.time) h += '<span class="qa-tok">' + licn('clock') + q.time + '</span>';
+  if(q.rec) h += '<span class="qa-tok">' + licn('repeat') + esc(recResumo(q.rec)) + '</span>';
+  if(q.cat) h += '<span class="qa-tok">' + licn('tag') + esc(q.cat) + '</span>';
+  el.innerHTML = h ? h + '<span class="qa-titulo">' + esc(q.title) + '</span>' : '';
+}
+function quickAddLem(viaBotao){
+  const inp = $('#rlTitle'), dEl = $('#rlDate');
+  const raw = inp.value.trim();
+  if(!raw){
+    /* com o campo vazio, a seta abre o detalhe de um lembrete novo */
+    if(viaBotao){
+      const p = {date:dEl.value || '', time:LM_QA.hora, category:LM_QA.cat || (LV === 'cat' ? LCAT : ''), recurrence:lmRepDe(LM_QA.rep)};
+      if(p.recurrence && p.date) lmRepFixa(p.recurrence, p.date);
+      lmQaFechar(); openLembrete(null, p);
+    }else inp.focus();
+    return;
+  }
+  const q = lmMontar(raw, true);
+  const nr = {id:uid(), title:q.title, date:q.date || null, time:q.time || '', category:q.cat || '', notes:'', recurrence:q.rec || null,
+    personIds:[], dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()};
   S.reminders.push(nr);
-  inp.value = ''; $('#rlDate').value = '';
+  /* de Dispensados ou Aniversários, vai para onde o lembrete aparece */
+  if(LV === 'feitos' || LV === 'aniv') lmIrPara(nr.date ? 'agenda' : 'semdata');
+  if(!nr.date && LV === 'agenda'){ LM_DOBRA['lm:agenda|sem'] = true; tkLSset('lmDobra', LM_DOBRA); }
+  const fora = (LV === 'semdata' && nr.date) || (LV === 'cat' && nr.category !== LCAT);
+  inp.value = ''; dEl.value = ''; LM_QA = {hora:'', rep:'', cat:''};
   window.__novo = nr.id; sfx('add'); haptic('light');
   save(); render(); inp.focus();
+  const msg = 'Lembrete ' + (nr.date ? 'para ' + lmQuando(nr) : 'sem data') + (nr.recurrence ? ', ' + recResumo(nr.recurrence).toLowerCase() : '') + '.';
+  if(fora) toast(msg, 'Ver', () => { lmIrPara(nr.date ? 'agenda' : 'semdata'); lmQaFechar(); setView('lembretes'); });
+  else toast(msg);
 }
-function openLembrete(id){
+
+/* ---------- detalhe do lembrete ---------- */
+/* Folha com a categoria no topo, data e hora em botões, título, descrição e uma barra de ícones.
+   Salva sozinha ao fechar (tocar fora, voltar, Esc ou ✓). Lembrete novo sem texto é descartado. */
+function openLembrete(id, preset){
   const r = id ? S.reminders.find(x => x.id === id) : null;
-  M = { type:'lembrete', id: id || null, draft: r ? JSON.parse(JSON.stringify(r)) :
-    {title:'', date:'', category:LCAT || '', notes:'', dismissed:false} };
+  if(id && !r) return;
+  popFechar();
+  const base = {title:'', date:'', time:'', category:(VIEW === 'lembretes' && LV === 'cat') ? LCAT : '', notes:'', recurrence:null, personIds:[], dismissed:false};
+  M = {type:'lembrete', id:id || null, aberto:false, abrir:'', draft:r ? JSON.parse(JSON.stringify(r)) : Object.assign(base, preset || {})};
+  if(!M.draft.personIds) M.draft.personIds = [];
   renderLembreteModal();
 }
+function lmSyncDraft(){
+  if(!M || M.type !== 'lembrete') return;
+  const d = M.draft, ti = document.getElementById('f_ltitle'), nt = document.getElementById('f_lnotes');
+  if(ti) d.title = ti.value;
+  if(nt) d.notes = nt.value;
+  if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'lem');
+}
 function renderLembreteModal(){
-  const d = M.draft;
-  const cats = [...new Set(S.reminders.map(r => r.category || '').filter(Boolean))];
-  const body =
-    '<div class="field"><label>Lembrete</label><textarea class="inp" id="f_ltitle" rows="2" style="resize:vertical; min-height:42px" placeholder="Do que precisa lembrar?">' + esc(d.title) + '</textarea></div>' +
-    '<div class="frow">' +
-      '<div class="field"><label>Data (opcional)</label><input class="inp" type="date" id="f_ldate" value="' + esc(d.date || '') + '" style="width:100%">' +
-      (d.date && d.date < today() ? '<span style="color:var(--danger); font-size:12px; margin-top:4px; display:block">' + fmtAtraso(d.date) + '</span>' : '') + '</div>' +
-      '<div class="field" style="flex:0 1 130px"><label>Hora (opcional)</label><input class="inp" type="time" id="f_ltime" value="' + esc(d.time || '') + '" style="width:100%"></div>' +
-      '<div class="field"><label>Categoria</label><input class="inp" id="f_lcat" value="' + esc(d.category || '') + '" list="catlist" placeholder="Ex.: aniversário, trabalho"></div>' +
+  const d = M.draft, t = today();
+  const primeira = !M.aberto;
+  M.aberto = true;
+  const late = !d.dismissed && d.date && d.date < t;
+  const rec = recResumo(d.recurrence);
+  let body = '<div class="tkd-top">' +
+      '<button class="tkd-proj" data-action="lmd-cat" aria-haspopup="menu" title="Categoria">' + licn('tag') + '<span>' + esc(d.category || 'Sem categoria') + '</span>' + licn('chevrons-up-down') + '</button>' +
+      '<span class="grow"></span>' +
+      (M.id ? '<button class="icon-btn" data-action="lmd-mais" aria-haspopup="menu" title="Mais ações" aria-label="Mais ações">' + licn('more-vertical') + '</button>' : '') +
     '</div>' +
-    '<datalist id="catlist">' + cats.map(c => '<option value="' + esc(c) + '">').join('') + '</datalist>' +
-    recurrenceHTML(d.recurrence, 'lem') +
-    '<div class="field"><label>Notas</label><textarea class="inp" id="f_lnotes" placeholder="Contexto, detalhes">' + esc(d.notes || '') + '</textarea></div>' +
-    peoplePickerHTML(d.personIds, 'lem');
-  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-lembrete">Excluir</button><button class="btn" data-action="lem-to-task" style="margin-left:4px">→ Tarefa</button>' : '') +
-    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-lembrete">Salvar</button>';
-  openModal(M.id ? 'Editar lembrete' : 'Novo lembrete', body, foot);
+    '<div class="tkd-data">' +
+      (M.id ? '<button class="ck' + (d.dismissed ? ' on' : '') + '" data-action="lmd-ck" aria-label="' + (d.dismissed ? 'Restaurar' : 'Dispensar') + '"></button>' : '') +
+      '<button class="tkd-due' + (d.date ? ' set' : '') + (late ? ' late' : '') + '" data-action="lmd-data" aria-haspopup="menu">' + licn('calendar') +
+        '<span>' + (d.date ? cap1(tkDataTxt(d.date)) + (late ? ', ' + fmtAtraso(d.date) : '') : 'Sem data') + '</span></button>' +
+      '<button class="tkd-due' + (d.time ? ' set' : '') + (late ? ' late' : '') + '" data-action="lmd-hora" aria-haspopup="menu">' + licn('clock') + '<span>' + esc(d.time || 'Sem hora') + '</span></button>' +
+      (rec ? '<button class="tkd-rep" data-action="lmd-abrir" data-q="rep" title="Repetição">' + licn('repeat') + '<span>' + esc(rec) + '</span></button>' : '') +
+    '</div>' +
+    '<textarea class="inp tk-titulo" id="f_ltitle" rows="1" placeholder="Do que precisa lembrar?" enterkeyhint="done">' + esc(d.title) + '</textarea>' +
+    '<textarea class="inp tkd-notas" id="f_lnotes" rows="1" placeholder="Descrição">' + esc(d.notes || '') + '</textarea>';
+  const chips = (d.personIds || []).map(pid => { const p = S.people.find(x => x.id === pid); return p ? '<button class="tkd-chip" data-action="lmd-abrir" data-q="pessoas">' + licn('user') + esc(p.name) + '</button>' : ''; }).join('');
+  if(chips) body += '<div class="tkd-chips">' + chips + '</div>';
+  if(M.abrir === 'rep') body += '<div class="tkd-ed">' + recurrenceHTML(d.recurrence, 'lem') + '</div>';
+  if(M.abrir === 'pessoas') body += '<div class="tkd-ed">' + peoplePickerHTML(d.personIds, 'lem') + '</div>';
+  /* no app, diz quando o aviso vai tocar */
+  if(NATIVE && !d.dismissed && d.date){
+    const c = notifCfg(), at = quando(d.date, d.time || c.lemHora);
+    if(!(c.on && c.lembretes)) body += '<p class="lmd-aviso">' + licn('bell') + 'Avisos de lembretes desligados em Dados.</p>';
+    else if(at > new Date()) body += '<p class="lmd-aviso">' + licn('bell') + 'Avisa ' + quandoTxt(at) + (d.time ? '' : ' (horário dos lembretes sem hora)') + '.</p>';
+  }
+  const ferr = (q, ic, tem, rot) => '<button class="tkd-tool' + (tem ? ' tem' : '') + (M.abrir === q ? ' ab' : '') + '" data-action="lmd-abrir" data-q="' + q + '" title="' + rot + '" aria-label="' + rot + '">' + licn(ic) + '</button>';
+  const foot = ferr('rep', 'repeat', !!rec, 'Repetição') + ferr('pessoas', 'user', (d.personIds || []).length, 'Pessoas') +
+    '<span class="grow"></span>' +
+    (M.id && !d.dismissed ? '<button class="tkd-tool" data-action="lm-adiar" title="Adiar" aria-label="Adiar">' + licn('clock') + '</button>' : '') +
+    '<button class="tkd-ok" data-action="fechar-modal" title="Pronto" aria-label="Pronto">' + licn('check') + '</button>';
+  openModal('', body, foot, {semFoco:!primeira || !!M.id});
+  $('#mback').classList.add('tk-det');
+  tkAltura(document.getElementById('f_ltitle')); tkAltura(document.getElementById('f_lnotes'));
+}
+function lmMaisHTML(){
+  return '<div class="tk-tiles">' +
+    '<button class="tk-tile" data-action="lm-adiar">' + licn('clock') + 'Adiar</button>' +
+    '<button class="tk-tile" data-action="lem-to-task">' + licn('clipboard-list') + 'Tarefa</button>' +
+    '<button class="tk-tile" data-action="lm-duplicar">' + licn('copy') + 'Duplicar</button>' +
+    '<button class="tk-tile del" data-action="excluir-lembrete">' + licn('trash-2') + 'Excluir</button></div>';
+}
+function lmAplicarData(acao, ds){
+  popFechar();
+  if(acao === 'lm-qa-data-set'){
+    const i = $('#rlDate'); if(i) i.value = ds || '';
+    lmQaSync(); lmPreview();
+    const q = $('#rlTitle'); if(q) q.focus();
+    return;
+  }
+  if(!M || M.type !== 'lembrete') return;
+  lmSyncDraft();
+  const d = M.draft, rec = d.recurrence, velha = d.date;
+  /* repetição semanal ou mensal presa ao dia antigo acompanha a data nova */
+  if(rec && velha && ds){
+    if(rec.type === 'weekly' && (rec.days || []).length === 1 && rec.days[0] === fromD(velha).getDay()) rec.days = [fromD(ds).getDay()];
+    if(rec.type === 'monthly' && rec.dayOfMonth === fromD(velha).getDate()) rec.dayOfMonth = fromD(ds).getDate();
+  }
+  d.date = ds || '';
+  if(!ds) d.time = '';
+  renderLembreteModal();
+}
+function lmAplicarHora(acao, hr){
+  popFechar();
+  hr = /^\d{2}:\d{2}$/.test(hr || '') ? hr : '';
+  if(acao === 'lm-qa-hora-set'){ LM_QA.hora = hr; lmQaSync(); lmPreview(); const i = $('#rlTitle'); if(i) i.focus(); return; }
+  if(!M || M.type !== 'lembrete') return;
+  lmSyncDraft();
+  M.draft.time = hr;
+  if(hr && !M.draft.date) M.draft.date = hr > lmAgora() ? today() : addD(today(), 1);
+  renderLembreteModal();
+}
+const lmNorm = o => JSON.stringify([(o.title || '').trim(), o.date || null, o.time || '', (o.category || '').trim(), o.notes || '',
+  o.recurrence && o.recurrence.type ? o.recurrence : null, o.personIds || []]);
+/* grava se algo mudou; lembrete novo sem texto é descartado */
+function lmAutoSalvar(){
+  if(!M || M.type !== 'lembrete' || M.salvo) return false;
+  lmSyncDraft();
+  M.salvo = true;
+  const d = M.draft, title = (d.title || '').trim();
+  const limpo = {title, date:d.date || null, time:d.time || '', category:(d.category || '').trim(), notes:d.notes || '',
+    recurrence:d.recurrence && d.recurrence.type ? d.recurrence : null, personIds:d.personIds || []};
+  if(M.id){
+    const r = S.reminders.find(x => x.id === M.id);
+    if(!r) return false;
+    if(!title) limpo.title = r.title;
+    if(lmNorm(limpo) === lmNorm(r)) return false;
+    if(limpo.recurrence && limpo.date) lmRepFixa(limpo.recurrence, limpo.date);
+    Object.assign(r, limpo);
+  }else{
+    if(!title) return false;
+    if(limpo.time && !limpo.date) limpo.date = limpo.time > lmAgora() ? today() : addD(today(), 1);
+    if(limpo.recurrence && limpo.date) lmRepFixa(limpo.recurrence, limpo.date);
+    const nr = Object.assign({id:uid(), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()}, limpo);
+    S.reminders.push(nr);
+    window.__novo = nr.id; sfx('add');
+  }
+  save();
+  return true;
 }
 function salvarLembrete(){
-  const d = M.draft;
-  d.title = ($('#f_ltitle').value || '').trim();
-  d.date = $('#f_ldate').value || null;
-  d.time = (document.getElementById('f_ltime') || {}).value || '';
-  d.category = ($('#f_lcat').value || '').trim();
-  d.notes = $('#f_lnotes').value || '';
-  if(d.recurrence) d.recurrence = syncRecurrence(d.recurrence, 'lem');
-  if(!d.title){ toast('Escreva o lembrete.'); return; }
-  if(M.id) Object.assign(S.reminders.find(x => x.id === M.id), d);
-  else S.reminders.push(Object.assign({id:uid(), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()}, d));
-  save(); closeModal(); render(); toast('Lembrete salvo.');
+  lmSyncDraft();
+  if(!(M.draft.title || '').trim()){ toast('Escreva o lembrete.'); return; }
+  closeModal();
 }
 
 /* ===================== Rotina ===================== */
@@ -4422,8 +4995,8 @@ function openModal(title, body, foot, o){
   if(f) setTimeout(() => f.focus(), 30);
 }
 function closeModal(){
-  /* o detalhe da tarefa salva sozinho ao fechar */
-  const mudou = !!(M && M.type === 'task') && tkAutoSalvar();
+  /* o detalhe da tarefa e o do lembrete salvam sozinhos ao fechar */
+  const mudou = !!(M && M.type === 'task') ? tkAutoSalvar() : !!(M && M.type === 'lembrete') && lmAutoSalvar();
   $('#mback').classList.remove('on', 'tk-det');
   M = null;
   popFechar();
@@ -4456,16 +5029,17 @@ function recResumo(r){
   return 'Repete';
 }
 /* menu de prazo: atalhos, calendário e tirar o prazo */
-function tkDataMenuHTML(atual, acao){
+function tkDataMenuHTML(atual, acao, tirar){
   return tkOpcoesData().map(([ic, lab, ds]) =>
     '<button class="tk-mi' + (atual === ds ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-ds="' + ds + '">' + licn(ic) +
     '<span class="l">' + lab + '</span><small>' + tkDataAbs(ds) + '</small></button>').join('') +
     '<label class="tk-mi" role="menuitem">' + licn('calendar') + '<span class="l">Escolher data</span><small>' + (atual ? tkDataAbs(atual) : '') + '</small>' +
       '<input type="date" class="tk-dataesc" data-acao="' + acao + '" value="' + esc(atual || '') + '" aria-label="Escolher data"></label>' +
-    (atual ? '<div class="tk-msep"></div><button class="tk-mi del" role="menuitem" data-action="' + acao + '" data-ds="">' + licn('x') + '<span class="l">Tirar o prazo</span></button>' : '');
+    (atual ? '<div class="tk-msep"></div><button class="tk-mi del" role="menuitem" data-action="' + acao + '" data-ds="">' + licn('x') + '<span class="l">' + (tirar || 'Tirar o prazo') + '</span></button>' : '');
 }
 function tkAplicarData(acao, ds){
   popFechar();
+  if(/^lm/.test(acao || '')) return lmAplicarData(acao, ds);
   if(acao === 'qa-data-set'){
     const i = $('#qaDue');
     if(i) i.value = ds || '';
@@ -5013,9 +5587,10 @@ function nextRecDate(fromDate, rec){
     return dstr(d);
   }
   if(rec.type === 'monthly'){
-    d.setMonth(d.getMonth() + 1);
-    if(rec.dayOfMonth) d.setDate(Math.min(rec.dayOfMonth, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
-    return dstr(d);
+    /* vai para o dia 1 do mês seguinte e só então acerta o dia: 31/10 vira 30/11, não 01/12 */
+    const dia = rec.dayOfMonth || d.getDate(), n = new Date(d.getFullYear(), d.getMonth() + 1, 1, 12);
+    n.setDate(Math.min(dia, new Date(n.getFullYear(), n.getMonth() + 1, 0).getDate()));
+    return dstr(n);
   }
   if(rec.type === 'monthly_weekday'){
     const nth = rec.nth || 2, wd = rec.weekday != null ? rec.weekday : 0;
@@ -5043,6 +5618,8 @@ function nextRecDate(fromDate, rec){
       if(sorted.includes(nd.getDay())) return dstr(nd);
     }
   }
+  /* semanal sem dia marcado: mesmo dia da semana, sete dias depois */
+  if(rec.type === 'weekly'){ d.setDate(d.getDate() + 7); return dstr(d); }
   d.setDate(d.getDate() + 1);
   return dstr(d);
 }
@@ -5281,7 +5858,7 @@ function tkMover(ids, ds){
   });
 }
 
-/* ===================== Arrastar no celular: direita conclui, esquerda reagenda ===================== */
+/* ===================== Arrastar no celular: direita conclui (ou dispensa o lembrete), esquerda reagenda (ou adia) ===================== */
 (function(){
   let sw = null, ultimo = 0;
   const LIM = 88;
@@ -5294,7 +5871,7 @@ function tkMover(ids, ds){
     if(e.pointerType !== 'touch') return;
     if(sw){ if(sw.ativo) volta(sw); sw = null; }
     const row = e.target.closest ? e.target.closest('.trow.tk') : null;
-    if(!row || row.classList.contains('done') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
+    if(!row || row.classList.contains('done') || row.classList.contains('aniv') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
     sw = {row, id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, ativo:false, passou:0, bg:null};
   }, {passive:true});
   document.addEventListener('pointermove', e => {
@@ -5310,7 +5887,9 @@ function tkMover(ids, ds){
       bg.className = 'tk-swbg';
       bg.style.top = sw.row.offsetTop + 'px';
       bg.style.height = sw.row.offsetHeight + 'px';
-      bg.innerHTML = '<span class="sw-ok" title="Concluir">' + licn('check') + '</span><span class="sw-rs" title="Reagendar">' + licn('calendar') + '</span>';
+      const lm = sw.row.classList.contains('lm');
+      bg.innerHTML = '<span class="sw-ok" title="' + (lm ? 'Dispensar' : 'Concluir') + '">' + licn('check') + '</span>' +
+        '<span class="sw-rs" title="' + (lm ? 'Adiar' : 'Reagendar') + '">' + licn(lm ? 'clock' : 'calendar') + '</span>';
       list.insertBefore(bg, list.firstChild);
       sw.bg = bg;
       sw.row.classList.add('sw-ativo');
@@ -5327,8 +5906,18 @@ function tkMover(ids, ds){
     const s = sw; sw = null;
     if(!s.ativo) return;
     ultimo = Date.now();
-    const id = s.row.dataset.id;
-    if(e.type === 'pointerup' && s.dx > LIM){
+    const id = s.row.dataset.id, lm = s.row.classList.contains('lm');
+    if(e.type === 'pointerup' && s.dx > LIM && lm){
+      const r = S.reminders.find(x => x.id === id);
+      if(r && !r.dismissed && !ANIM_PEND.has(id)){
+        ANIM_PEND.add(id);
+        s.row.classList.remove('sw-ativo');
+        s.row.style.transform = 'translateX(105%)';
+        setTimeout(() => { ANIM_PEND.delete(id); lmDispensar(id); }, 230);
+        return;
+      }
+    }
+    if(e.type === 'pointerup' && s.dx > LIM && !lm){
       const tk = S.tasks.find(x => x.id === id);
       if(tk && tk.status !== 'done' && !ANIM_PEND.has(id)){
         ANIM_PEND.add(id);
@@ -5340,7 +5929,7 @@ function tkMover(ids, ds){
       }
     }
     volta(s);
-    if(e.type === 'pointerup' && s.dx < -LIM) setTimeout(() => tkReagendar(id), 140);
+    if(e.type === 'pointerup' && s.dx < -LIM) setTimeout(() => lm ? lmAdiar(id) : tkReagendar(id), 140);
   };
   document.addEventListener('pointerup', fim, {passive:true});
   document.addEventListener('pointercancel', fim, {passive:true});
@@ -5568,7 +6157,7 @@ document.addEventListener('click', e => {
     else if(tp === 'rem') openLembrete(gid);
     return;
   }
-  if(a === 'cal-add-lem'){ openLembrete(null); M.draft.date = CAL_SEL; renderLembreteModal(); return; }
+  if(a === 'cal-add-lem'){ openLembrete(null, {date:CAL_SEL}); return; }
   if(a === 'nova-tarefa'){ openTask(null, TF === 'hoje' ? {due:today()} : {}); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
   if(a === 'novo-habito'){ openHabit(null); return; }
@@ -5670,27 +6259,13 @@ document.addEventListener('click', e => {
     renderTaskModal(); return;
   }
   if(a === 'lem-link'){
-    const ti = document.getElementById('f_ltitle');
-    const dt = document.getElementById('f_ldate');
-    const ct = document.getElementById('f_lcat');
-    const nt = document.getElementById('f_lnotes');
-    if(ti) M.draft.title = ti.value;
-    if(dt) M.draft.date = dt.value;
-    if(ct) M.draft.category = ct.value;
-    if(nt) M.draft.notes = nt.value;
+    lmSyncDraft();
     const sel = document.getElementById('lem_addperson');
-    if(sel && sel.value){ if(!M.draft.personIds) M.draft.personIds = []; M.draft.personIds.push(sel.value); renderLembreteModal(); }
+    if(sel && sel.value){ (M.draft.personIds = M.draft.personIds || []).push(sel.value); renderLembreteModal(); }
     return;
   }
   if(a === 'lem-unlink'){
-    const ti = document.getElementById('f_ltitle');
-    const dt = document.getElementById('f_ldate');
-    const ct = document.getElementById('f_lcat');
-    const nt = document.getElementById('f_lnotes');
-    if(ti) M.draft.title = ti.value;
-    if(dt) M.draft.date = dt.value;
-    if(ct) M.draft.category = ct.value;
-    if(nt) M.draft.notes = nt.value;
+    lmSyncDraft();
     M.draft.personIds = (M.draft.personIds || []).filter(id => id !== el.dataset.pid);
     renderLembreteModal(); return;
   }
@@ -5707,19 +6282,13 @@ document.addEventListener('click', e => {
     el.classList.toggle('on', ix < 0); return;
   }
   if(a === 'lem-rec-type'){
-    if(M.draft.title === undefined || M.type === 'lembrete'){
-      const ti = document.getElementById('f_ltitle');
-      const dt = document.getElementById('f_ldate');
-      const ct = document.getElementById('f_lcat');
-      const nt = document.getElementById('f_lnotes');
-      if(ti) M.draft.title = ti.value;
-      if(dt) M.draft.date = dt.value;
-      if(ct) M.draft.category = ct.value;
-      if(nt) M.draft.notes = nt.value;
+    lmSyncDraft();
+    const v = el.dataset.v || '';
+    if(!v) M.draft.recurrence = null;
+    else{
+      M.draft.recurrence = Object.assign(M.draft.recurrence || {}, {type:v});
+      lmRepFixa(M.draft.recurrence, M.draft.date || today());
     }
-    M.draft.recurrence = M.draft.recurrence || {};
-    M.draft.recurrence.type = el.dataset.v || ''; if(!el.dataset.v) M.draft.recurrence = null;
-    if(M.draft.recurrence && M.draft.recurrence.type === 'weekly' && !(M.draft.recurrence.days || []).length) M.draft.recurrence.days = [1,2,3,4,5];
     renderLembreteModal(); return;
   }
   if(a === 'lem-rec-dow'){
@@ -5972,51 +6541,152 @@ document.addEventListener('click', e => {
   if(a === 'novo-lembrete'){ openLembrete(null); return; }
   if(a === 'edit-lembrete'){ openLembrete(el.dataset.id); return; }
   if(a === 'salvar-lembrete'){ salvarLembrete(); return; }
-  if(a === 'qadd-lem'){ quickAddLem(); return; }
-  if(a === 'ir-lembretes'){ setView('lembretes'); return; }
-  if(a === 'lcat'){ LCAT = el.dataset.c; renderLembretes(); return; }
-  if(a === 'lem-fold'){ LEM_FOLDS[el.dataset.k] = LEM_FOLDS[el.dataset.k] === false; renderLembretes(); return; }
+  if(a === 'qadd-lem'){ quickAddLem(true); return; }
+  if(a === 'ir-lembretes'){ lmIrPara('agenda'); setView('lembretes'); return; }
+  if(a === 'lm-nav'){ LM_NAV = !LM_NAV; renderLmNav(); lmNavSync(); return; }
+  if(a === 'lm-nav-fechar'){ LM_NAV = false; lmNavSync(); return; }
+  if(a === 'lm-lista'){
+    lmIrPara(el.dataset.v, el.dataset.c);
+    LM_NAV = false; popFechar();
+    renderLembretes();
+    const l = $('#rlLista');
+    if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); }
+    if(window.scrollY > 0) window.scrollTo(0, 0);
+    const mn = document.querySelector('.main'); if(mn && mn.scrollTop > 0) mn.scrollTop = 0;
+    return;
+  }
+  if(a === 'lm-fold'){
+    const k = el.dataset.k, ab = el.getAttribute('aria-expanded') === 'true';
+    LM_DOBRA[k] = !ab;
+    const ks = Object.keys(LM_DOBRA);
+    if(ks.length > 200) ks.slice(0, ks.length - 200).forEach(x => delete LM_DOBRA[x]);
+    tkLSset('lmDobra', LM_DOBRA);
+    renderLembretes();
+    return;
+  }
+  if(a === 'lm-opcoes'){ popAbrir(el, lmOpcoesHTML(), {direita:true}); return; }
+  if(a === 'lm-aniv'){ LM_ANIV = !LM_ANIV; tkLSset('lmAniv', LM_ANIV); popFechar(); renderLembretes(); return; }
+  if(a === 'lm-ir-pessoas'){ popFechar(); setView('pessoas'); return; }
+  if(a === 'lm-dispensar-atrasados'){
+    popFechar();
+    const t = today(), agora = new Date().toISOString();
+    const xs = S.reminders.filter(r => !r.dismissed && r.date && r.date < t && (VIEW !== 'lembretes' || LV !== 'cat' || r.category === LCAT));
+    if(!xs.length) return;
+    const fotos = lmFoto(xs.map(r => r.id));
+    xs.forEach(r => { if(lmRepete(r)) r.date = lmDepoisDe(r, addD(t, -1)); else{ r.dismissed = true; r.dismissedAt = agora; } });
+    playDing(); save(); render();
+    toast(xs.length === 1 ? '1 atrasado dispensado.' : xs.length + ' atrasados dispensados.', 'Desfazer', lmDesfazer(fotos));
+    return;
+  }
+  if(a === 'lm-cat-renomear'){
+    popFechar();
+    const velho = LCAT, novo = (prompt('Novo nome da categoria:', velho) || '').trim();
+    if(!velho || !novo || novo === velho) return;
+    const xs = S.reminders.filter(r => r.category === velho), fotos = lmFoto(xs.map(r => r.id));
+    xs.forEach(r => { r.category = novo; });
+    lmIrPara('cat', novo); save(); render();
+    toast('Categoria renomeada.', 'Desfazer', () => { lmDesfazer(fotos)(); lmIrPara('cat', velho); render(); });
+    return;
+  }
   if(a === 'ack-lem'){
     e.stopPropagation();
-    const r = S.reminders.find(x => x.id === el.dataset.id);
-    if(r){
-      if(!r.dismissed && r.recurrence && r.recurrence.type && r.date){
-        r.date = proximaFutura(r.date, r.recurrence);
-        playDing();
-        save(); render();
-        toast('OK. Próximo: ' + fmtCurto(r.date) + '.');
-      }else{
-        r.dismissed = !r.dismissed;
-        r.dismissedAt = r.dismissed ? new Date().toISOString() : null;
-        if(r.dismissed) playDing();
-        save(); render();
-      }
+    const id = el.dataset.id, r = S.reminders.find(x => x.id === id);
+    if(!r || ANIM_PEND.has(id)) return;
+    const row = el.closest('.trow');
+    if(!r.dismissed && row && animOn()){
+      el.classList.add('pop');
+      ANIM_PEND.add(id);
+      row.classList.add('completing');
+      setTimeout(() => { ANIM_PEND.delete(id); lmDispensar(id); }, 380);
+      return;
     }
+    lmDispensar(id);
+    return;
+  }
+  if(a === 'lm-adiar'){
+    e.stopPropagation();
+    const id = el.dataset.id || (M && M.id);
+    if(M && M.type === 'lembrete') closeModal(); else popFechar();
+    lmAdiar(id);
+    return;
+  }
+  if(a === 'lm-adiar-set'){ if(M && M.type === 'lm-adiar') lmMover(M.id, el.dataset.ds, el.dataset.hr); return; }
+  /* folha de adicionar */
+  if(a === 'lm-qa-abrir'){ lmQaAbrir(); return; }
+  if(a === 'lm-qa-fechar'){ lmQaFechar(); return; }
+  if(a === 'lm-qa-data'){ popAbrir(el, tkDataMenuHTML($('#rlDate').value, 'lm-qa-data-set', 'Tirar a data')); return; }
+  if(a === 'lm-qa-data-set' || a === 'lmd-data-set'){ lmAplicarData(a, el.dataset.ds); return; }
+  if(a === 'lm-qa-hora'){ popAbrir(el, lmHoraMenuHTML(LM_QA.hora, 'lm-qa-hora-set')); return; }
+  if(a === 'lm-qa-hora-set' || a === 'lmd-hora-set'){ lmAplicarHora(a, el.dataset.hr); return; }
+  if(a === 'lm-hora-ok'){
+    const i = el.parentElement.querySelector('.lm-horainp');
+    if(i && /^\d{2}:\d{2}/.test(i.value)) lmAplicarHora(el.dataset.acao, i.value.slice(0, 5));
+    else if(i) i.focus();
+    return;
+  }
+  if(a === 'lm-qa-rep'){ popAbrir(el, lmRepMenuHTML(LM_QA.rep, 'lm-qa-rep-set')); return; }
+  if(a === 'lm-qa-rep-set'){ LM_QA.rep = el.dataset.v || ''; popFechar(); lmQaSync(); lmPreview(); $('#rlTitle').focus(); return; }
+  if(a === 'lm-qa-cat'){ popAbrir(el, lmCatMenuHTML(LM_QA.cat, 'lm-qa-cat-set')); return; }
+  if(a === 'lm-qa-cat-set'){ LM_QA.cat = el.dataset.c || ''; popFechar(); lmQaSync(); lmPreview(); $('#rlTitle').focus(); return; }
+  if(a === 'lm-qa-cat-set-nova' || a === 'lmd-cat-set-nova'){
+    popFechar();
+    const nm = (prompt('Nome da nova categoria:') || '').trim();
+    if(!nm) return;
+    if(a === 'lm-qa-cat-set-nova'){ LM_QA.cat = nm; lmQaSync(); lmPreview(); $('#rlTitle').focus(); }
+    else if(M && M.type === 'lembrete'){ lmSyncDraft(); M.draft.category = nm; renderLembreteModal(); }
+    return;
+  }
+  /* detalhe */
+  if(a === 'lmd-cat'){ popAbrir(el, lmCatMenuHTML(M.draft.category || '', 'lmd-cat-set')); return; }
+  if(a === 'lmd-cat-set'){ lmSyncDraft(); M.draft.category = el.dataset.c || ''; popFechar(); renderLembreteModal(); return; }
+  if(a === 'lmd-data'){ popAbrir(el, tkDataMenuHTML(M.draft.date || '', 'lmd-data-set', 'Tirar a data')); return; }
+  if(a === 'lmd-hora'){ popAbrir(el, lmHoraMenuHTML(M.draft.time || '', 'lmd-hora-set')); return; }
+  if(a === 'lmd-mais'){ popAbrir(el, lmMaisHTML(), {direita:true, cls:'tiles'}); return; }
+  if(a === 'lmd-abrir'){
+    lmSyncDraft();
+    const q = el.dataset.q;
+    M.abrir = M.abrir === q ? '' : q;
+    renderLembreteModal();
+    return;
+  }
+  if(a === 'lmd-ck'){ const id = M.id; closeModal(); lmDispensar(id); return; }
+  if(a === 'lm-duplicar'){
+    const id = M && M.id;
+    closeModal();
+    const r0 = S.reminders.find(x => x.id === id);
+    if(!r0) return;
+    const c = Object.assign(JSON.parse(JSON.stringify(r0)), {id:uid(), dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+    S.reminders.push(c);
+    window.__novo = c.id;
+    save(); render();
+    toast('Lembrete duplicado.', 'Abrir', () => openLembrete(c.id));
     return;
   }
   if(a === 'lem-to-task'){
-    const ti = document.getElementById('f_ltitle');
-    const dt = document.getElementById('f_ldate');
-    const nt = document.getElementById('f_lnotes');
-    const lid = M.id;
-    S.tasks.push({id:uid(), title:(ti ? ti.value : M.draft.title).trim(), notes:nt ? nt.value : '', projectId:null, priority:0,
-      due:dt ? dt.value || null : null, tags:[], subtasks:[], recurrence:M.draft.recurrence || null,
-      personIds:M.draft.personIds || [], status:'open', createdAt:new Date().toISOString(), completedAt:null});
+    popFechar();
+    lmSyncDraft();
+    const d = M.draft, lid = M.id, fotos = lmFoto([lid]), tid = uid();
+    S.tasks.push({id:tid, title:(d.title || '').trim() || 'Sem título', notes:d.notes || '', projectId:null, priority:0, due:d.date || null, tags:[], subtasks:[],
+      recurrence:lmRepete(d) ? d.recurrence : null, personIds:d.personIds || [], status:'open', createdAt:new Date().toISOString(), completedAt:null});
     S.reminders = S.reminders.filter(x => x.id !== lid);
-    save(); closeModal(); render(); toast('Convertido em tarefa.');
+    M.salvo = true; closeModal(); save(); render();
+    toast('Virou tarefa.', 'Desfazer', () => { S.tasks = S.tasks.filter(x => x.id !== tid); lmDesfazer(fotos)(); });
     return;
   }
   if(a === 'excluir-lembrete'){
-    if(!confirm('Excluir este lembrete?')) return;
+    popFechar();
     S.reminders = S.reminders.filter(x => x.id !== M.id);
-    save(); closeModal(); render(); toast('Lembrete excluído.');
+    M.salvo = true; closeModal(); save(); render();
     return;
   }
   if(a === 'limpar-lems'){
-    const n = S.reminders.filter(r => r.dismissed).length;
-    if(!confirm('Apagar ' + n + ' lembrete(s) dispensado(s)?')) return;
+    popFechar();
+    const xs = S.reminders.filter(r => r.dismissed), n = xs.length;
+    if(!n) return;
+    const fotos = lmFoto(xs.map(r => r.id));
     S.reminders = S.reminders.filter(r => !r.dismissed);
-    save(); render(); toast('Dispensados apagados.');
+    save(); render();
+    toast(n === 1 ? '1 dispensado apagado.' : n + ' dispensados apagados.', 'Desfazer', lmDesfazer(fotos));
     return;
   }
 
@@ -6268,6 +6938,10 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if(e.target.classList && e.target.classList.contains('tk-dataesc') && e.target.value) tkAplicarData(e.target.dataset.acao, e.target.value);
   if(e.target.id === 'f_rsd' && e.target.value && M && M.type === 'resched') tkMover(M.ids, e.target.value);
+  if(e.target.id === 'f_lmadiar' && e.target.value && M && M.type === 'lm-adiar') lmMover(M.id, e.target.value, null);
+  /* no celular a hora vem inteira do relógio do Android; no PC vale o OK */
+  if(e.target.classList && e.target.classList.contains('lm-horainp') && e.target.value && window.matchMedia && matchMedia('(pointer: coarse)').matches)
+    lmAplicarHora(e.target.dataset.acao, e.target.value.slice(0, 5));
   if(e.target.id === 'qaDue') qaPreview();
   if(e.target.id === 'lKind'){ LK = e.target.value; renderLugares(); }
   if(e.target.id === 'f_proj' && e.target.value === '__new'){
@@ -6284,6 +6958,8 @@ document.addEventListener('change', e => {
 
 document.addEventListener('input', e => {
   if(e.target.id === 'qaTitle') qaPreview();
+  if(e.target.id === 'rlTitle') lmPreview();
+  if(e.target.id === 'f_ltitle' || (e.target.id === 'f_lnotes' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
   if(e.target.id === 'f_title') tkTituloAjusta();
   if(e.target.id === 'f_notes') tkNotasAjusta();
   if(e.target.id === 'pSearch'){ PQ = e.target.value; renderPessoas(); }
@@ -6292,8 +6968,8 @@ document.addEventListener('input', e => {
 });
 
 /* dica do adicionar rápido aparece com o campo em foco */
-document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); });
-document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); });
+document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); });
+document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); });
 
 /* desfazer: guarda o estado antes de excluir e oferece voltar */
 document.addEventListener('click', e => {
@@ -6317,12 +6993,18 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && POP){ popFechar(); return; }
   if(e.key === 'Escape' && TK_ADD && !$('#mback').classList.contains('on')){ qaFechar(); return; }
   if(e.key === 'Escape' && TK_NAV){ TK_NAV = false; tkNavSync(); return; }
+  if(e.key === 'Escape' && LM_ADD && !$('#mback').classList.contains('on')){ lmQaFechar(); return; }
+  if(e.key === 'Escape' && LM_NAV){ LM_NAV = false; lmNavSync(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_title' && M && M.type === 'task'){ e.preventDefault(); salvarTask(); return; }
-  if(e.key === 'n' && VIEW === 'tarefas' && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); qaAbrir(); return; }
+  if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_ltitle' && M && M.type === 'lembrete'){ e.preventDefault(); salvarLembrete(); return; }
+  if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('lm-horainp')){
+    e.preventDefault(); const b = e.target.parentElement.querySelector('[data-action="lm-hora-ok"]'); if(b) b.click(); return;
+  }
+  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else lmQaAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'pLogName'){ e.preventDefault(); const n = $('#pLogNotes'); if(n) n.focus(); return; }
@@ -6403,7 +7085,7 @@ function ocorrencias(ds, rec, desde, ate, max){
 }
 function notifPlan(now){
   const c = notifCfg(), t = today(), out = [], limite = now.getTime() + 20000;
-  const add = (key, at, title, body, canal, view) => { if(at.getTime() > limite) out.push({id:nid(key), at, title, body, canal, view}); };
+  const add = (key, at, title, body, canal, view, ext) => { if(at.getTime() > limite) out.push({id:nid(key), at, title, body, canal, view, ext}); };
   if(c.lembretes){
     const ate = addD(t, 45);
     S.reminders.forEach(r => {
@@ -6411,7 +7093,7 @@ function notifPlan(now){
       const hora = r.time || c.lemHora;
       const corpo = r.notes ? corta(r.notes, 140) : (r.category ? 'Lembrete · ' + r.category : 'Lembrete');
       ocorrencias(r.date, r.recurrence, t, ate, 8).forEach(ds =>
-        add('lem:' + r.id + ':' + ds + ':' + hora, quando(ds, hora), corta(r.title, 80), corpo, 'lembretes', 'lembretes'));
+        add('lem:' + r.id + ':' + ds + ':' + hora, quando(ds, hora), corta(r.title, 80), corpo, 'lembretes', 'lembretes', {lem:r.id, ds}));
     });
   }
   if(c.tarefas){
@@ -6458,8 +7140,10 @@ function notifPlan(now){
   return out.slice(0, 200);
 }
 function notifNative(n){
-  return {id:n.id, title:n.title, body:n.body, largeBody:n.body, channelId:CANAIS[n.canal].id, smallIcon:'ic_stat_central', iconColor:'#0F62B4',
-    schedule:{at:n.at, allowWhileIdle:true}, extra:{view:n.view}, autoCancel:true, isExactNotification:NOTIF.exact === 'granted'};
+  const o = {id:n.id, title:n.title, body:n.body, largeBody:n.body, channelId:CANAIS[n.canal].id, smallIcon:'ic_stat_central', iconColor:'#0F62B4',
+    schedule:{at:n.at, allowWhileIdle:true}, extra:Object.assign({view:n.view}, n.ext || {}), autoCancel:true, isExactNotification:NOTIF.exact === 'granted'};
+  if(n.canal === 'lembretes' && NOTIF.acoes) o.actionTypeId = 'lembrete';
+  return o;
 }
 function notifCanais(){
   if(!LN || NOTIF.canais) return Promise.resolve();
@@ -6471,7 +7155,7 @@ function notifExato(){
   if(!LN || !LN.checkExactNotificationSetting) return Promise.resolve();
   return LN.checkExactNotificationSetting().then(x => { NOTIF.exact = (x && x.exact_alarm) || 'granted'; }).catch(() => {});
 }
-function notifHash(n){ return [+n.at, n.title, n.body, n.canal, NOTIF.exact].join('|'); }
+function notifHash(n){ return [+n.at, n.title, n.body, n.canal, NOTIF.exact, n.canal === 'lembretes' && NOTIF.acoes ? 'botoes' : ''].join('|'); }
 /* Reprograma quando o plano muda: só agenda o que é novo ou mudou e cancela o que saiu do plano. */
 function notifSync(force){
   if(!LN) return Promise.resolve();
@@ -6711,6 +7395,8 @@ function nativeInit(){
       if($('#mback').classList.contains('on')){ closeModal(); return; }
       if(TK_ADD){ qaFechar(); return; }
       if(TK_NAV){ TK_NAV = false; tkNavSync(); return; }
+      if(LM_ADD){ lmQaFechar(); return; }
+      if(LM_NAV){ LM_NAV = false; lmNavSync(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
     });
@@ -6731,12 +7417,21 @@ function nativeInit(){
   }
   if(LN){
     capOn(LN, 'localNotificationActionPerformed', a => {
-      const v = a && a.notification && a.notification.extra && a.notification.extra.view;
-      if(v && TABS[v]) setView(v);
+      const ex = (a && a.notification && a.notification.extra) || {};
+      /* folha aberta salva antes (senão o rascunho dela voltaria por cima da ação) */
+      popFechar();
+      if($('#mback').classList.contains('on')) closeModal();
+      /* botões do aviso de lembrete; tocar no aviso abre o lembrete */
+      if(ex.lem && (a.actionId === 'adiar' || a.actionId === 'feito')){ lmAcaoNotif(ex.lem, a.actionId, ex.ds); return; }
+      if(ex.lem && S.reminders.some(r => r.id === ex.lem)){ lmIrPara('agenda'); setView('lembretes'); openLembrete(ex.lem); return; }
+      if(ex.view && TABS[ex.view]) setView(ex.view);
     });
+    const acoes = typeof LN.registerActionTypes === 'function' ?
+      Promise.resolve().then(() => LN.registerActionTypes({types:[{id:'lembrete', actions:[{id:'adiar', title:'Adiar 1 h'}, {id:'feito', title:'Feito'}]}]}))
+        .then(() => { NOTIF.acoes = true; }).catch(() => {}) : Promise.resolve();
     let pediu = false;
     try{ pediu = localStorage.getItem('central.notifPedido') === '1'; }catch(e){}
-    notifCanais().then(notifExato)
+    acoes.then(notifCanais).then(notifExato)
       .then(() => LN.checkPermissions())
       .then(p => {
         NOTIF.perm = p.display;
