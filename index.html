@@ -4597,7 +4597,7 @@ document.addEventListener('click', e => {
   }
   if(a === 'baixar-apk'){ abrirFora(APK_URL); toast('Baixando. Depois toque no arquivo para instalar.'); return; }
   if(a === 'fechar-upd'){ try{ localStorage.setItem('central.updFechado', updChave()); }catch(_){} renderUpdBar(); return; }
-  if(a === 'checar-versao'){ checkUpdate(true); toast('Verificando…'); return; }
+  if(a === 'checar-versao'){ toast('Verificando…'); checkUpdate(true, true); return; }
   if(a === 'login-codigo'){ const i = $('#loginCodigo'); loginComCodigo(i ? i.value : ''); if(i) i.value = ''; return; }
   if(a === 'importar'){ $('#fileImp').click(); return; }
   if(a === 'restaurar-ponto'){
@@ -5541,20 +5541,24 @@ function renderSonsCard(){
 }
 /* ===================== App Android: versão, voltar, login ===================== */
 function temVersaoNova(){ return UPD.v > APP_VERSION || (UPD.build > 0 && UPD.lb > UPD.build); }
-function checkUpdate(force){
-  if(!NATIVE || navigator.onLine === false) return;
-  if(!force && Date.now() - UPD.checked < 3 * 3600 * 1000) return;
+/* Procura versão nova ao abrir o app e sempre que ele volta para a tela (no máximo a cada 10 minutos).
+   avisar: mostra o resultado (botão Verificar atualização). */
+function checkUpdate(force, avisar){
+  if(!NATIVE) return;
+  if(navigator.onLine === false){ if(avisar) toast('Sem internet agora. Tente de novo depois.'); return; }
+  if(!force && Date.now() - UPD.checked < 10 * 60 * 1000) return;
   UPD.checked = Date.now();
   fetch('https://api.github.com/repos/jpvanacor/Central/releases/latest', {cache:'no-store'})
-    .then(r => r.ok ? r.json() : null)
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('GitHub respondeu ' + r.status)))
     .then(j => {
-      if(!j || !j.tag_name) return;
+      if(!j || !j.tag_name) throw new Error('nenhuma versão publicada');
       UPD.v = parseInt(String(j.tag_name).replace(/\D/g, ''), 10) || 0;
       const m = String(j.body || '').match(/build (\d+)/i);
       UPD.lb = m ? parseInt(m[1], 10) : 0;
       renderUpdBar();
       if(VIEW === 'dados') renderAppCard();
-    }).catch(() => {});
+      if(avisar) toast(temVersaoNova() ? 'Nova versão pronta. Toque em Baixar.' : 'Você já está na versão mais nova.');
+    }).catch(e => { UPD.checked = 0; if(avisar) toast('Não deu para verificar agora: ' + ((e && e.message) || e)); });
 }
 function updChave(){ return UPD.v + '.' + UPD.lb; }
 function renderUpdBar(){
