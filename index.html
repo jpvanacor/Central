@@ -1329,10 +1329,10 @@ function capPlugin(n){
   catch(e){ return null; }
 }
 const LN = capPlugin('LocalNotifications'), HAP = capPlugin('Haptics'), CAPP = capPlugin('App'), LAUNCHER = capPlugin('AppLauncher'),
-  BARS = capPlugin('SystemBars'), FS = capPlugin('Filesystem'), SHARE = capPlugin('Share');
+  BARS = capPlugin('SystemBars'), FS = capPlugin('Filesystem'), SHARE = capPlugin('Share'), FOCO = capPlugin('Foco');
 const NOTIF = {perm:'?', exact:'?', count:0, next:null, err:'', busy:false, again:false, timer:null, sig:'', canais:false};
 const UPD = {v:0, lb:0, build:0, checked:0};
-let APP_ATIVO = true, POMO_CX = 0;
+let APP_ATIVO = true, POMO_CX = 0, TT_AVISO = '';
 if(NATIVE) document.documentElement.classList.add('native');
 
 /* ===================== Estado ===================== */
@@ -1363,7 +1363,7 @@ function save(){
   /* o Firestore aceita no máximo 1 MiB por documento */
   if(json.length > 900 * 1024 && !save._aviso){ save._aviso = true; setTimeout(() => toast('Os dados estão perto do limite da nuvem (1 MB). Veja em Dados.'), 3000); }
   if(window.__push) window.__push();
-  notifSoon();
+  notifSoon(); ttAvisoSync();
 }
 
 /* ===================== Helpers ===================== */
@@ -3537,7 +3537,7 @@ var POMO = {phase:'work', round:1, totalRounds:4, running:false, paused:false, e
 function pomoCfg(){ const c = S.meta.pomo || {}; return {work:c.work || 25, short:c.short || 5, long:c.long || 15, rounds:c.rounds || 4}; }
 function pomoDuration(ph){ const c = pomoCfg(); ph = ph || POMO.phase; return (ph === 'work' ? c.work : ph === 'short' ? c.short : c.long) * 60; }
 function pomoPhaseLabel(ph){ ph = ph || POMO.phase; return ph === 'work' ? 'Foco' : ph === 'short' ? 'Pausa curta' : 'Pausa longa'; }
-function pomoPersist(){ try{ const o = Object.assign({}, POMO); delete o.interval; localStorage.setItem(POMO_KEY, JSON.stringify(o)); }catch(e){} }
+function pomoPersist(){ try{ const o = Object.assign({}, POMO); delete o.interval; localStorage.setItem(POMO_KEY, JSON.stringify(o)); }catch(e){} ttAvisoSync(); }
 function pomoRemaining(){
   if(!POMO.running) return POMO.remaining ? Math.round(POMO.remaining / 1000) : pomoDuration();
   if(POMO.paused) return Math.max(0, Math.round(POMO.remaining / 1000));
@@ -4584,7 +4584,7 @@ document.addEventListener('click', e => {
   }
   if(a === 'notif-permitir'){
     notifPermissao().then(ok => {
-      if(ok) notifSync(true);
+      if(ok){ notifSync(true); ttAvisoSync(true); }
       else toast('Bloqueadas. Libere em Configurações > Apps > Central > Notificações.');
     }).catch(() => {});
     return;
@@ -5304,7 +5304,7 @@ $('#mback').addEventListener('mousedown', e => { if(e.target === e.currentTarget
 /* ===================== Notificações (app Android) ===================== */
 /* Horários padrão definidos aqui; dá para mudar em Dados > Notificações. */
 const NOTIF_DEF = {on:true, lembretes:true, lemHora:'09:00', tarefas:true, tarHora:'07:30', habitos:true, habHora:'21:00',
-  aniversarios:true, anivHora:'09:00', pomodoro:true, rotina:false};
+  aniversarios:true, anivHora:'09:00', pomodoro:true, fixo:true, rotina:false};
 function notifCfg(){ return Object.assign({}, NOTIF_DEF, S.meta.notif || {}); }
 /* Canais do Android: o som de cada canal fica fixo depois de criado, por isso o sufixo de versão no id. */
 const CANAIS = {
@@ -5523,6 +5523,7 @@ function renderNotifCard(){
       row('habitos', 'Hábitos que faltam', 'habHora') +
       row('aniversarios', 'Aniversários', 'anivHora') +
       row('pomodoro', 'Fim do Pomodoro') +
+      row('fixo', 'Aviso fixo da sessão', '', 'tempo correndo enquanto o Pomodoro ou o cronômetro rodam') +
       row('rotina', 'Início dos blocos da rotina', '', 'desligado para não repetir o Orders of the Day') +
     '</div>' +
     '<div class="nbtns">' + (NOTIF.perm !== 'granted' ? '<button class="btn btn-primary" data-action="notif-permitir">Permitir</button>' : '') +
@@ -5589,6 +5590,39 @@ function abrirFora(url){
 /* Login no app: o Google não permite entrar dentro do app, então o login acontece no Chrome
    (página app-login.html) e volta com central://login?c=<código>. */
 function loginNoChrome(){ abrirFora(LOGIN_URL); toast('Entre no Chrome e toque em Abrir o Central.'); }
+function abrirLink(url){
+  if(String(url || '').indexOf('central://tempo') === 0){ if(ttFocoAberto()) ttFocoRender(); else setView('tempo'); return; }
+  loginPorLink(url);
+}
+/* Aviso fixo do Android com o tempo da sessão: regressivo no Pomodoro, progressivo no cronômetro.
+   Só chama o nativo quando o conteúdo muda. */
+function ttAvisoSync(force){
+  if(!FOCO) return;
+  const c = notifCfg(), r = running();
+  let d = null;
+  if(c.on && c.fixo !== false){
+    if(POMO.running){
+      const fase = POMO.phase === 'work' ? 'Foco' : POMO.phase === 'short' ? 'Pausa' : 'Pausa longa';
+      const ciclo = POMO.phase === 'work' ? 'foco ' + POMO.round + ' de ' + POMO.totalRounds
+        : 'depois, foco ' + (POMO.phase === 'long' ? 1 : POMO.round + 1) + ' de ' + POMO.totalRounds;
+      const quem = POMO.label ? corta(POMO.label, 70) : '';
+      const cor = POMO.phase === 'work' ? '#0F62B4' : POMO.phase === 'short' ? '#1F8A4C' : '#B4700F';
+      if(POMO.paused){
+        d = {titulo:'Pomodoro pausado', texto:'Faltam ' + mmss(Math.round(POMO.remaining / 1000)) + ' de ' + fase.toLowerCase() + (quem ? ', ' + quem : '') + '. Toque para continuar.', cor};
+      }else{
+        const f = new Date(POMO.endsAt);
+        d = {titulo:fase + ' até ' + pad(f.getHours()) + ':' + pad(f.getMinutes()), texto:(quem ? quem + ', ' : '') + ciclo, fim:POMO.endsAt, cor};
+      }
+    }else if(r){
+      const p = projById(r.projectId);
+      d = {titulo:'Cronômetro desde ' + hhmm(r.start), texto:corta(r.desc, 80) + (p ? ', ' + p.name : ''), inicio:new Date(r.start).getTime(), cor:'#0F62B4'};
+    }
+  }
+  const sig = d ? JSON.stringify(d) : '';
+  if(!force && sig === TT_AVISO) return;
+  TT_AVISO = sig;
+  capCall(d ? FOCO.mostrar(d) : FOCO.esconder());
+}
 function loginPorLink(url){
   if(!url || String(url).indexOf('central://login') !== 0) return;
   const m = String(url).match(/[?&]c=([^&#]+)/);
@@ -5623,9 +5657,10 @@ function nativeInit(){
       if(!APP_ATIVO) return;
       render(); notifSoon(); checkUpdate();
       if(POMO.running && !POMO.paused) pomoTick();
+      ttAvisoSync(true);
     });
-    capOn(CAPP, 'appUrlOpen', d => loginPorLink(d && d.url));
-    if(CAPP.getLaunchUrl) capCall(CAPP.getLaunchUrl()).then(r => { if(r && r.url) loginPorLink(r.url); }).catch(() => {});
+    capOn(CAPP, 'appUrlOpen', d => abrirLink(d && d.url));
+    if(CAPP.getLaunchUrl) capCall(CAPP.getLaunchUrl()).then(r => { if(r && r.url) abrirLink(r.url); }).catch(() => {});
     if(CAPP.getInfo) capCall(CAPP.getInfo()).then(i => {
       UPD.build = parseInt(i && i.build, 10) || 0;
       renderUpdBar();
@@ -5649,7 +5684,7 @@ function nativeInit(){
         }
       })
       .catch(() => {})
-      .then(() => { notifSync(true); pomoNotify(); });
+      .then(() => { notifSync(true); pomoNotify(); ttAvisoSync(true); });
   }
   checkUpdate(true);
 }
@@ -5667,7 +5702,7 @@ window.__central = {
     const b = blank();
     S = Object.assign(b, o, {meta:Object.assign(b.meta, o.meta || {})});
     try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
-    applyTheme(); render(); notifSoon();
+    applyTheme(); render(); notifSoon(); ttAvisoSync();
   }
 };
 if(!NATIVE && 'serviceWorker' in navigator && location.protocol.indexOf('http') === 0){

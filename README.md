@@ -20,6 +20,7 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 | Hábitos que faltam | 21:00, só se ainda faltar algum |
 | Aniversários | 09:00 do dia |
 | Pomodoro | no fim de cada foco e de cada pausa |
+| Sessão em andamento | aviso fixo com o tempo correndo: regressivo no Pomodoro (some no fim da fase), progressivo no cronômetro; tocar abre o Tempo |
 | Blocos da rotina | desligado, para não repetir o Orders of the Day |
 
 Os avisos são recalculados sempre que o app abre ou algo muda nele. Cada tipo tem um canal próprio no Android, com som próprio, que dá para ajustar nas configurações de notificação do sistema.
@@ -49,5 +50,6 @@ A chave de assinatura (`android/app/central-release.p12`) fica no repositório p
 | `sw.js`, `manifest.webmanifest`, `icons/` | instalação como PWA no navegador |
 | `app-login.html` | login do Google para o app Android, aberto no Chrome |
 | `capacitor.config.json`, `android/` | projeto Android (Capacitor 8) |
+| `android/app/src/main/java/.../FocoPlugin.java` | aviso fixo da sessão, com contagem no próprio aviso |
 | `android/app/src/main/res/raw/` | sons das notificações |
 | `package.json` | Capacitor e plugins (notificações locais, vibração, app, abrir links, arquivos, compartilhar) |
