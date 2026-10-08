@@ -7,7 +7,7 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 
 ## Tarefas
 
-Abas Hoje, Próximos, Todas e Feitas, com os projetos em fila logo abaixo (um toque filtra). No campo de adicionar, o prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
+No topo, dois menus que abrem com um toque: o que mostrar (Hoje, Próximos 7 dias, Todas, Feitas) e de qual projeto, com o atalho para gerenciar projetos. No campo de adicionar, o prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
 
 - `Ligar para o cartório sexta #promotoria !!!` cria a tarefa para sexta, no projeto Promotoria, com prioridade alta;
 - datas: `hoje`, `amanhã`, `depois de amanhã`, dias da semana (`sexta`, `na segunda`, `quinta-feira`), `dia 15`, `15/10`, `próxima semana`, `fim de semana`, `em 3 dias`;
@@ -15,7 +15,7 @@ Abas Hoje, Próximos, Todas e Feitas, com os projetos em fila logo abaixo (um to
 - `!`, `!!`, `!!!` ou `!baixa`, `!média`, `!alta` definem a prioridade;
 - com o campo vazio, o **+** abre o formulário completo.
 
-No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** leva ao campo de adicionar. As atrasadas têm **Mover para hoje**, e toda mudança de prazo pode ser desfeita no aviso.
+No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** leva ao campo de adicionar. No fim da lista de atrasadas fica **Mover para hoje**, e toda mudança de prazo pode ser desfeita no aviso.
 
 ## App Android
 
