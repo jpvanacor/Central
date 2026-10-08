@@ -343,22 +343,6 @@ pre.fmt{
 .toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
 
 /* ===== Time track ===== */
-.timer-card{padding:16px 18px; display:flex; flex-direction:column; gap:12px; margin-bottom:18px}
-.timer-card .btn{display:flex; align-items:center; justify-content:center; text-align:center}
-#ttStopwatch .seclab{margin-top:24px}
-#ttStopwatch .list{margin-bottom:20px}
-.pomo-ring{width:240px; height:240px; border-radius:50%; margin:20px auto 16px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column}
-.pomo-ring svg{position:absolute; top:0; left:0; transform:rotate(-90deg)}
-.pomo-time{font-family:'IBM Plex Mono',monospace; font-size:36px; font-weight:700; z-index:1}
-.pomo-label{font-size:12px; color:var(--muted); z-index:1; margin-top:2px}
-.pomo-dots{display:flex; gap:8px; justify-content:center; margin:10px 0}
-.pomo-dot{width:12px; height:12px; border-radius:50%; border:2px solid var(--line)}
-.pomo-dot.done{background:var(--accent); border-color:var(--accent)}
-.pomo-dot.active{border-color:var(--accent); box-shadow:0 0 6px var(--accent)}
-.pomo-btns{display:flex; gap:10px; justify-content:center; margin-top:8px}
-.tt-form{display:flex; gap:8px; flex-wrap:wrap}
-.tt-form .inp[type="text"]{flex:1; min-width:180px}
-.clockrow{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
 .clock{font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:600; letter-spacing:.02em; font-variant-numeric:tabular-nums}
 .clock-desc{flex:1; min-width:0; font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .sumrow{display:flex; gap:12px; margin:0 0 6px; flex-wrap:wrap}
@@ -655,18 +639,6 @@ pre.fmt{
 .est-qcard{padding:6px 16px 12px}
 
 /* pomodoro */
-.pomo-wrap{text-align:center; padding:4px 0 20px}
-.pomo-focus{display:flex; gap:8px; max-width:440px; margin:0 auto 4px}
-.pomo-focus .inp{min-width:0; flex:1}
-.pomo-focus select.inp{flex:0 1 auto; width:auto; max-width:150px}
-.pomo-focus-lbl{font-weight:650; color:var(--muted); margin-bottom:4px}
-.pomo-time{font-size:46px; font-variant-numeric:tabular-nums}
-.pomo-btns .btn{border-radius:99px; padding:10px 22px}
-.pomo-btns .pomo-main{min-width:140px; padding:12px 30px; font-size:15px}
-.pomo-stats{font-size:12.5px; color:var(--muted); margin-top:14px; font-family:var(--mono)}
-.pomo-cfg{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:12px; font-size:12px; color:var(--muted)}
-.pomo-cfg label{display:flex; align-items:center; gap:5px}
-.pomo-cfg .inp{width:54px; padding:5px 6px; text-align:center; font-size:12.5px; border-radius:8px}
 
 /* finanças: resumo em um cartão */
 #finResumo:has(.fin-sum){display:block}
@@ -704,6 +676,152 @@ html[data-theme="dark"] .est-tag{filter:brightness(.8) saturate(1.1)}
   .trow{padding:12px 14px}
   .pomo-time{font-size:42px}
   .vhead .hj-pills{margin-left:auto}
+}
+
+/* ===================== Tempo ===================== */
+.card.tt-sessao{position:relative; padding:16px 18px 22px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:18px}
+.card.tt-sessao.rodando{padding-top:22px}
+.tt-full{position:absolute; top:14px; right:14px; z-index:1}
+.tt-modo button{padding:7px 14px; font-size:13px}
+
+/* mostrador */
+.tt-dial{position:relative; width:min(264px, 72vw); aspect-ratio:1; container-type:inline-size; margin:2px auto 0; flex:none}
+.tt-dial svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none}
+.tt-ticks line{stroke:var(--line2); stroke-width:1.4; stroke-linecap:round}
+.tt-ticks line.mj{stroke:var(--muted); stroke-width:2; opacity:.55}
+.tt-track{fill:none; stroke:var(--surface2); stroke-width:10}
+.tt-arc{fill:none; stroke:var(--fase); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1s linear, opacity .2s}
+.tt-hand{transform-origin:130px 130px; transition:transform 1s linear}
+.tt-head{fill:var(--fase); stroke:var(--surface); stroke-width:3.5; transition:opacity .2s}
+.tt-dial:not(.moving) .tt-arc, .tt-dial:not(.moving) .tt-head{opacity:0}
+.tt-arc.salto, .tt-hand.salto{transition:none}
+.tt-face{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none}
+.tt-top{display:inline-flex; align-items:center; gap:7px; font-size:clamp(12px, 5.4cqw, 20px); font-weight:650; color:var(--muted)}
+.tt-top::before{content:''; width:.5em; height:.5em; border-radius:50%; background:var(--fase)}
+.tt-dial.on .tt-top::before{animation:pulse 1.6s ease infinite}
+.tt-num{font-weight:800; font-stretch:72%; font-size:28cqw; line-height:1; letter-spacing:-.01em; font-variant-numeric:tabular-nums; color:var(--ink); margin:.06em 0 .04em}
+.tt-num.longo{font-size:21.5cqw}
+.tt-sub{font-size:clamp(12px, 5cqw, 19px); color:var(--muted); font-variant-numeric:tabular-nums}
+.tt-dial.paused .tt-num{opacity:.4}
+.tt-dial.paused .tt-sub{color:var(--warn); font-weight:650}
+.tt-dial.fim{animation:pomoFim .55s ease 3}
+
+/* o que está rodando / o que vai começar */
+.tt-what{display:flex; flex-direction:column; align-items:center; gap:6px; max-width:460px; text-align:center}
+.tt-desc{font-size:16px; font-weight:700; line-height:1.3; overflow-wrap:anywhere}
+.tt-setup{display:flex; gap:8px; width:100%; max-width:460px}
+.tt-setup .inp[type="text"]{flex:1; min-width:0; border-radius:99px; padding:11px 16px}
+.tt-setup select.inp{flex:0 1 auto; width:auto; max-width:42%; border-radius:99px; padding:10px 12px}
+.tt-recent{display:flex; gap:8px; width:100%; max-width:560px; overflow-x:auto; justify-content:safe center; padding:2px 2px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+.tt-recent::-webkit-scrollbar{display:none}
+@media (min-width:761px){ .tt-recent{flex-wrap:wrap; overflow:visible} }
+.tt-chip{flex:none; display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line2); background:var(--surface); color:var(--ink);
+  border-radius:99px; padding:6px 13px 6px 11px; font-size:13px; font-weight:600; white-space:nowrap; transition:border-color .15s, transform .09s}
+.tt-chip:hover{border-color:var(--muted)}
+.tt-chip:active{transform:scale(.95)}
+
+/* controles */
+.tt-ctrl{display:grid; grid-template-columns:1fr auto 1fr; align-items:start; width:100%; max-width:300px; margin-top:16px}
+.tt-c{display:flex; flex-direction:column; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--muted)}
+.tt-btn{width:52px; height:52px; border-radius:50%; border:1px solid var(--line2); background:var(--surface); color:var(--ink);
+  display:grid; place-items:center; padding:0; transition:transform .09s ease, background .15s, border-color .15s}
+.tt-btn:hover{border-color:var(--muted)}
+.tt-btn:active{transform:scale(.92)}
+.tt-btn svg{width:20px; height:20px}
+.tt-btn.prim{width:78px; height:78px; margin-top:-13px; border:0; background:var(--accent); color:#fff; box-shadow:0 10px 24px -10px var(--accent)}
+.tt-btn.prim svg{width:30px; height:30px}
+html[data-theme="dark"] .tt-btn.prim{color:var(--on-accent)}
+
+/* durações do Pomodoro */
+.tt-presets{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:6px}
+.tt-pre{border:1px solid var(--line2); background:none; color:var(--muted); border-radius:99px; padding:5px 12px; font-size:13px; font-weight:700; font-variant-numeric:tabular-nums}
+.tt-pre small{font-size:11.5px; font-weight:500; margin-left:1px}
+.tt-pre.on{border-color:var(--ink); color:var(--ink); background:var(--surface)}
+.tt-pre.aberto{background:var(--surface2)}
+.tt-ajuste{display:grid; grid-template-columns:repeat(4, auto); gap:10px 16px; justify-content:center; padding-top:4px}
+.tt-ajuste label{display:flex; flex-direction:column; gap:5px; font-size:12px; font-weight:600; color:var(--muted)}
+.tt-ajuste label span{display:flex; align-items:center; gap:5px}
+.tt-ajuste .inp{width:58px; padding:6px 6px; text-align:center; font-size:14px; border-radius:9px}
+
+/* semana */
+.tt-semhead .icon-btn{flex:none}
+.tt-semhead .icon-btn[disabled]{opacity:.3; cursor:default}
+.tt-semhead .n{margin-right:4px}
+.card.tt-sem{padding:12px 12px 12px; margin-bottom:18px}
+.tt-cols{position:relative; display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px; max-width:620px; margin:0 auto}
+.tt-cols::after{content:''; position:absolute; left:0; right:0; top:96px; height:1px; background:var(--line); pointer-events:none}
+.tt-col{border:0; background:none; padding:4px 0 7px; border-radius:10px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); min-width:0}
+.tt-col:hover:not([disabled]){background:var(--surface2)}
+.tt-col.sel{background:var(--accent-soft); color:var(--ink)}
+.tt-col.fut{opacity:.4; cursor:default}
+.tt-barra{height:92px; width:100%; display:flex; align-items:flex-end; justify-content:center; margin-bottom:4px}
+.tt-pilha{width:min(24px, 58%); display:flex; flex-direction:column-reverse; gap:2px; border-radius:4px 4px 0 0; overflow:hidden}
+.tt-pilha i{display:block; min-height:2px}
+.tt-dow{font-size:12px; font-weight:650}
+.tt-col.hoje .tt-dow{color:var(--accent); font-weight:800}
+.tt-tot{font-size:11px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.tt-col.sel .tt-tot{color:var(--ink); font-weight:650}
+.tt-leg{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:10px; padding:11px 4px 0; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink)}
+.tt-legi{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.tt-legi b{font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums}
+.tt-leg.vazio{color:var(--muted)}
+
+/* dia */
+.card.tt-dia{padding:14px 0 0; margin-bottom:18px; overflow:hidden}
+.tt-fita{padding:0 16px 12px}
+.tt-trilho{position:relative; height:16px; border-radius:5px; background:var(--surface2)}
+.tt-seg{position:absolute; top:0; bottom:0; border:0; padding:0; border-radius:4px; box-shadow:0 0 0 2px var(--surface); cursor:pointer}
+.tt-seg:hover{filter:brightness(1.08)}
+.tt-seg.vivo{animation:pulse 1.6s ease infinite}
+.tt-agora{position:absolute; top:-4px; bottom:-4px; width:2px; margin-left:-1px; border-radius:1px; background:var(--ink); pointer-events:none}
+.tt-horas{position:relative; height:14px; margin-top:6px; font-size:10.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+.tt-horas span{position:absolute; top:0; transform:translateX(-50%); white-space:nowrap}
+.tt-horas span:first-child{transform:none}
+.tt-horas span:last-child{transform:translateX(-100%)}
+.tt-lista{border-top:1px solid var(--line)}
+.tt-row{display:flex; align-items:center; gap:12px; padding:11px 10px 11px 14px; cursor:pointer}
+.tt-row + .tt-row, .tt-subs + .tt-row, .tt-row + .tt-subs{border-top:1px solid var(--line)}
+.tt-row::before{content:''; width:4px; align-self:stretch; border-radius:3px; background:var(--pc); flex:none}
+.tt-row:hover{background:var(--surface2)}
+.tt-main{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px}
+.tt-tt{font-weight:600; font-size:14.5px; line-height:1.3; overflow-wrap:anywhere}
+.tt-meta{display:flex; flex-wrap:wrap; align-items:center; gap:3px 10px; font-size:12px; color:var(--muted)}
+.tt-tag{display:inline-flex; align-items:center; gap:2px; font-size:11px; font-weight:700; color:var(--accent); background:var(--accent-soft); padding:1px 8px; border-radius:99px}
+.tt-tag svg{width:12px; height:12px; margin-right:-3px}
+.tt-dur{font-weight:700; font-size:13.5px; font-variant-numeric:tabular-nums; white-space:nowrap}
+.tt-row.vivo .tt-dur{color:var(--accent)}
+.tt-cont{flex:none; color:var(--muted); border-color:transparent; background:none}
+.tt-cont:hover{color:var(--accent); border-color:var(--accent)}
+.tt-subs{background:var(--surface2)}
+.tt-row.sub{padding:8px 52px 8px 32px}
+.tt-row.sub::before{width:3px; opacity:.6}
+.tt-row.sub .tt-tt{font-weight:500; font-size:13.5px}
+.tt-row.sub .tt-dur{font-weight:600; font-size:12.5px; color:var(--muted)}
+.tt-row.sub + .tt-row.sub{border-top:1px solid var(--line)}
+.tt-vazio{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 16px 16px; font-size:13.5px; color:var(--muted)}
+.tt-durs{display:flex; gap:6px; flex-wrap:wrap}
+.tt-durs .chip{padding:5px 11px}
+
+/* tela de foco */
+.tt-foco{position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center;
+  padding:calc(28px + var(--sat)) 20px calc(28px + var(--sab));
+  --bg:#0E1319; --surface:#161D25; --surface2:#1C2530; --ink:#E9EEF3; --muted:#8C99A6; --line:#222C36; --line2:#2F3B47;
+  --accent:#5AA6EE; --good:#4CBB7F; --warn:#E0A54A; --on-accent:#08131F;
+  background:var(--bg); color:var(--ink); animation:focoIn .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes focoIn{from{opacity:0; transform:scale(1.03)}to{opacity:1; transform:none}}
+.tt-foco-in{display:flex; flex-direction:column; align-items:center; gap:22px; width:100%; max-width:560px}
+.tt-dial.grande{width:min(86vw, 56vh, 480px)}
+.tt-foco-desc{font-size:clamp(16px, 2.6vh, 22px); font-weight:650; text-align:center; min-height:1.3em; max-width:90vw; overflow-wrap:anywhere}
+.tt-foco .tt-ctrl{max-width:340px}
+.tt-foco .tt-btn.prim{color:var(--on-accent)}
+.tt-foco-x{position:absolute; z-index:2; top:calc(14px + var(--sat)); right:16px; width:44px; height:44px; border-radius:50%; border:1px solid var(--line2);
+  background:none; color:var(--muted); display:grid; place-items:center}
+.tt-foco-x:hover{color:var(--ink); border-color:var(--muted)}
+html.tt-foco-on body{overflow:hidden}
+@media (max-width:760px){
+  .card.tt-sessao{padding:12px 12px 20px}
+  .tt-ajuste{grid-template-columns:repeat(2, auto)}
+  .tt-recent{justify-content:flex-start}
 }
 
 /* ===================== App Android, notificações, sons e animações ===================== */
@@ -787,8 +905,7 @@ a.btn{text-decoration:none; display:inline-flex; align-items:center}
 }
 @keyframes sheetUp{from{transform:translateY(48px); opacity:.5}to{transform:none; opacity:1}}
 
-/* Pomodoro: o anel pulsa quando a fase acaba */
-.pomo-ring.fim{animation:pomoFim .55s ease 3}
+/* Pomodoro: o mostrador pulsa quando a fase acaba */
 @keyframes pomoFim{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
 /* confete */
@@ -889,23 +1006,12 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
   <section class="view" id="view-tempo">
     <div class="vhead">
       <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tempo</h1>
-      <div class="seg" style="margin-left:auto" id="ttTabs">
-        <button data-action="tt-tab" data-v="pomo" class="on">Pomo</button>
-        <button data-action="tt-tab" data-v="stopwatch">Stopwatch</button>
-      </div>
       <div class="grow"></div>
-      <button class="btn btn-ghost btn-sm" data-action="lanc-manual" id="ttManual">+ Lançamento manual</button>
+      <span id="ttResumo"></span>
     </div>
-    <div id="ttPomodoro"></div>
-    <div id="ttStopwatch">
-      <div class="card timer-card" id="ttTimer"></div>
-      <div class="sumrow">
-        <div class="card sum"><div class="k">Hoje</div><div class="v" id="ttHoje">0min</div></div>
-        <div class="card sum"><div class="k">Esta semana</div><div class="v" id="ttSemana">0min</div></div>
-      </div>
-      <div id="ttBars"></div>
-      <div id="ttLista"></div>
-    </div>
+    <div class="card tt-sessao" id="ttSessao"></div>
+    <div id="ttSemana"></div>
+    <div id="ttDia"></div>
   </section>
 
   <!-- ===== PESSOAS ===== -->
@@ -1950,96 +2056,448 @@ function fmtClock(sec){
 }
 const hhmm = iso => { const d = new Date(iso); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 function weekStart(){ const d = fromD(today()); const w = (d.getDay() + 6) % 7; d.setDate(d.getDate() - w); return dstr(d); }
-function startTimer(){
-  const inp = $('#ttDesc');
-  const desc = inp ? inp.value.trim() : '';
-  if(!desc){ toast('Descreva a atividade antes de iniciar.'); if(inp) inp.focus(); return; }
-  const pj = $('#ttProj') ? $('#ttProj').value : '';
-  const r = running();
-  if(r) r.end = new Date().toISOString();
-  S.timeEntries.push({id:uid(), desc, projectId:pj || null, start:new Date().toISOString(), end:null, createdAt:new Date().toISOString()});
-  save(); render();
-}
-function stopTimer(){
-  const r = running();
-  if(!r) return;
-  r.end = new Date().toISOString();
-  save(); render();
-  toast('Registrado: ' + fmtDur(durSec(r)) + ' em "' + r.desc + '".');
-}
 function entriesOfDay(ds){ return S.timeEntries.filter(e => dstr(new Date(e.start)) === ds); }
 function totalOfDay(ds){ let t = 0; entriesOfDay(ds).forEach(e => t += durSec(e)); return t; }
-function renderTempo(){
-  const r = running();
-  const projs = S.projects.filter(p => !p.archived);
-  const projOpts = '<option value="">Sem projeto</option>' + projs.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
-  $('#ttTimer').innerHTML = r
-    ? '<div class="clockrow"><span class="rundot"></span>' +
-      '<span class="clock" data-tick-start="' + r.start + '">' + fmtClock(durSec(r)) + '</span>' +
-      '<span class="clock-desc">' + esc(r.desc) + '</span>' + projChipHTML(r) +
-      '<button class="btn btn-ghost btn-sm" data-action="edit-entry" data-id="' + r.id + '">Editar</button>' +
-      '<button class="btn btn-primary" data-action="parar-timer">Parar</button></div>'
-    : '<div class="tt-form"><input class="inp" type="text" id="ttDesc" placeholder="No que você vai trabalhar? Enter inicia…">' +
-      '<select class="inp" id="ttProj">' + projOpts + '</select>' +
-      '<button class="btn btn-primary" data-action="iniciar-timer">Iniciar</button></div>';
-
-  const t = today(), ws = weekStart();
-  let semana = 0;
-  for(let i = 0; i < 7; i++){ const ds = addD(ws, i); if(ds <= t) semana += totalOfDay(ds); }
-  const hj = totalOfDay(t);
-  const elHj = $('#ttHoje');
-  elHj.textContent = hj ? fmtDur(hj) : '0min';
-  if(r && dstr(new Date(r.start)) === t){
-    elHj.dataset.tickBase = String(hj - durSec(r));
-    elHj.dataset.tickStart = r.start;
-  }else{
-    delete elHj.dataset.tickBase;
-    delete elHj.dataset.tickStart;
-  }
-  $('#ttSemana').textContent = semana ? fmtDur(semana) : '0min';
-
-  const porPj = {};
-  for(let i = 0; i < 7; i++){
-    const ds = addD(ws, i); if(ds > t) break;
-    entriesOfDay(ds).forEach(e => { const k = e.projectId || ''; porPj[k] = (porPj[k] || 0) + durSec(e); });
-  }
-  const ks = Object.keys(porPj).sort((a,b) => porPj[b] - porPj[a]);
-  const max = ks.length ? porPj[ks[0]] : 0;
-  $('#ttBars').innerHTML = !ks.length ? '' :
-    secHTML('Por projeto nesta semana', ks.length, '', 'folder') + '<div class="card bars">' + ks.map(k => {
-      const p = projById(k);
-      return '<div class="bar-row"><span class="bar-lab">' + (p ? esc(p.name) : 'Sem projeto') + '</span>' +
-        '<span class="bar-track"><span class="bar-fill" style="width:' + Math.max(3, Math.round(porPj[k] / max * 100)) + '%; background:' + (p ? CORES[p.color] : 'var(--muted)') + '"></span></span>' +
-        '<span class="bar-v">' + fmtDur(porPj[k]) + '</span></div>';
-    }).join('') + '</div>';
-
-  let out = '';
-  for(let i = 0; i < 7; i++){
-    const ds = addD(t, -i);
-    const es = entriesOfDay(ds).sort((a,b) => b.start.localeCompare(a.start));
-    if(!es.length && i > 0) continue;
-    const lab = i === 0 ? 'Hoje' : i === 1 ? 'Ontem' : DOW[fromD(ds).getDay()] + ', ' + fmtCurto(ds);
-    out += '<div class="seclab"><span>' + lab + '</span><span class="n">' + (totalOfDay(ds) ? fmtDur(totalOfDay(ds)) : '0min') + '</span><span class="rule"></span></div>';
-    out += !es.length ? '<div class="list"><div class="empty">Nenhum registro hoje. Use o timer acima ou lance manualmente.</div></div>' :
-      '<div class="list">' + es.map(e =>
-        '<div class="trow" data-action="edit-entry" data-id="' + e.id + '">' +
-        '<span class="tt">' + esc(e.desc) + '</span><span class="tmeta">' + projChipHTML(e) +
-        '<span class="trange">' + hhmm(e.start) + '–' + (e.end ? hhmm(e.end) : 'agora') + '</span>' +
-        '<span class="due"' + (e.end ? '' : ' data-tick-dur="' + e.start + '"') + '>' + fmtDur(durSec(e)) + '</span></span></div>').join('') + '</div>';
-  }
-  $('#ttLista').innerHTML = out;
-  document.getElementById('ttStopwatch').style.display = TT_TAB === 'stopwatch' ? '' : 'none';
-  document.getElementById('ttPomodoro').style.display = TT_TAB === 'pomo' ? '' : 'none';
-  const ttm = document.getElementById('ttManual'); if(ttm) ttm.style.display = TT_TAB === 'stopwatch' ? '' : 'none';
-  renderPomodoro();
+/* ===================== Tempo ===================== */
+/* Uma sessão por vez: Pomodoro (contagem regressiva em ciclos) ou cronômetro (conta a partir do zero).
+   Os dois registram em S.timeEntries. O Pomodoro guarda o estado em POMO; o cronômetro é o lançamento sem fim. */
+let TT_MODO = (() => { try{ return localStorage.getItem('central.ttModo') === 'crono' ? 'crono' : 'pomo'; }catch(e){ return 'pomo'; } })();
+let TT_SEM = 0;              /* 0 = semana atual, -1 = anterior */
+let TT_DIA = null;           /* dia aberto no registro (null = hoje) */
+let TT_AJUSTE = false;       /* painel de ajuste do Pomodoro */
+let TT_RASCUNHO = {desc:'', pj:''};
+let TT_LOCK = null;          /* tela ligada na tela de foco */
+const TT_ABERTOS = new Set();
+const POMO_PRESETS = [{work:25, short:5, long:15}, {work:50, short:10, long:20}, {work:90, short:20, long:30}];
+LICN['maximize-2'] = '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" x2="14" y1="3" y2="10"/><line x1="3" x2="10" y1="21" y2="14"/>';
+const TT_IC = {
+  play:'<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M8.5 5.3v13.4a1 1 0 0 0 1.53.85l10.3-6.7a1 1 0 0 0 0-1.7L10.03 4.45A1 1 0 0 0 8.5 5.3z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.3"/><rect x="13.5" y="5" width="4" height="14" rx="1.3"/></svg>',
+  stop:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>',
+  stopBig:'<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>',
+  skip:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M5.5 6.4v11.2a1 1 0 0 0 1.56.83l8.1-5.6a1 1 0 0 0 0-1.66l-8.1-5.6a1 1 0 0 0-1.56.83z"/><rect x="16.5" y="5.5" width="2.6" height="13" rx="1.1"/></svg>',
+  playSm:'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8.5 5.3v13.4a1 1 0 0 0 1.53.85l10.3-6.7a1 1 0 0 0 0-1.7L10.03 4.45A1 1 0 0 0 8.5 5.3z"/></svg>'
+};
+const DOW_LONGO = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+function fmtCurtoDur(sec){
+  const m = Math.round(sec / 60);
+  if(m < 60) return m + 'm';
+  const h = Math.floor(m / 60), r = m % 60;
+  return h + 'h' + (r ? pad(r) : '');
 }
+function ttModo(){ if(running()) return 'crono'; if(POMO.running) return 'pomo'; return TT_MODO; }
+/* Pomodoro parado no meio do ciclo (por exemplo, a pausa ficou para depois) */
+function pomoMeioCiclo(){ return !POMO.running && (POMO.phase !== 'work' || POMO.round > 1 || POMO.remaining > 0); }
+function ttCorFase(ph){ return ph === 'work' ? 'var(--accent)' : ph === 'short' ? 'var(--good)' : 'var(--warn)'; }
+function ttRecentes(n){
+  const vistos = new Set(), out = [];
+  S.timeEntries.slice().sort((a, b) => (b.start || '').localeCompare(a.start || '')).some(e => {
+    const d = (e.desc || '').trim();
+    if(!d || d === 'Pomodoro' || d === 'Sem descrição') return false;
+    const k = d.toLowerCase() + '|' + (e.projectId || '');
+    if(vistos.has(k)) return false;
+    vistos.add(k);
+    out.push({desc:d, projectId:e.projectId || ''});
+    return out.length >= n;
+  });
+  return out;
+}
+
+/* ---------- mostrador ---------- */
+const TT_R = 100, TT_C = 2 * Math.PI * TT_R;
+function ttDialEstado(){
+  if(ttModo() === 'crono'){
+    const r = running();
+    if(r){
+      const s = durSec(r);
+      return {num:fmtClock(s), frac:(s % 3600) / 3600, cor:'var(--accent)', top:'Cronômetro', sub:'desde ' + hhmm(r.start), longo:true, ativo:true};
+    }
+    return {num:'0:00:00', frac:0, cor:'var(--accent)', top:'Cronômetro', sub:'conta a partir do zero', longo:true, ativo:false};
+  }
+  const dur = pomoDuration(), rem = pomoRemaining(), c = pomoCfg(), meio = pomoMeioCiclo();
+  const top = POMO.phase === 'work' ? (POMO.running || meio ? 'Foco ' + POMO.round + ' de ' + POMO.totalRounds : 'Foco') : pomoPhaseLabel();
+  let sub;
+  if(POMO.running && POMO.paused) sub = 'pausado';
+  else if(POMO.running){ const f = new Date(POMO.endsAt); sub = 'até ' + pad(f.getHours()) + ':' + pad(f.getMinutes()); }
+  else if(meio) sub = 'esperando você';
+  else sub = c.rounds + ' ciclos, pausa de ' + c.short + ' min';
+  return {num:mmss(rem), frac:(POMO.running || meio) && dur ? 1 - rem / dur : 0, cor:ttCorFase(POMO.phase), top, sub, longo:false,
+    ativo:POMO.running && !POMO.paused, pausado:POMO.running && POMO.paused};
+}
+function ttTicks(){
+  if(ttTicks._h) return ttTicks._h;
+  let h = '';
+  for(let i = 0; i < 60; i++){
+    const a = i / 60 * 2 * Math.PI, mj = i % 5 === 0, r1 = mj ? 110 : 114, r2 = 120;
+    h += '<line' + (mj ? ' class="mj"' : '') + ' x1="' + (130 + r1 * Math.sin(a)).toFixed(1) + '" y1="' + (130 - r1 * Math.cos(a)).toFixed(1) +
+      '" x2="' + (130 + r2 * Math.sin(a)).toFixed(1) + '" y2="' + (130 - r2 * Math.cos(a)).toFixed(1) + '"/>';
+  }
+  return (ttTicks._h = '<g class="tt-ticks">' + h + '</g>');
+}
+function ttDialHTML(extra){
+  const st = ttDialEstado();
+  return '<div class="tt-dial' + (extra ? ' ' + extra : '') + (st.ativo ? ' on' : '') + (st.pausado ? ' paused' : '') + (st.frac > 0 ? ' moving' : '') + '" style="--fase:' + st.cor + '" data-deg="' + (st.frac * 360).toFixed(2) + '">' +
+    '<svg viewBox="0 0 260 260" aria-hidden="true">' + ttTicks() +
+      '<circle class="tt-track" cx="130" cy="130" r="' + TT_R + '"/>' +
+      '<circle class="tt-arc" cx="130" cy="130" r="' + TT_R + '" stroke-dasharray="' + TT_C.toFixed(1) + '" stroke-dashoffset="' + (TT_C * (1 - st.frac)).toFixed(1) + '" transform="rotate(-90 130 130)"/>' +
+      '<g class="tt-hand" style="transform:rotate(' + (st.frac * 360).toFixed(2) + 'deg)"><circle class="tt-head" cx="130" cy="' + (130 - TT_R) + '" r="7"/></g>' +
+    '</svg>' +
+    '<div class="tt-face"><span class="tt-top">' + esc(st.top) + '</span>' +
+      '<span class="tt-num' + (st.longo ? ' longo' : '') + '" role="timer" aria-live="off">' + st.num + '</span>' +
+      '<span class="tt-sub">' + esc(st.sub) + '</span></div></div>';
+}
+function ttDialUpdate(){
+  const dials = document.querySelectorAll('.tt-dial');
+  if(!dials.length) return;
+  const st = ttDialEstado(), deg = st.frac * 360;
+  dials.forEach(d => {
+    d.style.setProperty('--fase', st.cor);
+    d.classList.toggle('on', !!st.ativo);
+    d.classList.toggle('paused', !!st.pausado);
+    d.classList.toggle('moving', st.frac > 0);
+    const n = d.querySelector('.tt-num');
+    if(n && n.textContent !== st.num){ n.textContent = st.num; n.classList.toggle('longo', !!st.longo); }
+    const tp = d.querySelector('.tt-top'); if(tp && tp.textContent !== st.top) tp.textContent = st.top;
+    const sb = d.querySelector('.tt-sub'); if(sb && sb.textContent !== st.sub) sb.textContent = st.sub;
+    const arc = d.querySelector('.tt-arc'); if(arc) arc.setAttribute('stroke-dashoffset', (TT_C * (1 - st.frac)).toFixed(1));
+    /* a volta do ponteiro (fim da hora no cronômetro) acontece sem animar para trás */
+    const hand = d.querySelector('.tt-hand'), antes = parseFloat(d.dataset.deg || '0');
+    if(hand){
+      hand.classList.toggle('salto', deg < antes - 1);
+      if(arc) arc.classList.toggle('salto', deg < antes - 1);
+      hand.style.transform = 'rotate(' + deg.toFixed(2) + 'deg)';
+    }
+    d.dataset.deg = deg.toFixed(2);
+  });
+}
+
+/* ---------- sessão ---------- */
+function ttControlesHTML(modo, rodando, meio){
+  const b = (act, ic, lab, cls) => '<div class="tt-c"><button class="tt-btn' + (cls ? ' ' + cls : '') + '" data-action="' + act + '" aria-label="' + lab + '" title="' + lab + '">' + ic + '</button><span>' + lab + '</span></div>';
+  const vazio = '<div class="tt-c vazio" aria-hidden="true"></div>';
+  let h;
+  if(modo === 'crono') h = rodando ? b('tt-editar', licn('pencil'), 'Editar') + b('tt-play', TT_IC.stopBig, 'Parar', 'prim stop') + vazio
+    : vazio + b('tt-play', TT_IC.play, 'Começar', 'prim') + vazio;
+  else if(rodando) h = b('tt-parar', TT_IC.stop, 'Parar') + b('tt-play', POMO.paused ? TT_IC.play : TT_IC.pause, POMO.paused ? 'Continuar' : 'Pausar', 'prim') + b('tt-pular', TT_IC.skip, 'Pular');
+  else if(meio) h = b('tt-parar', TT_IC.stop, 'Encerrar') + b('tt-play', TT_IC.play, 'Continuar', 'prim') + b('tt-pular', TT_IC.skip, 'Pular');
+  else h = vazio + b('tt-play', TT_IC.play, 'Começar', 'prim') + vazio;
+  return '<div class="tt-ctrl">' + h + '</div>';
+}
+function ttPresetsHTML(){
+  const c = pomoCfg();
+  const at = POMO_PRESETS.findIndex(p => p.work === c.work && p.short === c.short && p.long === c.long);
+  let h = '<div class="tt-presets" role="group" aria-label="Duração do foco e da pausa">' +
+    POMO_PRESETS.map((p, i) => '<button class="tt-pre' + (i === at ? ' on' : '') + '" data-action="tt-preset" data-i="' + i + '" title="' + p.work + ' min de foco, ' + p.short + ' de pausa">' + p.work + '<small>/' + p.short + '</small></button>').join('') +
+    '<button class="tt-pre' + (at < 0 ? ' on' : '') + (TT_AJUSTE ? ' aberto' : '') + '" data-action="tt-ajustar">' + (at < 0 ? c.work + '<small>/' + c.short + '</small>' : 'Ajustar') + '</button></div>';
+  if(TT_AJUSTE){
+    const campo = (k, lab, un, min, max) => '<label>' + lab + '<span><input type="number" class="inp" data-pomo="' + k + '" value="' + c[k] + '" min="' + min + '" max="' + max + '" inputmode="numeric">' + un + '</span></label>';
+    h += '<div class="tt-ajuste">' + campo('work', 'Foco', 'min', 1, 180) + campo('short', 'Pausa', 'min', 1, 60) + campo('long', 'Pausa longa', 'min', 1, 90) + campo('rounds', 'Ciclos', '', 1, 12) + '</div>';
+  }
+  return h;
+}
+function renderSessao(){
+  const el = document.getElementById('ttSessao');
+  if(!el) return;
+  const modo = ttModo(), r = running();
+  const rodando = modo === 'crono' ? !!r : POMO.running, meio = modo === 'pomo' && pomoMeioCiclo();
+  const ae = document.activeElement, foco = ae && ae.id === 'ttDesc' ? [ae.selectionStart, ae.selectionEnd] : null;
+  let h = '<button class="icon-btn sm tt-full" data-action="tt-foco" title="Tela de foco" aria-label="Abrir tela de foco">' + licn('maximize-2') + '</button>';
+  if(!rodando && !meio) h += '<div class="seg tt-modo" role="group" aria-label="Tipo de sessão">' +
+      '<button data-action="tt-modo" data-v="pomo" class="' + (modo === 'pomo' ? 'on' : '') + '">Pomodoro</button>' +
+      '<button data-action="tt-modo" data-v="crono" class="' + (modo === 'crono' ? 'on' : '') + '">Cronômetro</button></div>';
+  h += ttDialHTML();
+  if(rodando || meio){
+    const desc = modo === 'crono' ? r.desc : (POMO.label || 'Foco livre');
+    const p = projById(modo === 'crono' ? r.projectId : POMO.projectId);
+    h += '<div class="tt-what"><span class="tt-desc">' + esc(desc) + '</span>' +
+      (p ? '<span class="pchip"><span class="pdot" style="background:' + CORES[p.color] + '"></span>' + esc(p.name) + '</span>' : '') + '</div>';
+  }else{
+    const projs = S.projects.filter(p => !p.archived);
+    h += '<div class="tt-setup"><input class="inp" type="text" id="ttDesc" placeholder="' + (modo === 'pomo' ? 'No que você vai focar?' : 'No que você vai trabalhar?') +
+      '" value="' + esc(TT_RASCUNHO.desc) + '" autocomplete="off" enterkeyhint="go">' +
+      '<select class="inp" id="ttProj" aria-label="Projeto"><option value="">Sem projeto</option>' +
+      projs.map(p => '<option value="' + p.id + '"' + (TT_RASCUNHO.pj === p.id ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select></div>';
+    const rec = ttRecentes(5);
+    if(rec.length) h += '<div class="tt-recent" aria-label="Recentes">' + rec.map(x => {
+      const p = projById(x.projectId);
+      return '<button class="tt-chip" data-action="tt-chip" data-desc="' + esc(x.desc) + '" data-pj="' + esc(x.projectId) + '" title="Começar: ' + esc(x.desc) + '">' +
+        '<span class="pdot" style="background:' + (p ? CORES[p.color] : 'var(--line2)') + '"></span><span>' + esc(corta(x.desc, 30)) + '</span></button>';
+    }).join('') + '</div>';
+  }
+  h += ttControlesHTML(modo, rodando, meio);
+  if(modo === 'pomo' && !rodando && !meio) h += ttPresetsHTML();
+  el.innerHTML = h;
+  el.classList.toggle('rodando', rodando);
+  const inp = document.getElementById('ttDesc'), sel = document.getElementById('ttProj');
+  if(inp){
+    inp.addEventListener('input', () => { TT_RASCUNHO.desc = inp.value; });
+    if(foco){ inp.focus(); try{ inp.setSelectionRange(foco[0], foco[1]); }catch(_){} }
+  }
+  if(sel) sel.addEventListener('change', () => { TT_RASCUNHO.pj = sel.value; });
+  el.querySelectorAll('[data-pomo]').forEach(i => i.addEventListener('change', () => {
+    const c = pomoCfg(), lim = {work:180, short:60, long:90, rounds:12};
+    c[i.dataset.pomo] = Math.max(1, Math.min(lim[i.dataset.pomo], parseInt(i.value, 10) || 1));
+    S.meta.pomo = c; POMO.remaining = 0; POMO.totalRounds = c.rounds;
+    save(); renderSessao();
+  }));
+}
+
+/* ---------- ações ---------- */
+function ttLer(){
+  const i = document.getElementById('ttDesc'), s = document.getElementById('ttProj');
+  return {desc:i ? i.value.trim() : TT_RASCUNHO.desc.trim(), pj:s ? s.value : TT_RASCUNHO.pj};
+}
+/* registra o foco feito até agora (a partir de 2 minutos) */
+function pomoParcial(){
+  if(!POMO.running || POMO.phase !== 'work') return null;
+  const fim = POMO.paused && POMO.pausedAt ? POMO.pausedAt : Date.now();
+  const rem = POMO.paused ? POMO.remaining : Math.max(0, POMO.endsAt - Date.now());
+  const feito = pomoDuration('work') * 1000 - rem;
+  if(feito < 120000) return null;
+  const e = {id:uid(), desc:POMO.label || 'Pomodoro', projectId:POMO.projectId || null, start:new Date(fim - feito).toISOString(),
+    end:new Date(fim).toISOString(), pomo:true, createdAt:new Date().toISOString()};
+  S.timeEntries.push(e);
+  return e;
+}
+function ttComecar(desc, pj, modo){
+  modo = modo || TT_MODO;
+  desc = String(desc || '').trim(); pj = pj || '';
+  const r = running();
+  if(r) r.end = new Date().toISOString();
+  if(POMO.running){ pomoParcial(); pomoResetAll(); }
+  if(modo === 'pomo'){
+    const c = pomoCfg();
+    Object.assign(POMO, {phase:'work', round:1, totalRounds:c.rounds, label:desc, projectId:pj, remaining:0, paused:false, pausedAt:0});
+    pomoStartPhase();
+  }else{
+    S.timeEntries.push({id:uid(), desc:desc || 'Sem descrição', projectId:pj || null, start:new Date().toISOString(), end:null, createdAt:new Date().toISOString()});
+  }
+  TT_MODO = modo;
+  try{ localStorage.setItem('central.ttModo', modo); }catch(e){}
+  TT_RASCUNHO = {desc:'', pj:''};
+  sfx('tap'); haptic('medium');
+  save(); render();
+}
+function ttPararCrono(){
+  const r = running();
+  if(!r) return;
+  if(Date.now() - new Date(r.start) < 60000){
+    S.timeEntries = S.timeEntries.filter(x => x.id !== r.id);
+    save(); render(); toast('Descartado: menos de 1 minuto.');
+    return;
+  }
+  r.end = new Date().toISOString();
+  save(); render(); playDing();
+  const id = r.id;
+  toast('Registrado: ' + fmtDur(durSec(r)) + ' em ' + r.desc + '.', 'Desfazer', () => {
+    const x = S.timeEntries.find(y => y.id === id);
+    if(x && !running() && !POMO.running){ x.end = null; save(); render(); }
+  });
+}
+function ttPararPomo(){
+  const e = pomoParcial();
+  pomoResetAll();
+  save(); render();
+  if(e){ playDing(); toast('Foco registrado: ' + fmtDur(durSec(e)) + '.'); }
+  else toast('Pomodoro encerrado.');
+}
+function ttPlay(){
+  if(ttModo() === 'crono'){
+    if(running()) return ttPararCrono();
+    const x = ttLer();
+    return ttComecar(x.desc, x.pj, 'crono');
+  }
+  if(POMO.running){
+    if(POMO.paused){
+      POMO.paused = false; POMO.pausedAt = 0; POMO.endsAt = Date.now() + POMO.remaining;
+      pomoEnsureTick(); pomoPersist(); pomoTitle(); pomoNotify();
+    }else{
+      POMO.paused = true; POMO.pausedAt = Date.now(); POMO.remaining = Math.max(0, POMO.endsAt - Date.now());
+      pomoStop(); pomoPersist(); pomoTitle(); pomoNotifyCancel();
+    }
+    haptic('light');
+    return renderTempo();
+  }
+  if(pomoMeioCiclo()){ pomoStartPhase(); sfx('tap'); haptic('medium'); return renderTempo(); }
+  const x = ttLer();
+  ttComecar(x.desc, x.pj, 'pomo');
+}
+function ttPular(){
+  if(POMO.running && POMO.phase === 'work') pomoParcial();
+  pomoNextPhase();
+  if(POMO.running && !POMO.paused) pomoStartPhase();
+  else if(POMO.running){ POMO.remaining = pomoDuration() * 1000; pomoPersist(); }
+  else{ POMO.remaining = 0; pomoPersist(); }
+  haptic('light');
+  save(); render();
+}
+function stopTimer(){ ttPararCrono(); }
+
+/* ---------- semana ---------- */
+function ttDiaSel(){ const t = today(); return TT_DIA && TT_DIA <= t ? TT_DIA : t; }
+function renderTTSemana(){
+  const el = document.getElementById('ttSemana');
+  if(!el) return;
+  const t = today(), ws = addD(weekStart(), 7 * TT_SEM), sel = ttDiaSel(), dias = [];
+  for(let i = 0; i < 7; i++) dias.push(addD(ws, i));
+  const tot = {}, pj = {}, porPj = {};
+  dias.forEach(ds => {
+    tot[ds] = 0; pj[ds] = {};
+    entriesOfDay(ds).forEach(e => { const k = e.projectId || '', s = durSec(e); tot[ds] += s; pj[ds][k] = (pj[ds][k] || 0) + s; porPj[k] = (porPj[k] || 0) + s; });
+  });
+  const semana = dias.reduce((a, d) => a + tot[d], 0), max = Math.max(3600, ...dias.map(d => tot[d]));
+  const ordem = Object.keys(porPj).sort((a, b) => porPj[b] - porPj[a]);
+  const cor = k => { const p = projById(k); return p ? CORES[p.color] : 'var(--muted)'; };
+  const nome = k => { const p = projById(k); return p ? p.name : 'Sem projeto'; };
+  const d0 = fromD(dias[0]), d6 = fromD(dias[6]);
+  const faixa = d0.getMonth() === d6.getMonth() ? d0.getDate() + ' a ' + d6.getDate() + ' de ' + MES[d6.getMonth()]
+    : d0.getDate() + ' de ' + MES[d0.getMonth()] + ' a ' + d6.getDate() + ' de ' + MES[d6.getMonth()];
+  let h = '<div class="seclab tt-semhead"><span class="sec-ic">' + licn('calendar') + '</span><span>' +
+    (TT_SEM === 0 ? 'Esta semana' : TT_SEM === -1 ? 'Semana passada' : 'Semana de ' + faixa) + '</span><span class="n">' + (semana ? fmtDur(semana) : '0min') + '</span>' +
+    '<button class="icon-btn sm" data-action="tt-sem" data-d="-1" aria-label="Semana anterior" title="Semana anterior">' + licn('chevron-left') + '</button>' +
+    '<button class="icon-btn sm" data-action="tt-sem" data-d="1" aria-label="Próxima semana" title="Próxima semana"' + (TT_SEM >= 0 ? ' disabled' : '') + '>' + licn('chevron-right') + '</button></div>';
+  h += '<div class="card tt-sem"><div class="tt-cols">' + dias.map(ds => {
+    const fut = ds > t, s = tot[ds], alt = s ? Math.max(5, Math.round(s / max * 100)) : 0, ks = ordem.filter(k => pj[ds][k]);
+    const dica = DOW_LONGO[fromD(ds).getDay()] + ', ' + fromD(ds).getDate() + ' de ' + MES[fromD(ds).getMonth()] + ': ' +
+      (s ? fmtDur(s) + ' (' + ks.map(k => nome(k) + ' ' + fmtDur(pj[ds][k])).join(', ') + ')' : 'nada registrado');
+    return '<button class="tt-col' + (ds === sel ? ' sel' : '') + (ds === t ? ' hoje' : '') + (fut ? ' fut' : '') + '" data-action="tt-dia" data-ds="' + ds + '" title="' + esc(dica) + '" aria-label="' + esc(dica) + '"' + (fut ? ' disabled' : '') + '>' +
+      '<span class="tt-barra"><span class="tt-pilha" style="height:' + alt + '%">' + ks.map(k => '<i style="flex:' + Math.max(1, Math.round(pj[ds][k])) + ' 1 0;background:' + cor(k) + '"></i>').join('') + '</span></span>' +
+      '<span class="tt-dow">' + DOW[fromD(ds).getDay()] + '</span><span class="tt-tot">' + (s ? fmtCurtoDur(s) : '–') + '</span></button>';
+  }).join('') + '</div>';
+  h += ordem.length ? '<div class="tt-leg">' + ordem.map(k => '<span class="tt-legi"><span class="pdot" style="background:' + cor(k) + '"></span>' + esc(nome(k)) + '<b>' + fmtCurtoDur(porPj[k]) + '</b></span>').join('') + '</div>'
+    : '<div class="tt-leg vazio">Nada registrado nesta semana.</div>';
+  el.innerHTML = h + '</div>';
+}
+
+/* ---------- dia ---------- */
+function ttFitaHTML(ds, es){
+  const b0 = fromD(ds); b0.setHours(0, 0, 0, 0);
+  const z = b0.getTime(), hr = x => (x - z) / 36e5, fimDe = e => e.end ? new Date(e.end).getTime() : Date.now();
+  let ini = 6, fim = 24;
+  es.forEach(e => { ini = Math.min(ini, Math.floor(hr(new Date(e.start).getTime()))); });
+  ini = Math.max(0, ini);
+  const span = fim - ini, pos = h => (h - ini) / span * 100;
+  let segs = '';
+  es.forEach(e => {
+    const s = Math.max(ini, hr(new Date(e.start).getTime())), f = Math.min(fim, hr(fimDe(e)));
+    if(f <= s) return;
+    const p = projById(e.projectId);
+    segs += '<button class="tt-seg' + (e.end ? '' : ' vivo') + '" data-action="edit-entry" data-id="' + e.id + '" style="left:' + pos(s).toFixed(2) + '%;width:' + Math.max(.9, pos(f) - pos(s)).toFixed(2) +
+      '%;background:' + (p ? CORES[p.color] : 'var(--muted)') + '" title="' + esc(e.desc + ', ' + hhmm(e.start) + '–' + (e.end ? hhmm(e.end) : 'agora')) + '" aria-label="' + esc(e.desc) + '"></button>';
+  });
+  let marcas = '';
+  for(let h = Math.ceil(ini / 3) * 3; h <= fim; h += 3) marcas += '<span style="left:' + pos(h).toFixed(2) + '%">' + h + 'h</span>';
+  const agora = ds === today() ? hr(Date.now()) : null;
+  return '<div class="tt-fita"><div class="tt-trilho">' + segs +
+    (agora !== null && agora > ini && agora < fim ? '<span class="tt-agora" style="left:' + pos(agora).toFixed(2) + '%" title="Agora"></span>' : '') +
+    '</div><div class="tt-horas">' + marcas + '</div></div>';
+}
+/* focos seguidos da mesma atividade viram uma linha só */
+function ttGrupos(es){
+  const gs = [];
+  es.forEach(e => {
+    const g = gs[gs.length - 1], ult = g && g.itens[g.itens.length - 1];
+    if(g && e.pomo && ult.pomo && e.end && g.desc === (e.desc || '') && g.pj === (e.projectId || '') && new Date(ult.start) - new Date(e.end) <= 45 * 60000){ g.itens.push(e); return; }
+    gs.push({desc:e.desc || '', pj:e.projectId || '', itens:[e]});
+  });
+  return gs;
+}
+function ttLinhaHTML(e, sub){
+  const p = projById(e.projectId);
+  return '<div class="tt-row' + (sub ? ' sub' : '') + (e.end ? '' : ' vivo') + '" data-action="edit-entry" data-id="' + e.id + '" style="--pc:' + (p ? CORES[p.color] : 'var(--line2)') + '">' +
+    '<span class="tt-main"><span class="tt-tt">' + (sub ? 'Foco ' + sub : esc(e.desc)) + '</span>' +
+      '<span class="tt-meta">' + (p && !sub ? '<span>' + esc(p.name) + '</span>' : '') + '<span class="trange">' + hhmm(e.start) + '–' + (e.end ? hhmm(e.end) : 'agora') + '</span>' + (e.pomo && !sub ? '<span class="tt-tag">foco</span>' : '') + '</span></span>' +
+    '<span class="tt-dur"' + (e.end ? '' : ' data-tick-dur="' + e.start + '"') + '>' + fmtDur(durSec(e)) + '</span>' +
+    (sub ? '' : '<button class="icon-btn sm tt-cont" data-action="tt-continuar" data-id="' + e.id + '" title="Começar de novo" aria-label="Começar de novo: ' + esc(e.desc) + '">' + TT_IC.playSm + '</button>') + '</div>';
+}
+function ttListaHTML(es){
+  return '<div class="tt-lista">' + ttGrupos(es).map(g => {
+    if(g.itens.length === 1) return ttLinhaHTML(g.itens[0]);
+    const prim = g.itens[g.itens.length - 1], ult = g.itens[0], p = projById(g.pj), k = ult.id, aberto = TT_ABERTOS.has(k);
+    const tot = g.itens.reduce((a, e) => a + durSec(e), 0);
+    return '<div class="tt-row grupo' + (aberto ? ' aberto' : '') + '" data-action="tt-grupo" data-k="' + k + '" style="--pc:' + (p ? CORES[p.color] : 'var(--line2)') + '" aria-expanded="' + aberto + '">' +
+      '<span class="tt-main"><span class="tt-tt">' + esc(g.desc) + '</span>' +
+        '<span class="tt-meta">' + (p ? '<span>' + esc(p.name) + '</span>' : '') + '<span class="trange">' + hhmm(prim.start) + '–' + hhmm(ult.end) + '</span>' +
+        '<span class="tt-tag">' + g.itens.length + ' focos' + licn(aberto ? 'chevron-down' : 'chevron-right') + '</span></span></span>' +
+      '<span class="tt-dur">' + fmtDur(tot) + '</span>' +
+      '<button class="icon-btn sm tt-cont" data-action="tt-continuar" data-id="' + ult.id + '" title="Começar de novo" aria-label="Começar de novo: ' + esc(g.desc) + '">' + TT_IC.playSm + '</button></div>' +
+      (aberto ? '<div class="tt-subs">' + g.itens.map((e, i) => ttLinhaHTML(e, g.itens.length - i)).join('') + '</div>' : '');
+  }).join('') + '</div>';
+}
+function renderTTDia(){
+  const el = document.getElementById('ttDia');
+  if(!el) return;
+  const t = today(), ds = ttDiaSel(), d = fromD(ds);
+  const es = entriesOfDay(ds).sort((a, b) => b.start.localeCompare(a.start));
+  const tot = es.reduce((a, e) => a + durSec(e), 0);
+  const lab = ds === t ? 'Hoje' : ds === addD(t, -1) ? 'Ontem' : DOW_LONGO[d.getDay()] + ', ' + d.getDate() + ' de ' + MES[d.getMonth()];
+  el.innerHTML = '<div class="seclab"><span class="sec-ic">' + licn('clock') + '</span><span>' + lab + '</span><span class="n">' + (tot ? fmtDur(tot) : '') + '</span>' +
+      '<button class="icon-btn sm" data-action="lanc-manual" title="Lançar tempo neste dia" aria-label="Lançar tempo neste dia">' + licn('plus') + '</button></div>' +
+    '<div class="card tt-dia">' + ttFitaHTML(ds, es) +
+      (es.length ? ttListaHTML(es) : '<div class="tt-vazio">Nada registrado ' + (ds === t ? 'hoje' : 'neste dia') + '. <button class="btn btn-sm" data-action="lanc-manual">Lançar tempo</button></div>') + '</div>';
+}
+function renderTempo(){
+  renderSessao(); renderTTSemana(); renderTTDia();
+  const t = today(), hj = totalOfDay(t), r = running(), el = document.getElementById('ttResumo');
+  if(el){
+    el.innerHTML = '<span class="hj-pill" title="Tempo registrado hoje">' + licn('clock') + '<span id="ttHoje">' + (hj ? fmtDur(hj) : '0min') + '</span></span>';
+    const v = document.getElementById('ttHoje');
+    if(r && dstr(new Date(r.start)) === t){ v.dataset.tickBase = String(hj - durSec(r)); v.dataset.tickStart = r.start; }
+  }
+  if(ttFocoAberto()) ttFocoRender();
+}
+
+/* ---------- tela de foco ---------- */
+function ttFocoAberto(){ return !!document.getElementById('ttFoco'); }
+function ttFocoRender(){
+  const d = document.getElementById('ttFoco');
+  if(!d) return;
+  const modo = ttModo(), r = running(), rodando = modo === 'crono' ? !!r : POMO.running, meio = modo === 'pomo' && pomoMeioCiclo();
+  const desc = modo === 'crono' ? (r ? r.desc : '') : (rodando || meio ? POMO.label || 'Foco livre' : '');
+  d.innerHTML = '<button class="tt-foco-x" data-action="tt-foco-fechar" aria-label="Fechar a tela de foco" title="Fechar">' + licn('x') + '</button>' +
+    '<div class="tt-foco-in">' + ttDialHTML('grande') + '<div class="tt-foco-desc">' + esc(desc) + '</div>' + ttControlesHTML(modo, rodando, meio) + '</div>';
+  /* o botão principal fica com o foco: espaço e Enter pausam e continuam */
+  const pb = d.querySelector('.tt-btn.prim');
+  if(pb) pb.focus({preventScroll:true});
+}
+function ttFocoAbrir(){
+  if(ttFocoAberto()) return;
+  const d = document.createElement('div');
+  d.id = 'ttFoco'; d.className = 'tt-foco'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Tela de foco');
+  document.body.appendChild(d);
+  document.documentElement.classList.add('tt-foco-on');
+  ttFocoRender(); ttWake(true);
+  if(BARS) capCall(BARS.setStyle({style:'DARK'}));
+}
+function ttFocoFechar(){
+  const d = document.getElementById('ttFoco');
+  if(d) d.remove();
+  document.documentElement.classList.remove('tt-foco-on');
+  ttWake(false);
+  applyTheme();
+}
+async function ttWake(on){
+  try{
+    if(on && 'wakeLock' in navigator && !TT_LOCK){
+      TT_LOCK = await navigator.wakeLock.request('screen');
+      TT_LOCK.addEventListener('release', () => { TT_LOCK = null; });
+    }else if(!on && TT_LOCK){ const l = TT_LOCK; TT_LOCK = null; await l.release(); }
+  }catch(e){ TT_LOCK = null; }
+}
+document.addEventListener('visibilitychange', () => { if(!document.hidden && ttFocoAberto()) ttWake(true); });
 function openEntry(id){
   const e0 = id ? S.timeEntries.find(x => x.id === id) : null;
   M = { type:'entry', id: id || null, draft: e0 ? JSON.parse(JSON.stringify(e0)) : {desc:'', projectId:'', start:'', end:''} };
   const d = M.draft;
-  const sd = d.start ? dstr(new Date(d.start)) : today();
-  const sh = d.start ? hhmm(d.start) : '';
-  const eh = d.end ? hhmm(d.end) : '';
+  const sd = d.start ? dstr(new Date(d.start)) : (VIEW === 'tempo' ? ttDiaSel() : today());
+  let sh = d.start ? hhmm(d.start) : '';
+  let eh = d.end ? hhmm(d.end) : '';
+  if(!e0){
+    if(sd === today()){
+      const n = new Date(), fimM = Math.floor((n.getHours() * 60 + n.getMinutes()) / 5) * 5;
+      sh = m2hm(Math.max(0, fimM - 30)); eh = m2hm(fimM);
+    }else{ sh = '09:00'; eh = '09:30'; }
+  }
   const projs = S.projects.filter(p => !p.archived);
   const body =
     '<div class="field"><label>Atividade</label><input class="inp" id="f_edesc" value="' + esc(d.desc) + '" placeholder="No que trabalhou?"></div>' +
@@ -2051,7 +2509,10 @@ function openEntry(id){
     '<div class="frow">' +
       '<div class="field"><label>Início</label><input class="inp mono" type="time" id="f_eini" value="' + sh + '" style="width:100%"></div>' +
       '<div class="field"><label>Fim (vazio = em andamento)</label><input class="inp mono" type="time" id="f_efim" value="' + eh + '" style="width:100%"></div>' +
-    '</div>';
+    '</div>' +
+    '<div class="field"><label>Duração a partir do início</label><div class="tt-durs">' +
+      [15, 30, 45, 60, 90, 120].map(m => '<button type="button" class="chip" data-action="tt-durc" data-m="' + m + '">' + (m < 60 ? m + ' min' : Math.floor(m / 60) + 'h' + (m % 60 ? pad(m % 60) : '')) + '</button>').join('') +
+    '</div></div>';
   const foot = (id ? '<button class="btn btn-danger" data-action="excluir-entry">Excluir</button>' : '') +
     '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
     '<button class="btn btn-primary" data-action="salvar-entry">Salvar</button>';
@@ -2086,6 +2547,11 @@ function tick(){
   });
   const h = document.getElementById('ttHoje');
   if(h && h.dataset.tickStart) h.textContent = fmtDur((+h.dataset.tickBase) + (Date.now() - new Date(h.dataset.tickStart)) / 1000);
+  if(VIEW === 'tempo' || ttFocoAberto()){
+    ttDialUpdate();
+    /* a faixa do dia acompanha o cronômetro a cada minuto */
+    if(VIEW === 'tempo' && running() && new Date().getSeconds() === 0) renderTTDia();
+  }
 }
 
 /* ===================== Pessoas ===================== */
@@ -2951,7 +3417,6 @@ function todayDayLabel(){
   return DOW[d.getDay()] + ', ' + fmtCurto(today());
 }
 let EST_WEEK_VIEW = false, EST_VIEW_WEEK = null;
-let TT_TAB = 'pomo';
 const EST_DAY_ORDER = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, sab1:6, sab2:7};
 function renderEstudos(){
   const plan = S.studyPlan || [];
@@ -3069,7 +3534,7 @@ function renderEstudos(){
 const POMO_KEY = 'central.pomo';
 const BASE_TITLE = document.title;
 var POMO = {phase:'work', round:1, totalRounds:4, running:false, paused:false, endsAt:0, remaining:0, label:'', projectId:'', interval:null};
-function pomoCfg(){ const c = S.meta.pomo || {}; return {work:c.work || 25, short:c.short || 5, long:c.long || 15}; }
+function pomoCfg(){ const c = S.meta.pomo || {}; return {work:c.work || 25, short:c.short || 5, long:c.long || 15, rounds:c.rounds || 4}; }
 function pomoDuration(ph){ const c = pomoCfg(); ph = ph || POMO.phase; return (ph === 'work' ? c.work : ph === 'short' ? c.short : c.long) * 60; }
 function pomoPhaseLabel(ph){ ph = ph || POMO.phase; return ph === 'work' ? 'Foco' : ph === 'short' ? 'Pausa curta' : 'Pausa longa'; }
 function pomoPersist(){ try{ const o = Object.assign({}, POMO); delete o.interval; localStorage.setItem(POMO_KEY, JSON.stringify(o)); }catch(e){} }
@@ -3129,12 +3594,9 @@ function pomoTick(){
       pomoStartPhase();
       toast(pomoPhaseLabel() + ' come\u00e7ou.');
     }
-    if(VIEW === 'tempo'){
-      renderTempo();
-      const pr = document.querySelector('.pomo-ring');
-      if(pr && animOn()) pr.classList.add('fim');
-    }
-    else renderSide();
+    if(VIEW === 'tempo') renderTempo();
+    else{ renderSide(); if(ttFocoAberto()) ttFocoRender(); }
+    if(animOn()) document.querySelectorAll('.tt-dial').forEach(d => d.classList.add('fim'));
   }
   pomoTitle();
   pomoClock();
@@ -3142,12 +3604,8 @@ function pomoTick(){
 /* atualiza só o relógio, sem redesenhar os campos */
 function mmss(sec){ return String(Math.floor(sec / 60)).padStart(2,'0') + ':' + String(sec % 60).padStart(2,'0'); }
 function pomoClock(){
-  const rem = pomoRemaining();
-  const hp = document.getElementById('hojePomo'); if(hp) hp.textContent = mmss(rem);
-  const t = document.getElementById('pomoTime'), arc = document.getElementById('pomoArc');
-  if(!t || !arc) return;
-  t.textContent = mmss(rem);
-  arc.setAttribute('stroke-dashoffset', String(+arc.dataset.circ * (rem / pomoDuration())));
+  const hp = document.getElementById('hojePomo'); if(hp) hp.textContent = mmss(pomoRemaining());
+  ttDialUpdate();
 }
 function pomoRestore(){
   try{
@@ -3163,68 +3621,7 @@ function pomoRestore(){
     pomoTitle();
   }catch(e){}
 }
-function renderPomodoro(){
-  const el = document.getElementById('ttPomodoro');
-  if(!el) return;
-  const dur = pomoDuration(), rem = pomoRemaining();
-  const r = 110, circ = 2 * Math.PI * r;
-  const color = POMO.phase === 'work' ? 'var(--accent)' : POMO.phase === 'short' ? 'var(--good)' : 'var(--warn)';
-  let dots = '';
-  for(let i = 1; i <= POMO.totalRounds; i++){
-    const cls = (i < POMO.round || (i === POMO.round && POMO.phase !== 'work')) ? 'done' : (i === POMO.round ? 'active' : '');
-    dots += '<span class="pomo-dot ' + cls + '"></span>';
-  }
-  const t = today();
-  const focosHoje = S.timeEntries.filter(e => e.pomo && e.end && dstr(new Date(e.start)) === t);
-  const minHoje = Math.round(focosHoje.reduce((a, e) => a + (new Date(e.end) - new Date(e.start)) / 1000, 0) / 60);
-  const parado = !POMO.running;
-  let h = '<div class="pomo-wrap">';
-  if(parado){
-    h += '<div class="pomo-focus"><input class="inp" id="pomoLbl" placeholder="No que você vai focar?" value="' + esc(POMO.label || '') + '">' +
-      '<select class="inp" id="pomoPj" aria-label="Projeto"><option value="">Sem projeto</option>' +
-      S.projects.map(p => '<option value="' + p.id + '"' + (POMO.projectId === p.id ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select></div>';
-  }else{
-    h += '<div class="pomo-focus-lbl">' + esc(POMO.label || 'Foco livre') + '</div>';
-  }
-  h += '<div class="pomo-ring">' +
-    '<svg width="240" height="240" viewBox="0 0 240 240"><circle cx="120" cy="120" r="' + r + '" fill="none" stroke="var(--line)" stroke-width="5"/>' +
-    '<circle id="pomoArc" data-circ="' + circ + '" cx="120" cy="120" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="5" stroke-dasharray="' + circ + '" stroke-dashoffset="' + (circ * (rem / dur)) + '" stroke-linecap="round"/></svg>' +
-    '<span class="pomo-time" id="pomoTime">' + String(Math.floor(rem / 60)).padStart(2,'0') + ':' + String(rem % 60).padStart(2,'0') + '</span>' +
-    '<span class="pomo-label">' + pomoPhaseLabel() + (POMO.paused ? ' \u00b7 pausado' : '') + '</span></div>';
-  h += '<div class="pomo-dots" title="Ciclo ' + POMO.round + ' de ' + POMO.totalRounds + '">' + dots + '</div>';
-  h += '<div class="pomo-btns">';
-  if(parado){
-    h += '<button class="btn btn-primary pomo-main" data-action="pomo-start">' + (POMO.remaining || POMO.phase !== 'work' ? 'Continuar' : 'Iniciar') + '</button>';
-    if(POMO.phase !== 'work' || POMO.round > 1) h += '<button class="btn btn-ghost" data-action="pomo-reset">Zerar</button>';
-  }else if(POMO.paused){
-    h += '<button class="btn btn-primary pomo-main" data-action="pomo-resume">Continuar</button>';
-    h += '<button class="btn btn-ghost" data-action="pomo-reset">Zerar</button>';
-  }else{
-    h += '<button class="btn pomo-main" data-action="pomo-pause">Pausar</button>';
-    h += '<button class="btn btn-ghost" data-action="pomo-skip">Pular</button>';
-  }
-  h += '</div>';
-  h += '<div class="pomo-stats">' + (focosHoje.length ? focosHoje.length + (focosHoje.length === 1 ? ' foco' : ' focos') + ' hoje \u00b7 ' + fmtDur(minHoje * 60) : 'Nenhum foco concluído hoje') + '</div>';
-  if(parado){
-    const c = pomoCfg();
-    h += '<div class="pomo-cfg">' +
-      '<label>Foco <input type="number" class="inp" data-pomo="work" value="' + c.work + '" min="1" max="120"> min</label>' +
-      '<label>Pausa <input type="number" class="inp" data-pomo="short" value="' + c.short + '" min="1" max="60"> min</label>' +
-      '<label>Longa <input type="number" class="inp" data-pomo="long" value="' + c.long + '" min="1" max="90"> min</label></div>';
-  }
-  h += '</div>';
-  el.innerHTML = h;
-  el.querySelectorAll('[data-pomo]').forEach(inp => {
-    inp.addEventListener('change', () => {
-      const c = pomoCfg();
-      c[inp.dataset.pomo] = Math.max(1, Math.min(180, parseInt(inp.value, 10) || 1));
-      S.meta.pomo = c; POMO.remaining = 0; save(); renderPomodoro();
-    });
-  });
-  const lb = document.getElementById('pomoLbl'), pj = document.getElementById('pomoPj');
-  if(lb) lb.addEventListener('input', () => { POMO.label = lb.value; pomoPersist(); });
-  if(pj) pj.addEventListener('change', () => { POMO.projectId = pj.value; pomoPersist(); });
-}
+function renderPomodoro(){ if(VIEW === 'tempo') renderTempo(); }
 document.addEventListener('visibilitychange', () => { if(!document.hidden && POMO.running && !POMO.paused) pomoTick(); });
 
 /* ===================== Mercado ===================== */
@@ -4070,11 +4467,8 @@ document.addEventListener('click', e => {
     e.stopPropagation();
     const tk = S.tasks.find(x => x.id === el.dataset.id);
     if(!tk) return;
-    const r = running();
-    if(r) r.end = new Date().toISOString();
-    S.timeEntries.push({id:uid(), desc:tk.title, projectId:tk.projectId || null, start:new Date().toISOString(), end:null, createdAt:new Date().toISOString()});
-    save(); render();
-    toast('Timer iniciado: ' + tk.title);
+    ttComecar(tk.title, tk.projectId || '', TT_MODO);
+    toast((TT_MODO === 'pomo' ? 'Foco começou: ' : 'Cronômetro começou: ') + tk.title, 'Ver', () => setView('tempo'));
     return;
   }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
@@ -4425,7 +4819,43 @@ document.addEventListener('click', e => {
   if(a === 'do-paste'){ doPaste(); return; }
 
   /* time track */
-  if(a === 'iniciar-timer'){ startTimer(); return; }
+  if(a === 'iniciar-timer' || a === 'tt-play'){ ttPlay(); return; }
+  if(a === 'tt-parar'){ if(ttModo() === 'crono') ttPararCrono(); else ttPararPomo(); return; }
+  if(a === 'tt-pular'){ ttPular(); return; }
+  if(a === 'tt-editar'){ const r = running(); if(r) openEntry(r.id); return; }
+  if(a === 'tt-modo'){
+    if(running() || POMO.running || pomoMeioCiclo()) return;
+    TT_MODO = el.dataset.v === 'crono' ? 'crono' : 'pomo';
+    try{ localStorage.setItem('central.ttModo', TT_MODO); }catch(_){}
+    renderSessao(); return;
+  }
+  if(a === 'tt-chip'){ ttComecar(el.dataset.desc, el.dataset.pj, TT_MODO); return; }
+  if(a === 'tt-continuar'){
+    e.stopPropagation();
+    const x = S.timeEntries.find(y => y.id === el.dataset.id);
+    if(x) ttComecar(x.desc === 'Sem descrição' || x.desc === 'Pomodoro' ? '' : x.desc, x.projectId || '', TT_MODO);
+    return;
+  }
+  if(a === 'tt-preset'){
+    const c = Object.assign(pomoCfg(), POMO_PRESETS[+el.dataset.i] || {});
+    S.meta.pomo = c; POMO.remaining = 0; POMO.totalRounds = c.rounds; TT_AJUSTE = false;
+    save(); renderSessao(); haptic('light'); return;
+  }
+  if(a === 'tt-ajustar'){ TT_AJUSTE = !TT_AJUSTE; renderSessao(); return; }
+  if(a === 'tt-dia'){ TT_DIA = el.dataset.ds; renderTTSemana(); renderTTDia(); return; }
+  if(a === 'tt-sem'){
+    TT_SEM = Math.min(0, TT_SEM + (+el.dataset.d));
+    TT_DIA = TT_SEM === 0 ? null : addD(weekStart(), 7 * TT_SEM + 6);
+    renderTTSemana(); renderTTDia(); return;
+  }
+  if(a === 'tt-grupo'){ const k = el.dataset.k; if(TT_ABERTOS.has(k)) TT_ABERTOS.delete(k); else TT_ABERTOS.add(k); renderTTDia(); return; }
+  if(a === 'tt-foco'){ ttFocoAbrir(); return; }
+  if(a === 'tt-foco-fechar'){ ttFocoFechar(); return; }
+  if(a === 'tt-durc'){
+    const i = $('#f_eini'), f = $('#f_efim');
+    if(i && f && i.value){ const [hh, mm] = i.value.split(':').map(Number); f.value = m2hm((hh * 60 + mm + (+el.dataset.m)) % 1440); }
+    return;
+  }
   if(a === 'parar-timer'){ stopTimer(); return; }
   if(a === 'lanc-manual'){ openEntry(null); return; }
   if(a === 'edit-entry'){ openEntry(el.dataset.id); return; }
@@ -4567,7 +4997,7 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'ir-rotina'){ setView('rotina'); return; }
-  if(a === 'ir-tempo'){ TT_TAB = 'pomo'; document.querySelectorAll('#ttTabs button').forEach(b => b.classList.toggle('on', b.dataset.v === 'pomo')); setView('tempo'); return; }
+  if(a === 'ir-tempo'){ setView('tempo'); return; }
 
   /* conhecimento */
   if(a === 'nova-nota'){ openNota(null); return; }
@@ -4671,12 +5101,6 @@ document.addEventListener('click', e => {
   /* estudos */
   /* estudos */
   if(a === 'est-week'){ EST_WEEK = +el.dataset.w; renderEstudos(); return; }
-  if(a === 'tt-tab'){
-    TT_TAB = el.dataset.v;
-    document.querySelectorAll('#ttTabs button').forEach(b => b.classList.toggle('on', b.dataset.v === TT_TAB));
-    renderTempo();
-    return;
-  }
   if(a === 'toggle-est-week'){ EST_WEEK_VIEW = !EST_WEEK_VIEW; renderEstudos(); return; }
   if(a === 'est-view-week'){ const w = +el.dataset.w; EST_VIEW_WEEK = (w === estCurrentWeek()) ? null : w; EST_WEEK_VIEW = true; renderEstudos(); return; }
   if(a === 'est-shift'){
@@ -4775,20 +5199,6 @@ document.addEventListener('click', e => {
   if(a === 'ir-mercado'){ setView('mercado'); return; }
 
   /* pomodoro */
-  if(a === 'pomo-start'){
-    const lb = $('#pomoLbl'), pj = $('#pomoPj');
-    POMO.label = lb ? lb.value.trim() : POMO.label; POMO.projectId = pj ? pj.value : POMO.projectId;
-    pomoStartPhase(); renderPomodoro(); return;
-  }
-  if(a === 'pomo-pause'){ POMO.paused = true; POMO.remaining = Math.max(0, POMO.endsAt - Date.now()); pomoStop(); pomoPersist(); pomoTitle(); pomoNotifyCancel(); renderPomodoro(); return; }
-  if(a === 'pomo-resume'){ POMO.paused = false; POMO.endsAt = Date.now() + POMO.remaining; pomoEnsureTick(); pomoPersist(); pomoNotify(); renderPomodoro(); return; }
-  if(a === 'pomo-reset'){ pomoResetAll(); renderPomodoro(); return; }
-  if(a === 'pomo-skip'){
-    pomoNextPhase();
-    if(POMO.running && !POMO.paused) pomoStartPhase();
-    else { POMO.remaining = pomoDuration() * 1000; pomoPersist(); }
-    renderPomodoro(); return;
-  }
   if(a === 'qadd-shop'){ quickAddShop(); return; }
   if(a === 'edit-shop'){ e.stopPropagation(); openShopItem(el.dataset.id); return; }
   if(a === 'salvar-shop'){ salvarShop(); return; }
@@ -4854,7 +5264,9 @@ document.addEventListener('click', e => {
 }, true);
 
 document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && ttFocoAberto()){ ttFocoFechar(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
+  if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
@@ -4873,7 +5285,7 @@ document.addEventListener('keydown', e => {
     const btn = document.querySelector('[data-action="add-sub"]');
     if(btn) btn.click();
   }
-  if(e.key === 'Enter' && e.target.id === 'ttDesc'){ startTimer(); return; }
+  if(e.key === 'Enter' && e.target.id === 'ttDesc'){ ttPlay(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'shopInp'){ quickAddShop(); return; }
   if(e.key === 'Enter' && e.target.id === 'wsInp'){ document.querySelector('[data-action="qadd-ws"]').click(); return; }
@@ -5201,6 +5613,7 @@ function nativeInit(){
   window.__nativeLogin = loginNoChrome;
   if(CAPP){
     capOn(CAPP, 'backButton', () => {
+      if(ttFocoAberto()){ ttFocoFechar(); return; }
       if($('#mback').classList.contains('on')){ closeModal(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
