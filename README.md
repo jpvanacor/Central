@@ -47,6 +47,21 @@ Mesma estrutura das Tarefas, pensada como agenda:
 - **Detalhe do item:** corredor no topo, quantidade com − e +, preço (o carrinho soma), nome, observação (marca, tamanho) e quantas vezes você já comprou. Salva sozinho ao fechar.
 - **Compartilhar a lista** (⋮): manda o texto separado por corredor, pelo compartilhar do Android ou copiando no navegador.
 
+## Hábitos
+
+- **Hoje:** cada hábito numa linha com o círculo na cor dele; um toque (ou arrastar para a direita no celular) marca o dia. A lista se divide por momento do dia (Manhã, Tarde, Noite, Qualquer hora), na ordem da hora de cada um; o que foi feito desce para **Feitos** e o que não é do dia fica em **Outros dias** (fechado; dá para esconder no ⋮). O 🔥 à direita é a sequência.
+- **Nunca falhe duas vezes:** uma falha isolada não quebra a sequência. Quando a última vez do hábito ficou sem marcar, a linha avisa **Não falhe duas vezes**, porque falhar de novo quebra. Marcos de 7, 21, 30, 66 e 100 dias (e outros) ganham comemoração, e o dia completo solta confete.
+- **Faixa dos últimos 7 dias** no topo: o anel de cada dia enche com o que foi feito. Tocar num dia passado mostra aquele dia para marcar o que ficou para trás.
+- **Adicionar:** pelo + no celular ou pelo campo no topo no PC. Dias, hora ou momento e gatilho podem ir no texto, e a linha de baixo mostra o que foi entendido:
+  - `Academia seg qua sex 20h`, `Ler 10 páginas antes de dormir`, `Meditar ao acordar`, `Terço aos domingos`, `Correr de manhã dias úteis`;
+  - dias: `todo dia`, `dias úteis`, `fim de semana`, `de segunda a sexta`, `seg qua sex`, `segunda e quarta`, `toda terça`, `aos sábados`;
+  - hora: `20h`, `6h30`, `22:15`, `às 7`, `8 da noite`; momento: `de manhã`, `à tarde`, `à noite`, `toda manhã`;
+  - gatilho: `depois de…`, `após…`, `antes de…`, `ao acordar`, `quando chegar…` (acordar vira manhã; jantar e dormir viram noite);
+  - o emoji vem do nome (ler 📖, academia 🏋️, água 💧…) e a cor é a menos usada; os ícones da folha (dias e quando) fazem o mesmo sem digitar. Escrever o nome de um hábito arquivado traz ele de volta, com o histórico.
+- **Detalhe:** o momento do dia (ou a hora) no topo, emoji e cor num toque, nome e os dias em botões; pelos ícones de baixo, gatilho, versão de 2 minutos e nota para a próxima vez. Embaixo, sequência, recorde, % nos últimos 30 dias, total e o calendário do mês, onde um toque marca ou desmarca qualquer dia. O ⋮ arquiva ou exclui (com Desfazer). Salva sozinho ao fechar.
+- **Semana** (toque no título): grade hábito × dia, de segunda a domingo, com quantos foram feitos dos planejados e ‹ › para as semanas anteriores. Os **Arquivados** também ficam ali.
+- **No Android:** o hábito com horário avisa naquela hora, se ainda faltar, com a versão de 2 minutos (ou o gatilho) e a nota; o botão **Feito** do aviso marca o hábito. Horário de madrugada (00:00 a 04:59) conta como o fim da noite: o aviso toca na madrugada seguinte e marca o dia do hábito.
+
 ## App Android
 
 **Instalar ou atualizar.** No celular, abra o link do APK, baixe e toque no arquivo. Na primeira vez o Android pede para permitir instalação pelo Chrome. Atualizar é igual: baixe o novo e instale por cima, os dados ficam.
@@ -59,6 +74,7 @@ Mesma estrutura das Tarefas, pensada como agenda:
 | --- | --- |
 | Lembretes | na data e hora do lembrete; sem hora, às 09:00. Com os botões Adiar 1 h e Feito |
 | Tarefas do dia | 07:30, com as tarefas do dia e as atrasadas |
+| Hábitos no horário | na hora marcada em cada hábito, se ainda faltar. Com o botão Feito |
 | Hábitos que faltam | 21:00, só se ainda faltar algum |
 | Aniversários | 09:00 do dia |
 | Pomodoro | no fim de cada foco e de cada pausa |

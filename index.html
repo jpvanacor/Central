@@ -200,35 +200,6 @@ input[type="date"].inp{width:auto; font-family:'IBM Plex Mono',monospace; font-s
 .qadd .inp[type="text"]:focus{box-shadow:0 0 0 3px var(--accent-soft); border-color:var(--accent)}
 @media(max-width:760px){.qadd .inp[type="date"]{display:none}}
 
-/* ===== Hábitos ===== */
-.hab{padding:14px 16px; display:flex; flex-direction:column; gap:10px}
-.hab + .hab{border-top:1px solid var(--line)}
-.hab-top{display:flex; align-items:center; gap:10px}
-.hab-emoji{font-size:18px; flex:none; width:24px; text-align:center}
-.hab-name{font-weight:650; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer}
-.hab-name:hover{color:var(--accent)}
-.hab-freq{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:.04em}
-.streak{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); flex:none; display:flex; align-items:center; gap:2px}
-.streak b{color:var(--ink); font-weight:600}
-.hgrid{display:flex; gap:4px; align-items:flex-end}
-.hcell{
-  width:16px; height:16px; border-radius:5px; border:1px solid var(--line2);
-  background:var(--surface2); padding:0; flex:none; position:relative;
-}
-.hcell.off{opacity:.28; border-style:dashed; cursor:default}
-.hcell.done{border-color:transparent}
-.hcell.today{width:26px; height:26px; border-radius:8px; border-width:2px}
-.hcell.today:not(.done){border-color:var(--hc, var(--accent)); background:var(--surface)}
-.hcell:not(.off):hover{border-color:var(--muted)}
-.hcell.done:hover{filter:brightness(.92)}
-.hcell.stamp{animation:stamp .28s cubic-bezier(.2,1.4,.4,1)}
-@keyframes stamp{0%{transform:scale(.4) rotate(-8deg)}100%{transform:scale(1) rotate(0)}}
-.hgrid-lab{font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); text-align:center; width:32px; letter-spacing:.04em; text-transform:uppercase}
-.hgrid{gap:6px}
-.hcell{width:32px; height:32px; border-radius:8px}
-.hcell.forgiven{border-style:dashed; border-color:var(--warn); background:var(--surface)}
-.hcell.today{width:32px; height:32px; border-width:2px}
-
 /* check de hoje (visão Hoje) */
 .today-habits{display:flex; flex-wrap:wrap; gap:10px}
 .thab{
@@ -594,10 +565,6 @@ pre.fmt{
 .thab.fora{opacity:.5}
 .thab.fora:hover{opacity:.85}
 
-/* hábitos: dia fora da frequência pode ser marcado */
-.hcell.unsched{opacity:.45; border-style:dashed}
-.hcell.unsched:hover{opacity:.8}
-
 /* pessoas: registrar conversa */
 .plog{padding:16px 18px; margin-bottom:16px; display:flex; flex-direction:column; gap:10px}
 .plog-title{font-weight:700; font-size:14px}
@@ -819,7 +786,7 @@ html.tt-foco-on body{overflow:hidden}
 :root{--warn-soft:#F7EEDF}
 html[data-theme="dark"]{--warn-soft:#2E2617}
 /* a aba entra só com opacidade: transform faria o botão + e as folhas fixas pularem */
-#view-tarefas.on, #view-lembretes.on, #view-mercado.on{animation:tkVin .22s ease}
+#view-tarefas.on, #view-lembretes.on, #view-mercado.on, #view-habitos.on{animation:tkVin .22s ease}
 @keyframes tkVin{from{opacity:0}to{opacity:1}}
 .tk-main{min-width:0}
 
@@ -832,7 +799,7 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-tit{flex:1; min-width:0; margin:0; display:flex; align-items:center; gap:10px; white-space:nowrap; cursor:pointer}
 .tk-tit .nm{overflow:hidden; text-overflow:ellipsis}
 .tk-tit .em{font-size:.9em; line-height:1}
-#tResumo .hj-pill, #lmResumo .hj-pill{margin-right:2px}
+#tResumo .hj-pill, #lmResumo .hj-pill, #mcResumo .hj-pill, #hbResumo .hj-pill{margin-right:2px}
 
 /* gaveta de listas */
 .tk-nav{position:fixed; top:0; bottom:0; left:0; z-index:70; width:min(84vw, 320px); display:flex; flex-direction:column; gap:1px; overflow-y:auto;
@@ -885,7 +852,7 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-vazio{display:flex; flex-direction:column; align-items:center; gap:10px; padding:44px 20px; color:var(--muted); text-align:center; font-size:14.5px}
 .tk-vazio > svg{width:40px; height:40px; opacity:.55}
 .tk-vazio p{margin:0}
-#tLista.troca, #rlLista.troca, #shopLista.troca{animation:tkTroca .2s ease}
+#tLista.troca, #rlLista.troca, #shopLista.troca, #hbLista.troca{animation:tkTroca .2s ease}
 @keyframes tkTroca{from{opacity:.35; transform:translateY(5px)}to{opacity:1; transform:none}}
 
 /* linha de tarefa: título; embaixo projeto e etiquetas; à direita a data e os ícones */
@@ -1095,7 +1062,8 @@ html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44p
     border:0; background:var(--accent); color:#fff; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(15,98,180,.35); cursor:pointer}
   .tk-fab svg{width:28px; height:28px; stroke-width:2.3}
   .tk-fab:active{transform:scale(.92)}
-  html[data-view="tarefas"] .toast, html[data-view="lembretes"] .toast, html[data-view="mercado"] .toast{bottom:calc(152px + var(--sab))}
+  html[data-view="tarefas"] .toast, html[data-view="lembretes"] .toast, html[data-view="mercado"] .toast, html[data-view="habitos"] .toast{bottom:calc(152px + var(--sab))}
+  #tLista, #rlLista, #shopLista, #hbLista{padding-bottom:56px}
   .tk-add{position:fixed; left:0; right:0; bottom:0; z-index:75; margin:0; padding:14px calc(12px + var(--sar)) calc(10px + var(--sab)) calc(16px + var(--sal));
     border:0; border-radius:20px 20px 0 0; box-shadow:0 -10px 34px rgba(0,0,0,.2); transform:translateY(110%); visibility:hidden;
     transition:transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s}
@@ -1226,6 +1194,153 @@ html[data-theme="dark"] .mc-sug{border-color:var(--line2); box-shadow:0 16px 44p
   .tk-add .mc-sug{position:static; flex-basis:100%; order:2; max-height:30vh; overflow-y:auto; padding:0 0 6px; border:0; border-radius:0; background:none; box-shadow:none}
 }
 
+/* ===================== Hábitos ===================== */
+/* mesma estrutura das Tarefas (cartões, folha de adicionar, detalhe); aqui só o que é próprio dos hábitos */
+#view-habitos[data-v="arq"] .tk-add, #view-habitos[data-v="arq"] .tk-fab{display:none}
+/* faixa dos últimos 7 dias: o anel enche com os feitos do dia */
+.hb-faixa{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px; margin:0 0 14px}
+.hb-dia{border:0; background:none; padding:6px 0 7px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--muted); cursor:pointer; min-width:0; font:inherit}
+.hb-dia:hover{background:var(--surface2)}
+.hb-dia.sel{background:var(--accent-soft)}
+.hb-dow{font-size:12px; font-weight:650; white-space:nowrap}
+.hb-dia.hoje .hb-dow{color:var(--accent); font-weight:800}
+.hb-anel{position:relative; width:38px; height:38px; display:grid; place-items:center}
+.hb-anel svg{position:absolute; inset:0; width:100%; height:100%}
+.hb-anel circle{fill:none; stroke-width:3.4}
+.hb-anel .fundo{stroke:var(--line)}
+.hb-anel .arco{stroke:var(--good); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+.hb-anel b{position:relative; font-size:14px; font-weight:750; color:var(--ink); font-variant-numeric:tabular-nums}
+.hb-dia.vazio .hb-anel b{color:var(--muted); font-weight:600}
+.hb-dia.cheio .hb-anel .fundo{fill:var(--good); stroke:var(--good)}
+.hb-dia.cheio .hb-anel .arco{display:none}
+.hb-dia.cheio .hb-anel b{color:#fff}
+html[data-theme="dark"] .hb-dia.cheio .hb-anel b{color:#0E1A13}
+.hb-diatit{display:flex; align-items:center; gap:9px; margin:-2px 2px 12px; font-size:15px; font-weight:750}
+.hb-diatit > svg{width:18px; height:18px; color:var(--muted); flex:none}
+.hb-diatit span{flex:1; min-width:0}
+.hb-pronto{display:flex; align-items:center; gap:10px; padding:12px 16px; margin:0 0 12px; border-radius:16px; background:var(--good-soft); color:var(--good); font-weight:700; font-size:15px}
+.hb-pronto > svg{width:20px; height:20px; flex:none}
+.hb-livre{display:flex; align-items:center; gap:10px; padding:12px 16px; margin:0 0 12px; border-radius:16px; background:var(--surface2); color:var(--muted); font-weight:600; font-size:14px}
+.hb-livre > svg{width:18px; height:18px; flex:none}
+.hb-agora{font-size:11px; font-weight:750; color:var(--accent); background:var(--accent-soft); padding:2px 8px; border-radius:99px; margin-right:2px}
+/* linha: o círculo na cor do hábito marca o dia */
+.trow.tk.hb .ck{width:24px; height:24px; margin-top:-2px; border:2px solid var(--hc)}
+.trow.tk.hb .ck::before{inset:-12px}
+.trow.tk.hb .ck:hover{background:var(--hcs)}
+.trow.tk.hb .ck.on{background:var(--hc); border-color:var(--hc)}
+.trow.tk.hb .ck.on::after{color:#fff; font-size:13px}
+.trow.tk.hb.done .tt, .trow.tk.hb.completing .tt{text-decoration:none; color:var(--muted)}
+.hb-em{margin-right:7px}
+.trow.hb .tk-meta svg{width:12px; height:12px; flex:none}
+.hb-nf{color:var(--warn); font-weight:650}
+.hb-cue, .hb-2m, .hb-nota{max-width:100%}
+.hb-cue .tx, .hb-2m .tx, .hb-nota .tx{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.hb-nota{color:var(--warn)}
+.hb-fogo{display:inline-flex; align-items:center; gap:3px; font-size:13.5px; font-weight:750; color:var(--warn); font-variant-numeric:tabular-nums}
+.hb-fogo svg{width:15px; height:15px}
+.trow.tk.hb.done .hb-fogo{opacity:1}
+/* arquivados */
+.trow.tk.hb.arq{align-items:center}
+.hb-bola{flex:none; width:36px; height:36px; border-radius:11px; background:var(--hcs); display:grid; place-items:center; font-size:19px; line-height:1}
+.hb-bola .ini, .hbd-badge .ini{font-weight:800; color:var(--hc)}
+.hb-rest{border:0; background:none; flex:none}
+.hb-arq-nota{font-size:12.5px; color:var(--muted); margin:2px 4px 16px}
+.hb-exemplos{max-width:560px; justify-content:center}
+/* semana: grade hábito × dia */
+.hb-semnav{display:flex; align-items:center; gap:4px; margin:0 0 12px}
+.hb-semnav .icon-btn{border:0; background:none; flex:none}
+.hb-semnav .icon-btn[disabled]{opacity:.3; cursor:default}
+.hb-semnav .t{flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; font-weight:750; font-size:15px; line-height:1.3}
+.hb-semnav .t small{font-size:12px; font-weight:500; color:var(--muted)}
+.card.hb-grade{padding:4px 0; margin-bottom:18px; overflow:hidden}
+.hb-gl{display:grid; grid-template-columns:minmax(0, 1fr) repeat(7, 38px) 46px; align-items:center; padding:7px 14px}
+.hb-gl + .hb-gl{border-top:1px solid var(--line)}
+.hb-gcab{padding-top:8px; padding-bottom:8px}
+.hb-gd{display:flex; flex-direction:column; align-items:center; font-size:11.5px; font-weight:650; color:var(--muted); line-height:1.25}
+.hb-gd b{font-size:13px; color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums}
+.hb-gd.hoje, .hb-gd.hoje b{color:var(--accent)}
+.hb-gn{display:flex; align-items:center; gap:2px; min-width:0; border:0; background:none; padding:4px 8px 4px 0; font:inherit; font-size:14.5px; font-weight:650; color:var(--ink); text-align:left; cursor:pointer}
+.hb-gn .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.hb-gn .pdot{width:9px; height:9px; margin-right:7px}
+.hb-gn:hover .nm{color:var(--accent)}
+.hb-gq{font-family:var(--mono); font-size:12px; color:var(--muted); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+.hb-c{position:relative; justify-self:center; width:28px; height:28px; border-radius:50%; border:2px solid var(--line2); background:none; padding:0; cursor:pointer}
+.hb-c::before{content:''; position:absolute; inset:-6px}
+.hb-c.f{background:var(--hc); border-color:var(--hc)}
+.hb-c.f::after{content:'✓'; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:13px; font-weight:800}
+.hb-c.hojec{border-color:var(--hc)}
+.hb-c.livre{width:9px; height:9px; border:0; background:var(--line2)}
+.hb-c.livre::before{inset:-10px}
+.hb-c.fut{opacity:.35; cursor:default}
+.hb-c:not(.fut):not(.f):hover{border-color:var(--hc); background:var(--hcs)}
+/* detalhe; o ⋮ do topo dos detalhes vai para o canto direito */
+.tkd-top .grow{flex:1}
+.hbd-cab{display:flex; align-items:flex-start; gap:12px}
+.hbd-badge{flex:none; width:50px; height:50px; border-radius:15px; border:0; background:var(--hcs); font-size:27px; line-height:1; display:grid; place-items:center; cursor:pointer; padding:0}
+.hbd-badge .ini{font-size:22px}
+.hbd-badge:active{transform:scale(.94)}
+#mback.tk-det .hbd-cab .inp.tk-titulo{flex:1; min-width:0; margin-top:9px}
+.hbd-hoje{gap:12px}
+.hbd-hoje .ck{width:24px; height:24px; border:2px solid var(--hc)}
+.hbd-hoje .ck.on{background:var(--hc); border-color:var(--hc)}
+.hbd-hoje .ck.on::after{color:#fff; font-size:13px}
+.hbd-hoje-t{font-size:14.5px; font-weight:650}
+.hbd-hoje .hb-nf{display:inline-flex; align-items:center; gap:5px; font-size:12.5px}
+.hbd-hoje .hb-nf svg{width:13px; height:13px}
+.hbd-dias{display:flex; gap:6px; flex-wrap:wrap}
+.hbd-dia{min-width:42px; height:34px; padding:0 6px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--muted); font:inherit; font-size:13px; font-weight:650; cursor:pointer}
+.hbd-dia.on{background:var(--hc, var(--accent)); border-color:var(--hc, var(--accent)); color:#fff}
+.hbd-dia:active{transform:scale(.95)}
+.hbd-campo{display:flex; align-items:flex-start; gap:10px; color:var(--muted); cursor:text}
+.hbd-campo > svg{width:17px; height:17px; flex:none; margin-top:5px}
+.hbd-campo.nota > svg{color:var(--warn)}
+.hbd-campo .tkd-notas{flex:1; min-width:0}
+.hbd-nums{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; margin-top:4px}
+.hbd-num{display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 6px 9px; border-radius:12px; background:var(--surface2); text-align:center; min-width:0}
+.hbd-num b{font-size:19px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.15}
+.hbd-num span{font-size:11.5px; line-height:1.25; color:var(--muted); font-weight:600}
+.hbd-cal{border-top:1px solid var(--line); padding-top:6px}
+.hbd-mes{display:flex; align-items:center; justify-content:space-between; gap:6px}
+.hbd-mes span{font-weight:750; font-size:14.5px}
+.hbd-mes .icon-btn{border:0; background:none}
+.hbd-mes .icon-btn[disabled]{opacity:.25; cursor:default}
+.hbd-grade{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:3px; margin-top:4px; justify-items:center}
+.hbd-dow{font-size:11px; font-weight:700; color:var(--muted); padding:2px 0 4px}
+.hbd-c{width:38px; height:38px; max-width:100%; border-radius:50%; border:0; background:none; padding:0; font:inherit; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; font-variant-numeric:tabular-nums}
+.hbd-c.falta{color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--line2)}
+.hbd-c.f{background:var(--hc); color:#fff; font-weight:750}
+.hbd-c.hoje:not(.f){color:var(--accent); font-weight:800; box-shadow:inset 0 0 0 2px var(--accent)}
+.hbd-c.livre{opacity:.5}
+.hbd-c.fut{opacity:.3; cursor:default}
+.hbd-c:not(.fut):not(.f):hover{background:var(--hcs)}
+.hbd-mesres{margin:6px 0 0; text-align:center; font-size:12.5px; color:var(--muted)}
+/* emoji e cor */
+.tk-pop.hb-appop{width:min(316px, calc(100vw - 24px))}
+.hb-ap{display:flex; flex-direction:column; gap:10px; padding:4px}
+.hb-emos{display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:3px}
+.hb-emo{height:42px; border:0; border-radius:10px; background:none; font-size:22px; line-height:1; cursor:pointer; padding:0}
+.hb-emo:hover{background:var(--surface2)}
+.hb-emo.on{background:var(--accent-soft); box-shadow:inset 0 0 0 2px var(--accent)}
+.hb-cores{display:flex; gap:9px; flex-wrap:wrap; justify-content:center; padding:2px 0 4px}
+.hb-cor{width:28px; height:28px; border-radius:50%; border:2px solid transparent; padding:0; cursor:pointer}
+.hb-cor.on{border-color:var(--ink); box-shadow:inset 0 0 0 2px var(--surface)}
+/* dias na folha de adicionar */
+.hb-diaspop{display:flex; gap:4px; flex-wrap:wrap; padding:2px 6px 6px}
+.hb-diaspop .hbd-dia{min-width:38px; height:32px; font-size:12.5px}
+.hb-diaspop .hbd-dia.on{background:var(--accent); border-color:var(--accent)}
+@media (max-width:760px){
+  .hb-gl{grid-template-columns:repeat(7, minmax(0, 1fr)); row-gap:8px; padding:10px 10px 11px}
+  .hb-gl .hb-gn{grid-row:1; grid-column:1 / 7; padding:0 0 0 4px}
+  .hb-gl .hb-gq{grid-row:1; grid-column:7; padding-right:4px}
+  .hb-gl .hb-c{grid-row:2}
+  .hb-gcab .hb-gn, .hb-gcab .hb-gq{display:none}
+  .hb-gcab .hb-gd{grid-row:1}
+  .hbd-nums{gap:6px}
+  .hbd-num{padding:9px 4px 8px}
+  .hbd-num b{font-size:18px}
+  .hbd-num span{font-size:11px}
+  .hbd-c{width:36px; height:36px}
+}
 /* ===================== App Android, notificações, sons e animações ===================== */
 /* áreas seguras: o app Android desenha atrás das barras do sistema */
 :root{
@@ -1405,14 +1520,25 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
 
   <!-- ===== HÁBITOS ===== -->
   <section class="view" id="view-habitos">
-    <div class="vhead">
-      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Hábitos</h1>
-      <span class="vdate mono" id="habRange"></span>
-      <div class="grow"></div>
-      <button class="btn btn-primary btn-sm" data-action="novo-habito">+ Novo hábito</button>
+    <div class="tk-main">
+      <div class="tk-top">
+        <h1 class="vtitle tk-tit" id="hbTitulo" data-action="hb-vista" aria-haspopup="menu" title="Hoje, semana ou arquivados"></h1>
+        <span id="hbResumo"></span>
+        <button class="icon-btn" data-action="hb-opcoes" aria-haspopup="menu" aria-label="Opções dos hábitos" title="Opções dos hábitos"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+      </div>
+      <div class="tk-add" id="hbAdd">
+        <input class="inp tk-add-inp" type="text" id="hbInp" placeholder="Novo hábito…" autocomplete="off" enterkeyhint="send">
+        <div class="tk-ferr">
+          <button class="tk-tool" id="hbDiasBtn" data-action="hb-qa-dias" aria-haspopup="menu" title="Dias"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" id="hbQuandoBtn" data-action="hb-qa-quando" aria-haspopup="menu" title="Quando"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="qd-lab"></span></button>
+        </div>
+        <button class="tk-send" data-action="hb-qadd" aria-label="Adicionar" title="Adicionar (com o campo vazio, abre o detalhe)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+        <div class="qa-prev" id="hbPrev" aria-live="polite"></div>
+      </div>
+      <div class="tk-add-fundo" data-action="hb-qa-fechar"></div>
+      <div id="hbLista"></div>
     </div>
-    <div id="hLista"></div>
-    <div id="hArquivados"></div>
+    <button class="tk-fab" data-action="hb-qa-abrir" aria-label="Novo hábito" title="Novo hábito"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
   </section>
 
   <!-- ===== TIME TRACK ===== -->
@@ -1668,8 +1794,9 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
       "priority": "alta", "tags": ["susepe"], "notes": "" }
   ],
   "habits": [
-    { "name": "Academia", "emoji": "🏋️", "color": "verde", "days": ["seg","qua","sex"] },
-    { "name": "Leitura", "emoji": "📖", "color": "azul", "days": "diario" }
+    { "name": "Academia", "emoji": "🏋️", "color": "verde", "days": ["seg","qua","sex"],
+      "hora": "20:00", "cue": "Depois de chegar do trabalho", "twoMin": "Vestir a roupa de treino" },
+    { "name": "Leitura", "emoji": "📖", "color": "azul", "days": "diario", "periodo": "noite" }
   ],
   "people": [
     { "name": "Fulano de Tal", "phone": "51 99999-0000", "email": "",
@@ -1697,7 +1824,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
     { "title": "Salário", "type": "receita", "amount": 5000, "date": "2026-08-05" }
   ]
 }</pre>
-    <p class="vsub" style="margin-top:10px">Cores aceitas: azul, verde, ambar, vermelho, roxo, ciano, rosa, grafite. Prioridade: alta, media, baixa ou nenhuma. Dias: "diario" ou lista com dom, seg, ter, qua, qui, sex, sab. Tipos de lugar: viagem, restaurante, bar, passeio, outro. Status de lugar: quero ou fui.</p>
+    <p class="vsub" style="margin-top:10px">Cores aceitas: azul, verde, ambar, vermelho, roxo, ciano, rosa, grafite. Prioridade: alta, media, baixa ou nenhuma. Dias: "diario" ou lista com dom, seg, ter, qua, qui, sex, sab. Hábito, tudo opcional: "hora" (HH:MM, com aviso no app) ou "periodo" (manha, tarde, noite), "cue" (gatilho), "twoMin" (versão de 2 minutos) e "notes". Tipos de lugar: viagem, restaurante, bar, passeio, outro. Status de lugar: quero ou fui.</p>
 
     <div class="seclab"><span>Schema</span><span class="rule"></span></div>
     <p class="vsub">Todas as coleções do banco (tarefas, projetos, hábitos, tempo, pessoas, contatos, rotina, notas e lugares) têm interface. O backup exporta tudo num único arquivo .json.</p>
@@ -1880,15 +2007,6 @@ function celebraDia(){
     setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Tarefas do dia concluídas.'); }, 140);
   }
 }
-function celebraHabitos(){
-  const t = today();
-  if(CELEB_HAB === t) return;
-  const hs = S.habits.filter(h => !h.archived && schedOn(h, t));
-  if(hs.length && hs.every(h => habDone(h, t))){
-    CELEB_HAB = t;
-    setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Hábitos do dia concluídos.'); }, 160);
-  }
-}
 /* ids com animação em andamento: um segundo toque no meio dela não desfaz o primeiro */
 const ANIM_PEND = new Set();
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
@@ -1982,32 +2100,6 @@ function streak(h){
   return {count:n, forgiven};
 }
 function streakN(h){ return streak(h).count; }
-function forgivenDays(h){
-  const fdays = new Set();
-  let consecutiveMisses = 0, pending = [], ds = today();
-  if(schedOn(h, ds) && !habDone(h, ds)){ /* hoje pendente */ }
-  ds = addD(ds, -1);
-  for(let i = 0; i < 400; i++){
-    if(schedOn(h, ds)){
-      if(habDone(h, ds)){
-        pending.forEach(d => fdays.add(d));
-        pending = [];
-        consecutiveMisses = 0;
-      }else{
-        consecutiveMisses++;
-        if(consecutiveMisses >= 2) break;
-        pending.push(ds);
-      }
-    }
-    ds = addD(ds, -1);
-  }
-  return fdays;
-}
-function freqLabel(h){
-  if(!h.freq || h.freq.type === 'daily') return 'todos os dias';
-  const ds = (h.freq.days || []).slice().sort((a,b) => (a === 0 ? 7 : a) - (b === 0 ? 7 : b));
-  return ds.map(d => DOW[d]).join(' ');
-}
 
 /* ===================== Tema, navegação ===================== */
 function applyTheme(){
@@ -2059,6 +2151,8 @@ function setView(v){
   if(v !== 'tarefas'){ TK_ADD = false; TK_NAV = false; }
   if(v !== 'lembretes'){ LM_ADD = false; LM_NAV = false; }
   if(v !== 'mercado') MC_ADD = false;
+  if(v !== 'habitos') HB_ADD = false;
+  else{ HB_V = 'hoje'; HB_DIA = null; HB_SEM = 0; }
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
   renderBottomNav();
@@ -2245,12 +2339,15 @@ function renderHoje(){
     if(!hsPendSched.length && !hsPendExtra.length){
       hh += '<div class="empty">Todos feitos \u2713</div>';
     }else{
-      const thab = (h, fora) =>
-        '<button class="thab' + (fora ? ' fora' : '') + '" style="--hc:' + CORES[h.color] + '" data-action="thab" data-id="' + h.id + '" title="' + esc((fora ? 'Fora da frequência de hoje. ' : '') + (h.notes || '')) + '">' +
+      const thab = (h, fora) => {
+        const sk = streakN(h);
+        return '<button class="thab' + (fora ? ' fora' : '') + '" style="--hc:' + CORES[h.color] + '" data-action="thab" data-id="' + h.id + '" title="' + esc((fora ? 'Fora da frequência de hoje. ' : '') + (h.notes || '')) + '">' +
           '<span class="dot">\u2713</span><span>' + esc((h.emoji ? h.emoji + ' ' : '') + h.name) + '</span>' +
           (h.notes ? '<span class="st" style="color:var(--warn)">' + licn('pin') + '</span>' : '') +
-          '<span class="st">\ud83d\udd25 ' + streakN(h) + '</span></button>';
-      hh += '<div class="today-habits">' + hsPendSched.map(h => thab(h, false)).join('') + hsPendExtra.map(h => thab(h, true)).join('') + '</div>';
+          (sk ? '<span class="st">\ud83d\udd25 ' + sk + '</span>' : '') + '</button>';
+      };
+      const ordH = hbOrdenador();
+      hh += '<div class="today-habits">' + hsPendSched.sort(ordH).map(h => thab(h, false)).join('') + hsPendExtra.sort(ordH).map(h => thab(h, true)).join('') + '</div>';
     }
   }
   $('#hojeHabitos').innerHTML = hh;
@@ -2580,57 +2677,6 @@ function tkPrioMenuHTML(atual, acao){
   return [[3, 'Alta'], [2, 'Média'], [1, 'Baixa'], [0, 'Nenhuma']].map(([p, nome]) =>
     '<button class="tk-mi f' + p + (atual === p ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-v="' + p + '">' + (p ? TK_FLAG : licn('flag')) +
     '<span class="l">' + nome + '</span>' + (atual === p ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>').join('');
-}
-
-/* ===================== Render: Hábitos ===================== */
-function weekSunday(){ const d = fromD(today()); d.setDate(d.getDate() - d.getDay()); return dstr(d); }
-function renderHabitos(){
-  const t = today();
-  const ws = weekSunday();
-  $('#habRange').textContent = 'semana de ' + fmtCurto(ws);
-  const ativos = S.habits.filter(h => !h.archived);
-  let out = '';
-  if(!ativos.length){
-    out = '<div class="list"><div class="empty">Nenhum hábito ainda. Crie o primeiro e marque os dias na grade.</div></div>';
-  }else{
-    out = '<div class="list">' + ativos.map(h => {
-      const fgDays = forgivenDays(h);
-      let labs = '', cells = '';
-      for(let i = 0; i < 7; i++){
-        const ds = addD(ws, i);
-        const sched = schedOn(h, ds);
-        const done = habDone(h, ds);
-        const isFuture = ds > t;
-        const isToday = ds === t;
-        const isForgiven = !done && sched && !isFuture && fgDays.has(ds);
-        const cls = 'hcell' + (done ? ' done' : '') + (isFuture ? ' off' : '') + (!sched && !isFuture && !done ? ' unsched' : '') + (isToday ? ' today' : '') + (isForgiven ? ' forgiven' : '');
-        const st = done ? ' style="background:' + CORES[h.color] + (isToday ? ';--hc:' + CORES[h.color] : '') + '"' :
-                   (isToday ? ' style="--hc:' + CORES[h.color] + '"' : '');
-        labs += '<span class="hgrid-lab">' + DOW[i] + '</span>';
-        cells += '<button class="' + cls + '"' + st + (isFuture ? ' disabled' : '') +
-          ' data-action="hcell" data-id="' + h.id + '" data-ds="' + ds + '"' +
-          ' title="' + DOW[fromD(ds).getDay()] + ', ' + fmtCurto(ds) + (isFuture ? ' (futuro)' : '') + '"></button>';
-      }
-      const sk = streak(h);
-      return '<div class="hab"><div class="hab-top">' +
-        '<span class="hab-emoji">' + esc(h.emoji || '✦') + '</span>' +
-        '<div style="flex:1; min-width:0"><div class="hab-name" data-action="edit-habit" data-id="' + h.id + '">' + esc(h.name) + '</div>' +
-        (h.notes ? '<div style="font-size:11px; color:var(--warn); margin-top:2px; line-height:1.3">' + licn('pin') + ' ' + esc(h.notes) + '</div>' : '') + '</div>' +
-        '<span class="streak">\ud83d\udd25 <b>' + sk.count + '</b>' + (sk.forgiven ? '<span style="font-size:9px; opacity:.7"> ' + sk.forgiven + '×🛡</span>' : '') + '</span></div>' +
-        '<div class="hgrid">' + labs + '</div>' +
-        '<div class="hgrid">' + cells + '</div></div>';
-    }).join('') + '</div>';
-  }
-  $('#hLista').innerHTML = out;
-
-  const arq = S.habits.filter(h => h.archived);
-  $('#hArquivados').innerHTML = !arq.length ? '' :
-    secHTML('Arquivados', arq.length, '', 'archive') + '<div class="list">' + arq.map(h =>
-      '<div class="trow" style="cursor:default"><span class="hab-emoji">' + esc(h.emoji || '✦') + '</span>' +
-      '<span class="tt" style="color:var(--muted)">' + esc(h.name) + '</span><span class="tmeta">' +
-      '<button class="btn btn-sm" data-action="restaurar-habito" data-id="' + h.id + '">Restaurar</button>' +
-      '<button class="btn btn-danger btn-sm" data-action="excluir-habito-arq" data-id="' + h.id + '">Excluir</button>' +
-      '</span></div>').join('') + '</div>';
 }
 
 /* ===================== Render: Dados e laterais ===================== */
@@ -3249,7 +3295,9 @@ function tick(){
     if(VIEW === 'tempo' && running() && new Date().getSeconds() === 0) renderTTDia();
   }
   if(VIEW === 'lembretes') lmAgoraSync();
+  if(VIEW === 'habitos') hbDiaSync();
 }
+document.addEventListener('visibilitychange', () => { if(!document.hidden) hbDiaSync(); });
 
 /* ===================== Pessoas ===================== */
 const KIND = {ligacao:'ligação', conversa:'conversa', mensagem:'mensagem', encontro:'encontro', outro:'outro'};
@@ -4067,6 +4115,7 @@ function lmAplicarData(acao, ds){
   renderLembreteModal();
 }
 function lmAplicarHora(acao, hr){
+  if(/^hb/.test(acao || '')) return hbAplicarQuando(acao, hr);
   popFechar();
   hr = /^\d{2}:\d{2}$/.test(hr || '') ? hr : '';
   if(acao === 'lm-qa-hora-set'){ LM_QA.hora = hr; lmQaSync(); lmPreview(); const i = $('#rlTitle'); if(i) i.focus(); return; }
@@ -5376,7 +5425,7 @@ function salvarShop(){
 function syncAny(){
   if(!M) return;
   if(M.type === 'task') syncTaskDraft();
-  else if(M.type === 'habit') syncHabitDraft();
+  else if(M.type === 'habito') hbSyncDraft();
   else if(M.type === 'pessoa') syncPessoaDraft();
   else if(M.type === 'bloco') syncBlocoDraft();
   else if(M.type === 'nota') syncNotaDraft();
@@ -5416,6 +5465,7 @@ function openMais(){
 
 /* ===================== Busca global ===================== */
 function openGlobalSearch(){
+  if($('#mback').classList.contains('on')) closeModal();
   M = { type:'gsearch' };
   openModal('Buscar tudo',
     '<div class="gsearch"><input class="inp" id="gq" placeholder="Digite para buscar em tudo…" autofocus></div><div id="gresults"><div class="gempty">Busque em tarefas, lembretes, pessoas, notas, lugares, finanças, rotina e mais.</div></div>',
@@ -5469,7 +5519,7 @@ function runGlobalSearch(raw){
       results.push({type:'Lugares', icon:'map-pin', text:x.name, meta:x.city || '', action:'edit-lugar', id:x.id});
   });
   S.habits.forEach(x => {
-    if(m(x.name)) results.push({type:'Hábitos', icon:'target', text:x.name, meta:'', action:'edit-habit', id:x.id});
+    if(m(x.name)) results.push({type:'Hábitos', icon:'target', text:x.name, meta:hbFreqTxt(hbDiasDe(x)) + (x.archived ? ', arquivado' : ''), action:'edit-habit', id:x.id});
   });
   S.routines.forEach(x => {
     if(m(x.name)) results.push({type:'Rotina', icon:'list-checks', text:x.name, meta:x.start + '–' + x.end, action:'edit-bloco', id:x.id});
@@ -5515,9 +5565,9 @@ function openModal(title, body, foot, o){
   if(f) setTimeout(() => f.focus(), 30);
 }
 function closeModal(){
-  /* os detalhes de tarefa, lembrete e item do mercado salvam sozinhos ao fechar */
+  /* os detalhes de tarefa, lembrete, item do mercado e hábito salvam sozinhos ao fechar */
   const tipo = M && M.type;
-  const mudou = tipo === 'task' ? tkAutoSalvar() : tipo === 'lembrete' ? lmAutoSalvar() : tipo === 'shop' ? mcAutoSalvar() : false;
+  const mudou = tipo === 'task' ? tkAutoSalvar() : tipo === 'lembrete' ? lmAutoSalvar() : tipo === 'shop' ? mcAutoSalvar() : tipo === 'habito' ? hbAutoSalvar() : false;
   $('#mback').classList.remove('on', 'tk-det');
   M = null;
   popFechar();
@@ -5676,106 +5726,832 @@ function salvarTask(){
   closeModal();
 }
 
-/* ===================== Modal: hábito ===================== */
-function openHabit(id){
-  const h = id ? S.habits.find(x => x.id === id) : null;
-  M = { type:'habit', id: id || null, draft: h ? JSON.parse(JSON.stringify(h)) :
-    {name:'', emoji:'', color:'azul', freq:{type:'daily', days:[1,2,3,4,5]}, notes:''} };
-  renderHabitModal();
+/* ===================== Hábitos ===================== */
+/* Lista do dia agrupada por momento (manhã, tarde, noite), faixa dos últimos 7 dias com anéis, visão Semana em grade e arquivados.
+   Adicionar escrevendo ("Academia seg qua sex 20h", "Ler antes de dormir"); detalhe em folha que salva sozinha, com números e calendário;
+   horário com aviso no Android e "nunca falhe duas vezes" visível na linha. */
+let HB_V = 'hoje';                      /* hoje, semana ou arq */
+let HB_DIA = null;                      /* dia aberto na lista (null = hoje) */
+let HB_SEM = 0;                         /* semana da grade: 0 = esta, -1 = a anterior */
+let HB_ADD = false;                     /* folha de adicionar aberta (celular) */
+let HB_QA = {dias:null, quando:null};   /* escolhas dos botões da folha (null = o que vier do texto) */
+let HB_DOBRA = tkLS('hbDobra', {});     /* cartões abertos (true) ou fechados (false) */
+let HB_FORA = tkLS('hbFora', true);     /* mostra o cartão dos hábitos de outros dias */
+const HB_MARCO_VISTO = new Set();       /* marcos já comemorados nesta sessão */
+const HB_TODOS = [0, 1, 2, 3, 4, 5, 6];
+const HB_ORDEM_DIAS = [1, 2, 3, 4, 5, 6, 0];   /* segunda primeiro */
+const HB_PER = {manha:{nome:'Manhã', ic:'sunrise', i:0}, tarde:{nome:'Tarde', ic:'sun', i:1}, noite:{nome:'Noite', ic:'moon', i:2}};
+const HB_MARCOS = [7, 14, 21, 30, 50, 66, 100, 150, 200, 250, 300, 365, 500, 730, 1000];
+const HB_MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+LICN['sunrise'] = '<path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>';
+LICN['infinity'] = '<path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/>';
+LICN['zap'] = '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>';
+LICN['link'] = '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+LICN['shield'] = '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>';
+LICN['layout-grid'] = '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>';
+LICN['eye'] = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+
+/* ---------- regras ---------- */
+const hbAtivos = () => S.habits.filter(h => !h.archived);
+/* dias do hábito (0 = domingo); diário vale para todos */
+function hbDiasDe(h){ return !h || !h.freq || h.freq.type === 'daily' ? HB_TODOS.slice() : (h.freq.days || []).filter(d => d >= 0 && d <= 6); }
+function hbFreq(dias){ const u = [...new Set(dias || [])]; return u.length >= 7 ? {type:'daily', days:[]} : {type:'week', days:HB_ORDEM_DIAS.filter(d => u.includes(d))}; }
+function hbFreqTxt(dias){
+  const u = HB_ORDEM_DIAS.filter(d => (dias || []).includes(d));
+  if(!u.length) return 'Nenhum dia';
+  if(u.length === 7) return 'Todo dia';
+  if(u.join() === '1,2,3,4,5') return 'Dias úteis';
+  if(u.join() === '6,0') return 'Fim de semana';
+  const ns = u.map(d => DOW[d]);
+  return ns.length === 1 ? 'Só ' + ns[0] : ns.slice(0, -1).join(', ') + ' e ' + ns[ns.length - 1];
 }
-function openHabitDetail(id){
+/* momento do dia: pela hora (madrugada é noite) ou pelo que foi escolhido */
+function hbPeriodoDeHora(hm){ const h = +String(hm || '').slice(0, 2); return h < 5 ? 'noite' : h < 12 ? 'manha' : h < 18 ? 'tarde' : 'noite'; }
+const hbHoraOk = v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v || '');
+function hbPeriodo(h){ return hbHoraOk(h.hora) ? hbPeriodoDeHora(h.hora) : (HB_PER[h.periodo] ? h.periodo : ''); }
+/* minutos para ordenar: a madrugada vem depois da noite; sem hora vai para o fim */
+function hbMin(h){ if(!hbHoraOk(h.hora)) return 9999; const m = hm2m(h.hora); return m < 300 ? m + 1440 : m; }
+function hbOrdenador(){
+  const ix = new Map(S.habits.map((x, i) => [x.id, i]));
+  const pi = h => { const p = hbPeriodo(h); return p ? HB_PER[p].i : 3; };
+  return (a, b) => pi(a) - pi(b) || hbMin(a) - hbMin(b) || ix.get(a.id) - ix.get(b.id);
+}
+/* primeiro dia do hábito: a criação ou a marcação mais antiga */
+function hbInicio(h){
+  let ini = '';
+  if(h.createdAt){ const d = new Date(h.createdAt); if(!isNaN(d)) ini = dstr(d); }
+  if(!ini) ini = today();
+  const logs = S.habitLogs[h.id] || {};
+  for(const k in logs) if(logs[k] && k < ini) ini = k;
+  return ini;
+}
+/* planejado no dia: é um dos dias dele, desde o começo; feito fora disso é extra e não conta no anel nem no contador */
+function hbPlanejado(h, ds, ini){ return schedOn(h, ds) && ds >= (ini || hbInicio(h)); }
+function hbProgresso(ds){
+  let ok = 0, n = 0;
+  hbAtivos().forEach(h => { if(!hbPlanejado(h, ds)) return; n++; if(habDone(h, ds)) ok++; });
+  return [ok, n];
+}
+/* nunca falhe duas vezes: a última vez antes do dia ficou sem marcar e a anterior foi feita; falhar de novo quebra a sequência */
+function hbFalhouUma(h, ds){
+  ds = ds || today();
+  const ini = hbInicio(h);
+  let d = addD(ds, -1), falhas = 0;
+  for(let i = 0; i < 70 && d >= ini; i++, d = addD(d, -1)){
+    if(!schedOn(h, d)) continue;
+    if(habDone(h, d)) return falhas === 1;
+    if(++falhas > 1) return false;
+  }
+  return false;
+}
+/* recorde: a maior sequência, com a mesma regra da atual (uma falha isolada não quebra) */
+function hbRecorde(h){
+  const logs = S.habitLogs[h.id] || {}, t = today();
+  const ks = Object.keys(logs).filter(k => logs[k] && k <= t).sort();
+  if(!ks.length) return 0;
+  let run = 0, melhor = 0, falhas = 0;
+  for(let d = ks[0], i = 0; d <= t && i < 5000; d = addD(d, 1), i++){
+    if(!schedOn(h, d)) continue;
+    if(habDone(h, d)){ run++; falhas = 0; if(run > melhor) melhor = run; }
+    else if(d < t && ++falhas >= 2) run = 0;
+  }
+  return melhor;
+}
+/* % feito nos últimos dias (hoje só conta depois de marcado) */
+function hbTaxa(h, n){
+  const t = today(), ini = hbInicio(h);
+  let ok = 0, tot = 0;
+  for(let i = 0; i < n; i++){
+    const d = addD(t, -i);
+    if(d < ini) break;
+    if(!schedOn(h, d) || (d === t && !habDone(h, d))) continue;
+    tot++; if(habDone(h, d)) ok++;
+  }
+  return tot ? Math.round(ok / tot * 100) : null;
+}
+function hbTotal(h){ const l = S.habitLogs[h.id] || {}; return Object.keys(l).filter(k => l[k]).length; }
+function hbSeqTxt(h, n){ return n + (hbDiasDe(h).length >= 7 ? (n === 1 ? ' dia seguido' : ' dias seguidos') : (n === 1 ? ' vez seguida' : ' vezes seguidas')); }
+function hbCorVars(c){ const x = CORES[c] || CORES.azul; return '--hc:' + x + ';--hcs:' + x + '24'; }
+function hbInicial(nome){ const c = umEmoji(nome); return c ? c.toUpperCase() : '?'; }
+function hbNome(s){ s = String(s || '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+/* cor menos usada entre os hábitos ativos */
+function hbCorLivre(){
+  const uso = {};
+  hbAtivos().forEach(h => { uso[h.color] = (uso[h.color] || 0) + 1; });
+  return ['azul', 'verde', 'roxo', 'ambar', 'ciano', 'rosa', 'vermelho', 'grafite'].reduce((a, c) => (uso[c] || 0) < (uso[a] || 0) ? c : a, 'azul');
+}
+
+/* ---------- marcar ---------- */
+/* marca ou desmarca o hábito no dia; hoje comemora o dia completo e os marcos da sequência (mudo: o som já tocou no toque) */
+function hbMarcar(id, ds, mudo, desfazer){
+  const h = S.habits.find(x => x.id === id), t = today();
+  ds = ds || t;
+  if(!h || ds > t) return false;
+  const logs = S.habitLogs[id] || (S.habitLogs[id] = {});
+  const marca = !logs[ds];
+  if(marca){ logs[ds] = true; if(!mudo){ sfx('habit'); haptic('light'); } }
+  else delete logs[ds];
+  window.__novo = id;
+  save(); render();
+  return marca && ds === t ? hbCelebrar(h, desfazer) : false;
+}
+/* comemora o dia completo e os marcos; devolve true quando comemorou (o aviso dela leva o Desfazer, se houver) */
+function hbCelebrar(h, desfazer){
+  const t = today(), n = streak(h).count;
+  const chave = h.id + ':' + t + ':' + n;
+  const marco = schedOn(h, t) && HB_MARCOS.includes(n) && !HB_MARCO_VISTO.has(chave);
+  const hs = hbAtivos().filter(x => schedOn(x, t));
+  const todos = CELEB_HAB !== t && hs.length > 0 && hs.every(x => habDone(x, t));
+  if(!todos && !marco) return false;
+  if(todos) CELEB_HAB = t;
+  if(marco) HB_MARCO_VISTO.add(chave);
+  const txt = marco ? '🔥 ' + hbSeqTxt(h, n) + ': ' + h.name + '.' : '';
+  const msg = todos ? 'Hábitos do dia concluídos.' + (txt ? ' ' + txt : '') : txt;
+  setTimeout(() => { confete(); sfx('all'); haptic('success'); if(desfazer) toast(msg, 'Desfazer', desfazer); else toast(msg); }, 160);
+  return true;
+}
+
+/* ---------- lista ---------- */
+function hbDiaSel(){ const t = today(); return HB_DIA && HB_DIA <= t && HB_DIA >= addD(t, -6) ? HB_DIA : t; }
+function hbRowHTML(h, ds, ctx){
+  const t = today(), feito = habDone(h, ds), sk = streak(h).count;
+  let meta = '';
+  if(!feito && ds === t && schedOn(h, t) && hbFalhouUma(h, t)) meta += '<span class="hb-nf" title="A última vez ficou sem marcar. Se falhar hoje, a sequência quebra.">' + licn('shield') + 'Não falhe duas vezes</span>';
+  if(tkCtx(ctx, 'fora')) meta += '<span>' + licn('repeat') + esc(hbFreqTxt(hbDiasDe(h))) + '</span>';
+  if(hbHoraOk(h.hora)) meta += '<span>' + licn('clock') + h.hora + '</span>';
+  if(h.cue && !feito) meta += '<span class="hb-cue" title="Gatilho">' + licn('link') + '<span class="tx">' + esc(h.cue) + '</span></span>';
+  if(h.twoMin && !feito) meta += '<span class="hb-2m" title="Versão de 2 minutos">' + licn('zap') + '<span class="tx">' + esc(h.twoMin) + '</span></span>';
+  if(h.notes) meta += '<span class="hb-nota" title="Nota para a próxima vez">' + licn('pin') + '<span class="tx">' + esc(h.notes) + '</span></span>';
+  const id = esc(h.id);
+  return '<div class="trow tk hb' + (feito ? ' done' : '') + '" style="' + hbCorVars(h.color) + '" data-action="hb-abrir" data-id="' + id + '" data-ds="' + ds + '">' +
+    '<button class="ck' + (feito ? ' on' : '') + '" data-action="hb-ck" data-id="' + id + '" data-ds="' + ds + '" aria-label="' + (feito ? 'Desmarcar ' : 'Marcar ') + esc(h.name) + '"></button>' +
+    '<span class="tk-body"><span class="tt">' + (h.emoji ? '<span class="hb-em">' + esc(h.emoji) + '</span>' : '') + esc(h.name) + '</span>' +
+      (meta ? '<span class="tk-meta">' + meta + '</span>' : '') + '</span>' +
+    (sk ? '<span class="tk-side"><span class="hb-fogo" title="' + esc(hbSeqTxt(h, sk)) + '">' + licn('flame') + sk + '</span></span>' : '') +
+  '</div>';
+}
+function hbGrupoHTML(g, ds){
+  const k = 'hb:' + g.k;
+  const ab = k in HB_DOBRA ? !!HB_DOBRA[k] : g.aberto !== false;
+  return '<section class="tk-g hb-g' + (g.cls ? ' ' + g.cls : '') + '">' +
+    '<button class="tk-gh" data-action="hb-fold" data-k="' + esc(k) + '" aria-expanded="' + ab + '"><span class="tk-gi">' + licn(g.ic) + '</span>' +
+      '<span class="tk-gn">' + esc(g.nome) + '</span>' + (g.agora ? '<span class="hb-agora">agora</span>' : '') +
+      '<span class="tk-gc">' + g.itens.length + '</span>' + licn(ab ? 'chevron-down' : 'chevron-right') + '</button>' +
+    (ab ? '<div class="tk-gl tk-list">' + g.itens.map(x => hbRowHTML(x, ds, g.ctx)).join('') + '</div>' : '') +
+  '</section>';
+}
+function hbAnelSVG(fr){
+  const r = 15.5, c = 2 * Math.PI * r;
+  return '<svg viewBox="0 0 38 38" aria-hidden="true"><circle class="fundo" cx="19" cy="19" r="' + r + '"/>' +
+    (fr > 0 ? '<circle class="arco" cx="19" cy="19" r="' + r + '" stroke-dasharray="' + (c * Math.min(1, fr)).toFixed(2) + ' ' + c.toFixed(2) + '"/>' : '') + '</svg>';
+}
+/* últimos 7 dias, hoje na ponta direita; o anel enche com os feitos do dia */
+function hbFaixaHTML(sel){
+  const t = today();
+  let h = '<div class="hb-faixa" role="tablist" aria-label="Últimos 7 dias">';
+  for(let i = 6; i >= 0; i--){
+    const ds = addD(t, -i), d = fromD(ds), [ok, n] = hbProgresso(ds);
+    const dica = cap1(DOW_LONGO[d.getDay()]) + ', ' + d.getDate() + ' de ' + MES[d.getMonth()] + ': ' + (n ? ok + ' de ' + n + (ok === 1 ? ' feito' : ' feitos') : 'nenhum hábito');
+    h += '<button class="hb-dia' + (ds === sel ? ' sel' : '') + (ds === t ? ' hoje' : '') + (n && ok === n ? ' cheio' : '') + (!n ? ' vazio' : '') +
+      '" data-action="hb-dia" data-ds="' + ds + '" role="tab" aria-selected="' + (ds === sel) + '" title="' + esc(dica) + '" aria-label="' + esc(dica) + '">' +
+      '<span class="hb-dow">' + (ds === t ? 'hoje' : DOW[d.getDay()]) + '</span>' +
+      '<span class="hb-anel">' + hbAnelSVG(n ? ok / n : 0) + '<b>' + d.getDate() + '</b></span></button>';
+  }
+  return h + '</div>';
+}
+const HB_EXEMPLOS = ['Ler 10 páginas antes de dormir', 'Meditar 5 min ao acordar', 'Academia seg qua sex 20h', 'Beber 2 L de água', 'Estudar todo dia'];
+function hbVazioHTML(){
+  return '<div class="tk-vazio">' + licn('target') + '<p>Nenhum hábito ainda. Escreva o que, em quais dias e quando:</p>' +
+    '<div class="mc-chips hb-exemplos">' + HB_EXEMPLOS.map(x => '<button class="mc-chip" data-action="hb-exemplo" data-t="' + esc(x) + '"><span class="em">' +
+      (hbEmojiDe(hbParse(x).name) || '✦') + '</span>' + esc(x) + '</button>').join('') + '</div></div>';
+}
+function hbHojeHTML(ds){
+  const t = today(), hoje = ds === t, hs = hbAtivos();
+  if(!hs.length) return hbVazioHTML();
+  let out = hbFaixaHTML(ds);
+  if(!hoje) out += '<div class="hb-diatit">' + licn('calendar') + '<span>' + esc(cap1(tkDataTxt(ds))) + '</span>' +
+    '<button class="btn btn-sm" data-action="hb-dia" data-ds="' + t + '">Voltar para hoje</button></div>';
+  const ord = hbOrdenador(), pend = [], feitos = [], fora = [];
+  hs.forEach(h => { if(habDone(h, ds)) feitos.push(h); else if(hbPlanejado(h, ds)) pend.push(h); else fora.push(h); });
+  const gs = [];
+  if(pend.length){
+    if(!pend.some(h => hbPeriodo(h))) gs.push({k:'p', ic:hoje ? 'target' : 'calendar', nome:hoje ? 'Para hoje' : 'Não feitos', itens:pend.sort(ord)});
+    else{
+      const agora = hoje ? hbPeriodoDeHora(lmAgora()) : '';
+      ['manha', 'tarde', 'noite', ''].forEach(p => {
+        const ys = pend.filter(h => hbPeriodo(h) === p).sort(ord);
+        if(ys.length) gs.push({k:'p' + p, ic:p ? HB_PER[p].ic : 'infinity', nome:p ? HB_PER[p].nome : 'Qualquer hora', itens:ys, agora:!!p && p === agora});
+      });
+    }
+  }
+  if(feitos.length) gs.push({k:'feitos', ic:'check-circle', nome:'Feitos', itens:feitos.sort(ord), cls:'ok'});
+  if(fora.length && HB_FORA) gs.push({k:'fora', ic:'calendar-days', nome:'Outros dias', itens:fora.sort(ord), ctx:'fora', aberto:false});
+  const [okDia, nDia] = hbProgresso(ds);
+  if(nDia && okDia === nDia) out += '<div class="hb-pronto">' + licn('check-circle') + '<span>' + (hoje ? 'Tudo feito hoje.' : 'Tudo feito nesse dia.') + '</span></div>';
+  else if(!nDia && !feitos.length) out += '<div class="hb-livre">' + licn('sun') + '<span>Nenhum hábito ' + (hoje ? 'para hoje.' : 'nesse dia.') + '</span></div>';
+  return out + gs.map(g => hbGrupoHTML(g, ds)).join('');
+}
+
+/* ---------- semana: grade hábito × dia, de segunda a domingo ---------- */
+function hbSemanaDias(){ const ws = addD(weekStart(), 7 * HB_SEM), xs = []; for(let i = 0; i < 7; i++) xs.push(addD(ws, i)); return xs; }
+function hbSemanaHTML(){
+  const t = today(), dias = hbSemanaDias(), hs = hbAtivos().sort(hbOrdenador());
+  const d0 = fromD(dias[0]), d6 = fromD(dias[6]);
+  const faixa = d0.getMonth() === d6.getMonth() ? d0.getDate() + ' a ' + d6.getDate() + ' de ' + MES[d6.getMonth()]
+    : d0.getDate() + ' de ' + MES[d0.getMonth()] + ' a ' + d6.getDate() + ' de ' + MES[d6.getMonth()];
+  let h = '<div class="hb-semnav">' +
+    '<button class="icon-btn" data-action="hb-sem" data-d="-1" aria-label="Semana anterior" title="Semana anterior">' + licn('chevron-left') + '</button>' +
+    '<span class="t"><span>' + (HB_SEM === 0 ? 'Esta semana' : HB_SEM === -1 ? 'Semana passada' : 'Semana de ' + d0.getDate() + ' de ' + MES[d0.getMonth()]) + '</span><small>' + faixa + '</small></span>' +
+    '<button class="icon-btn" data-action="hb-sem" data-d="1" aria-label="Próxima semana" title="Próxima semana"' + (HB_SEM >= 0 ? ' disabled' : '') + '>' + licn('chevron-right') + '</button></div>';
+  if(!hs.length) return h + hbVazioHTML();
+  h += '<div class="card hb-grade"><div class="hb-gl hb-gcab"><span class="hb-gn"></span>' +
+    dias.map(ds => '<span class="hb-gd' + (ds === t ? ' hoje' : '') + '">' + DOW[fromD(ds).getDay()] + '<b>' + fromD(ds).getDate() + '</b></span>').join('') + '<span class="hb-gq"></span></div>';
+  hs.forEach(x => {
+    const ini = hbInicio(x);
+    let ok = 0, plano = 0, cel = '';
+    dias.forEach(ds => {
+      const fut = ds > t, feito = habDone(x, ds), dia = schedOn(x, ds) && ds >= ini;
+      if(dia){ plano++; if(feito) ok++; }
+      const cls = 'hb-c' + (feito ? ' f' : '') + (fut ? ' fut' : '') + (!feito && dia && ds === t ? ' hojec' : '') + (!feito && !dia ? ' livre' : '');
+      const nome = DOW_LONGO[fromD(ds).getDay()] + ', ' + fromD(ds).getDate() + ' de ' + MES[fromD(ds).getMonth()];
+      cel += '<button class="' + cls + '" data-action="hb-cel" data-id="' + esc(x.id) + '" data-ds="' + ds + '"' + (fut ? ' disabled' : '') +
+        ' aria-pressed="' + feito + '" aria-label="' + esc(x.name + ', ' + nome + (feito ? ': feito' : dia ? ': não feito' : ': fora dos dias')) + '"></button>';
+    });
+    h += '<div class="hb-gl" style="' + hbCorVars(x.color) + '"><button class="hb-gn" data-action="hb-abrir" data-id="' + esc(x.id) + '">' +
+      (x.emoji ? '<span class="hb-em">' + esc(x.emoji) + '</span>' : '<span class="pdot" style="background:' + (CORES[x.color] || CORES.azul) + '"></span>') +
+      '<span class="nm">' + esc(x.name) + '</span></button>' + cel +
+      '<span class="hb-gq" title="Feitos de planejados na semana">' + (plano ? ok + '/' + plano : '') + '</span></div>';
+  });
+  return h + '</div>';
+}
+/* % da semana aberta na grade, até hoje */
+function hbSemanaTaxa(){
+  const t = today(), dias = hbSemanaDias();
+  let ok = 0, n = 0;
+  hbAtivos().forEach(h => { const ini = hbInicio(h); dias.forEach(ds => { if(ds > t || !hbPlanejado(h, ds, ini)) return; n++; if(habDone(h, ds)) ok++; }); });
+  return n ? Math.round(ok / n * 100) : null;
+}
+
+/* ---------- arquivados ---------- */
+function hbArqHTML(arq){
+  if(!arq.length) return '<div class="tk-vazio">' + licn('archive') + '<p>Nenhum hábito arquivado.</p></div>';
+  return '<section class="tk-g"><div class="tk-gl tk-list">' + arq.map(x => {
+    const tot = hbTotal(x), rec = hbRecorde(x);
+    return '<div class="trow tk hb arq" style="' + hbCorVars(x.color) + '" data-action="hb-abrir" data-id="' + esc(x.id) + '">' +
+      '<span class="hb-bola">' + (x.emoji ? esc(x.emoji) : '<span class="ini">' + esc(hbInicial(x.name)) + '</span>') + '</span>' +
+      '<span class="tk-body"><span class="tt">' + esc(x.name) + '</span><span class="tk-meta"><span>' + (tot === 1 ? '1 vez' : tot + ' vezes') + ' no total</span>' +
+        (rec > 1 ? '<span>' + licn('flame') + 'recorde ' + rec + '</span>' : '') + '</span></span>' +
+      '<button class="icon-btn sm hb-rest" data-action="hb-restaurar" data-id="' + esc(x.id) + '" title="Voltar para a lista" aria-label="Restaurar ' + esc(x.name) + '">' + licn('rotate-ccw') + '</button>' +
+    '</div>';
+  }).join('') + '</div></section><p class="hb-arq-nota">Arquivados não aparecem na lista nem nos avisos. O histórico fica guardado.</p>';
+}
+
+/* ---------- tela ---------- */
+let HB_RENDER_DIA = '';
+/* virou o dia com a lista aberta (PC ligado à noite, celular voltando): redesenha, se nada estiver aberto por cima */
+function hbDiaSync(){
+  if(VIEW !== 'habitos' || !HB_RENDER_DIA || HB_RENDER_DIA === today() || POP || HB_ADD || $('#mback').classList.contains('on')) return;
+  render();
+}
+function renderHabitos(){
+  HB_RENDER_DIA = today();
+  if(!['hoje', 'semana', 'arq'].includes(HB_V)) HB_V = 'hoje';
+  const arq = S.habits.filter(h => h.archived);
+  if(HB_V === 'arq' && !arq.length) HB_V = 'hoje';
+  const sec = $('#view-habitos');
+  if(sec) sec.dataset.v = HB_V;
+  $('#hbTitulo').innerHTML = '<span class="nm">' + (HB_V === 'semana' ? 'Semana' : HB_V === 'arq' ? 'Arquivados' : 'Hábitos') + '</span>' + licn('chevron-down');
+  const ds = hbDiaSel();
+  let pill = '';
+  if(HB_V === 'hoje'){
+    const [ok, n] = hbProgresso(ds);
+    if(n) pill = '<span class="hj-pill' + (ok === n ? ' ok' : '') + '" title="Feitos ' + (ds === today() ? 'hoje' : 'nesse dia') + '">' + licn('check') + ok + '/' + n + '</span>';
+  }else if(HB_V === 'semana'){
+    const p = hbSemanaTaxa();
+    if(p !== null) pill = '<span class="hj-pill' + (p === 100 ? ' ok' : '') + '" title="Feito na semana até hoje">' + p + '%</span>';
+  }
+  $('#hbResumo').innerHTML = pill;
+  hbAddSync(); hbQaSync();
+  $('#hbLista').innerHTML = HB_V === 'semana' ? hbSemanaHTML() : HB_V === 'arq' ? hbArqHTML(arq) : hbHojeHTML(ds);
+  hbPreview();
+  /* dica única no celular: arrastar a linha */
+  if(HB_V === 'hoje' && window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#hbLista .trow.hb:not(.done)')){
+    let visto = true;
+    try{ visto = localStorage.getItem('central.dicaArrastarHab') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarHab', '1'); }catch(e){}
+    if(!visto) setTimeout(() => toast('Dica: arraste um hábito para a direita para marcar.'), 700);
+  }
+}
+function hbTroca(){ const l = $('#hbLista'); if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); } }
+function hbVistaHTML(){
+  const arq = S.habits.filter(h => h.archived).length;
+  const it = (v, ic, nome, c) => '<button class="tk-mi' + (HB_V === v ? ' on' : '') + '" role="menuitemradio" data-action="hb-vista-set" data-v="' + v + '">' + licn(ic) +
+    '<span class="l">' + nome + '</span>' + (c ? '<span class="c">' + c + '</span>' : '') + (HB_V === v ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  return it('hoje', 'target', 'Hábitos de hoje') + it('semana', 'layout-grid', 'Semana') + (arq ? it('arq', 'archive', 'Arquivados', arq) : '');
+}
+function hbOpcoesHTML(){
+  let h = '';
+  if(hbAtivos().length > 1) h += '<button class="tk-mi" role="menuitem" data-action="hb-ordem">' + licn('list') + '<span class="l">Ordem dos hábitos</span></button>';
+  h += '<button class="tk-mi' + (HB_FORA ? ' on' : '') + '" role="menuitemcheckbox" aria-checked="' + HB_FORA + '" data-action="hb-fora">' + licn('eye') +
+    '<span class="l">Mostrar os de outros dias</span>' + (HB_FORA ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  if(NATIVE) h += '<button class="tk-mi" role="menuitem" data-action="hb-avisos">' + licn('bell') + '<span class="l">Avisos dos hábitos</span></button>';
+  return h;
+}
+function hbOrdemAbrir(){ popFechar(); M = {type:'hb-ordem'}; hbOrdemRender(); }
+function hbOrdemRender(){
+  const xs = hbAtivos();
+  const body = '<p class="vsub" style="margin:0">Dentro de cada momento do dia a lista segue esta ordem; os que têm horário vêm pela hora.</p><div class="mc-ord">' +
+    xs.map((x, i) => '<div class="mc-ord-l"><span class="em">' + (x.emoji ? esc(x.emoji) : '<span class="pdot" style="background:' + (CORES[x.color] || CORES.azul) + '"></span>') + '</span>' +
+      '<span class="l">' + esc(x.name) + '</span>' +
+      '<button class="icon-btn sm" data-action="hb-ord" data-id="' + esc(x.id) + '" data-d="-1" aria-label="Subir ' + esc(x.name) + '"' + (i === 0 ? ' disabled' : '') + '>' + licn('chevron-up') + '</button>' +
+      '<button class="icon-btn sm" data-action="hb-ord" data-id="' + esc(x.id) + '" data-d="1" aria-label="Descer ' + esc(x.name) + '"' + (i === xs.length - 1 ? ' disabled' : '') + '>' + licn('chevron-down') + '</button></div>').join('') + '</div>';
+  openModal('Ordem dos hábitos', body, '<div class="grow"></div><button class="btn btn-primary" data-action="fechar-modal">Pronto</button>', {semFoco:true});
+}
+function hbOrdMover(id, d){
+  const xs = hbAtivos(), i = xs.findIndex(x => x.id === id), j = i + d;
+  if(i < 0 || j < 0 || j >= xs.length) return;
+  const a = S.habits.indexOf(xs[i]), b = S.habits.indexOf(xs[j]);
+  [S.habits[a], S.habits[b]] = [S.habits[b], S.habits[a]];
+  save(); render(); hbOrdemRender();
+}
+function hbRestaurar(id){
+  const h = S.habits.find(x => x.id === id);
+  if(!h || !h.archived) return;
+  h.archived = false;
+  haptic('light'); save(); render();
+  toast(h.name + ' voltou para a lista.', 'Desfazer', () => { h.archived = true; save(); render(); sfx('undo'); });
+}
+
+/* ---------- adicionar: entende dias, hora ou momento, gatilho e emoji ---------- */
+/* "Academia seg qua sex 20h", "Ler 10 páginas antes de dormir", "Meditar ao acordar", "Terço aos domingos", "Correr de manhã dias úteis".
+   Dias: todo dia, dias úteis, fim de semana, de segunda a sexta, seg qua sex, segunda e quarta, toda terça, aos sábados.
+   Hora: 20h, 6h30, 22:15, às 7, 8 da noite, meio-dia; momento: de manhã, à tarde, à noite, toda manhã.
+   Gatilho: depois de…, após…, antes de…, ao acordar, quando chegar… (o momento vem dele quando dá: acordar é manhã, dormir é noite). */
+const HB_NOMES_DIA = {domingo:0, segunda:1, terca:2, quarta:3, quinta:4, sexta:5, sabado:6};
+const HB_ABREV_DIA = {dom:0, seg:1, ter:2, qua:3, qui:4, sex:5, sab:6};
+let HB_EMO_RE;
+function hbEmojiRe(){
+  if(HB_EMO_RE === undefined){ try{ HB_EMO_RE = new RegExp('\\p{Regional_Indicator}{2}|\\p{Extended_Pictographic}(?:\\uFE0F|\\u200D\\p{Extended_Pictographic}|[\\u{1F3FB}-\\u{1F3FF}])*', 'u'); }catch(e){ HB_EMO_RE = null; } }
+  return HB_EMO_RE;
+}
+function hbParse(txt){
+  const r = {name:'', emoji:'', dias:null, hora:'', periodo:'', cue:''};
+  let s = String(txt || '').replace(/\s+/g, ' ').trim();
+  const re = hbEmojiRe(), me = re && s.match(re);
+  if(me){ r.emoji = me[0]; s = s.replace(me[0], ' ').replace(/\s+/g, ' ').trim(); }
+  const limpa = w => semAcento(w).replace(/^[("']+|[.,;:!?)"']+$/g, '');
+  /* dia da semana: nome completo vale sempre; abreviação só em sequência ou depois de "às", "toda", "nos"… */
+  const dia = w => {
+    const b = String(w || '').replace(/-feiras?$/, '').replace(/s$/, '');
+    if(HB_NOMES_DIA[b] !== undefined) return [HB_NOMES_DIA[b], true];
+    if(HB_ABREV_DIA[w] !== undefined) return [HB_ABREV_DIA[w], false];
+    return null;
+  };
+  /* "seg/qua/sex" vira três dias; outras barras ficam no nome */
+  const toks = s.split(' ').filter(Boolean).flatMap(w => w.indexOf('/') > 0 && w.split('/').every(p => dia(limpa(p))) ? w.split('/') : [w]);
+  const nt = toks.map(limpa);
+  const usado = toks.map(() => false);
+  const marca = (i, k) => { for(let j = i; j < i + k; j++) usado[j] = true; };
+  const livre = i => i >= 0 && i < toks.length && !usado[i];
+  const PREF = /^(as|aos|nas|nos|na|no|toda|todo|todas|todos|em)$/;
+  const tudo = ' ' + nt.join(' ') + ' ', sono = /\s(dormir|sono)\s/.test(tudo), jejum = /\s(jejum|jejuar)\s/.test(tudo);
+  /* lê uma hora a partir de k: 20h, 6h30, 22:15 ou só o número; com "horas", "e meia", "e 15" e "da manhã/tarde/noite" */
+  const lerHora = k => {
+    const w = nt[k] || '', m = w.match(/^(\d{1,2})(?:h(\d{2})?|:(\d{2})h?)$/);
+    let hh, mm = 0, n = 1, unid = false, exato = false, suf = '';
+    if(m){ hh = +m[1]; unid = true; if(m[2] || m[3]){ mm = +(m[2] || m[3]); exato = true; } }
+    else if(/^\d{1,2}$/.test(w)) hh = +w;
+    else return null;
+    if(/^(horas?|hrs?)$/.test(nt[k + n] || '')){ n++; unid = true; }
+    if(nt[k + n] === 'e' && nt[k + n + 1] === 'meia'){ mm = 30; n += 2; exato = true; }
+    else if(nt[k + n] === 'e' && /^\d{1,2}$/.test(nt[k + n + 1] || '') && +nt[k + n + 1] < 60){ mm = +nt[k + n + 1]; n += 2; exato = true; if(/^(min|minutos?)$/.test(nt[k + n] || '')) n++; }
+    if(/^(da|de)$/.test(nt[k + n] || '') && /^(manha|tarde|noite)$/.test(nt[k + n + 1] || '')){ suf = nt[k + n + 1]; n += 2; if(suf !== 'manha' && hh < 12) hh += 12; }
+    if(hh > 23 || mm > 59) return null;
+    return {hm:pad(hh) + ':' + pad(mm), n, unid, exato, suf};
+  };
+  const limite = i => i > 0 && /^(depois|antes|ate|apos)$/.test(nt[i - 1]) || (i > 1 && /^(de|da|das|do|dos|as|a)$/.test(nt[i - 1]) && /^(depois|antes|ate|apos)$/.test(nt[i - 2]));
+  const dias = new Set();
+  let achouDia = false;
+  for(let i = 0; i < toks.length; i++){
+    if(usado[i]) continue;
+    const w = nt[i], w1 = nt[i + 1] || '', w2 = nt[i + 2] || '', w3 = nt[i + 3] || '';
+    /* todos os dias */
+    const uteis = w === 'dias' && w1 === 'uteis' ? 2 : /^(em|nos)$/.test(w) && w1 === 'dias' && w2 === 'uteis' ? 3 : w === 'todo' && w1 === 'dia' && w2 === 'util' ? 3 :
+      w === 'todos' && w1 === 'os' && w2 === 'dias' && w3 === 'uteis' ? 4 : 0;
+    if(uteis){ [1, 2, 3, 4, 5].forEach(d => dias.add(d)); achouDia = true; marca(i, uteis); continue; }
+    const todos = w === 'diariamente' ? 1 : (w === 'todo' || w === 'toda') && w1 === 'dia' ? 2 : w === 'todos' && w1 === 'os' && w2 === 'dias' ? 3 : 0;
+    if(todos){ HB_TODOS.forEach(d => dias.add(d)); achouDia = true; marca(i, todos); continue; }
+    if(/^(fim|fins|finais)$/.test(w) && w1 === 'de' && w2 === 'semana'){ dias.add(6); dias.add(0); achouDia = true; marca(i, 3); if(i > 0 && /^(no|nos|todo|todos)$/.test(nt[i - 1]) && livre(i - 1)) usado[i - 1] = true; continue; }
+    /* de segunda a sexta, seg a sex */
+    const dw = dia(w), dw2 = dia(w2);
+    if(((w === 'de' && dia(w1) && /^(a|ate)$/.test(w2) && dia(w3))) || (dw && /^(a|ate)$/.test(w1) && dw2)){
+      const a = w === 'de' ? dia(w1)[0] : dw[0], b = w === 'de' ? dia(w3)[0] : dw2[0];
+      for(let d = a, k = 0; k < 7; k++, d = (d + 1) % 7){ dias.add(d); if(d === b) break; }
+      achouDia = true; marca(i, w === 'de' ? 4 : 3); continue;
+    }
+    /* seg qua sex, segunda e quarta, toda terça, aos sábados */
+    if(dw){
+      const run = [i];
+      let j = i + 1;
+      while(j < toks.length){
+        if((nt[j] === 'e' || toks[j] === ',') && dia(nt[j + 1])){ run.push(j, j + 1); j += 2; continue; }
+        if(dia(nt[j])){ run.push(j); j++; continue; }
+        break;
+      }
+      const ds = run.map(k => dia(nt[k])).filter(Boolean);
+      const pref = i > 0 && livre(i - 1) && PREF.test(nt[i - 1]);
+      if(ds.length > 1 || ds.some(x => x[1]) || pref){
+        ds.forEach(x => dias.add(x[0])); achouDia = true;
+        run.forEach(k => { usado[k] = true; });
+        if(pref){ usado[i - 1] = true; if(i > 1 && livre(i - 2) && /^(todas|todos)$/.test(nt[i - 2])) usado[i - 2] = true; }
+        i = j - 1;
+        continue;
+      }
+    }
+    /* hora: 20h, 6h30, 22:15, às 7, às 18 horas, às 6 e meia, 8 da noite, das 8h às 10h.
+       "2h", "de 16h", "8h por dia", "dormir 8h" e "jejum 16h" são duração e ficam no nome. */
+    if(!r.hora && !limite(i)){
+      const x = lerHora(i);
+      if(x){
+        const ant = i > 0 && livre(i - 1) ? nt[i - 1] : '', ant2 = i > 1 && livre(i - 2) ? nt[i - 2] : '', depois = nt[i + x.n] || '';
+        const fim = /^(as|a|ate)$/.test(depois) && livre(i + x.n) ? lerHora(i + x.n + 1) : null;
+        const faixa = /^(das|de|entre)$/.test(ant) && fim && (x.unid || x.exato || fim.unid || fim.exato);
+        const prep = /^(as|a|pelas)$/.test(ant);
+        let ok;
+        if(faixa) ok = true;
+        else if(prep) ok = x.unid || x.exato || !!x.suf || /^às$/i.test(toks[i - 1]) || i + x.n >= toks.length;
+        else if(x.suf) ok = true;
+        else if(!x.unid && !x.exato) ok = false;
+        else{
+          const dur = /^(de|por|durante|minimo)$/.test(ant) || (ant === 'menos' && ant2 === 'pelo') || /^(por|de|diaria|diarias|diario|diarios|seguida|seguidas)$/.test(depois);
+          const hh = +x.hm.slice(0, 2);
+          ok = !dur && hh > 4 && !jejum && !(sono && hh <= 12);
+        }
+        if(ok){
+          r.hora = x.hm; marca(i, x.n);
+          if(faixa){ usado[i - 1] = true; marca(i + x.n, 1 + fim.n); }
+          else if(prep) usado[i - 1] = true;
+          continue;
+        }
+      }
+      if(w === 'meio-dia' || (w === 'meio' && w1 === 'dia') || w === 'meia-noite'){
+        r.hora = w === 'meia-noite' ? '00:00' : '12:00'; marca(i, w === 'meio' ? 2 : 1);
+        if(i > 0 && livre(i - 1) && /^(ao|a|as|pelo|pela)$/.test(nt[i - 1])) usado[i - 1] = true;
+        continue;
+      }
+    }
+    /* momento: de manhã, à tarde, à noite, toda manhã, todas as noites */
+    if(!r.periodo){
+      const per = x => ({manha:'manha', manhas:'manha', tarde:'tarde', tardes:'tarde', noite:'noite', noites:'noite'})[x] || '';
+      if(/^(de|pela|a|na|nesta)$/.test(w) && per(w1)){ r.periodo = per(w1); marca(i, 2); continue; }
+      if(/^(toda|todo)$/.test(w) && per(w1)){ r.periodo = per(w1); HB_TODOS.forEach(d => dias.add(d)); achouDia = true; marca(i, 2); continue; }
+      if(w === 'todas' && w1 === 'as' && per(w2)){ r.periodo = per(w2); HB_TODOS.forEach(d => dias.add(d)); achouDia = true; marca(i, 3); continue; }
+    }
+  }
+  /* gatilho: do "depois de…", "antes de…", "ao acordar"… até a próxima parte já entendida */
+  let ini = -1;
+  for(let i = 0; i < toks.length && ini < 0; i++){
+    if(usado[i]) continue;
+    const w = nt[i], w1 = nt[i + 1] || '', w2 = nt[i + 2] || '';
+    const naoNum = x => x && !/^\d/.test(x);
+    if((w === 'depois' || w === 'antes') && /^(de|do|da|dos|das|que)$/.test(w1) && naoNum(w2) && livre(i + 1) && livre(i + 2)) ini = i;
+    else if(w === 'apos' && naoNum(w1) && livre(i + 1)) ini = i;
+    else if(w === 'ao' && /r$/.test(w1) && livre(i + 1)) ini = i;
+    else if(w === 'quando' && naoNum(w1) && livre(i + 1)) ini = i;
+    if(ini > 0 && nt[ini - 1] === 'logo' && livre(ini - 1)) ini--;
+  }
+  const resto = [];
+  if(ini >= 0){
+    let fim = ini;
+    while(fim < toks.length && !usado[fim]){ fim++; if(/,$/.test(toks[fim - 1])) break; }
+    const cue = toks.slice(ini, fim).join(' ').replace(/[.,;:]+$/, '');
+    const nome = toks.filter((_, k) => !usado[k] && (k < ini || k >= fim));
+    if(nome.length){ r.cue = hbFrase(cue); for(let k = ini; k < fim; k++) usado[k] = true; }
+  }
+  toks.forEach((w, k) => { if(!usado[k]) resto.push(w); });
+  r.name = hbNome(resto.join(' ').replace(/\s+([,.;:])/g, '$1').replace(/^[,.;:\s]+|[,;:\s]+$/g, ''));
+  if(achouDia) r.dias = HB_ORDEM_DIAS.filter(d => dias.has(d));
+  if(r.hora) r.periodo = '';
+  else if(!r.periodo && r.cue){
+    const c = semAcento(r.cue);
+    r.periodo = /acordar|levantar|cafe da manha|manha/.test(c) ? 'manha' : /almoco|almocar|tarde/.test(c) ? 'tarde' : /jantar|janta|dormir|deitar|noite/.test(c) ? 'noite' : '';
+  }
+  return r;
+}
+function hbFrase(s){ s = String(s || '').replace(/\s+/g, ' ').trim(); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+/* emoji pelo nome: a primeira linha que bate vence (as mais específicas vêm antes) */
+const HB_EMO = [
+  ['🦷', 'fio dental|dentes|escovar os dentes'], ['📵', 'celular|sem tela|telas|redes sociais|instagram|tiktok'], ['🧠', 'anki|flashcard|flashcards|memorizar'],
+  ['📿', 'terco|rosario'], ['🙏', 'rezar|orar|oracao|gratidao|agradecer|missa|devocional'], ['🛏️', 'cama'], ['💧', 'agua|hidratar|hidratacao'],
+  ['📖', 'ler|leitura|livro|livros|pagina|paginas|capitulo|biblia'], ['📚', 'estudar|estudo|estudos|concurso|questoes|questao|revisar|revisao|aula|aulas|curso|materia|oab'],
+  ['✍️', 'escrever|escrita|diario|journal|redacao|anotar'], ['🧘', 'meditar|meditacao|mindfulness|yoga|respirar|respiracao'],
+  ['🏋️', 'academia|treino|treinar|musculacao|malhar|gym|crossfit|calistenia|flexao|flexoes|abdominal|abdominais|exercicio|exercicios'],
+  ['🏃', 'correr|corrida|cardio'], ['🚶', 'caminhar|caminhada|passos'], ['🚴', 'bike|bicicleta|pedalar|ciclismo'], ['🏊', 'nadar|natacao|piscina'],
+  ['🤸', 'alongar|alongamento|alongamentos|mobilidade'], ['🥗', 'salada|verdura|verduras|legume|legumes|dieta|saudavel'], ['🍎', 'fruta|frutas'],
+  ['💊', 'remedio|remedios|vitamina|vitaminas|suplemento|creatina|omega'], ['😴', 'dormir|sono|deitar'], ['⏰', 'acordar|despertar|levantar'],
+  ['🧹', 'limpar|limpeza|faxina|arrumar|organizar|louca'], ['🗣️', 'ingles|espanhol|frances|alemao|italiano|idioma|idiomas|duolingo'],
+  ['🎸', 'violao|guitarra'], ['🎹', 'piano|teclado'], ['🎵', 'musica|cantar|canto'], ['🧴', 'skincare|pele|protetor'], ['🍳', 'cozinhar|cozinha|marmita'],
+  ['🚭', 'fumar|cigarro'], ['💰', 'poupar|economizar|financas|gastos|orcamento|investir'], ['📞', 'ligar|telefonar'], ['🐕', 'cachorro|cachorra|cao|pet'],
+  ['🌱', 'plantas|regar|jardim|horta'], ['📝', 'planejar|planejamento|agenda|revisao semanal'], ['🎧', 'podcast|audiobook|audiolivro'], ['🚿', 'banho']
+];
+function hbEmojiDe(nome){
+  const t = ' ' + semAcento(nome || '').replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+  for(const [em, ks] of HB_EMO) if(ks.split('|').some(k => t.indexOf(' ' + k + ' ') >= 0)) return em;
+  return '';
+}
+/* junta o texto com os botões da folha; dias null = não disse (todo dia num hábito novo) */
+function hbMontar(raw){
+  const q = hbParse(raw);
+  if(!q.name) return null;
+  let hora = q.hora, periodo = q.periodo, quando = !!(q.hora || q.periodo);
+  if(HB_QA.quando !== null){ const v = HB_QA.quando; quando = true; hora = /^\d{2}:\d{2}$/.test(v) ? v : ''; periodo = hora ? '' : (HB_PER[v] ? v : ''); }
+  return {name:q.name, emojiTxt:q.emoji, emoji:q.emoji || hbEmojiDe(q.name), dias:HB_QA.dias || q.dias || null, hora, periodo, quando, cue:q.cue};
+}
+function hbQuandoTxt(hora, periodo){ return hora || (HB_PER[periodo] ? HB_PER[periodo].nome : 'Qualquer hora'); }
+function hbPreview(){
+  const el = document.getElementById('hbPrev'), inp = document.getElementById('hbInp');
+  if(!el || !inp) return;
+  const v = inp.value.trim();
+  if(!v){ el.innerHTML = document.activeElement !== inp ? '' : '<span class="qa-dica">Pode escrever: Academia seg qua sex 20h, Ler antes de dormir, Meditar ao acordar</span>'; return; }
+  const m = hbMontar(v);
+  if(!m){ el.innerHTML = ''; return; }
+  let h = '<span class="qa-tok">' + (m.emoji ? '<span class="em">' + esc(m.emoji) + '</span>' : '') + esc(m.name) + '</span>';
+  h += '<span class="qa-tok">' + licn('repeat') + esc(hbFreqTxt(m.dias || HB_TODOS)) + '</span>';
+  if(m.hora || m.periodo) h += '<span class="qa-tok">' + licn(m.hora ? 'clock' : HB_PER[m.periodo].ic) + esc(hbQuandoTxt(m.hora, m.periodo)) + '</span>';
+  if(m.cue) h += '<span class="qa-tok">' + licn('link') + esc(m.cue) + '</span>';
+  el.innerHTML = h;
+}
+function hbAddSync(){
+  const a = $('#hbAdd'), f = document.querySelector('#view-habitos .tk-add-fundo');
+  if(a) a.classList.toggle('on', HB_ADD);
+  if(f) f.classList.toggle('on', HB_ADD);
+}
+function hbQaSync(){
+  const db = $('#hbDiasBtn'), qb = $('#hbQuandoBtn');
+  if(db){
+    db.classList.toggle('on', !!HB_QA.dias);
+    db.querySelector('.qd-lab').textContent = HB_QA.dias ? hbFreqTxt(HB_QA.dias).replace(/^Só /, '') : '';
+    db.title = HB_QA.dias ? 'Dias: ' + hbFreqTxt(HB_QA.dias) : 'Dias';
+  }
+  if(qb){
+    const v = HB_QA.quando;
+    qb.classList.toggle('on', v !== null);
+    qb.innerHTML = licn(v && HB_PER[v] ? HB_PER[v].ic : v === 'qualquer' ? 'infinity' : 'clock') + '<span class="qd-lab">' + (v === null ? '' : esc(hbQuandoTxt(/^\d/.test(v) ? v : '', v))) + '</span>';
+    qb.title = v === null ? 'Quando' : 'Quando: ' + hbQuandoTxt(/^\d/.test(v) ? v : '', v);
+  }
+}
+function hbQaAbrir(){
+  if(HB_V === 'arq'){ HB_V = 'hoje'; renderHabitos(); }
+  HB_ADD = true; hbAddSync();
+  const i = $('#hbInp'); if(i) i.focus();
+  hbPreview();
+}
+function hbQaFechar(){ HB_ADD = false; hbAddSync(); const i = $('#hbInp'); if(i && document.activeElement === i) i.blur(); }
+function hbQuickAdd(viaBotao){
+  const inp = $('#hbInp'), raw = inp.value.trim();
+  if(!raw){
+    /* com o campo vazio, a seta abre o detalhe de um hábito novo */
+    if(viaBotao){
+      const p = {};
+      if(HB_QA.dias) p.freq = hbFreq(HB_QA.dias);
+      if(HB_QA.quando !== null){ p.hora = /^\d/.test(HB_QA.quando) ? HB_QA.quando : ''; p.periodo = p.hora ? '' : (HB_PER[HB_QA.quando] ? HB_QA.quando : ''); }
+      HB_QA = {dias:null, quando:null}; hbQaSync();
+      hbQaFechar(); hbAbrir(null, p);
+    }else inp.focus();
+    return;
+  }
+  const m = hbMontar(raw);
+  if(!m){ inp.focus(); return; }
+  const igual = x => semAcento(x.name) === semAcento(m.name);
+  const ativo = hbAtivos().find(igual), arquivado = S.habits.find(x => x.archived && igual(x));
+  if(ativo){ toast(ativo.name + ' já está na lista.', 'Abrir', () => hbAbrir(ativo.id)); return; }
+  inp.value = ''; HB_QA = {dias:null, quando:null};
+  HB_DIA = null; if(HB_V === 'arq') HB_V = 'hoje';
+  if(arquivado){
+    /* volta com o histórico; o que foi dito agora (dias, quando, gatilho, emoji) passa a valer */
+    arquivado.archived = false;
+    if(m.dias) arquivado.freq = hbFreq(m.dias);
+    if(m.quando){ arquivado.hora = m.hora; arquivado.periodo = m.periodo; }
+    if(m.cue) arquivado.cue = m.cue;
+    if(m.emojiTxt) arquivado.emoji = m.emojiTxt;
+    window.__novo = arquivado.id; sfx('add'); haptic('light');
+    save(); render(); inp.focus();
+    toast(arquivado.name + ' voltou do arquivo, com o histórico.');
+    return;
+  }
+  const h = {id:uid(), name:m.name, emoji:m.emoji, color:hbCorLivre(), freq:hbFreq(m.dias || HB_TODOS), hora:m.hora, periodo:m.periodo, cue:m.cue || '', twoMin:'', notes:'',
+    archived:false, createdAt:new Date().toISOString()};
+  S.habits.push(h);
+  window.__novo = h.id; sfx('add'); haptic('light');
+  save(); render(); inp.focus();
+  const dias = hbFreqTxt(hbDiasDe(h)).replace(/^Só /, '');
+  toast(h.name + (schedOn(h, today()) ? ' começa hoje.' : ' entra na lista nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.'));
+}
+function hbDiasMenuHTML(dias, acao){
+  const set = new Set(dias || []);
+  const pre = (ic, nome, ds) => { const on = !!dias && ds.length === set.size && ds.every(x => set.has(x)); return '<button class="tk-mi' + (on ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-dias="' + ds.join(',') + '">' + licn(ic) + '<span class="l">' + nome + '</span>' + (on ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>'; };
+  return pre('repeat', 'Todo dia', HB_TODOS) + pre('briefcase', 'Dias úteis', [1, 2, 3, 4, 5]) + pre('coffee', 'Fim de semana', [6, 0]) +
+    '<div class="tk-msep"></div><div class="tk-mh">Ou escolha os dias</div><div class="hb-diaspop">' + HB_ORDEM_DIAS.map(n => '<button class="hbd-dia' + (set.has(n) ? ' on' : '') + '" data-action="' + acao + '-um" data-d="' + n + '" aria-pressed="' + set.has(n) + '" title="' + DOW_LONGO[n] + '">' + DOW[n] + '</button>').join('') + '</div>' +
+    (dias ? '<div class="tk-msep"></div><button class="tk-mi" role="menuitem" data-action="' + acao + '" data-dias="">' + licn('x') + '<span class="l">Pelo texto</span></button>' : '');
+}
+function hbQuandoMenuHTML(hora, periodo, acao, livre){
+  const atual = livre ? '' : hora ? '' : (HB_PER[periodo] ? periodo : 'qualquer');
+  const it = (v, ic, nome, sub) => '<button class="tk-mi' + (atual === v ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-v="' + v + '">' + licn(ic) + '<span class="l">' + nome + '</span>' +
+    (sub ? '<small>' + sub + '</small>' : '') + (atual === v ? '<span class="ok">' + licn('check') + '</span>' : '') + '</button>';
+  return it('qualquer', 'infinity', 'Qualquer hora') + it('manha', 'sunrise', 'Manhã', 'até 12h') + it('tarde', 'sun', 'Tarde', '12h às 18h') + it('noite', 'moon', 'Noite', 'depois das 18h') +
+    '<div class="tk-msep"></div><div class="tk-mh">Horário, com aviso no app</div>' +
+    '<div class="lm-hesc">' + licn('clock') + '<input type="time" class="lm-horainp" data-acao="' + acao + '" value="' + esc(hora || '') + '" aria-label="Horário">' +
+      '<button class="lm-hok" data-action="lm-hora-ok" data-acao="' + acao + '" title="Usar este horário" aria-label="Usar este horário">' + licn('check') + '</button></div>';
+}
+/* escolha do menu Quando (ou do campo de hora): na folha de adicionar ou no detalhe */
+function hbAplicarQuando(acao, v){
+  popFechar();
+  const hora = /^\d{2}:\d{2}$/.test(v || '') ? v : '', periodo = hora ? '' : (HB_PER[v] ? v : '');
+  if(acao === 'hb-qa-quando-set'){ HB_QA.quando = hora || periodo || 'qualquer'; hbQaSync(); hbPreview(); const i = $('#hbInp'); if(i) i.focus(); return; }
+  if(!M || M.type !== 'habito') return;
+  hbSyncDraft();
+  M.draft.hora = hora; M.draft.periodo = periodo;
+  hbRenderDet();
+}
+
+/* ---------- detalhe ---------- */
+/* Folha com o momento do dia no topo, emoji e cor, nome, os dias, gatilho, versão de 2 minutos e nota; embaixo os números e o calendário do mês.
+   As marcações valem na hora; o resto salva sozinho ao fechar. Hábito novo sem nome é descartado. */
+function hbAbrir(id, preset){
+  const h = id ? S.habits.find(x => x.id === id) : null;
+  if(id && !h) return;
+  popFechar();
+  const base = {name:'', emoji:'', color:hbCorLivre(), freq:{type:'daily', days:[]}, hora:'', periodo:'', cue:'', twoMin:'', notes:'', archived:false};
+  M = {type:'habito', id:id || null, aberto:false, abrir:'', foco:'', mes:today().slice(0, 7), draft:h ? JSON.parse(JSON.stringify(h)) : Object.assign(base, preset || {})};
+  hbRenderDet();
+}
+function hbSyncDraft(){
+  if(!M || M.type !== 'habito') return;
+  const d = M.draft, g = id => document.getElementById(id);
+  if(g('f_hbnome')) d.name = g('f_hbnome').value;
+  if(g('f_hbcue')) d.cue = g('f_hbcue').value;
+  if(g('f_hb2m')) d.twoMin = g('f_hb2m').value;
+  if(g('f_hbnota')) d.notes = g('f_hbnota').value;
+}
+function hbAvisoTxt(hora){
+  if(!NATIVE) return 'No app Android, avisa às ' + hora + ' nos dias dele, se ainda faltar.';
+  const c = notifCfg();
+  return c.on && c.habAviso ? 'Avisa às ' + hora + ' nos dias dele, se ainda faltar.' : 'Os avisos no horário estão desligados em Dados > Notificações.';
+}
+function hbNum(v, lab){ return '<div class="hbd-num"><b>' + v + '</b><span>' + lab + '</span></div>'; }
+function hbCalHTML(h, mes){
+  const t = today(), [y, m] = mes.split('-').map(Number), ini = hbInicio(h);
+  const off = (new Date(y, m - 1, 1, 12).getDay() + 6) % 7, nd = new Date(y, m, 0).getDate();
+  let ok = 0, n = 0, g = '';
+  for(let i = 0; i < off; i++) g += '<span></span>';
+  for(let dd = 1; dd <= nd; dd++){
+    const ds = y + '-' + pad(m) + '-' + pad(dd), fut = ds > t, feito = habDone(h, ds), dia = schedOn(h, ds) && ds >= ini;
+    if(!fut && (feito || dia) && (ds < t || feito)){ n++; if(feito) ok++; }
+    const cls = 'hbd-c' + (feito ? ' f' : '') + (fut ? ' fut' : '') + (!feito && !fut && dia && ds < t ? ' falta' : '') + (ds === t ? ' hoje' : '') + (!dia && !feito ? ' livre' : '');
+    g += '<button class="' + cls + '" data-action="hbd-cal" data-ds="' + ds + '"' + (fut ? ' disabled' : '') + ' aria-pressed="' + feito + '" aria-label="' +
+      dd + ' de ' + HB_MESES[m - 1] + (feito ? ', feito' : dia && !fut ? ', não feito' : '') + '">' + dd + '</button>';
+  }
+  return '<div class="hbd-cal">' +
+    '<div class="hbd-mes"><button class="icon-btn sm" data-action="hbd-mes" data-d="-1" aria-label="Mês anterior" title="Mês anterior"' + (mes > ini.slice(0, 7) ? '' : ' disabled') + '>' + licn('chevron-left') + '</button>' +
+      '<span>' + cap1(HB_MESES[m - 1]) + (y !== +t.slice(0, 4) ? ' ' + y : '') + '</span>' +
+      '<button class="icon-btn sm" data-action="hbd-mes" data-d="1" aria-label="Próximo mês" title="Próximo mês"' + (mes < t.slice(0, 7) ? '' : ' disabled') + '>' + licn('chevron-right') + '</button></div>' +
+    '<div class="hbd-grade">' + HB_ORDEM_DIAS.map(d => '<span class="hbd-dow">' + DOW[d].charAt(0).toUpperCase() + '</span>').join('') + g + '</div>' +
+    (n ? '<p class="hbd-mesres">' + ok + ' de ' + n + ' no mês. Toque num dia para marcar ou desmarcar.</p>' : '<p class="hbd-mesres">Toque num dia para marcar ou desmarcar.</p>') +
+  '</div>';
+}
+function hbRenderDet(){
+  const d = M.draft, primeira = !M.aberto, t = today();
+  M.aberto = true;
+  const corpo = document.getElementById('mBody'), rolou = !primeira && corpo ? corpo.scrollTop : 0;
+  const orig = M.id ? S.habits.find(x => x.id === M.id) : null;
+  /* números e calendário já seguem os dias escolhidos agora */
+  const viva = orig ? Object.assign({}, orig, {freq:hbFreq(hbDiasDe(d))}) : null;
+  if(d.hora && !hbHoraOk(d.hora)) d.hora = '';
+  const dias = hbDiasDe(d), per = d.hora ? hbPeriodoDeHora(d.hora) : (HB_PER[d.periodo] ? d.periodo : '');
+  let body = '<div class="tkd-top">' +
+      '<button class="tkd-proj" data-action="hbd-quando" aria-haspopup="menu" title="Quando">' + licn(per ? HB_PER[per].ic : 'infinity') + '<span>' +
+        esc(d.hora ? HB_PER[per].nome + ', ' + d.hora : hbQuandoTxt('', per)) + '</span>' + licn('chevrons-up-down') + '</button>' +
+      '<span class="grow"></span>' +
+      (M.id ? '<button class="icon-btn" data-action="hbd-mais" aria-haspopup="menu" title="Mais ações" aria-label="Mais ações">' + licn('more-vertical') + '</button>' : '') +
+    '</div>' +
+    '<div class="hbd-cab" data-hbcor style="' + hbCorVars(d.color) + '">' +
+      '<button class="hbd-badge" data-action="hbd-ap" aria-haspopup="menu" title="Emoji e cor" aria-label="Emoji e cor">' + (d.emoji ? esc(d.emoji) : '<span class="ini">' + esc(hbInicial(d.name)) + '</span>') + '</button>' +
+      '<textarea class="inp tk-titulo" id="f_hbnome" rows="1" placeholder="Nome do hábito" enterkeyhint="done">' + esc(d.name) + '</textarea>' +
+    '</div>';
+  if(orig && !orig.archived){
+    const feito = habDone(viva, t), dia = schedOn(viva, t);
+    body += '<div class="tkd-data hbd-hoje" data-hbcor style="' + hbCorVars(d.color) + '">' +
+      '<button class="ck' + (feito ? ' on' : '') + '" data-action="hbd-ck" aria-label="' + (feito ? 'Desmarcar hoje' : 'Marcar hoje') + '"></button>' +
+      '<span class="hbd-hoje-t">' + (feito ? 'Feito hoje' : dia ? 'Para hoje' : 'Hoje não é dia dele') + '</span>' +
+      (!feito && dia && hbFalhouUma(viva, t) ? '<span class="hb-nf">' + licn('shield') + 'Não falhe duas vezes</span>' : '') +
+    '</div>';
+  }
+  if(orig && orig.archived) body += '<p class="lmd-aviso">' + licn('archive') + 'Arquivado: não aparece na lista nem nos avisos.</p>';
+  body += '<div class="hbd-dias" role="group" aria-label="Dias do hábito" data-hbcor style="' + hbCorVars(d.color) + '">' + HB_ORDEM_DIAS.map(n =>
+    '<button class="hbd-dia' + (dias.includes(n) ? ' on' : '') + '" data-action="hbd-dia" data-d="' + n + '" aria-pressed="' + dias.includes(n) + '" title="' + DOW_LONGO[n] + '">' + DOW[n] + '</button>').join('') + '</div>';
+  const campo = (q, id, ic, ph, v) => '<label class="hbd-campo ' + q + '" title="' + ph + '">' + licn(ic) + '<textarea class="inp tkd-notas" id="' + id + '" rows="1" placeholder="' + ph + '">' + esc(v || '') + '</textarea></label>';
+  if((d.cue || '').trim() || M.abrir === 'cue') body += campo('cue', 'f_hbcue', 'link', 'Gatilho: depois de…', d.cue);
+  if((d.twoMin || '').trim() || M.abrir === '2m') body += campo('m2', 'f_hb2m', 'zap', 'Versão de 2 minutos', d.twoMin);
+  if((d.notes || '').trim() || M.abrir === 'nota') body += campo('nota', 'f_hbnota', 'pin', 'Nota para a próxima vez', d.notes);
+  if(d.hora) body += '<p class="lmd-aviso">' + licn('bell') + esc(hbAvisoTxt(d.hora)) + '</p>';
+  if(viva){
+    const sk = streak(viva).count, tx = hbTaxa(viva, 30);
+    body += '<div class="hbd-nums">' + hbNum(sk, hbDiasDe(viva).length >= 7 ? (sk === 1 ? 'dia seguido' : 'dias seguidos') : (sk === 1 ? 'vez seguida' : 'vezes seguidas')) +
+      hbNum(hbRecorde(viva), 'recorde') + hbNum(tx === null ? '–' : tx + '%', 'em 30 dias') + hbNum(hbTotal(viva), 'no total') + '</div>' +
+      '<div data-hbcor style="' + hbCorVars(d.color) + '">' + hbCalHTML(viva, M.mes) + '</div>';
+  }
+  const ferr = (q, ic, tem, rot) => '<button class="tkd-tool' + (tem ? ' tem' : '') + (M.abrir === q ? ' ab' : '') + '" data-action="hbd-abrir" data-q="' + q + '" title="' + rot + '" aria-label="' + rot + '">' + licn(ic) + '</button>';
+  const foot = ferr('cue', 'link', !!(d.cue || '').trim(), 'Gatilho (depois de…)') + ferr('2m', 'zap', !!(d.twoMin || '').trim(), 'Versão de 2 minutos') +
+    ferr('nota', 'pin', !!(d.notes || '').trim(), 'Nota para a próxima vez') +
+    '<span class="grow"></span><button class="tkd-ok" data-action="fechar-modal" title="Pronto" aria-label="Pronto">' + licn('check') + '</button>';
+  openModal('', body, foot, {semFoco:!primeira || !!M.id});
+  $('#mback').classList.add('tk-det');
+  ['f_hbnome', 'f_hbcue', 'f_hb2m', 'f_hbnota'].forEach(i => tkAltura(document.getElementById(i)));
+  if(rolou) document.getElementById('mBody').scrollTop = rolou;
+  if(M.foco){ const f = document.getElementById(M.foco); M.foco = ''; if(f){ f.focus(); try{ f.setSelectionRange(f.value.length, f.value.length); }catch(e){} } }
+}
+function hbMaisHTML(){
+  const arq = !!M.draft.archived;
+  return '<button class="tk-mi" role="menuitem" data-action="hbd-arquivar">' + licn(arq ? 'rotate-ccw' : 'archive') + '<span class="l">' + (arq ? 'Voltar para a lista' : 'Arquivar') + '</span></button>' +
+    '<button class="tk-mi del" role="menuitem" data-action="excluir-habito">' + licn('trash-2') + '<span class="l">Excluir com o histórico</span></button>';
+}
+const HB_EMOJIS = ['📖', '📚', '🧠', '✍️', '🧘', '🏋️', '🏃', '🚶', '🚴', '🏊', '🤸', '💧', '🥗', '🍎', '💊', '😴', '⏰', '🛏️', '🧹', '🙏', '📿', '🗣️', '🎸', '🎹',
+  '📵', '🦷', '💰', '📞', '🐕', '🌱', '📝', '🎧', '🚿', '☀️', '🌙', '✅'];
+function hbApHTML(){
+  const d = M.draft, outro = d.emoji && !HB_EMOJIS.includes(d.emoji);
+  return '<div class="hb-ap"><div class="hb-emos">' + HB_EMOJIS.map(e => '<button class="hb-emo' + (d.emoji === e ? ' on' : '') + '" data-action="hbd-emo" data-e="' + e + '" aria-label="' + e + '" aria-pressed="' + (d.emoji === e) + '">' + e + '</button>').join('') + '</div>' +
+    '<div><button class="tk-mi' + (outro ? ' on' : '') + '" role="menuitem" data-action="hbd-emo-outro">' + licn('pencil') + '<span class="l">Outro emoji…</span>' + (outro ? '<span class="em">' + esc(d.emoji) + '</span>' : '') + '</button>' +
+      (d.emoji ? '<button class="tk-mi" role="menuitem" data-action="hbd-emo" data-e="">' + licn('x') + '<span class="l">Sem emoji</span></button>' : '') + '</div>' +
+    '<div class="tk-msep"></div><div class="hb-cores">' + Object.keys(CORES).map(c => '<button class="hb-cor' + (d.color === c ? ' on' : '') + '" data-action="hbd-cor" data-c="' + c + '" style="background:' + CORES[c] + '" aria-label="Cor ' + c + '" aria-pressed="' + (d.color === c) + '"></button>').join('') + '</div></div>';
+}
+/* emoji e cor mudam no lugar: o menu continua aberto para escolher os dois */
+function hbApSync(){
+  const d = M.draft, b = document.querySelector('#mBody .hbd-badge');
+  if(b) b.innerHTML = d.emoji ? esc(d.emoji) : '<span class="ini">' + esc(hbInicial(d.name)) + '</span>';
+  document.querySelectorAll('#mBody [data-hbcor]').forEach(el => el.setAttribute('style', hbCorVars(d.color)));
+  if(POP && POP.el.classList.contains('hb-appop')){ POP.el.innerHTML = hbApHTML(); popPosicionar(); }
+}
+/* deixa o hábito no formato salvo, para comparar e gravar */
+function hbLimpo(o){
+  const hora = hbHoraOk(o.hora) ? o.hora : '';
+  return {name:hbNome(o.name), emoji:umEmoji(o.emoji), color:CORES[o.color] ? o.color : 'azul', freq:hbFreq(hbDiasDe(o)), hora, periodo:hora ? '' : (HB_PER[o.periodo] ? o.periodo : ''),
+    cue:hbFrase(o.cue), twoMin:hbFrase(o.twoMin), notes:String(o.notes || '').replace(/\r\n?/g, '\n').trim()};
+}
+/* grava se algo mudou; hábito novo sem nome é descartado */
+function hbAutoSalvar(){
+  if(!M || M.type !== 'habito' || M.salvo) return false;
+  hbSyncDraft();
+  M.salvo = true;
+  const limpo = hbLimpo(M.draft);
+  if(M.id){
+    const h = S.habits.find(x => x.id === M.id);
+    if(!h) return false;
+    if(!limpo.name) limpo.name = hbNome(h.name) || h.name;
+    if(JSON.stringify(limpo) === JSON.stringify(hbLimpo(h))) return false;
+    Object.assign(h, limpo);
+  }else{
+    if(!limpo.name){ if(limpo.cue || limpo.twoMin || limpo.notes) toast('Sem nome, o hábito não foi criado.'); return false; }
+    const h = Object.assign({id:uid(), archived:false, createdAt:new Date().toISOString()}, limpo);
+    S.habits.push(h);
+    window.__novo = h.id; sfx('add');
+    if(HB_V === 'arq') HB_V = 'hoje';
+  }
+  save();
+  return true;
+}
+function hbSalvar(){
+  hbSyncDraft();
+  if(!hbNome(M.draft.name)){ toast('Dê um nome ao hábito.'); const f = $('#f_hbnome'); if(f) f.focus(); return; }
+  closeModal();
+}
+function hbArquivar(){
+  popFechar();
+  hbAutoSalvar();
+  const h = S.habits.find(x => x.id === M.id);
+  if(!h) return;
+  h.archived = !h.archived;
+  closeModal(); save(); render();
+  const arq = h.archived;
+  toast(arq ? h.name + ' foi para os arquivados.' : h.name + ' voltou para a lista.', 'Desfazer', () => { h.archived = !arq; save(); render(); sfx('undo'); });
+}
+function hbExcluir(){
+  popFechar();
+  if(!M || M.type !== 'habito' || !M.id) return;
+  const id = M.id;
+  M.salvo = true;
+  S.habits = S.habits.filter(x => x.id !== id);
+  delete S.habitLogs[id];
+  closeModal(); save(); render();
+}
+/* botão Feito do aviso no Android: marca o dia daquele aviso */
+function hbAcaoNotif(id, ds){
+  HB_V = 'hoje'; HB_DIA = null;
+  if(VIEW !== 'habitos') setView('habitos'); else render();
   const h = S.habits.find(x => x.id === id);
   if(!h) return;
-  M = { type:'habit-detail', id };
-  const sk = streak(h);
-  const logs = S.habitLogs[id] || {};
-  const t = today();
-  const startD = fromD(t);
-  startD.setDate(startD.getDate() - startD.getDay() - 35);
-  let grid = '<div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin:12px 0">';
-  grid += ['D','S','T','Q','Q','S','S'].map(d2 =>
-    '<div style="text-align:center; font-size:9px; color:var(--muted); font-family:var(--mono)">' + d2 + '</div>').join('');
-  for(let i = 0; i < 42; i++){
-    const d2 = new Date(startD); d2.setDate(d2.getDate() + i);
-    const ds = dstr(d2);
-    const sched = schedOn(h, ds);
-    const done = logs[ds];
-    const isFuture = ds > t;
-    const isToday2 = ds === t;
-    let bg = 'transparent', border = '1px solid transparent', clr = 'var(--muted)', cursor = 'default', opacity = '0.25';
-    if(isFuture){ opacity = '0.12'; }
-    else if(!sched){ opacity = '0.18'; }
-    else if(done){ bg = CORES[h.color] || 'var(--accent)'; clr = '#fff'; opacity = '1'; cursor = 'pointer'; }
-    else{ bg = 'var(--surface2)'; opacity = '1'; cursor = 'pointer'; border = '1px solid var(--line)'; clr = 'var(--muted)'; }
-    if(isToday2) border = '2px solid var(--accent)';
-    grid += '<div data-action="hab-hist" data-id="' + id + '" data-ds="' + ds + '" style="' +
-      'width:100%; aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center;' +
-      'font-size:10px; font-family:var(--mono); cursor:' + cursor + '; opacity:' + opacity + ';' +
-      'background:' + bg + '; color:' + clr + '; border:' + border + '">' +
-      d2.getDate() + '</div>';
-  }
-  grid += '</div>';
-  const body =
-    '<div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">' +
-      '<span style="font-size:28px">' + esc(h.emoji || '\u2726') + '</span>' +
-      '<div><div style="font-weight:700; font-size:16px">' + esc(h.name) + '</div>' +
-      '<div style="font-size:12px; color:var(--muted)">' + freqLabel(h) + ' \u00b7 \ud83d\udd25 ' + sk.count + (sk.forgiven ? ' \ud83d\udee1' + sk.forgiven : '') + '</div></div></div>' +
-    (h.notes ? '<div class="card" style="padding:10px 14px; font-size:13px; color:var(--warn)">' + licn('pin') + ' ' + esc(h.notes) + '</div>' : '') +
-    '<div style="font-size:11px; color:var(--muted); margin-bottom:4px">\u00daltimas 6 semanas (toque para editar)</div>' +
-    grid +
-    '<div style="display:flex; gap:8px; align-items:center; margin-top:8px; font-size:11px; color:var(--muted)">' +
-      '<span style="width:14px; height:14px; border-radius:4px; background:' + (CORES[h.color] || 'var(--accent)') + '"></span> feito ' +
-      '<span style="width:14px; height:14px; border-radius:4px; background:var(--surface2); border:1px solid var(--line)"></span> n\u00e3o feito ' +
-    '</div>';
-  const foot = '<button class="btn" data-action="hab-edit-from-detail">' + licn('pencil') + ' Editar</button><div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Fechar</button>';
-  openModal(h.name, body, foot);
-}
-function renderHabitModal(){
-  const d = M.draft;
-  const wk = d.freq && d.freq.type === 'week';
-  const body =
-    '<div class="frow">' +
-      '<div class="field" style="flex:3"><label>Nome</label><input class="inp" id="f_hname" value="' + esc(d.name) + '" placeholder="Ex.: Academia, Leitura, Terço"></div>' +
-      '<div class="field" style="flex:1; min-width:80px"><label>Emoji</label><input class="inp" id="f_hemoji" value="' + esc(d.emoji || '') + '" placeholder="✦"></div>' +
-    '</div>' +
-    '<div class="field"><label>Cor</label><div class="sw">' +
-      Object.keys(CORES).map(c => '<button title="' + c + '" style="background:' + CORES[c] + '" data-action="sw" data-c="' + c + '" class="' + (d.color === c ? 'on' : '') + '"></button>').join('') +
-    '</div></div>' +
-    '<div class="field"><label>Frequência</label><div class="seg">' +
-      '<button data-action="seg-freq" data-v="daily" class="' + (!wk ? 'on' : '') + '">Todos os dias</button>' +
-      '<button data-action="seg-freq" data-v="week" class="' + (wk ? 'on' : '') + '">Dias da semana</button>' +
-    '</div></div>' +
-    (wk ? '<div class="field"><label>Quais dias</label><div class="dows">' +
-      [1,2,3,4,5,6,0].map(i => '<button class="dow' + ((d.freq.days || []).includes(i) ? ' on' : '') + '" data-action="dow" data-d="' + i + '">' + DOW[i] + '</button>').join('') +
-    '</div></div>' : '') +
-    '<div class="field"><label>Notas (lembrete para a pr\u00f3xima vez)</label><textarea class="inp" id="f_hnotes" rows="2" placeholder="Ex.: Pr\u00f3ximo leg day: focar no hip thrust">' + esc(d.notes || '') + '</textarea></div>';
-  const foot =
-    (M.id ? '<button class="btn btn-danger" data-action="excluir-habito">Excluir</button>' +
-            '<button class="btn" data-action="arquivar-habito">' + (M.draft.archived ? 'Restaurar' : 'Arquivar') + '</button>' : '') +
-    '<div class="grow"></div>' +
-    '<button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-habito">Salvar</button>';
-  openModal(M.id ? 'Editar hábito' : 'Novo hábito', body, foot);
-}
-function syncHabitDraft(){
-  if(!M || M.type !== 'habit') return;
-  if($('#f_hname')) M.draft.name = $('#f_hname').value;
-  if($('#f_hemoji')) M.draft.emoji = $('#f_hemoji').value;
-  if($('#f_hnotes')) M.draft.notes = $('#f_hnotes').value;
-}
-function salvarHabito(){
-  syncHabitDraft();
-  const d = M.draft;
-  d.name = d.name.trim();
-  d.emoji = (d.emoji || '').trim();
-  if(!d.name){ toast('Dê um nome para o hábito.'); return; }
-  if(d.freq.type === 'week' && !(d.freq.days || []).length){ toast('Escolha ao menos um dia da semana.'); return; }
-  if(M.id){
-    Object.assign(S.habits.find(x => x.id === M.id), d);
-  }else{
-    S.habits.push(Object.assign({id:uid(), archived:false, createdAt:new Date().toISOString()}, d));
-  }
-  save(); closeModal(); render(); toast('Hábito salvo.');
+  ds = ds && ds <= today() ? ds : today();
+  if(habDone(h, ds)){ toast(h.name + ' já estava marcado.'); return; }
+  const desfazer = () => { const l = S.habitLogs[id]; if(l) delete l[ds]; save(); render(); sfx('undo'); };
+  if(!hbMarcar(id, ds, false, desfazer)) toast('Feito: ' + h.name + '.', 'Desfazer', desfazer);
 }
 
 /* ===================== Modal: projetos ===================== */
@@ -5878,10 +6654,15 @@ function doPaste(){
     if(!x || !x.name) return;
     if(S.habits.find(h => h.name.toLowerCase() === String(x.name).toLowerCase())){ pulados++; return; }
     const days = normDays(x.days);
+    const hm = String(x.hora || x.time || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+    const hora = hm && +hm[1] < 24 && +hm[2] < 60 ? pad(+hm[1]) + ':' + hm[2] : '';
+    const per = semAcento(x.periodo || '');
     S.habits.push({
-      id:uid(), name:String(x.name).trim(), emoji:String(x.emoji || ''),
+      id:uid(), name:String(x.name).trim(), emoji:umEmoji(x.emoji),
       color: CORES[x.color] ? x.color : 'azul',
       freq: days ? {type:'week', days} : {type:'daily', days:[]},
+      hora, periodo:!hora && HB_PER[per] ? per : '',
+      cue:hbFrase(x.cue), twoMin:hbFrase(x.twoMin), notes:String(x.notes || '').trim(),
       archived:false, createdAt:new Date().toISOString()
     });
     nh++;
@@ -6158,13 +6939,6 @@ function toggleTask(id){
   t.completedAt = t.status === 'done' ? new Date().toISOString() : null;
   save(); render();
 }
-function toggleHabitDay(hid, ds, sel){
-  if(ds > today()) return;
-  if(!S.habitLogs[hid]) S.habitLogs[hid] = {};
-  if(S.habitLogs[hid][ds]){ delete S.habitLogs[hid][ds]; }
-  else{ S.habitLogs[hid][ds] = true; window.__stamp = {sel}; }
-  save(); render();
-}
 let QA_CAIXA = false;
 let QA_PRIO = null;   /* prioridade escolhida no botão (null = a do texto) */
 let QA_PROJ = '';     /* projeto escolhido no botão (vazio = o do texto ou o da lista) */
@@ -6392,7 +7166,7 @@ function tkMover(ids, ds){
     if(e.pointerType !== 'touch') return;
     if(sw){ if(sw.ativo) volta(sw); sw = null; }
     const row = e.target.closest ? e.target.closest('.trow.tk') : null;
-    if(!row || row.classList.contains('done') || row.classList.contains('aniv') || row.classList.contains('desp') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
+    if(!row || row.classList.contains('done') || row.classList.contains('aniv') || row.classList.contains('desp') || row.classList.contains('arq') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
     sw = {row, id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, ativo:false, passou:0, bg:null};
   }, {passive:true});
   document.addEventListener('pointermove', e => {
@@ -6408,19 +7182,21 @@ function tkMover(ids, ds){
       bg.className = 'tk-swbg';
       bg.style.top = sw.row.offsetTop + 'px';
       bg.style.height = sw.row.offsetHeight + 'px';
-      const lm = sw.row.classList.contains('lm'), mc = sw.row.classList.contains('mc');
+      const lm = sw.row.classList.contains('lm'), mc = sw.row.classList.contains('mc'), hb = sw.row.classList.contains('hb');
       if(mc) bg.classList.add('mc');
-      bg.innerHTML = '<span class="sw-ok" title="' + (mc ? 'Pôr no carrinho' : lm ? 'Dispensar' : 'Concluir') + '">' + licn(mc ? 'shopping-cart' : 'check') + '</span>' +
-        '<span class="sw-rs" title="' + (mc ? 'Tirar da lista' : lm ? 'Adiar' : 'Reagendar') + '">' + licn(mc ? 'circle-minus' : lm ? 'clock' : 'calendar') + '</span>';
+      bg.innerHTML = '<span class="sw-ok" title="' + (hb ? 'Marcar' : mc ? 'Pôr no carrinho' : lm ? 'Dispensar' : 'Concluir') + '">' + licn(mc ? 'shopping-cart' : 'check') + '</span>' +
+        (hb ? '<span class="sw-rs"></span>' : '<span class="sw-rs" title="' + (mc ? 'Tirar da lista' : lm ? 'Adiar' : 'Reagendar') + '">' + licn(mc ? 'circle-minus' : lm ? 'clock' : 'calendar') + '</span>');
       list.insertBefore(bg, list.firstChild);
       sw.bg = bg;
       sw.row.classList.add('sw-ativo');
     }
-    sw.dx = dx;
-    sw.row.style.transform = 'translateX(' + dx + 'px)';
-    sw.bg.classList.toggle('dir', dx > 0);
-    sw.bg.classList.toggle('esq', dx < 0);
-    const passou = dx > LIM ? 1 : dx < -LIM ? -1 : 0;
+    /* hábito não tem ação para a esquerda: a linha só cede um pouco */
+    const dxv = dx < 0 && sw.row.classList.contains('hb') ? Math.max(-24, dx / 4) : dx;
+    sw.dx = dxv;
+    sw.row.style.transform = 'translateX(' + dxv + 'px)';
+    sw.bg.classList.toggle('dir', dxv > 0);
+    sw.bg.classList.toggle('esq', dxv < 0);
+    const passou = dxv > LIM ? 1 : dxv < -LIM ? -1 : 0;
     if(passou !== sw.passou){ sw.passou = passou; sw.bg.classList.toggle('pronto', !!passou); if(passou) haptic('light'); }
   }, {passive:true});
   const fim = e => {
@@ -6428,7 +7204,18 @@ function tkMover(ids, ds){
     const s = sw; sw = null;
     if(!s.ativo) return;
     ultimo = Date.now();
-    const id = s.row.dataset.id, lm = s.row.classList.contains('lm'), mc = s.row.classList.contains('mc');
+    const id = s.row.dataset.id, lm = s.row.classList.contains('lm'), mc = s.row.classList.contains('mc'), hb = s.row.classList.contains('hb');
+    if(e.type === 'pointerup' && s.dx > LIM && hb){
+      const h = S.habits.find(x => x.id === id), ds = HB_DIA && s.row.dataset.ds ? s.row.dataset.ds : today();
+      if(h && !habDone(h, ds) && !ANIM_PEND.has(id)){
+        ANIM_PEND.add(id);
+        s.row.classList.remove('sw-ativo');
+        s.row.style.transform = 'translateX(105%)';
+        sfx('habit'); haptic('light');
+        setTimeout(() => { ANIM_PEND.delete(id); hbMarcar(id, ds, true); }, 230);
+        return;
+      }
+    }
     if(e.type === 'pointerup' && s.dx > LIM && mc){
       const it = S.shoppingItems.find(x => x.id === id);
       if(it && !it.bought && !ANIM_PEND.has(id)){
@@ -6449,7 +7236,7 @@ function tkMover(ids, ds){
         return;
       }
     }
-    if(e.type === 'pointerup' && s.dx > LIM && !lm && !mc){
+    if(e.type === 'pointerup' && s.dx > LIM && !lm && !mc && !hb){
       const tk = S.tasks.find(x => x.id === id);
       if(tk && tk.status !== 'done' && !ANIM_PEND.has(id)){
         ANIM_PEND.add(id);
@@ -6461,7 +7248,7 @@ function tkMover(ids, ds){
       }
     }
     volta(s);
-    if(e.type === 'pointerup' && s.dx < -LIM) setTimeout(() => mc ? mcTirar(id) : lm ? lmAdiar(id) : tkReagendar(id), 140);
+    if(e.type === 'pointerup' && s.dx < -LIM && !hb) setTimeout(() => mc ? mcTirar(id) : lm ? lmAdiar(id) : tkReagendar(id), 140);
   };
   document.addEventListener('pointerup', fim, {passive:true});
   document.addEventListener('pointercancel', fim, {passive:true});
@@ -6505,6 +7292,7 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
+  /* hábitos */
   if(a === 'thab'){
     const id = el.dataset.id;
     if(ANIM_PEND.has('h' + id)) return;
@@ -6512,33 +7300,129 @@ document.addEventListener('click', e => {
     if(animOn()){
       ANIM_PEND.add('h' + id);
       el.classList.add('saindo');
-      setTimeout(() => { ANIM_PEND.delete('h' + id); toggleHabitDay(id, today(), '.thab[data-id="' + id + '"]'); celebraHabitos(); }, 300);
+      setTimeout(() => { ANIM_PEND.delete('h' + id); hbMarcar(id, today(), true); }, 300);
       return;
     }
-    toggleHabitDay(id, today(), '.thab[data-id="' + id + '"]'); celebraHabitos(); return;
+    hbMarcar(id, today(), true); return;
   }
-  if(a === 'hcell'){
-    const hh = S.habits.find(x => x.id === el.dataset.id);
-    const marca = !!(hh && el.dataset.ds <= today() && !habDone(hh, el.dataset.ds));
-    if(marca){ sfx('habit'); haptic('light'); }
-    toggleHabitDay(el.dataset.id, el.dataset.ds, '.hcell[data-id="' + el.dataset.id + '"][data-ds="' + el.dataset.ds + '"]');
-    if(marca) celebraHabitos();
+  if(a === 'hb-ck'){
+    e.stopPropagation();
+    /* na lista de hoje vale o dia de agora: a lista pode ter ficado aberta desde ontem */
+    const id = el.dataset.id, ds = HB_DIA && el.dataset.ds ? el.dataset.ds : today(), h = S.habits.find(x => x.id === id);
+    if(!h || ANIM_PEND.has(id)) return;
+    const row = el.closest('.trow');
+    if(!habDone(h, ds) && row && animOn()){
+      sfx('habit'); haptic('light');
+      el.classList.add('on', 'pop');
+      ANIM_PEND.add(id);
+      row.classList.add('completing');
+      setTimeout(() => { ANIM_PEND.delete(id); hbMarcar(id, ds, true); }, 320);
+      return;
+    }
+    hbMarcar(id, ds);
     return;
   }
-  if(a === 'hab-hist'){
-    const hid = el.dataset.id, ds = el.dataset.ds;
-    const h = S.habits.find(x => x.id === hid);
-    if(!h || ds > today()) return;
-    if(!S.habitLogs[hid]) S.habitLogs[hid] = {};
-    if(S.habitLogs[hid][ds]) delete S.habitLogs[hid][ds];
-    else{ S.habitLogs[hid][ds] = true; sfx('habit'); haptic('light'); }
-    save(); closeModal(); openHabitDetail(hid);
+  if(a === 'hb-abrir'){ hbAbrir(el.dataset.id); return; }
+  if(a === 'hb-cel'){ hbMarcar(el.dataset.id, el.dataset.ds); return; }
+  if(a === 'hb-dia'){ HB_DIA = el.dataset.ds === today() ? null : el.dataset.ds; renderHabitos(); hbTroca(); return; }
+  if(a === 'hb-fold'){
+    const k = el.dataset.k, ab = el.getAttribute('aria-expanded') === 'true';
+    HB_DOBRA[k] = !ab; tkLSset('hbDobra', HB_DOBRA);
+    renderHabitos();
     return;
   }
-  if(a === 'hab-edit-from-detail'){
-    const hid = M.id;
-    closeModal();
-    openHabit(hid);
+  if(a === 'hb-vista'){ popAbrir(el, hbVistaHTML()); return; }
+  if(a === 'hb-vista-set'){ HB_V = el.dataset.v; HB_SEM = 0; HB_DIA = null; popFechar(); renderHabitos(); hbTroca(); return; }
+  if(a === 'hb-opcoes'){ popAbrir(el, hbOpcoesHTML(), {direita:true}); return; }
+  if(a === 'hb-ordem'){ hbOrdemAbrir(); return; }
+  if(a === 'hb-ord'){ hbOrdMover(el.dataset.id, +el.dataset.d); return; }
+  if(a === 'hb-fora'){ HB_FORA = !HB_FORA; tkLSset('hbFora', HB_FORA); popFechar(); renderHabitos(); return; }
+  if(a === 'hb-avisos'){
+    popFechar(); setView('dados');
+    setTimeout(() => { const c = document.getElementById('cardNotif'); if(c) c.scrollIntoView({block:'start', behavior:animOn() ? 'smooth' : 'auto'}); }, 80);
+    return;
+  }
+  if(a === 'hb-sem'){ HB_SEM = Math.min(0, HB_SEM + (+el.dataset.d || 0)); renderHabitos(); hbTroca(); return; }
+  if(a === 'hb-restaurar'){ e.stopPropagation(); hbRestaurar(el.dataset.id); return; }
+  if(a === 'hb-exemplo'){
+    const i = $('#hbInp');
+    if(i) i.value = el.dataset.t || '';
+    if(window.matchMedia && matchMedia('(max-width: 760px)').matches) hbQaAbrir();
+    else if(i) i.focus();
+    hbPreview();
+    return;
+  }
+  /* folha de adicionar */
+  if(a === 'hb-qadd'){ hbQuickAdd(true); return; }
+  if(a === 'hb-qa-abrir'){ hbQaAbrir(); return; }
+  if(a === 'hb-qa-fechar'){ hbQaFechar(); return; }
+  if(a === 'hb-qa-dias'){ popAbrir(el, hbDiasMenuHTML(HB_QA.dias, 'hb-qa-dias-set')); return; }
+  if(a === 'hb-qa-dias-set'){
+    const v = el.dataset.dias;
+    HB_QA.dias = v ? v.split(',').map(Number) : null;
+    popFechar(); hbQaSync(); hbPreview();
+    const i = $('#hbInp'); if(i) i.focus();
+    return;
+  }
+  if(a === 'hb-qa-dias-set-um'){
+    const n = +el.dataset.d, set = new Set(HB_QA.dias || []);
+    if(set.has(n)) set.delete(n); else set.add(n);
+    HB_QA.dias = set.size ? HB_ORDEM_DIAS.filter(x => set.has(x)) : null;
+    if(POP){ POP.el.innerHTML = hbDiasMenuHTML(HB_QA.dias, 'hb-qa-dias-set'); popPosicionar(); }
+    hbQaSync(); hbPreview();
+    return;
+  }
+  if(a === 'hb-qa-quando'){ const v = HB_QA.quando; popAbrir(el, hbQuandoMenuHTML(v && /^\d/.test(v) ? v : '', v, 'hb-qa-quando-set', v === null)); return; }
+  if(a === 'hb-qa-quando-set' || a === 'hbd-quando-set'){ hbAplicarQuando(a, el.dataset.v); return; }
+  /* detalhe do hábito */
+  if(a === 'hbd-quando'){ hbSyncDraft(); popAbrir(el, hbQuandoMenuHTML(M.draft.hora, M.draft.periodo, 'hbd-quando-set')); return; }
+  if(a === 'hbd-mais'){ hbSyncDraft(); popAbrir(el, hbMaisHTML(), {direita:true}); return; }
+  if(a === 'hbd-arquivar'){ hbArquivar(); return; }
+  if(a === 'excluir-habito'){ hbExcluir(); return; }
+  if(a === 'hbd-ap'){ hbSyncDraft(); popAbrir(el, hbApHTML(), {cls:'hb-appop'}); return; }
+  if(a === 'hbd-emo'){ M.draft.emoji = el.dataset.e || ''; hbApSync(); haptic('light'); return; }
+  if(a === 'hbd-emo-outro'){
+    popFechar();
+    const v = prompt('Digite ou cole um emoji:', M.draft.emoji || '');
+    if(v === null || !M || M.type !== 'habito') return;
+    const em = umEmoji(v), re = hbEmojiRe();
+    if(em && re && !re.test(em)){ toast('Isso não é um emoji.'); return; }
+    M.draft.emoji = em; hbApSync();
+    return;
+  }
+  if(a === 'hbd-cor'){ M.draft.color = el.dataset.c; hbApSync(); haptic('light'); return; }
+  if(a === 'hbd-dia'){
+    hbSyncDraft();
+    const n = +el.dataset.d, ds = new Set(hbDiasDe(M.draft));
+    if(ds.has(n)){
+      if(ds.size === 1){ toast('O hábito precisa de ao menos um dia.'); return; }
+      ds.delete(n);
+    }else ds.add(n);
+    M.draft.freq = hbFreq([...ds]);
+    haptic('light'); hbRenderDet();
+    return;
+  }
+  if(a === 'hbd-abrir'){
+    hbSyncDraft();
+    const q = el.dataset.q, campo = {cue:'cue', '2m':'twoMin', nota:'notes'}[q], id = {cue:'f_hbcue', '2m':'f_hb2m', nota:'f_hbnota'}[q];
+    if(!campo) return;
+    if(M.abrir === q && !String(M.draft[campo] || '').trim()) M.abrir = '';
+    else{ M.abrir = q; M.foco = id; }
+    hbRenderDet();
+    return;
+  }
+  if(a === 'hbd-ck' || a === 'hbd-cal'){
+    if(!M || M.type !== 'habito' || !M.id) return;
+    hbSyncDraft();
+    hbMarcar(M.id, a === 'hbd-ck' ? today() : el.dataset.ds);
+    if(M && M.type === 'habito') hbRenderDet();
+    return;
+  }
+  if(a === 'hbd-mes'){
+    hbSyncDraft();
+    const [y, m] = M.mes.split('-').map(Number), d = new Date(y, m - 1 + (+el.dataset.d || 0), 1, 12);
+    M.mes = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+    hbRenderDet();
     return;
   }
   if(a === 'tk-nav'){ TK_NAV = !TK_NAV; renderTkNav(); tkNavSync(); return; }
@@ -6692,8 +7576,7 @@ document.addEventListener('click', e => {
   if(a === 'cal-add-lem'){ openLembrete(null, {date:CAL_SEL}); return; }
   if(a === 'nova-tarefa'){ openTask(null, TF === 'hoje' ? {due:today()} : {}); return; }
   if(a === 'nova-hoje'){ openTask(null, {due:today()}); return; }
-  if(a === 'novo-habito'){ openHabit(null); return; }
-  if(a === 'edit-habit'){ openHabitDetail(el.dataset.id); return; }
+  if(a === 'edit-habit'){ hbAbrir(el.dataset.id); return; }
   if(a === 'projetos'){ popFechar(); if(TK_NAV){ TK_NAV = false; tkNavSync(); } openProjetos(); return; }
   if(a === 'colar'){ openPaste(); return; }
   if(a === 'dedup-fin'){
@@ -6773,7 +7656,7 @@ document.addEventListener('click', e => {
     else if(act === 'edit-pessoa') openPessoa(gid);
     else if(act === 'edit-nota') openNota(gid);
     else if(act === 'edit-lugar') openLugar(gid);
-    else if(act === 'edit-habit') openHabitDetail(gid);
+    else if(act === 'edit-habit') hbAbrir(gid);
     else if(act === 'edit-bloco') openBloco(gid);
     else if(act === 'edit-fin') openTransacao(gid);
     else if(act === 'est-go'){ EST_VIEW_WEEK = parseInt(gid) || null; EST_WEEK_VIEW = true; setView('estudos'); }
@@ -6895,50 +7778,20 @@ document.addEventListener('click', e => {
     return;
   }
 
-  /* modal hábito */
+  /* cor e dias do bloco da rotina */
   if(a === 'sw'){
     syncAny(); M.draft.color = el.dataset.c;
     el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.c === M.draft.color));
     return;
   }
-  if(a === 'seg-freq'){
-    syncHabitDraft();
-    M.draft.freq = el.dataset.v === 'daily' ? {type:'daily', days:[]} : {type:'week', days:M.draft.freq.days && M.draft.freq.days.length ? M.draft.freq.days : [1,2,3,4,5]};
-    renderHabitModal(); return;
-  }
   if(a === 'dow'){
+    if(!M || M.type !== 'bloco') return;
     syncAny();
     const dnum = +el.dataset.d;
-    const arr = M.type === 'bloco'
-      ? (M.draft.days || (M.draft.days = []))
-      : (M.draft.freq.days || (M.draft.freq.days = []));
+    const arr = M.draft.days || (M.draft.days = []);
     const ix = arr.indexOf(dnum);
     if(ix >= 0) arr.splice(ix,1); else arr.push(dnum);
     el.classList.toggle('on', ix < 0); return;
-  }
-  if(a === 'salvar-habito'){ salvarHabito(); return; }
-  if(a === 'arquivar-habito'){
-    const h = S.habits.find(x => x.id === M.id);
-    h.archived = !h.archived;
-    save(); closeModal(); render(); toast(h.archived ? 'Hábito arquivado.' : 'Hábito restaurado.');
-    return;
-  }
-  if(a === 'excluir-habito'){
-    if(!confirm('Excluir este hábito e todo o histórico de marcações dele?')) return;
-    S.habits = S.habits.filter(x => x.id !== M.id);
-    delete S.habitLogs[M.id];
-    save(); closeModal(); render(); toast('Hábito excluído.');
-    return;
-  }
-  if(a === 'restaurar-habito'){
-    S.habits.find(x => x.id === el.dataset.id).archived = false;
-    save(); render(); return;
-  }
-  if(a === 'excluir-habito-arq'){
-    if(!confirm('Excluir este hábito arquivado e o histórico dele?')) return;
-    S.habits = S.habits.filter(x => x.id !== el.dataset.id);
-    delete S.habitLogs[el.dataset.id];
-    save(); render(); return;
   }
 
   /* modal projetos */
@@ -7586,6 +8439,9 @@ document.addEventListener('input', e => {
   if(e.target.id === 'qaTitle') qaPreview();
   if(e.target.id === 'rlTitle') lmPreview();
   if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); }
+  if(e.target.id === 'hbInp') hbPreview();
+  if(/^f_hb(nome|cue|2m|nota)$/.test(e.target.id)) tkAltura(e.target);
+  if(e.target.id === 'f_hbnome' && M && M.type === 'habito' && !M.draft.emoji){ const b = document.querySelector('#mBody .hbd-badge .ini'); if(b) b.textContent = hbInicial(e.target.value); }
   if(e.target.id === 'f_shname' || (e.target.id === 'f_shnote' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
   if(e.target.id === 'f_ltitle' || (e.target.id === 'f_lnotes' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
   if(e.target.id === 'f_title') tkTituloAjusta();
@@ -7596,8 +8452,8 @@ document.addEventListener('input', e => {
 });
 
 /* dica do adicionar rápido aparece com o campo em foco */
-document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); } });
-document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); if(e.target.id === 'shopInp') setTimeout(() => { mcPreview(); mcSugSync(); }, 150); });
+document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); } if(e.target.id === 'hbInp') hbPreview(); });
+document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); if(e.target.id === 'shopInp') setTimeout(() => { mcPreview(); mcSugSync(); }, 150); if(e.target.id === 'hbInp') setTimeout(hbPreview, 120); });
 /* colar uma lista de várias linhas no campo do mercado: cada linha vira um item (títulos e corredores ficam de fora) */
 document.addEventListener('paste', e => {
   if(!e.target || e.target.id !== 'shopInp') return;
@@ -7644,17 +8500,19 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && LM_ADD && !$('#mback').classList.contains('on')){ lmQaFechar(); return; }
   if(e.key === 'Escape' && LM_NAV){ LM_NAV = false; lmNavSync(); return; }
   if(e.key === 'Escape' && MC_ADD && !$('#mback').classList.contains('on')){ mcQaFechar(); return; }
+  if(e.key === 'Escape' && HB_ADD && !$('#mback').classList.contains('on')){ hbQaFechar(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_title' && M && M.type === 'task'){ e.preventDefault(); salvarTask(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_ltitle' && M && M.type === 'lembrete'){ e.preventDefault(); salvarLembrete(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_shname' && M && M.type === 'shop'){ e.preventDefault(); salvarShop(); return; }
+  if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_hbnome' && M && M.type === 'habito'){ e.preventDefault(); hbSalvar(); return; }
   if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('lm-horainp')){
     e.preventDefault(); const b = e.target.parentElement.querySelector('[data-action="lm-hora-ok"]'); if(b) b.click(); return;
   }
-  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else mcQaAbrir(); return; }
+  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado' || VIEW === 'habitos') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else hbQaAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'pLogName'){ e.preventDefault(); const n = $('#pLogNotes'); if(n) n.focus(); return; }
@@ -7675,6 +8533,7 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.target.id === 'ttDesc'){ ttPlay(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'shopInp'){ quickAddShop(); return; }
+  if(e.key === 'Enter' && e.target.id === 'hbInp'){ hbQuickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'wsInp'){ document.querySelector('[data-action="qadd-ws"]').click(); return; }
 });
 
@@ -7690,14 +8549,14 @@ $('#mback').addEventListener('mousedown', e => { if(e.target === e.currentTarget
 
 /* ===================== Notificações (app Android) ===================== */
 /* Horários padrão definidos aqui; dá para mudar em Dados > Notificações. */
-const NOTIF_DEF = {on:true, lembretes:true, lemHora:'09:00', tarefas:true, tarHora:'07:30', habitos:true, habHora:'21:00',
+const NOTIF_DEF = {on:true, lembretes:true, lemHora:'09:00', tarefas:true, tarHora:'07:30', habitos:true, habHora:'21:00', habAviso:true,
   aniversarios:true, anivHora:'09:00', pomodoro:true, fixo:true, rotina:false};
 function notifCfg(){ return Object.assign({}, NOTIF_DEF, S.meta.notif || {}); }
 /* Canais do Android: o som de cada canal fica fixo depois de criado, por isso o sufixo de versão no id. */
 const CANAIS = {
   lembretes:{id:'lembretes_v1', name:'Lembretes', description:'Na data e na hora de cada lembrete', importance:4, sound:'central_lembrete.wav'},
   tarefas:{id:'tarefas_v1', name:'Tarefas do dia', description:'Resumo da manhã com as tarefas do dia', importance:3, sound:'central_suave.wav'},
-  habitos:{id:'habitos_v1', name:'Hábitos', description:'Aviso à noite com os hábitos que faltam', importance:3, sound:'central_suave.wav'},
+  habitos:{id:'habitos_v1', name:'Hábitos', description:'No horário de cada hábito e à noite com os que faltam', importance:3, sound:'central_suave.wav'},
   aniversarios:{id:'aniversarios_v1', name:'Aniversários', description:'No dia do aniversário de quem está em Pessoas', importance:3, sound:'central_suave.wav'},
   pomodoro:{id:'pomodoro_v1', name:'Pomodoro', description:'No fim de cada foco e de cada pausa', importance:5, sound:'central_pomodoro.wav'},
   rotina:{id:'rotina_v1', name:'Rotina', description:'No início de cada bloco da rotina', importance:4, sound:'central_rotina.wav'}
@@ -7768,7 +8627,7 @@ function notifPlan(now){
     if(c.habitos){
       const hs = S.habits.filter(h => !h.archived && schedOn(h, ds) && !habDone(h, ds));
       if(hs.length) add('hab:' + ds, quando(ds, c.habHora), hs.length === 1 ? 'Falta 1 hábito hoje' : 'Faltam ' + hs.length + ' hábitos hoje',
-        corta(hs.map(h => (h.emoji ? h.emoji + ' ' : '') + h.name).join(', '), 140), 'habitos', 'hoje');
+        corta(hs.map(h => (h.emoji ? h.emoji + ' ' : '') + h.name).join(', '), 140), 'habitos', 'habitos');
     }
     if(c.rotina){
       blocksOn(dw).forEach(b => {
@@ -7777,6 +8636,20 @@ function notifPlan(now){
         add('rot:' + b.id + ':' + ds + ':' + b.start, quando(ds, b.start), 'Agora: ' + b.name, corta(corpo, 140), 'rotina', 'rotina');
       });
     }
+  }
+  /* no horário de cada hábito, se ainda faltar; o corpo traz a versão de 2 minutos (ou o gatilho) e a nota.
+     Hora de madrugada (00:00 a 04:59) é o fim da noite do dia do hábito: o aviso toca no dia seguinte e marca aquele dia. */
+  if(c.habAviso){
+    S.habits.forEach(h => {
+      if(h.archived || !hbHoraOk(h.hora)) return;
+      const madrugada = hm2m(h.hora) < 300;
+      const corpo = [h.twoMin ? 'Comece pelo mínimo: ' + h.twoMin : h.cue, h.notes ? '📌 ' + h.notes : ''].filter(Boolean).join(' · ') || 'Hora do hábito.';
+      for(let d = madrugada ? -1 : 0; d < 7; d++){
+        const ds = addD(t, d);
+        if(!schedOn(h, ds) || habDone(h, ds)) continue;
+        add('habh:' + h.id + ':' + ds + ':' + h.hora, quando(madrugada ? addD(ds, 1) : ds, h.hora), corta((h.emoji ? h.emoji + ' ' : '') + h.name, 80), corta(corpo, 140), 'habitos', 'habitos', {hab:h.id, ds});
+      }
+    });
   }
   if(c.aniversarios){
     S.people.forEach(p => {
@@ -7793,6 +8666,7 @@ function notifNative(n){
   const o = {id:n.id, title:n.title, body:n.body, largeBody:n.body, channelId:CANAIS[n.canal].id, smallIcon:'ic_stat_central', iconColor:'#0F62B4',
     schedule:{at:n.at, allowWhileIdle:true}, extra:Object.assign({view:n.view}, n.ext || {}), autoCancel:true, isExactNotification:NOTIF.exact === 'granted'};
   if(n.canal === 'lembretes' && NOTIF.acoes) o.actionTypeId = 'lembrete';
+  else if(n.ext && n.ext.hab && NOTIF.acoes) o.actionTypeId = 'habito';
   return o;
 }
 function notifCanais(){
@@ -7805,7 +8679,7 @@ function notifExato(){
   if(!LN || !LN.checkExactNotificationSetting) return Promise.resolve();
   return LN.checkExactNotificationSetting().then(x => { NOTIF.exact = (x && x.exact_alarm) || 'granted'; }).catch(() => {});
 }
-function notifHash(n){ return [+n.at, n.title, n.body, n.canal, NOTIF.exact, n.canal === 'lembretes' && NOTIF.acoes ? 'botoes' : ''].join('|'); }
+function notifHash(n){ return [+n.at, n.title, n.body, n.canal, NOTIF.exact, (n.canal === 'lembretes' || (n.ext && n.ext.hab)) && NOTIF.acoes ? 'botoes' : ''].join('|'); }
 /* Reprograma quando o plano muda: só agenda o que é novo ou mudou e cancela o que saiu do plano. */
 function notifSync(force){
   if(!LN) return Promise.resolve();
@@ -7887,7 +8761,7 @@ function renderNotifCard(){
   const el = document.getElementById('cardNotif');
   if(!el) return;
   if(!NATIVE){
-    el.innerHTML = '<h3>App Android</h3><p>No app, o Central avisa na hora dos lembretes, de manhã com as tarefas do dia, à noite com os hábitos que faltam e no fim de cada Pomodoro.</p>' +
+    el.innerHTML = '<h3>App Android</h3><p>No app, o Central avisa na hora dos lembretes e dos hábitos, de manhã com as tarefas do dia, à noite com os hábitos que faltam e no fim de cada Pomodoro.</p>' +
       '<a class="btn btn-primary" href="' + APK_URL + '">Baixar o app (APK)</a>' +
       '<p class="nhint">No celular, baixe o arquivo e toque nele para instalar. Os dados chegam pelo mesmo login do Google.</p>';
     return;
@@ -7909,6 +8783,7 @@ function renderNotifCard(){
     '<div class="nlist' + (c.on ? '' : ' off') + '">' +
       row('lembretes', 'Lembretes', 'lemHora', 'horário dos que não têm hora') +
       row('tarefas', 'Tarefas do dia', 'tarHora') +
+      row('habAviso', 'Hábitos no horário', '', 'na hora marcada em cada hábito, se ainda faltar') +
       row('habitos', 'Hábitos que faltam', 'habHora') +
       row('aniversarios', 'Aniversários', 'anivHora') +
       row('pomodoro', 'Fim do Pomodoro') +
@@ -8048,6 +8923,7 @@ function nativeInit(){
       if(LM_ADD){ lmQaFechar(); return; }
       if(LM_NAV){ LM_NAV = false; lmNavSync(); return; }
       if(MC_ADD){ mcQaFechar(); return; }
+      if(HB_ADD){ hbQaFechar(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
     });
@@ -8073,12 +8949,14 @@ function nativeInit(){
       popFechar();
       if($('#mback').classList.contains('on')) closeModal();
       /* botões do aviso de lembrete; tocar no aviso abre o lembrete */
+      if(ex.hab && a.actionId === 'feito'){ hbAcaoNotif(ex.hab, ex.ds); return; }
+      if(ex.hab && S.habits.some(h => h.id === ex.hab)){ HB_V = 'hoje'; HB_DIA = null; setView('habitos'); return; }
       if(ex.lem && (a.actionId === 'adiar' || a.actionId === 'feito')){ lmAcaoNotif(ex.lem, a.actionId, ex.ds); return; }
       if(ex.lem && S.reminders.some(r => r.id === ex.lem)){ lmIrPara('agenda'); setView('lembretes'); openLembrete(ex.lem); return; }
       if(ex.view && TABS[ex.view]) setView(ex.view);
     });
     const acoes = typeof LN.registerActionTypes === 'function' ?
-      Promise.resolve().then(() => LN.registerActionTypes({types:[{id:'lembrete', actions:[{id:'adiar', title:'Adiar 1 h'}, {id:'feito', title:'Feito'}]}]}))
+      Promise.resolve().then(() => LN.registerActionTypes({types:[{id:'lembrete', actions:[{id:'adiar', title:'Adiar 1 h'}, {id:'feito', title:'Feito'}]}, {id:'habito', actions:[{id:'feito', title:'Feito'}]}]}))
         .then(() => { NOTIF.acoes = true; }).catch(() => {}) : Promise.resolve();
     let pediu = false;
     try{ pediu = localStorage.getItem('central.notifPedido') === '1'; }catch(e){}
