@@ -448,13 +448,6 @@ pre.fmt{
 .rt-cue{font-size:11px; color:var(--muted); width:100%; padding:0 0 0 34px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .rt-2min{font-size:11px; color:var(--warn); width:100%; padding:0 0 0 34px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
-/* ===== Mercado ===== */
-.shop-cat{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px 4px}
-.shop-row{display:flex; align-items:center; gap:10px; padding:8px 14px}
-.shop-row + .shop-row{border-top:1px solid var(--line)}
-.shop-row.bought .tt{color:var(--muted); text-decoration:line-through}
-.shop-row .recur{font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); background:var(--surface2); border-radius:4px; padding:1px 5px}
-
 /* ===== Finanças ===== */
 .fin-in{color:var(--good); font-weight:600}
 .fin-month-nav{display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:20px; padding:12px 0; border:1px solid var(--line); border-radius:var(--r); background:var(--surface)}
@@ -826,7 +819,7 @@ html.tt-foco-on body{overflow:hidden}
 :root{--warn-soft:#F7EEDF}
 html[data-theme="dark"]{--warn-soft:#2E2617}
 /* a aba entra só com opacidade: transform faria o botão + e as folhas fixas pularem */
-#view-tarefas.on, #view-lembretes.on{animation:tkVin .22s ease}
+#view-tarefas.on, #view-lembretes.on, #view-mercado.on{animation:tkVin .22s ease}
 @keyframes tkVin{from{opacity:0}to{opacity:1}}
 .tk-main{min-width:0}
 
@@ -892,7 +885,7 @@ html[data-theme="dark"]{--warn-soft:#2E2617}
 .tk-vazio{display:flex; flex-direction:column; align-items:center; gap:10px; padding:44px 20px; color:var(--muted); text-align:center; font-size:14.5px}
 .tk-vazio > svg{width:40px; height:40px; opacity:.55}
 .tk-vazio p{margin:0}
-#tLista.troca, #rlLista.troca{animation:tkTroca .2s ease}
+#tLista.troca, #rlLista.troca, #shopLista.troca{animation:tkTroca .2s ease}
 @keyframes tkTroca{from{opacity:.35; transform:translateY(5px)}to{opacity:1; transform:none}}
 
 /* linha de tarefa: título; embaixo projeto e etiquetas; à direita a data e os ícones */
@@ -1102,7 +1095,7 @@ html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44p
     border:0; background:var(--accent); color:#fff; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(15,98,180,.35); cursor:pointer}
   .tk-fab svg{width:28px; height:28px; stroke-width:2.3}
   .tk-fab:active{transform:scale(.92)}
-  html[data-view="tarefas"] .toast, html[data-view="lembretes"] .toast{bottom:calc(152px + var(--sab))}
+  html[data-view="tarefas"] .toast, html[data-view="lembretes"] .toast, html[data-view="mercado"] .toast{bottom:calc(152px + var(--sab))}
   .tk-add{position:fixed; left:0; right:0; bottom:0; z-index:75; margin:0; padding:14px calc(12px + var(--sar)) calc(10px + var(--sab)) calc(16px + var(--sal));
     border:0; border-radius:20px 20px 0 0; box-shadow:0 -10px 34px rgba(0,0,0,.2); transform:translateY(110%); visibility:hidden;
     transition:transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s}
@@ -1157,6 +1150,80 @@ html[data-theme="dark"] .tk-pop{border-color:var(--line2); box-shadow:0 16px 44p
 .tk-tool .qd-lab{max-width:96px; overflow:hidden; text-overflow:ellipsis}
 @media (max-width:760px){
   .lm-agora{padding:0 14px 0 42px}
+}
+
+/* ===================== Mercado ===================== */
+/* mesma estrutura das Tarefas (cartões, folha de adicionar, detalhe); aqui só o que é próprio da lista de compras */
+.tk-tit > svg{width:20px; height:20px; color:var(--muted); flex:none; margin-left:-4px}
+.mc-qtd{display:inline-flex; align-items:center; padding:2px 9px; border-radius:99px; background:var(--surface2); color:var(--ink); font-size:12.5px; font-weight:650; white-space:nowrap; font-variant-numeric:tabular-nums}
+.mc-preco{font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap}
+.mc-side{gap:4px}
+.trow.tk.mc.done .mc-qtd{background:none; color:var(--muted); padding:0}
+.mc-nota{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%}
+.mc-fixo{color:var(--accent); font-weight:600}
+.mc-fixo svg{width:12px; height:12px}
+.mc-total{font-family:var(--mono); font-size:12.5px; font-weight:600; color:var(--good); margin-right:2px}
+/* despensa: + põe na lista; ✓ já está nela */
+.mc-add{position:relative; flex:none; width:22px; height:22px; margin-top:0; padding:0; border:2px solid var(--accent); border-radius:50%; background:none; color:var(--accent);
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer}
+.mc-add svg{width:13px; height:13px; stroke-width:3}
+.mc-add.on{background:var(--accent); color:#fff}
+.mc-add::before{content:''; position:absolute; inset:-11px}
+/* tudo no carrinho */
+.mc-pronto{display:flex; align-items:center; gap:10px; padding:12px 14px 12px 16px; margin:0 0 12px; border-radius:16px; background:var(--good-soft); color:var(--good); font-weight:700; font-size:15px}
+.mc-pronto > svg{width:20px; height:20px; flex:none}
+.mc-pronto span{flex:1}
+.mc-pronto .btn{border-color:transparent; background:var(--surface); color:var(--good); font-weight:700}
+/* chips para pôr na lista com um toque */
+@media (min-width:761px){ .tk-add{position:relative} }
+.mc-sug{position:absolute; z-index:30; top:calc(100% + 6px); left:0; right:0; padding:10px 14px 14px; background:var(--surface); border:1px solid var(--line);
+  border-radius:14px; box-shadow:0 16px 40px rgba(21,26,32,.16), 0 2px 6px rgba(21,26,32,.06)}
+html[data-theme="dark"] .mc-sug{border-color:var(--line2); box-shadow:0 16px 44px rgba(0,0,0,.6)}
+.mc-sug:empty{display:none}
+.mc-sug-t{font-size:11.5px; font-weight:700; color:var(--muted); letter-spacing:.02em; margin:4px 0 7px}
+.mc-chips{display:flex; flex-wrap:wrap; gap:6px}
+.mc-chip{display:inline-flex; align-items:center; gap:6px; max-width:100%; padding:6px 12px 6px 10px; border:1px solid var(--line); border-radius:99px; background:var(--surface);
+  color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap}
+.mc-chip .em{font-size:15px; line-height:1}
+.mc-chip small{color:var(--muted); font-weight:500; font-size:12px}
+.mc-chip:hover{border-color:var(--accent); background:var(--accent-soft)}
+.mc-chip:active{transform:scale(.96)}
+.mc-vazio-sug{max-width:520px; text-align:left}
+.mc-vazio-sug .mc-chips{justify-content:center}
+.mc-vazio-sug .mc-sug-t{text-align:center}
+.qa-tok .em{font-size:13px}
+.qa-tok.mc-ja{background:var(--surface2); color:var(--muted)}
+/* detalhe: quantidade com − e +, preço */
+.mcd-linha{gap:10px}
+.mc-qtd-ed{display:inline-flex; align-items:center; height:38px; border:1px solid var(--line); border-radius:11px; overflow:hidden; background:var(--surface)}
+.mc-q{width:38px; height:100%; border:0; background:var(--surface2); color:var(--ink); font-size:19px; font-weight:700; line-height:1; cursor:pointer}
+.mc-q:active{background:var(--line)}
+.mc-qinp{width:86px; height:100%; border:0; padding:0 6px; text-align:center; font:inherit; font-size:15px; font-weight:650; background:none; color:var(--ink); outline:none}
+.inp.mc-pinp{width:118px; height:38px; padding:6px 10px; font-size:14px}
+.mcd-fixo-txt{font-size:13px; font-weight:650; color:var(--accent); margin-left:2px}
+/* ordem dos corredores */
+.mc-ord{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.mc-ord-l{display:flex; align-items:center; gap:10px; padding:6px 8px 6px 14px}
+.mc-ord-l + .mc-ord-l{border-top:1px solid var(--line)}
+.mc-ord-l .em{font-size:18px; line-height:1; width:22px; text-align:center}
+.mc-ord-l .l{flex:1; font-weight:600; font-size:14.5px}
+.mc-ord-l .icon-btn{border:0; background:none}
+.mc-ord-l .icon-btn:disabled{opacity:.25; cursor:default}
+.inp.mc-texto{font-family:var(--mono); font-size:13px; line-height:1.5; resize:vertical}
+/* cartões dos corredores mais baixos: a lista inteira cabe com menos rolagem; no PC, em duas colunas */
+.mc-g{margin-bottom:10px}
+.mc-g .tk-gh{min-height:46px; padding:10px 16px}
+.mc-g .tk-gi .em{font-size:18px}
+@media (min-width:900px){
+  #shopLista{columns:2; column-gap:14px}
+  #shopLista > *{break-inside:avoid}
+  #shopLista > .tk-vazio, #shopLista > .mc-pronto{column-span:all}
+}
+/* arrastar para a esquerda tira da lista */
+.tk-swbg.mc .sw-rs{color:var(--muted)}
+.tk-swbg.mc.esq.pronto{background:var(--muted)}
+@media (max-width:760px){
+  .tk-add .mc-sug{position:static; flex-basis:100%; order:2; max-height:30vh; overflow-y:auto; padding:0 0 6px; border:0; border-radius:0; background:none; box-shadow:none}
 }
 
 /* ===================== App Android, notificações, sons e animações ===================== */
@@ -1504,25 +1571,25 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
 
   <!-- ===== MERCADO ===== -->
   <section class="view" id="view-mercado">
-    <div class="vhead">
-      <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>Mercado</h1>
-      <span class="vdate mono" id="shopCount"></span>
-      <div class="grow"></div>
-      <button class="btn btn-ghost btn-sm" data-action="reset-compras">↺ Nova ida ao mercado</button>
+    <div class="tk-main">
+      <div class="tk-top">
+        <h1 class="vtitle tk-tit" id="mcTitulo" data-action="mc-vista" aria-haspopup="menu" title="Lista de compras ou despensa"></h1>
+        <span id="mcResumo"></span>
+        <button class="icon-btn" data-action="mc-opcoes" aria-haspopup="menu" aria-label="Opções do mercado" title="Opções do mercado"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+      </div>
+      <div class="tk-add" id="mcAdd">
+        <input class="inp tk-add-inp" type="text" id="shopInp" placeholder="Adicionar item…" autocomplete="off" enterkeyhint="send">
+        <div class="tk-ferr">
+          <button class="tk-tool" id="mcSecBtn" data-action="mc-qa-sec" aria-haspopup="menu" title="Corredor (automático)"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg></button>
+        </div>
+        <button class="tk-send" data-action="qadd-shop" aria-label="Adicionar" title="Adicionar (com o campo vazio, abre o detalhe)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+        <div class="qa-prev" id="mcPrev" aria-live="polite"></div>
+        <div class="mc-sug" id="mcSug"></div>
+      </div>
+      <div class="tk-add-fundo" data-action="mc-qa-fechar"></div>
+      <div id="shopLista"></div>
     </div>
-    <div class="qadd">
-      <input class="inp" type="text" id="shopInp" placeholder="Adicionar item…">
-      <select class="inp" id="shopCat" style="width:auto; font-size:12px; border-radius:99px; padding:10px 14px">
-        <option value="">Sem categoria</option>
-        <option value="frutas">frutas</option><option value="verduras">verduras</option>
-        <option value="carnes">carnes</option><option value="laticínios">laticínios</option>
-        <option value="padaria">padaria</option><option value="bebidas">bebidas</option>
-        <option value="limpeza">limpeza</option><option value="higiene">higiene</option>
-        <option value="outros">outros</option>
-      </select>
-      <button class="btn btn-primary" data-action="qadd-shop">+</button>
-    </div>
-    <div id="shopLista"></div>
+    <button class="tk-fab" data-action="mc-qa-abrir" aria-label="Adicionar item" title="Adicionar item"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
   </section>
 
   <!-- ===== DADOS ===== -->
@@ -1991,6 +2058,7 @@ function setView(v){
   popFechar();
   if(v !== 'tarefas'){ TK_ADD = false; TK_NAV = false; }
   if(v !== 'lembretes'){ LM_ADD = false; LM_NAV = false; }
+  if(v !== 'mercado') MC_ADD = false;
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'view-' + v));
   renderBottomNav();
@@ -2013,6 +2081,7 @@ LICN['chevrons-up-down'] = '<path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>';
 LICN['copy'] = '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
 LICN['tag'] = '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>';
 LICN['arrow-up'] = '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>';
+LICN['chevron-up'] = '<path d="m18 15-6-6-6 6"/>';
 LICN['coffee'] = '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>';
 const DOW_LONGO_T = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -2457,6 +2526,15 @@ function popAbrir(anchor, html, o){
   el.setAttribute('role', 'menu');
   el.innerHTML = html;
   document.body.appendChild(el);
+  POP = {el, anchor, o, y0:anchor.getBoundingClientRect().top};
+  popPosicionar();
+  anchor.setAttribute('aria-expanded', 'true');
+  return el;
+}
+/* põe o menu junto do botão: embaixo, ou em cima quando não cabe */
+function popPosicionar(){
+  if(!POP) return;
+  const {el, anchor, o} = POP;
   const r = anchor.getBoundingClientRect(), w = el.offsetWidth, hgt = el.offsetHeight, m = 12;
   let left = o.direita ? r.right - w : r.left;
   left = Math.max(m, Math.min(left, window.innerWidth - w - m));
@@ -2465,9 +2543,6 @@ function popAbrir(anchor, html, o){
   top = Math.max(m, Math.min(top, window.innerHeight - hgt - m));
   el.style.left = left + 'px';
   el.style.top = top + 'px';
-  anchor.setAttribute('aria-expanded', 'true');
-  POP = {el, anchor};
-  return el;
 }
 function popFechar(){
   if(!POP) return;
@@ -2481,7 +2556,12 @@ document.addEventListener('click', e => {
   popFechar();
   e.stopPropagation(); e.preventDefault();
 }, true);
-window.addEventListener('scroll', e => { if(POP && !(e.target && e.target.nodeType === 1 && POP.el.contains(e.target))) popFechar(); }, true);
+/* rolar a página fecha o menu; um ajuste pequeno de layout (um campo que encolheu) só o acompanha */
+window.addEventListener('scroll', e => {
+  if(!POP || (e.target && e.target.nodeType === 1 && POP.el.contains(e.target))) return;
+  if(!POP.anchor.isConnected || Math.abs(POP.anchor.getBoundingClientRect().top - POP.y0) > 60) popFechar();
+  else popPosicionar();
+}, true);
 window.addEventListener('resize', () => popFechar());
 /* lista de projetos para escolher (pastas como títulos) */
 function tkProjMenuHTML(atual, acao){
@@ -4760,96 +4840,536 @@ function renderPomodoro(){ if(VIEW === 'tempo') renderTempo(); }
 document.addEventListener('visibilitychange', () => { if(!document.hidden && POMO.running && !POMO.paused) pomoTick(); });
 
 /* ===================== Mercado ===================== */
-const SHOP_CATS_ORDER = ['frutas','verduras','carnes','laticínios','padaria','bebidas','limpeza','higiene','outros',''];
-function renderMercado(){
-  const items = S.shoppingItems;
-  const pending = items.filter(i => !i.bought);
-  const bought = items.filter(i => i.bought);
-  const total = items.length;
-  const done = bought.length;
-  $('#shopCount').textContent = total ? done + '/' + total + ' pego' + (done !== 1 ? 's' : '') : '';
-
-  const grouped = {};
-  pending.forEach(i => { const c = i.category || ''; if(!grouped[c]) grouped[c] = []; grouped[c].push(i); });
-  const cats = Object.keys(grouped).sort((a,b) => {
-    const ai = SHOP_CATS_ORDER.indexOf(a), bi = SHOP_CATS_ORDER.indexOf(b);
-    return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+/* A lista mostra só o que falta comprar; a despensa guarda tudo o que já foi comprado e devolve à lista com um toque.
+   Corredores com emoji escolhidos pelo nome do item; adicionar entende quantidade e vários itens de uma vez;
+   carrinho, concluir compra, compartilhar a lista e detalhe do item em folha que salva sozinho. */
+const MC_SECOES = [
+  ['hortifruti', 'Hortifruti', '🥬'], ['padaria', 'Padaria', '🥖'], ['carnes', 'Carnes e peixes', '🥩'],
+  ['laticinios', 'Frios e laticínios', '🧀'], ['mercearia', 'Mercearia', '🥫'], ['congelados', 'Congelados', '🧊'],
+  ['bebidas', 'Bebidas', '🥤'], ['limpeza', 'Limpeza e casa', '🧽'], ['higiene', 'Higiene', '🧴'],
+  ['pet', 'Pet', '🐾'], ['outros', 'Outros', '🛒']
+];
+/* palavras que levam o item ao corredor (sem acento; a mais longa vence: "batata palha" é mercearia, "batata" é hortifruti) */
+const MC_DIC = {
+  hortifruti: 'tomate|cebola|alho|batata|cenoura|alface|rucula|couve|couve-flor|brocolis|abobrinha|abobora|pepino|pimentao|beterraba|mandioca|aipim|macaxeira|banana|maca|laranja|limao|mamao|melao|melancia|uva|morango|abacaxi|manga|pera|kiwi|abacate|chuchu|berinjela|repolho|espinafre|salsa|salsinha|cebolinha|cheiro-verde|cheiro verde|coentro|manjericao|hortela|alecrim|gengibre|batata-doce|batata doce|inhame|vagem|quiabo|rabanete|tangerina|bergamota|mexerica|ameixa|pessego|goiaba|maracuja|caqui|figo|coco|mirtilo|framboesa|cogumelo|champignon|milho verde|verdura|fruta|legume|alho-poro|alho poro|acelga|agriao|jilo|nabo|salada',
+  padaria: 'pao|pao frances|pao de forma|pao integral|pao de queijo|bisnaga|bisnaguinha|baguete|croissant|bolo|torrada|cuca|sonho|broa|rosca|sanduiche|torta|focaccia|brioche',
+  carnes: 'carne|carne moida|frango|peito de frango|coxa|sobrecoxa|asa|file|file mignon|linguica|salsicha|bacon|costela|picanha|alcatra|patinho|acem|musculo|maminha|fraldinha|contrafile|guisado|bife|peixe|salmao|tilapia|merluza|bacalhau|camarao|porco|lombo|pernil|bisteca|figado|cupim|almondega|chester|calabresa|paio|carre',
+  laticinios: 'leite|iogurte|queijo|requeijao|manteiga|margarina|nata|presunto|mortadela|salame|peito de peru|ricota|cream cheese|ovo|mucarela|mussarela|parmesao|provolone|coalhada|kefir|petit suisse|danone|yakult|catupiry|cheddar|gorgonzola|queijo ralado',
+  mercearia: 'arroz|feijao|macarrao|massa|espaguete|lasanha|farinha|farinha de trigo|acucar|sal|oleo|azeite|vinagre|cafe|cha|achocolatado|nescau|biscoito|bolacha|molho|molho de tomate|extrato de tomate|milho|ervilha|atum|sardinha|aveia|granola|cereal|sucrilhos|maionese|ketchup|mostarda|tempero|oregano|pimenta|canela|cominho|colorau|paprica|fermento|leite condensado|leite em po|leite de coco|leite de soja|creme de leite|gelatina|pudim|pipoca|amendoim|castanha|nozes|mel|geleia|chocolate|bombom|bala|chiclete|salgadinho|batata palha|sopa|caldo|lentilha|grao-de-bico|grao de bico|polenta|fuba|tapioca|farofa|azeitona|palmito|conserva|shoyu|sazon|cuscuz|quinoa|chia|linhaca|adocante|papinha|filtro de cafe|capsula|doce de leite|pasta de amendoim|creme de avela|nutella|barra de cereal|wafer|amido|maisena',
+  congelados: 'sorvete|pizza|nuggets|empanado|batata frita|batata congelada|polpa|gelo|acai|picole|congelado|congelada|lasanha congelada|hamburguer|pao de queijo congelado|legumes congelados',
+  bebidas: 'agua|agua mineral|agua com gas|refrigerante|refri|suco|cerveja|vinho|energetico|cha gelado|isotonico|coca|coca-cola|guarana|espumante|kombucha|vodka|whisky|cachaca|gin|rum|tonica|agua tonica|agua de coco|chopp',
+  limpeza: 'detergente|sabao|sabao em po|sabao liquido|amaciante|agua sanitaria|desinfetante|esponja|multiuso|alcool|saco de lixo|papel toalha|limpa vidro|lustra moveis|vassoura|rodo|pano|pano de chao|alvejante|tira manchas|inseticida|lava roupas|la de aco|bombril|veja|cloro|luva|papel aluminio|filme pvc|pilha|lampada|guardanapo|copo descartavel|fosforo|vela|limpador|removedor|odorizador|aromatizador',
+  higiene: 'papel higienico|sabonete|shampoo|xampu|condicionador|pasta de dente|creme dental|escova de dente|fio dental|desodorante|absorvente|fralda|lenco|lenco umedecido|lenco de papel|cotonete|algodao|barbeador|aparelho de barbear|lamina|protetor solar|hidratante|enxaguante|enxaguante bucal|antisseptico|creme de cabelo|gel|curativo|band-aid|alcool em gel|esmalte|acetona|perfume',
+  pet: 'racao|areia|areia de gato|areia sanitaria|petisco|sache|osso|tapete higienico|antipulgas|vermifugo'
+};
+let MC_V = tkLS('mcVista', 'lista');     /* lista ou despensa */
+let MC_ADD = false;                      /* folha de adicionar aberta (celular) */
+let MC_SEC = '';                         /* corredor escolhido no botão da folha ('' = automático) */
+let MC_DOBRA = tkLS('mcDobra', {});      /* cartões abertos (true) ou fechados (false) */
+/* singular simples, para "tomates" achar "tomate" e "pães" achar "pão" */
+function mcSing(w){
+  if(w.length <= 3) return w;
+  if(/eses$/.test(w)){ w = w.slice(0, -2); if(w.length <= 3) return w; }
+  if(/ais$/.test(w)) return w.slice(0, -2) + 'l';
+  if(/eis$/.test(w)) return w.slice(0, -3) + 'el';
+  if(/ois$/.test(w)) return w.slice(0, -3) + 'ol';
+  if(/[oa]es$/.test(w)) return w.slice(0, -3) + 'ao';
+  if(/ns$/.test(w)) return w.slice(0, -2) + 'm';
+  if(/[rz]es$/.test(w)) return w.slice(0, -2);
+  if(/s$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+function mcToks(s){ return semAcento(s).replace(/[^a-z0-9\s-]/g, ' ').split(/\s+/).filter(Boolean).map(mcSing); }
+function mcChave(s){ return mcToks(s).join(' '); }
+/* montado no primeiro uso: semAcento só existe mais adiante no script */
+let MC_KW = null;
+function mcKW(){
+  if(MC_KW) return MC_KW;
+  const xs = [];
+  Object.keys(MC_DIC).forEach(sec => MC_DIC[sec].split('|').forEach(k => xs.push({sec, toks:mcToks(k)})));
+  return (MC_KW = xs.sort((a, b) => b.toks.join(' ').length - a.toks.join(' ').length));
+}
+/* corredor pelo nome: procura as palavras do dicionário dentro do nome */
+function mcSecaoDe(nome){
+  const t = mcToks(nome || '');
+  for(const kw of mcKW()){
+    const n = kw.toks.length;
+    for(let i = 0; i + n <= t.length; i++){
+      let ok = true;
+      for(let j = 0; j < n; j++) if(t[i + j] !== kw.toks[j]){ ok = false; break; }
+      if(ok) return kw.sec;
+    }
+  }
+  return 'outros';
+}
+function mcSec(k){ return MC_SECOES.find(s => s[0] === k) || MC_SECOES[MC_SECOES.length - 1]; }
+function mcSecDe(i){ return MC_SECOES.some(s => s[0] === i.category) ? i.category : 'outros'; }
+/* corredores na ordem do mercado de quem usa (Ordem dos corredores no ⋮) */
+function mcSecoes(){
+  const ord = (S.meta && S.meta.mcOrdem) || [];
+  const pos = s => { const i = ord.indexOf(s[0]); return i < 0 ? 100 + MC_SECOES.indexOf(s) : i; };
+  return MC_SECOES.slice().sort((a, b) => pos(a) - pos(b));
+}
+function mcSecPorNome(w){
+  const n = semAcento(w);
+  if(n.length < 3) return '';
+  const s = MC_SECOES.find(x => x[0].startsWith(n) || semAcento(x[1]).startsWith(n));
+  return s ? s[0] : '';
+}
+/* converte os dados antigos: tudo continua na lista e os corredores viram os novos */
+function mcMigra(){
+  const xs = S.shoppingItems;
+  if(!Array.isArray(xs)) return;
+  const velho = {frutas:'hortifruti', verduras:'hortifruti', 'laticínios':'laticinios'};
+  const primeira = S.meta.mcV !== 2;
+  let mudou = false;
+  xs.forEach(i => {
+    if(i.need === undefined){ i.need = true; mudou = true; }
+    let c = velho[i.category] || i.category || '';
+    if(!c || !MC_SECOES.some(s => s[0] === c) || (primeira && c === 'outros')){ const g = mcSecaoDe(i.name); if(g !== 'outros' || !MC_SECOES.some(s => s[0] === c)) c = g; }
+    if(c !== i.category){ i.category = c; mudou = true; }
   });
-  function shopRow(i){
-    return '<div class="shop-row' + (i.bought ? ' bought' : '') + '">' +
-      '<button class="ck' + (i.bought ? ' on' : '') + '" data-action="shop-ck" data-id="' + i.id + '"></button>' +
-      '<span class="tt">' + esc(i.name) + (i.qty ? ' <span class="tag-chip">' + esc(i.qty) + '</span>' : '') + '</span>' +
-      '<button class="btn btn-ghost btn-sm" data-action="edit-shop" data-id="' + i.id + '" style="padding:2px 6px">' + licn('pencil') + '</button></div>';
+  if(primeira){ S.meta.mcV = 2; mudou = true; }
+  if(mudou) try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
+}
+function mcNome(s){ s = String(s || '').trim().replace(/\s+/g, ' ').replace(/[.,;:]+$/, ''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function mcAchar(nome){ const k = mcChave(nome); return k ? S.shoppingItems.find(i => mcChave(i.name) === k) : null; }
+
+/* ---------- ler o que foi digitado: "2 kg tomate", "tomate 2kg", "leite x3", "6 ovos", "arroz, feijão, café" ---------- */
+const MC_UNID = [[/^(kg|kgs|quilos?|kilos?)$/, 'kg'], [/^(g|gr|grs|gramas?)$/, 'g'], [/^(l|lt|lts|litros?)$/, 'L'], [/^ml$/, 'ml'],
+  [/^(un|und|unid|unidades?)$/, 'un'], [/^(pct|pcts|pacotes?)$/, 'pct'], [/^(cx|cxs|caixas?)$/, 'cx'], [/^(dz|duzias?)$/, 'dz'],
+  [/^(latas?|garrafas?|fardos?|bandejas?|macos?|rolos?|sacos?|potes?|vidros?|barras?|tabletes?|cabecas?|frascos?|caixinhas?|saches?)$/, null]];
+function mcUnid(w){
+  const n = semAcento(w || '').replace(/\.$/, '');
+  for(const [re, u] of MC_UNID) if(re.test(n)) return u || String(w).toLowerCase().replace(/\.$/, '');
+  return '';
+}
+function mcPartes(txt){ return String(txt || '').split(/\s*(?:;|\n|(?<!\d),|,(?!\d))\s*/).map(x => x.trim()).filter(Boolean); }
+function mcLer(txt){
+  let s = String(txt || '').trim().replace(/\s+/g, ' ').replace(/^[-•*·]\s*/, '').replace(/×/g, 'x');
+  if(!s) return null;
+  let cat = '', qty = '';
+  s = s.replace(/(^|\s)#([^\s#]+)/, (m0, a, w) => { const c = mcSecPorNome(w); if(c){ cat = c; return a; } return m0; }).trim();
+  const toks = s.split(' ');
+  const ehNum = w => /^\d+(?:[.,]\d+)?$/.test(w || '');
+  const numUn = w => { const m = String(w || '').match(/^(\d+(?:[.,]\d+)?)([a-zA-Zç]+)\.?$/); return m && mcUnid(m[2]) ? [m[1], mcUnid(m[2])] : null; };
+  let n = '', u = '', i = 0;
+  /* quantidade no começo */
+  if(ehNum(toks[0])){ n = toks[0]; i = 1; if(toks.length > 2 && /^x$/i.test(toks[1])) i = 2; else if(toks.length > 2 && mcUnid(toks[1])){ u = mcUnid(toks[1]); i = 2; } }
+  else if(/^\d+x$/i.test(toks[0]) && toks.length > 1){ n = toks[0].slice(0, -1); i = 1; }
+  else if(numUn(toks[0])){ [n, u] = numUn(toks[0]); i = 1; }
+  else if(/^(meia|meio)$/i.test(toks[0]) && toks.length > 2){
+    const u1 = mcUnid(toks[1]);
+    if(u1 === 'dz'){ n = '6'; i = 2; } else if(u1 === 'kg'){ n = '500'; u = 'g'; i = 2; } else if(u1 === 'L'){ n = '500'; u = 'ml'; i = 2; }
   }
-  let out = '';
-  if(!total){
-    out = '<div class="list"><div class="empty">Lista vazia. Adicione os itens que costuma comprar. Eles ficam salvos entre idas ao mercado.</div></div>';
+  let nome = s;
+  if(n && i < toks.length){
+    if(/^(de|do|da|dos|das)$/i.test(toks[i]) && i + 1 < toks.length) i++;
+    qty = n + (u ? ' ' + u : '');
+    nome = toks.slice(i).join(' ');
+  }else if(toks.length >= 2){
+    /* quantidade no fim */
+    const k = toks.length, t1 = toks[k - 1].replace(/^\((.*)\)$/, '$1'), t2 = toks[k - 2];
+    const mx = t1.match(/^x(\d+(?:[.,]\d+)?)$/i) || t1.match(/^(\d+(?:[.,]\d+)?)x$/i);
+    if(mx){ qty = mx[1]; nome = toks.slice(0, -1).join(' '); }
+    else if(ehNum(t1)){ qty = t1; nome = toks.slice(0, /^x$/i.test(t2) && k > 2 ? -2 : -1).join(' '); }
+    else if(numUn(t1)){ const [a, b] = numUn(t1); qty = a + ' ' + b; nome = toks.slice(0, -1).join(' '); }
+    else if(k >= 3 && ehNum(t2) && mcUnid(t1)){ qty = t2 + ' ' + mcUnid(t1); nome = toks.slice(0, -2).join(' '); }
+  }
+  nome = mcNome(nome);
+  return nome ? {name:nome, qty, cat} : null;
+}
+/* quantidade só com número vira "×6" */
+function mcQtyTxt(q){ q = String(q || '').trim(); return /^\d+(?:[.,]\d+)?$/.test(q) ? '×' + q : q; }
+/* − e + na quantidade: de 1 em 1, de 100 em 100 para g e ml, de 0,5 quando já tem vírgula */
+function mcPasso(q, d){
+  q = String(q || '').trim();
+  const m = q.match(/^(\d+(?:[.,]\d+)?)(.*)$/);
+  if(!m) return !q && d > 0 ? '2' : q;
+  const un = m[2], passo = /^\s*(g|ml)$/i.test(un) ? 100 : /[.,]/.test(m[1]) ? 0.5 : 1;
+  const v = Math.round((parseFloat(m[1].replace(',', '.')) + d * passo) * 100) / 100;
+  if(v <= 0) return un.trim() ? q : '';
+  return String(v).replace('.', ',') + un;
+}
+function mcHa(ds){
+  const n = Math.round((fromD(today()) - fromD(ds)) / 864e5);
+  return n <= 0 ? 'hoje' : n === 1 ? 'ontem' : n < 30 ? 'há ' + n + ' dias' : 'em ' + fmtCurto(ds);
+}
+
+/* ---------- linhas e cartões ---------- */
+function mcRowHTML(i, ctx){
+  const desp = tkCtx(ctx, 'desp'), noCarro = !!i.bought && !desp;
+  let meta = '';
+  if(i.note) meta += '<span class="mc-nota">' + esc(i.note) + '</span>';
+  if(desp && i.count) meta += '<span>' + i.count + '× · ' + (i.lastBought ? mcHa(i.lastBought) : '') + '</span>';
+  if(i.fixo) meta += '<span class="mc-fixo" title="Sempre na lista">' + licn('pin') + 'sempre</span>';
+  const lado = (i.qty ? '<span class="mc-qtd">' + esc(mcQtyTxt(i.qty)) + '</span>' : '') + (i.price ? '<span class="mc-preco">' + moneyFmt(i.price) + '</span>' : '');
+  const ck = desp ? '<button class="mc-add' + (i.need ? ' on' : '') + '" data-action="mc-lista" data-id="' + i.id + '" aria-label="' + (i.need ? 'Tirar da lista' : 'Pôr na lista') + '">' + licn(i.need ? 'check' : 'plus') + '</button>' :
+    '<button class="ck' + (noCarro ? ' on' : '') + '" data-action="shop-ck" data-id="' + i.id + '" aria-label="' + (noCarro ? 'Tirar do carrinho' : 'Pôr no carrinho') + '"></button>';
+  return '<div class="trow tk mc' + (noCarro ? ' done' : '') + (desp ? ' desp' : '') + '" data-action="edit-shop" data-id="' + i.id + '">' + ck +
+    '<span class="tk-body"><span class="tt">' + esc(i.name) + '</span>' + (meta ? '<span class="tk-meta">' + meta + '</span>' : '') + '</span>' +
+    (lado ? '<span class="tk-side mc-side">' + lado + '</span>' : '') +
+    (!desp && !noCarro ? '<span class="tk-acts"><button class="icon-btn sm" data-action="mc-tirar" data-id="' + i.id + '" title="Tirar da lista" aria-label="Tirar da lista">' + licn('circle-minus') + '</button></span>' : '') +
+  '</div>';
+}
+const mcPorNome = (a, b) => a.name.localeCompare(b.name, 'pt');
+function mcGrupos(){
+  const gs = [], xs = S.shoppingItems;
+  if(MC_V === 'despensa'){
+    mcSecoes().forEach(([k, nome, em]) => {
+      const ys = xs.filter(i => mcSecDe(i) === k).sort(mcPorNome);
+      if(ys.length) gs.push({k:'d:' + k, em, nome, itens:ys, ctx:'desp'});
+    });
+    return gs;
+  }
+  mcSecoes().forEach(([k, nome, em]) => {
+    const ys = xs.filter(i => i.need && !i.bought && mcSecDe(i) === k).sort(mcPorNome);
+    if(ys.length) gs.push({k:'s:' + k, em, nome, itens:ys});
+  });
+  const ordem = mcSecoes().map(s => s[0]);
+  const carro = xs.filter(i => i.need && i.bought).sort((a, b) => ordem.indexOf(mcSecDe(a)) - ordem.indexOf(mcSecDe(b)) || mcPorNome(a, b));
+  if(carro.length){
+    const total = carro.reduce((s, i) => s + (+i.price || 0), 0);
+    gs.push({k:'carro', ic:'shopping-cart', nome:'No carrinho', itens:carro, cls:'ok', ctx:'carro', total,
+      rodape:'<button class="tk-lote" data-action="mc-concluir">' + licn('check-circle') + 'Concluir compra</button>'});
+  }
+  return gs;
+}
+function mcGrupoHTML(g){
+  const k = 'mc:' + MC_V + '|' + g.k;
+  const ab = k in MC_DOBRA ? !!MC_DOBRA[k] : g.aberto !== false;
+  return '<section class="tk-g mc-g' + (g.cls ? ' ' + g.cls : '') + '">' +
+    '<button class="tk-gh" data-action="mc-fold" data-k="' + esc(k) + '" aria-expanded="' + ab + '"><span class="tk-gi">' + (g.em ? '<span class="em">' + g.em + '</span>' : licn(g.ic)) + '</span>' +
+      '<span class="tk-gn">' + esc(g.nome) + '</span>' + (g.total ? '<span class="mc-total">' + moneyFmt(g.total) + '</span>' : '') +
+      '<span class="tk-gc">' + g.itens.length + '</span>' + licn(ab ? 'chevron-down' : 'chevron-right') + '</button>' +
+    (ab ? '<div class="tk-gl tk-list">' + g.itens.map(i => mcRowHTML(i, g.ctx)).join('') + (g.rodape || '') + '</div>' : '') +
+  '</section>';
+}
+/* chips para pôr na lista com um toque: os mais comprados, ou os da despensa que batem com o que está sendo digitado */
+function mcChipsHTML(xs){
+  return '<div class="mc-chips">' + xs.map(i => '<button class="mc-chip" data-action="mc-sug" data-id="' + i.id + '"><span class="em">' + mcSec(mcSecDe(i))[2] + '</span>' + esc(i.name) +
+    (i.qty ? '<small>' + esc(mcQtyTxt(i.qty)) + '</small>' : '') + '</button>').join('') + '</div>';
+}
+function mcMaisComprados(n){
+  return S.shoppingItems.filter(i => !i.need).sort((a, b) => (b.count || 0) - (a.count || 0) || (b.lastBought || '').localeCompare(a.lastBought || '') || mcPorNome(a, b)).slice(0, n);
+}
+function mcSugHTML(){
+  const inp = $('#shopInp'), v = inp ? inp.value.trim() : '';
+  let xs, tit;
+  if(v){
+    const q = mcLer(mcPartes(v).pop() || ''), chave = q ? semAcento(q.name) : '';
+    if(chave.length < 2) return '';
+    xs = S.shoppingItems.filter(i => !i.need && semAcento(i.name).includes(chave)).sort(mcPorNome).slice(0, 8);
+    tit = 'Da despensa';
   }else{
-    if(pending.length){
-      out += secHTML('Falta pegar', pending.length, '', 'shopping-bag');
-      out += '<div class="list">';
-      cats.forEach(c => {
-        if(c) out += '<div class="shop-cat">' + esc(c) + '</div>';
-        grouped[c].forEach(i => out += shopRow(i));
-      });
-      out += '</div>';
-    }
-    if(bought.length){
-      out += secHTML('Já no carrinho', bought.length, '', 'check-circle');
-      out += '<div class="list">' + bought.map(shopRow).join('') + '</div>';
-    }
-    if(done === total && total > 0){
-      out += '<div class="empty" style="padding:16px; text-align:center; color:var(--good); font-weight:600">Lista completa ✓ Quando chegar em casa, toque "Nova ida ao mercado" para resetar.</div>';
-    }
+    xs = mcMaisComprados(14);
+    tit = 'Mais comprados';
   }
+  return xs.length ? '<div class="mc-sug-t">' + tit + '</div>' + mcChipsHTML(xs) : '';
+}
+function mcSugSync(){
+  const el = $('#mcSug'), inp = $('#shopInp');
+  if(!el || !inp) return;
+  const celular = window.matchMedia && matchMedia('(max-width:760px)').matches;
+  el.innerHTML = (celular ? MC_ADD : document.activeElement === inp) ? mcSugHTML() : '';
+}
+function mcVazioHTML(){
+  if(MC_V === 'despensa') return '<div class="tk-vazio">' + licn('archive') + '<p>A despensa guarda tudo o que você já pôs na lista.</p></div>';
+  const mais = mcMaisComprados(10);
+  return '<div class="tk-vazio">' + licn('shopping-cart') + '<p>' + (mais.length ? 'Nada na lista.' : 'Lista vazia. Escreva o que falta: 2 kg tomate, leite, 6 ovos.') + '</p>' +
+    (mais.length ? '<div class="mc-vazio-sug"><div class="mc-sug-t">Mais comprados</div>' + mcChipsHTML(mais) + '</div>' : '') + '</div>';
+}
+function mcAddSync(){
+  const a = $('#mcAdd'), f = document.querySelector('#view-mercado .tk-add-fundo');
+  if(a) a.classList.toggle('on', MC_ADD);
+  if(f) f.classList.toggle('on', MC_ADD);
+}
+function mcQaSync(){
+  const b = $('#mcSecBtn');
+  if(!b) return;
+  const s = MC_SEC ? mcSec(MC_SEC) : null;
+  b.classList.toggle('on', !!s);
+  b.innerHTML = s ? '<span class="em">' + s[2] + '</span>' : licn('tag');
+  b.title = s ? 'Corredor: ' + s[1] : 'Corredor (automático)';
+}
+function renderMercado(){
+  mcMigra();
+  if(MC_V !== 'lista' && MC_V !== 'despensa') MC_V = 'lista';
+  const xs = S.shoppingItems, lista = xs.filter(i => i.need), carro = lista.filter(i => i.bought);
+  const desp = MC_V === 'despensa';
+  $('#mcTitulo').innerHTML = '<span class="nm">' + (desp ? 'Despensa' : 'Mercado') + '</span>' + licn('chevron-down');
+  $('#mcResumo').innerHTML = !desp && lista.length ? '<span class="hj-pill' + (carro.length === lista.length ? ' ok' : '') + '" title="No carrinho">' + licn('shopping-cart') + carro.length + '/' + lista.length + '</span>' : '';
+  mcAddSync(); mcQaSync();
+  const gs = mcGrupos();
+  let out = '';
+  if(!desp && lista.length && lista.every(i => i.bought)) out += '<div class="mc-pronto">' + licn('check-circle') + '<span>Tudo no carrinho.</span>' +
+    '<button class="btn btn-sm" data-action="mc-concluir">Concluir compra</button></div>';
+  out += gs.map(mcGrupoHTML).join('');
+  if(!gs.length) out = mcVazioHTML();
   $('#shopLista').innerHTML = out;
-}
-function quickAddShop(){
-  const inp = $('#shopInp');
-  const name = inp.value.trim();
-  if(!name){ inp.focus(); return; }
-  const cat = $('#shopCat').value || '';
-  if(S.shoppingItems.find(x => x.name.toLowerCase() === name.toLowerCase())){
-    toast('Esse item já está na lista.');
-    inp.value = ''; inp.focus(); return;
+  mcPreview(); mcSugSync();
+  /* dica única no celular: arrastar a linha */
+  if(!desp && window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#shopLista .trow.mc:not(.done)')){
+    let visto = true;
+    try{ visto = localStorage.getItem('central.dicaArrastarMc') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarMc', '1'); }catch(e){}
+    if(!visto) setTimeout(() => toast('Dica: arraste um item para a direita para pôr no carrinho, para a esquerda para tirar da lista.'), 700);
   }
-  S.shoppingItems.push({id:uid(), name, category:cat, qty:'', bought:false, createdAt:new Date().toISOString()});
-  inp.value = '';
-  sfx('add'); haptic('light');
-  save(); render(); inp.focus();
 }
-function openShopItem(id){
+function mcVistaHTML(){
+  const lista = S.shoppingItems.filter(i => i.need).length, todos = S.shoppingItems.length;
+  const it = (v, ic, nome, c) => '<button class="tk-mi' + (MC_V === v ? ' on' : '') + '" role="menuitemradio" data-action="mc-vista-set" data-v="' + v + '">' + licn(ic) +
+    '<span class="l">' + nome + '</span><span class="c">' + c + '</span></button>';
+  return it('lista', 'shopping-cart', 'Lista de compras', lista) + it('despensa', 'archive', 'Despensa', todos);
+}
+function mcOpcoesHTML(){
+  const lista = S.shoppingItems.filter(i => i.need), carro = lista.filter(i => i.bought).length;
+  let h = '';
+  if(lista.length) h += '<button class="tk-mi" role="menuitem" data-action="mc-compartilhar">' + licn('message-circle') + '<span class="l">Compartilhar a lista</span></button>';
+  if(carro) h += '<button class="tk-mi" role="menuitem" data-action="mc-concluir">' + licn('check-circle') + '<span class="l">Concluir compra</span><span class="c">' + carro + '</span></button>' +
+    '<button class="tk-mi" role="menuitem" data-action="mc-desmarcar">' + licn('undo-2') + '<span class="l">Tirar tudo do carrinho</span></button>';
+  h += '<button class="tk-mi" role="menuitem" data-action="mc-ordem">' + licn('list') + '<span class="l">Ordem dos corredores</span></button>';
+  if(lista.length) h += '<div class="tk-msep"></div><button class="tk-mi del" role="menuitem" data-action="mc-limpar">' + licn('circle-minus') + '<span class="l">Limpar a lista</span><span class="c">' + lista.length + '</span></button>';
+  return h;
+}
+function mcSecMenuHTML(atual, acao, auto){
+  const ok = '<span class="ok">' + licn('check') + '</span>';
+  return (auto ? '<button class="tk-mi' + (!atual ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-c="">' + licn('sparkles') +
+      '<span class="l">Automático</span>' + (!atual ? ok : '') + '</button><div class="tk-msep"></div>' : '') +
+    mcSecoes().map(([k, nome, em]) => '<button class="tk-mi' + (atual === k ? ' on' : '') + '" role="menuitemradio" data-action="' + acao + '" data-c="' + k + '"><span class="em">' + em + '</span>' +
+      '<span class="l">' + nome + '</span>' + (atual === k ? ok : '') + '</button>').join('');
+}
+
+/* ---------- adicionar ---------- */
+function mcQaAbrir(){ MC_ADD = true; mcAddSync(); const i = $('#shopInp'); if(i) i.focus(); mcPreview(); mcSugSync(); }
+function mcQaFechar(){ MC_ADD = false; mcAddSync(); const i = $('#shopInp'); if(i && document.activeElement === i) i.blur(); mcSugSync(); }
+function mcPreview(){
+  const el = document.getElementById('mcPrev'), inp = document.getElementById('shopInp');
+  if(!el || !inp) return;
+  const v = inp.value.trim();
+  if(!v){
+    el.innerHTML = document.activeElement !== inp ? '' : '<span class="qa-dica">Pode escrever: 2 kg tomate, leite x3, 6 ovos, arroz, feijão</span>';
+    return;
+  }
+  const xs = mcPartes(v).map(mcLer).filter(Boolean).slice(0, 8);
+  el.innerHTML = xs.map(q => {
+    const ex = mcAchar(q.name), sec = mcSec(MC_SEC || q.cat || (ex ? mcSecDe(ex) : mcSecaoDe(q.name)));
+    return '<span class="qa-tok' + (ex && ex.need ? ' mc-ja' : '') + '"><span class="em">' + sec[2] + '</span>' + esc(ex ? ex.name : q.name) +
+      (q.qty ? ' · ' + esc(mcQtyTxt(q.qty)) : '') +
+      (ex && ex.need ? (q.qty && q.qty !== ex.qty && !ex.bought ? ' · muda a quantidade' : ex.bought ? ' · já no carrinho' : ' · já na lista') : '') + '</span>';
+  }).join('');
+}
+function quickAddShop(viaBotao){
+  const inp = $('#shopInp');
+  const raw = inp.value.trim();
+  if(!raw){
+    /* com o campo vazio, a seta abre o detalhe de um item novo */
+    if(viaBotao){ mcQaFechar(); openShopItem(null, {category:MC_SEC}); }
+    else inp.focus();
+    return;
+  }
+  const lidos = mcPartes(raw).map(mcLer).filter(Boolean);
+  if(!lidos.length){ inp.focus(); return; }
+  let novos = 0, voltaram = 0, qtd = 0;
+  const ja = [];
+  lidos.forEach(q => {
+    const cat = MC_SEC || q.cat, ex = mcAchar(q.name);
+    if(ex){
+      if(ex.need){
+        if(q.qty && q.qty !== ex.qty && !ex.bought){ ex.qty = q.qty; qtd++; window.__novo = ex.id; }
+        else ja.push(ex.name);
+        return;
+      }
+      ex.need = true; ex.bought = false;
+      if(q.qty) ex.qty = q.qty;
+      if(cat) ex.category = cat;
+      voltaram++; window.__novo = ex.id;
+      return;
+    }
+    const it = {id:uid(), name:q.name, category:cat || mcSecaoDe(q.name), qty:q.qty || '', note:'', price:null, need:true, bought:false, fixo:false,
+      count:0, lastBought:null, createdAt:new Date().toISOString()};
+    S.shoppingItems.push(it);
+    novos++; window.__novo = it.id;
+  });
+  inp.value = ''; MC_SEC = '';
+  if(novos + voltaram + qtd){ sfx('add'); haptic('light'); }
+  save(); render(); inp.focus();
+  const n = novos + voltaram;
+  if(!n && !qtd) toast(ja.length === 1 ? ja[0] + ' já está na lista.' : 'Já estavam na lista.');
+  else if(!n && qtd) toast(qtd === 1 ? 'Quantidade atualizada.' : 'Quantidades atualizadas.');
+  else if(lidos.length > 1) toast((n === 1 ? '1 item' : n + ' itens') + ' na lista' + (ja.length ? ', ' + ja.length + ' já estava' + (ja.length > 1 ? 'm' : '') : '') + '.');
+}
+
+/* ---------- carrinho, lista, concluir e desfazer ---------- */
+function mcFoto(ids){ return ids.map(id => S.shoppingItems.find(x => x.id === id)).filter(Boolean).map(i => JSON.stringify(i)); }
+function mcDesfazer(fotos, criados){
+  return () => {
+    if(criados && criados.length) S.shoppingItems = S.shoppingItems.filter(x => !criados.includes(x.id));
+    fotos.forEach(j => { const o = JSON.parse(j), k = S.shoppingItems.findIndex(x => x.id === o.id); if(k >= 0) S.shoppingItems[k] = o; else S.shoppingItems.push(o); });
+    save(); render(); sfx('undo');
+  };
+}
+function mcCarrinho(id){
+  const i = S.shoppingItems.find(x => x.id === id);
+  if(!i) return;
+  i.bought = !i.bought;
+  if(i.bought){ i.need = true; playDing(); }
+  save(); render();
+  if(i.bought && !S.shoppingItems.some(x => x.need && !x.bought)) toast('Tudo no carrinho.', 'Concluir', () => mcConcluir());
+}
+function mcPorNaLista(id, qty){
+  const i = S.shoppingItems.find(x => x.id === id);
+  if(!i) return;
+  i.need = true; i.bought = false;
+  if(qty) i.qty = qty;
+  sfx('add'); haptic('light'); window.__novo = i.id;
+  save(); render();
+}
+function mcTirar(id){
+  const i = S.shoppingItems.find(x => x.id === id);
+  if(!i) return;
+  const fotos = mcFoto([id]);
+  i.need = false; i.bought = false;
+  haptic('light'); save(); render();
+  toast(i.name + ' saiu da lista.', 'Desfazer', mcDesfazer(fotos));
+}
+/* o carrinho volta para a despensa (os fixos voltam para a lista) e cada item conta mais uma compra */
+function mcConcluir(){
+  popFechar();
+  const carro = S.shoppingItems.filter(i => i.need && i.bought);
+  if(!carro.length){ toast('Nada no carrinho ainda.'); return; }
+  const fotos = mcFoto(carro.map(i => i.id)), t = today();
+  carro.forEach(i => { i.bought = false; i.count = (i.count || 0) + 1; i.lastBought = t; i.need = !!i.fixo; });
+  const fixos = carro.filter(i => i.fixo).length, ficou = S.shoppingItems.filter(i => i.need && !i.fixo).length;
+  if(!ficou){ confete(); sfx('all'); haptic('success'); } else playDing();
+  save(); render();
+  toast('Compra concluída: ' + (carro.length === 1 ? '1 item' : carro.length + ' itens') + '.' +
+    (fixos ? ' ' + (fixos === 1 ? 'O fixo voltou' : 'Os fixos voltaram') + ' para a lista.' : '') +
+    (ficou ? ' ' + ficou + (ficou === 1 ? ' ficou' : ' ficaram') + ' para a próxima.' : ''), 'Desfazer', mcDesfazer(fotos));
+}
+function mcTextoLista(){
+  const xs = S.shoppingItems.filter(i => i.need && !i.bought);
+  if(!xs.length) return '';
+  let t = '🛒 Lista do mercado\n';
+  mcSecoes().forEach(([k, nome, em]) => {
+    const ys = xs.filter(i => mcSecDe(i) === k).sort(mcPorNome);
+    if(ys.length) t += '\n' + em + ' ' + nome + '\n' + ys.map(i => '• ' + i.name + (i.qty ? ' (' + mcQtyTxt(i.qty) + ')' : '') + (i.note ? ', ' + i.note : '')).join('\n') + '\n';
+  });
+  return t.trim();
+}
+/* no app abre o compartilhar do Android; no navegador, o do sistema ou copia o texto */
+function mcCompartilhar(){
+  popFechar();
+  const t = mcTextoLista();
+  if(!t){ toast('A lista está vazia.'); return; }
+  if(SHARE){ capCall(SHARE.share({title:'Lista do mercado', text:t, dialogTitle:'Compartilhar a lista'})); return; }
+  if(navigator.share){ navigator.share({title:'Lista do mercado', text:t}).catch(() => {}); return; }
+  const mostra = () => openModal('Lista do mercado', '<textarea class="inp mc-texto" rows="12" readonly>' + esc(t) + '</textarea>',
+    '<div class="grow"></div><button class="btn btn-primary" data-action="fechar-modal">Fechar</button>', {semFoco:true});
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => toast('Lista copiada. É só colar na conversa.')).catch(mostra);
+  else mostra();
+}
+function mcOrdemAbrir(){ popFechar(); M = {type:'mc-ordem'}; mcOrdemRender(); }
+function mcOrdemRender(){
+  const xs = mcSecoes();
+  const body = '<p class="vsub" style="margin:0">Na ordem em que você anda pelo mercado. A lista segue esta ordem.</p><div class="mc-ord">' +
+    xs.map(([k, nome, em], i) => '<div class="mc-ord-l"><span class="em">' + em + '</span><span class="l">' + nome + '</span>' +
+      '<button class="icon-btn sm" data-action="mc-ord" data-k="' + k + '" data-d="-1" aria-label="Subir ' + nome + '"' + (i === 0 ? ' disabled' : '') + '>' + licn('chevron-up') + '</button>' +
+      '<button class="icon-btn sm" data-action="mc-ord" data-k="' + k + '" data-d="1" aria-label="Descer ' + nome + '"' + (i === xs.length - 1 ? ' disabled' : '') + '>' + licn('chevron-down') + '</button></div>').join('') + '</div>';
+  openModal('Ordem dos corredores', body, '<button class="btn btn-ghost" data-action="mc-ord-padrao">Ordem padrão</button><div class="grow"></div>' +
+    '<button class="btn btn-primary" data-action="fechar-modal">Pronto</button>', {semFoco:true});
+}
+
+/* ---------- detalhe do item ---------- */
+/* Folha com o corredor no topo, carrinho, quantidade com − e +, preço, nome e observação; salva sozinha ao fechar. */
+function openShopItem(id, preset){
   const i = id ? S.shoppingItems.find(x => x.id === id) : null;
-  M = { type:'shop', id: id || null, draft: i ? JSON.parse(JSON.stringify(i)) :
-    {name:'', category:'', qty:''} };
+  if(id && !i) return;
+  popFechar();
+  const base = {name:'', category:'', qty:'', note:'', price:null, need:true, bought:false, fixo:false, count:0, lastBought:null};
+  M = {type:'shop', id:id || null, aberto:false, draft:i ? JSON.parse(JSON.stringify(i)) : Object.assign(base, preset || {})};
   renderShopModal();
 }
+function mcSyncDraft(){
+  if(!M || M.type !== 'shop') return;
+  const d = M.draft, g = id => document.getElementById(id);
+  if(g('f_shname')) d.name = g('f_shname').value;
+  if(g('f_shnote')) d.note = g('f_shnote').value;
+  if(g('f_shqty')) d.qty = g('f_shqty').value.trim();
+  if(g('f_shprice')) d.price = moneyParse(g('f_shprice').value) || null;
+}
 function renderShopModal(){
+  const d = M.draft, primeira = !M.aberto;
+  M.aberto = true;
+  const sec = d.category ? mcSec(d.category) : null;
+  let body = '<div class="tkd-top">' +
+      '<button class="tkd-proj" data-action="mcd-sec" aria-haspopup="menu" title="Corredor">' + (sec ? '<span class="em">' + sec[2] + '</span><span>' + esc(sec[1]) + '</span>' : licn('tag') + '<span>Corredor automático</span>') +
+        licn('chevrons-up-down') + '</button>' +
+      '<span class="grow"></span>' +
+      (M.id ? '<button class="icon-btn" data-action="mcd-mais" aria-haspopup="menu" title="Mais ações" aria-label="Mais ações">' + licn('more-vertical') + '</button>' : '') +
+    '</div>' +
+    '<div class="tkd-data mcd-linha">' +
+      (M.id && d.need ? '<button class="ck' + (d.bought ? ' on' : '') + '" data-action="mcd-ck" aria-label="' + (d.bought ? 'Tirar do carrinho' : 'Pôr no carrinho') + '"></button>' : '') +
+      '<div class="mc-qtd-ed"><button class="mc-q" data-action="mcd-q" data-d="-1" aria-label="Menos">−</button>' +
+        '<input class="mc-qinp" id="f_shqty" value="' + esc(d.qty || '') + '" placeholder="Qtd." autocomplete="off" aria-label="Quantidade">' +
+        '<button class="mc-q" data-action="mcd-q" data-d="1" aria-label="Mais">+</button></div>' +
+      '<input class="inp mono money mc-pinp" id="f_shprice" type="text" inputmode="numeric" autocomplete="off" placeholder="Preço" aria-label="Preço" value="' + (d.price ? moneyFmt(d.price) : '') + '">' +
+    '</div>' +
+    '<textarea class="inp tk-titulo" id="f_shname" rows="1" placeholder="Nome do item" enterkeyhint="done">' + esc(d.name) + '</textarea>' +
+    '<textarea class="inp tkd-notas" id="f_shnote" rows="1" placeholder="Observação (marca, tamanho…)">' + esc(d.note || '') + '</textarea>';
+  if(M.id && d.count) body += '<p class="lmd-aviso">' + licn('shopping-bag') + 'Comprado ' + (d.count === 1 ? '1 vez' : d.count + ' vezes') + (d.lastBought ? ', a última ' + mcHa(d.lastBought) : '') + '.</p>';
+  const foot = '<button class="tkd-tool' + (d.fixo ? ' tem ab' : '') + '" data-action="mcd-fixo" aria-pressed="' + !!d.fixo + '" title="Sempre na lista: volta depois de cada compra" aria-label="Sempre na lista">' + licn('pin') + '</button>' +
+    '<span class="mcd-fixo-txt">' + (d.fixo ? 'Sempre na lista' : '') + '</span>' +
+    '<span class="grow"></span>' +
+    '<button class="tkd-ok" data-action="fechar-modal" title="Pronto" aria-label="Pronto">' + licn('check') + '</button>';
+  openModal('', body, foot, {semFoco:true});
+  $('#mback').classList.add('tk-det');
+  tkAltura(document.getElementById('f_shname')); tkAltura(document.getElementById('f_shnote'));
+  if(primeira && !M.id) setTimeout(() => { const n = document.getElementById('f_shname'); if(n) n.focus(); }, 30);
+}
+function mcMaisHTML(){
   const d = M.draft;
-  const body =
-    '<div class="field"><label>Item</label><input class="inp" id="f_shname" value="' + esc(d.name) + '"></div>' +
-    '<div class="frow">' +
-      '<div class="field"><label>Categoria</label><select class="inp" id="f_shcat" style="width:100%">' +
-        '<option value="">Sem categoria</option>' +
-        ['frutas','verduras','carnes','laticínios','padaria','bebidas','limpeza','higiene','outros'].map(c =>
-          '<option value="' + c + '"' + (d.category === c ? ' selected' : '') + '>' + c + '</option>').join('') +
-      '</select></div>' +
-      '<div class="field"><label>Quantidade</label><input class="inp" id="f_shqty" value="' + esc(d.qty || '') + '" placeholder="Ex.: 2kg, 1L, 6un"></div>' +
-    '</div>';
-  const foot = (M.id ? '<button class="btn btn-danger" data-action="excluir-shop">Excluir da lista</button>' : '') +
-    '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Cancelar</button>' +
-    '<button class="btn btn-primary" data-action="salvar-shop">Salvar</button>';
-  openModal(M.id ? 'Editar item' : 'Novo item', body, foot);
+  return '<button class="tk-mi" role="menuitem" data-action="mcd-lista">' + licn(d.need ? 'circle-minus' : 'plus') + '<span class="l">' + (d.need ? 'Tirar da lista' : 'Pôr na lista') + '</span></button>' +
+    '<button class="tk-mi del" role="menuitem" data-action="excluir-shop">' + licn('trash-2') + '<span class="l">Excluir da despensa</span></button>';
+}
+const mcNorm = o => JSON.stringify([(o.name || '').trim(), o.category || '', (o.qty || '').trim(), (o.note || '').trim(), +o.price || null, !!o.need, !!o.bought, !!o.fixo]);
+/* grava se algo mudou; item novo com o nome de um que já existe vai para ele */
+function mcAutoSalvar(){
+  if(!M || M.type !== 'shop' || M.salvo) return false;
+  mcSyncDraft();
+  M.salvo = true;
+  const d = M.draft, name = mcNome(d.name);
+  const limpo = {name, category:d.category || '', qty:(d.qty || '').trim(), note:(d.note || '').trim(), price:+d.price || null, need:!!d.need, bought:!!d.bought, fixo:!!d.fixo};
+  if(M.id){
+    const i = S.shoppingItems.find(x => x.id === M.id);
+    if(!i) return false;
+    if(!name) limpo.name = i.name;
+    if(!limpo.category) limpo.category = i.category || mcSecaoDe(limpo.name);
+    if(mcNorm(limpo) === mcNorm(i)) return false;
+    Object.assign(i, limpo);
+  }else{
+    if(!name){ if(limpo.qty || limpo.note || limpo.price) toast('Item sem nome não foi salvo.'); return false; }
+    if(!limpo.category) limpo.category = mcSecaoDe(name);
+    const ex = mcAchar(name);
+    /* já existe na despensa: volta para a lista e só leva o que foi preenchido agora */
+    if(ex){
+      ex.need = true; ex.bought = false;
+      if(limpo.qty) ex.qty = limpo.qty;
+      if(limpo.note) ex.note = limpo.note;
+      if(limpo.price) ex.price = limpo.price;
+      if(d.category) ex.category = d.category;
+      if(limpo.fixo) ex.fixo = true;
+      window.__novo = ex.id;
+    }
+    else{ const it = Object.assign({id:uid(), count:0, lastBought:null, createdAt:new Date().toISOString()}, limpo); S.shoppingItems.push(it); window.__novo = it.id; }
+    sfx('add');
+  }
+  save();
+  return true;
 }
 function salvarShop(){
-  const d = M.draft;
-  d.name = ($('#f_shname').value || '').trim();
-  d.category = $('#f_shcat').value || '';
-  d.qty = ($('#f_shqty').value || '').trim();
-  if(!d.name){ toast('Dê um nome ao item.'); return; }
-  if(M.id) Object.assign(S.shoppingItems.find(x => x.id === M.id), d);
-  else S.shoppingItems.push(Object.assign({id:uid(), bought:false, createdAt:new Date().toISOString()}, d));
-  save(); closeModal(); render(); toast('Item salvo.');
+  mcSyncDraft();
+  if(!mcNome(M.draft.name)){ toast('Dê um nome ao item.'); return; }
+  closeModal();
 }
 
 /* sincroniza o rascunho certo conforme o modal aberto */
@@ -4964,7 +5484,7 @@ function runGlobalSearch(raw){
   });
   S.shoppingItems.forEach(x => {
     if(m(x.name) || m(x.category))
-      results.push({type:'Mercado', icon:'shopping-cart', text:x.name, meta:x.category || '', action:'edit-shop', id:x.id});
+      results.push({type:'Mercado', icon:'shopping-cart', text:x.name, meta:mcSec(mcSecDe(x))[1] + (x.need ? ', na lista' : ''), action:'edit-shop', id:x.id});
   });
 
   if(!results.length){ el.innerHTML = '<div class="gempty">Nenhum resultado para "' + esc(raw) + '".</div>'; return; }
@@ -4995,8 +5515,9 @@ function openModal(title, body, foot, o){
   if(f) setTimeout(() => f.focus(), 30);
 }
 function closeModal(){
-  /* o detalhe da tarefa e o do lembrete salvam sozinhos ao fechar */
-  const mudou = !!(M && M.type === 'task') ? tkAutoSalvar() : !!(M && M.type === 'lembrete') && lmAutoSalvar();
+  /* os detalhes de tarefa, lembrete e item do mercado salvam sozinhos ao fechar */
+  const tipo = M && M.type;
+  const mudou = tipo === 'task' ? tkAutoSalvar() : tipo === 'lembrete' ? lmAutoSalvar() : tipo === 'shop' ? mcAutoSalvar() : false;
   $('#mback').classList.remove('on', 'tk-det');
   M = null;
   popFechar();
@@ -5871,7 +6392,7 @@ function tkMover(ids, ds){
     if(e.pointerType !== 'touch') return;
     if(sw){ if(sw.ativo) volta(sw); sw = null; }
     const row = e.target.closest ? e.target.closest('.trow.tk') : null;
-    if(!row || row.classList.contains('done') || row.classList.contains('aniv') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
+    if(!row || row.classList.contains('done') || row.classList.contains('aniv') || row.classList.contains('desp') || row.classList.contains('completing') || e.target.closest('.ck, .tk-acts') || ANIM_PEND.has(row.dataset.id)) return;
     sw = {row, id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, ativo:false, passou:0, bg:null};
   }, {passive:true});
   document.addEventListener('pointermove', e => {
@@ -5887,9 +6408,10 @@ function tkMover(ids, ds){
       bg.className = 'tk-swbg';
       bg.style.top = sw.row.offsetTop + 'px';
       bg.style.height = sw.row.offsetHeight + 'px';
-      const lm = sw.row.classList.contains('lm');
-      bg.innerHTML = '<span class="sw-ok" title="' + (lm ? 'Dispensar' : 'Concluir') + '">' + licn('check') + '</span>' +
-        '<span class="sw-rs" title="' + (lm ? 'Adiar' : 'Reagendar') + '">' + licn(lm ? 'clock' : 'calendar') + '</span>';
+      const lm = sw.row.classList.contains('lm'), mc = sw.row.classList.contains('mc');
+      if(mc) bg.classList.add('mc');
+      bg.innerHTML = '<span class="sw-ok" title="' + (mc ? 'Pôr no carrinho' : lm ? 'Dispensar' : 'Concluir') + '">' + licn(mc ? 'shopping-cart' : 'check') + '</span>' +
+        '<span class="sw-rs" title="' + (mc ? 'Tirar da lista' : lm ? 'Adiar' : 'Reagendar') + '">' + licn(mc ? 'circle-minus' : lm ? 'clock' : 'calendar') + '</span>';
       list.insertBefore(bg, list.firstChild);
       sw.bg = bg;
       sw.row.classList.add('sw-ativo');
@@ -5906,7 +6428,17 @@ function tkMover(ids, ds){
     const s = sw; sw = null;
     if(!s.ativo) return;
     ultimo = Date.now();
-    const id = s.row.dataset.id, lm = s.row.classList.contains('lm');
+    const id = s.row.dataset.id, lm = s.row.classList.contains('lm'), mc = s.row.classList.contains('mc');
+    if(e.type === 'pointerup' && s.dx > LIM && mc){
+      const it = S.shoppingItems.find(x => x.id === id);
+      if(it && !it.bought && !ANIM_PEND.has(id)){
+        ANIM_PEND.add(id);
+        s.row.classList.remove('sw-ativo');
+        s.row.style.transform = 'translateX(105%)';
+        setTimeout(() => { ANIM_PEND.delete(id); mcCarrinho(id); }, 230);
+        return;
+      }
+    }
     if(e.type === 'pointerup' && s.dx > LIM && lm){
       const r = S.reminders.find(x => x.id === id);
       if(r && !r.dismissed && !ANIM_PEND.has(id)){
@@ -5917,7 +6449,7 @@ function tkMover(ids, ds){
         return;
       }
     }
-    if(e.type === 'pointerup' && s.dx > LIM && !lm){
+    if(e.type === 'pointerup' && s.dx > LIM && !lm && !mc){
       const tk = S.tasks.find(x => x.id === id);
       if(tk && tk.status !== 'done' && !ANIM_PEND.has(id)){
         ANIM_PEND.add(id);
@@ -5929,7 +6461,7 @@ function tkMover(ids, ds){
       }
     }
     volta(s);
-    if(e.type === 'pointerup' && s.dx < -LIM) setTimeout(() => lm ? lmAdiar(id) : tkReagendar(id), 140);
+    if(e.type === 'pointerup' && s.dx < -LIM) setTimeout(() => mc ? mcTirar(id) : lm ? lmAdiar(id) : tkReagendar(id), 140);
   };
   document.addEventListener('pointerup', fim, {passive:true});
   document.addEventListener('pointercancel', fim, {passive:true});
@@ -6907,30 +7439,124 @@ document.addEventListener('click', e => {
 
   /* mercado */
   if(a === 'ir-mercado'){ setView('mercado'); return; }
-
-  /* pomodoro */
-  if(a === 'qadd-shop'){ quickAddShop(); return; }
+  if(a === 'qadd-shop'){ quickAddShop(true); return; }
   if(a === 'edit-shop'){ e.stopPropagation(); openShopItem(el.dataset.id); return; }
   if(a === 'salvar-shop'){ salvarShop(); return; }
   if(a === 'shop-ck'){
     e.stopPropagation();
-    const i = S.shoppingItems.find(x => x.id === el.dataset.id);
-    if(i){ i.bought = !i.bought; save(); render(); }
+    const id = el.dataset.id, it = S.shoppingItems.find(x => x.id === id);
+    if(!it || ANIM_PEND.has(id)) return;
+    const row = el.closest('.trow');
+    if(!it.bought && row && animOn()){
+      el.classList.add('pop');
+      ANIM_PEND.add(id);
+      row.classList.add('completing');
+      setTimeout(() => { ANIM_PEND.delete(id); mcCarrinho(id); }, 320);
+      return;
+    }
+    mcCarrinho(id);
+    return;
+  }
+  if(a === 'mc-tirar'){ e.stopPropagation(); mcTirar(el.dataset.id); return; }
+  if(a === 'mc-lista'){
+    e.stopPropagation();
+    const it = S.shoppingItems.find(x => x.id === el.dataset.id);
+    if(it){ if(it.need) mcTirar(it.id); else mcPorNaLista(it.id); }
+    return;
+  }
+  if(a === 'mc-sug'){
+    const inp = $('#shopInp');
+    let qtd = '';
+    if(inp && inp.value.trim()){
+      const ps = mcPartes(inp.value), ult = mcLer(ps.pop() || '');
+      if(ult && ult.qty) qtd = ult.qty;
+      inp.value = ps.length ? ps.join(', ') + ', ' : '';
+    }
+    mcPorNaLista(el.dataset.id, qtd);
+    if(inp && (MC_ADD || document.activeElement === inp)) inp.focus();
+    mcPreview(); mcSugSync();
+    return;
+  }
+  if(a === 'mc-vista'){ popAbrir(el, mcVistaHTML()); return; }
+  if(a === 'mc-vista-set'){
+    MC_V = el.dataset.v === 'despensa' ? 'despensa' : 'lista'; tkLSset('mcVista', MC_V);
+    popFechar(); renderMercado();
+    const l = $('#shopLista');
+    if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); }
+    return;
+  }
+  if(a === 'mc-opcoes'){ popAbrir(el, mcOpcoesHTML(), {direita:true}); return; }
+  if(a === 'mc-fold'){
+    const k = el.dataset.k, ab = el.getAttribute('aria-expanded') === 'true';
+    MC_DOBRA[k] = !ab; tkLSset('mcDobra', MC_DOBRA);
+    renderMercado();
+    return;
+  }
+  if(a === 'mc-concluir'){ mcConcluir(); return; }
+  if(a === 'mc-compartilhar'){ mcCompartilhar(); return; }
+  if(a === 'mc-desmarcar'){
+    popFechar();
+    const xs = S.shoppingItems.filter(i => i.need && i.bought);
+    if(!xs.length) return;
+    const fotos = mcFoto(xs.map(i => i.id));
+    xs.forEach(i => { i.bought = false; });
+    save(); render();
+    toast('Carrinho vazio de novo.', 'Desfazer', mcDesfazer(fotos));
+    return;
+  }
+  if(a === 'mc-limpar'){
+    popFechar();
+    const xs = S.shoppingItems.filter(i => i.need);
+    if(!xs.length) return;
+    const fotos = mcFoto(xs.map(i => i.id));
+    xs.forEach(i => { i.need = false; i.bought = false; });
+    save(); render();
+    toast('Lista limpa. Os itens continuam na despensa.', 'Desfazer', mcDesfazer(fotos));
+    return;
+  }
+  if(a === 'mc-ordem'){ mcOrdemAbrir(); return; }
+  if(a === 'mc-ord'){
+    const ks = mcSecoes().map(x => x[0]), i = ks.indexOf(el.dataset.k), j = i + (+el.dataset.d);
+    if(i < 0 || j < 0 || j >= ks.length) return;
+    [ks[i], ks[j]] = [ks[j], ks[i]];
+    S.meta.mcOrdem = ks;
+    save(); render(); mcOrdemRender();
+    return;
+  }
+  if(a === 'mc-ord-padrao'){ delete S.meta.mcOrdem; save(); render(); mcOrdemRender(); return; }
+  /* folha de adicionar */
+  if(a === 'mc-qa-abrir'){ mcQaAbrir(); return; }
+  if(a === 'mc-qa-fechar'){ mcQaFechar(); return; }
+  if(a === 'mc-qa-sec'){ popAbrir(el, mcSecMenuHTML(MC_SEC, 'mc-qa-sec-set', true)); return; }
+  if(a === 'mc-qa-sec-set'){ MC_SEC = el.dataset.c || ''; popFechar(); mcQaSync(); mcPreview(); $('#shopInp').focus(); return; }
+  /* detalhe do item */
+  if(a === 'mcd-sec'){ popAbrir(el, mcSecMenuHTML(M.draft.category || '', 'mcd-sec-set')); return; }
+  if(a === 'mcd-sec-set'){ mcSyncDraft(); M.draft.category = el.dataset.c || ''; popFechar(); renderShopModal(); return; }
+  if(a === 'mcd-mais'){ popAbrir(el, mcMaisHTML(), {direita:true}); return; }
+  if(a === 'mcd-q'){
+    mcSyncDraft();
+    M.draft.qty = mcPasso(M.draft.qty, +el.dataset.d);
+    const q = document.getElementById('f_shqty'); if(q) q.value = M.draft.qty;
+    haptic('light');
+    return;
+  }
+  if(a === 'mcd-fixo'){ mcSyncDraft(); M.draft.fixo = !M.draft.fixo; renderShopModal(); return; }
+  if(a === 'mcd-ck'){ const id = M.id; closeModal(); mcCarrinho(id); return; }
+  if(a === 'mcd-lista'){
+    popFechar();
+    mcSyncDraft();
+    const id = M.id, por = !M.draft.need;
+    M.draft.need = por;
+    M.draft.bought = false;
+    closeModal();
+    const it = S.shoppingItems.find(x => x.id === id);
+    if(it) toast(por ? it.name + ' está na lista.' : it.name + ' saiu da lista.');
     return;
   }
   if(a === 'excluir-shop'){
-    if(!confirm('Excluir este item da lista?')) return;
+    popFechar();
     S.shoppingItems = S.shoppingItems.filter(x => x.id !== M.id);
-    save(); closeModal(); render(); toast('Item excluído.');
-    return;
-  }
-  if(a === 'reset-compras'){
-    const checked = S.shoppingItems.filter(i => i.bought).length;
-    if(!checked){ toast('Nenhum item marcado para resetar.'); return; }
-    if(!confirm('Desmarcar todos os ' + checked + ' itens comprados? Nada é apagado, a lista volta ao estado inicial para a próxima ida.')) return;
-    S.shoppingItems.forEach(i => i.bought = false);
-    save(); render();
-    toast('Lista resetada para a próxima compra.');
+    M.salvo = true; closeModal(); save(); render();
     return;
   }
 });
@@ -6959,6 +7585,8 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   if(e.target.id === 'qaTitle') qaPreview();
   if(e.target.id === 'rlTitle') lmPreview();
+  if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); }
+  if(e.target.id === 'f_shname' || (e.target.id === 'f_shnote' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
   if(e.target.id === 'f_ltitle' || (e.target.id === 'f_lnotes' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
   if(e.target.id === 'f_title') tkTituloAjusta();
   if(e.target.id === 'f_notes') tkNotasAjusta();
@@ -6968,8 +7596,28 @@ document.addEventListener('input', e => {
 });
 
 /* dica do adicionar rápido aparece com o campo em foco */
-document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); });
-document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); });
+document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); } });
+document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); if(e.target.id === 'shopInp') setTimeout(() => { mcPreview(); mcSugSync(); }, 150); });
+/* colar uma lista de várias linhas no campo do mercado: cada linha vira um item (títulos e corredores ficam de fora) */
+document.addEventListener('paste', e => {
+  if(!e.target || e.target.id !== 'shopInp') return;
+  const t = ((e.clipboardData || window.clipboardData) || {getData:() => ''}).getData('text') || '';
+  if(!/\n/.test(t.trim())) return;
+  e.preventDefault();
+  const secs = MC_SECOES.map(x => semAcento(x[1]));
+  const itens = t.split(/\r?\n/).map(l => {
+    l = l.trim();
+    const bala = /^[-•*·]/.test(l);
+    l = l.replace(/^[-•*·]\s*/, '').replace(/\(([^)]*)\)/g, ' $1').replace(/\s+/g, ' ').trim();
+    if(bala) l = l.replace(/,\s.*$/, '');
+    return l;
+  }).filter(l => l && !/lista d[eo] (mercado|compras)/i.test(l) && !/:$/.test(l) && !secs.includes(semAcento(l.replace(/^[^a-zA-Z0-9À-ÿ]+/, '').trim())));
+  const inp = e.target, atual = inp.value.trim();
+  inp.value = (atual ? atual + '; ' : '') + itens.join('; ');
+  mcPreview(); mcSugSync();
+});
+/* tocar num chip de sugestão não tira o foco do campo (o teclado não fecha) */
+document.addEventListener('mousedown', e => { if(e.target.closest && e.target.closest('.mc-chip, #mcSecBtn')) e.preventDefault(); });
 
 /* desfazer: guarda o estado antes de excluir e oferece voltar */
 document.addEventListener('click', e => {
@@ -6995,16 +7643,18 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && TK_NAV){ TK_NAV = false; tkNavSync(); return; }
   if(e.key === 'Escape' && LM_ADD && !$('#mback').classList.contains('on')){ lmQaFechar(); return; }
   if(e.key === 'Escape' && LM_NAV){ LM_NAV = false; lmNavSync(); return; }
+  if(e.key === 'Escape' && MC_ADD && !$('#mback').classList.contains('on')){ mcQaFechar(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_title' && M && M.type === 'task'){ e.preventDefault(); salvarTask(); return; }
   if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_ltitle' && M && M.type === 'lembrete'){ e.preventDefault(); salvarLembrete(); return; }
+  if(e.key === 'Enter' && !e.shiftKey && e.target.id === 'f_shname' && M && M.type === 'shop'){ e.preventDefault(); salvarShop(); return; }
   if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('lm-horainp')){
     e.preventDefault(); const b = e.target.parentElement.querySelector('[data-action="lm-hora-ok"]'); if(b) b.click(); return;
   }
-  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else lmQaAbrir(); return; }
+  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else mcQaAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'pLogName'){ e.preventDefault(); const n = $('#pLogNotes'); if(n) n.focus(); return; }
@@ -7397,6 +8047,7 @@ function nativeInit(){
       if(TK_NAV){ TK_NAV = false; tkNavSync(); return; }
       if(LM_ADD){ lmQaFechar(); return; }
       if(LM_NAV){ LM_NAV = false; lmNavSync(); return; }
+      if(MC_ADD){ mcQaFechar(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
     });

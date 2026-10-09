@@ -38,6 +38,15 @@ Mesma estrutura das Tarefas, pensada como agenda:
 - **Dispensar e adiar:** o círculo (ou arrastar para a direita no celular) dispensa; o que repete pula para a próxima vez. Arrastar para a esquerda (ou o relógio) abre o adiar: em 1 hora, hoje à noite, amanhã cedo, fim de semana, próxima semana ou outra data. No que repete, só aquela vez muda e a repetição continua. Tudo tem Desfazer.
 - **No aviso do Android:** os botões **Adiar 1 h** e **Feito** resolvem sem abrir a lista, e tocar no aviso abre o lembrete.
 
+## Mercado
+
+- **Lista e despensa:** a lista mostra só o que falta comprar desta vez. Tudo o que já foi comprado fica na despensa (toque no título para trocar), de onde volta para a lista com um toque no +. Itens marcados como **sempre na lista** (o alfinete no detalhe) voltam sozinhos depois de cada compra.
+- **Corredores:** 🥬 Hortifruti, 🥖 Padaria, 🥩 Carnes e peixes, 🧀 Frios e laticínios, 🥫 Mercearia, 🧊 Congelados, 🥤 Bebidas, 🧽 Limpeza e casa, 🧴 Higiene, 🐾 Pet e 🛒 Outros. O corredor é escolhido pelo nome do item (dá para trocar no detalhe, no botão da etiqueta ou com `#corredor` no texto), e a ordem dos corredores pode seguir a do seu mercado (⋮ > Ordem dos corredores).
+- **Adicionar:** pelo + no celular ou pelo campo no topo no PC. Entende quantidade e vários itens de uma vez: `2 kg tomate`, `tomate 2kg`, `leite x3`, `6 ovos`, `meia dúzia de ovos`, `arroz, feijão, café`. Colar uma lista de várias linhas (do WhatsApp, por exemplo) também funciona. Embaixo aparecem os mais comprados e, enquanto você digita, o que já está na despensa; um toque põe na lista.
+- **No mercado:** o círculo (ou arrastar para a direita no celular) põe no carrinho; arrastar para a esquerda tira da lista. **Concluir compra** manda o carrinho para a despensa e conta mais uma compra de cada item. Tudo tem Desfazer.
+- **Detalhe do item:** corredor no topo, quantidade com − e +, preço (o carrinho soma), nome, observação (marca, tamanho) e quantas vezes você já comprou. Salva sozinho ao fechar.
+- **Compartilhar a lista** (⋮): manda o texto separado por corredor, pelo compartilhar do Android ou copiando no navegador.
+
 ## App Android
 
 **Instalar ou atualizar.** No celular, abra o link do APK, baixe e toque no arquivo. Na primeira vez o Android pede para permitir instalação pelo Chrome. Atualizar é igual: baixe o novo e instale por cima, os dados ficam.
