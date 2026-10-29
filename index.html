@@ -1341,6 +1341,181 @@ html[data-theme="dark"] .hb-dia.cheio .hb-anel b{color:#0E1A13}
   .hbd-num span{font-size:11px}
   .hbd-c{width:36px; height:36px}
 }
+/* ===================== Agora: o assistente ===================== */
+/* uma coisa de cada vez: o cartão do agora é o único elemento forte da tela (cores invertidas); o resto fica quieto */
+html.assist #painel, html:not(.assist) #agora{display:none}
+#painel > .vhead{margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--line)}
+#agora{max-width:620px; margin:0 auto}
+.ag-topo{display:flex; align-items:center; gap:6px; min-height:42px; margin:0 0 4px}
+.ag-data{flex:1; min-width:0; font-size:14px; font-weight:600; color:var(--muted)}
+.ag-topo .icon-btn{border:0; background:none; width:42px; height:42px; border-radius:12px; color:var(--ink); margin-right:-10px}
+.ag-topo .icon-btn:hover{background:var(--surface2)}
+.ag-topo .icon-btn svg{width:22px; height:22px}
+#agCab{margin:0 0 22px}
+.ag-ola{margin:0; font-size:36px; line-height:1.04; font-weight:800; font-stretch:122%; letter-spacing:-.03em}
+.ag-prog{display:flex; align-items:center; gap:10px; margin:12px 0 0; font-size:14px; font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums}
+.ag-barra{width:112px; height:6px; flex:none; border-radius:99px; background:var(--line); overflow:hidden}
+.ag-barra i{display:block; height:100%; border-radius:inherit; background:var(--good); transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.ag-prog.cheio{color:var(--good)}
+
+/* anotar: no PC uma linha acima do cartão; no celular, a folha do + da barra */
+#agora .tk-add{margin:0 0 20px}
+.ag-tipos .tk-tool .qd-lab:empty{display:none}
+.ag-quando{display:inline-flex; flex-wrap:wrap; gap:4px}
+.ag-qb{border:1px solid var(--line); border-radius:99px; background:var(--surface); color:var(--muted); padding:3px 10px; font:inherit; font-size:12.5px; font-weight:650; cursor:pointer}
+.ag-qb.on{background:var(--accent-soft); border-color:transparent; color:var(--accent)}
+
+/* o cartão do agora */
+.ag-card{--c-bg:var(--ink); --c-fg:var(--bg); --c-mut:rgba(245,246,243,.66); --c-sub:rgba(245,246,243,.11); --c-subh:rgba(245,246,243,.19); --c-ac:#8DC2F5; --c-late:#FF9E94;
+  --c-ok:#23935A; --c-okfg:#fff;
+  position:relative; margin:0 0 24px; padding:22px 22px 18px; border-radius:26px; background:var(--c-bg); color:var(--c-fg); box-shadow:0 18px 40px rgba(21,26,32,.17)}
+html[data-theme="dark"] .ag-card{--c-bg:#1A2531; --c-fg:var(--ink); --c-mut:var(--muted); --c-sub:rgba(232,237,242,.07); --c-subh:rgba(232,237,242,.13); --c-ac:var(--accent); --c-late:var(--danger);
+  --c-ok:var(--good); --c-okfg:#0D1A12; box-shadow:inset 0 0 0 1px rgba(77,158,232,.36), 0 18px 44px rgba(0,0,0,.45)}
+.ag-rot{display:flex; align-items:center; gap:8px; margin:0 0 14px; font-size:14px; font-weight:650; color:var(--c-mut)}
+.ag-rot span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ag-rot svg{width:17px; height:17px; flex:none; color:var(--c-ac)}
+.ag-card.k-l .ag-rot svg{color:#F4BA68}
+html[data-theme="dark"] .ag-card.k-l .ag-rot svg{color:var(--warn)}
+.ag-card.k-h .ag-rot svg{color:var(--hc)}
+.ag-card.k-b .ag-rot svg{color:#F59CC2}
+.ag-tit{margin:0; font-size:31px; line-height:1.1; font-weight:800; font-stretch:118%; letter-spacing:-.022em; overflow-wrap:anywhere}
+.ag-tit button{all:unset; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer}
+.ag-tit button:focus-visible{outline:2px solid var(--c-ac); outline-offset:3px; border-radius:6px}
+.ag-em{margin-right:.26em}
+.ag-mot{margin:10px 0 0; font-size:15.5px; line-height:1.4; color:var(--c-mut)}
+.ag-mot.late{color:var(--c-late)}
+.ag-extra{display:flex; align-items:flex-start; gap:9px; margin:14px 0 0; padding:10px 12px; border-radius:13px; background:var(--c-sub); font-size:14px; line-height:1.4}
+.ag-extra svg{width:16px; height:16px; flex:none; margin-top:2px; color:var(--c-ac)}
+.ag-acoes{display:flex; gap:8px; margin:20px 0 0}
+.ag-btn{flex:1 1 0; min-width:0; height:50px; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:0 12px; border:0; border-radius:15px;
+  background:var(--c-sub); color:var(--c-fg); font:inherit; font-size:15.5px; font-weight:700; white-space:nowrap; cursor:pointer}
+.ag-btn span{overflow:hidden; text-overflow:ellipsis}
+.ag-btn svg{width:19px; height:19px; flex:none}
+.ag-btn:hover{background:var(--c-subh)}
+.ag-btn.ok{background:var(--c-ok); color:var(--c-okfg)}
+.ag-btn.ok:hover{filter:brightness(1.07)}
+.ag-btn:active{transform:scale(.96)}
+.ag-btn:focus-visible{outline:2px solid var(--c-ac); outline-offset:2px}
+/* responde ao toque: o cartão feito sai para o lado e o próximo sobe */
+.ag-card.saindo{animation:agSai .3s cubic-bezier(.4,0,.7,1) forwards; pointer-events:none}
+@keyframes agSai{to{opacity:0; transform:translateX(40px) rotate(1.2deg)}}
+.ag-card.entra{animation:agEntra .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes agEntra{from{opacity:0; transform:translateY(14px) scale(.985)}to{opacity:1; transform:none}}
+/* sem nada agora, e o começo com exemplos */
+.ag-vazio .ag-tit{font-size:28px}
+.ag-ex{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0}
+.ag-exb{border:0; border-radius:99px; padding:8px 14px; background:var(--c-sub); color:var(--c-fg); font:inherit; font-size:14px; font-weight:600; cursor:pointer}
+.ag-exb:hover{background:var(--c-subh)}
+
+/* plano do dia: escolher o que entra hoje */
+.ag-plano .ag-tit{font-size:28px}
+.ag-pl{display:flex; flex-direction:column; margin:14px -6px 0}
+.ag-pl-row{display:flex; align-items:flex-start; gap:12px; width:100%; padding:10px 6px; border:0; border-top:1px solid var(--c-sub); border-radius:0; background:none;
+  color:var(--c-fg); font:inherit; text-align:left; cursor:pointer}
+.ag-pl-row:first-child{border-top:0}
+.ag-pl-row .ck{width:22px; height:22px; margin-top:1px; border-color:var(--c-mut)}
+.ag-pl-row .ck.on{background:var(--c-ok); border-color:var(--c-ok)}
+.ag-pl-row .ck.on::after{color:var(--c-okfg)}
+.ag-pl-row .tx{display:flex; flex-direction:column; gap:2px; min-width:0}
+.ag-pl-row .t{font-size:15.5px; font-weight:650; line-height:1.3; overflow-wrap:anywhere}
+.ag-pl-row small{font-size:12.5px; color:var(--c-mut)}
+.ag-pl-row small.late{color:var(--c-late)}
+.ag-pl-row:not(.on) .t{color:var(--c-mut); font-weight:550}
+.ag-pl-row:focus-visible{outline:2px solid var(--c-ac); outline-offset:-2px; border-radius:10px}
+.ag-pl-mais{align-self:flex-start; border:0; background:none; color:var(--c-ac); font:inherit; font-size:14px; font-weight:650; padding:8px 6px; cursor:pointer}
+.ag-pl-linha{display:flex; align-items:flex-start; gap:9px; margin:12px 0 0; font-size:13.5px; line-height:1.45; color:var(--c-mut)}
+.ag-pl-linha svg{width:16px; height:16px; flex:none; margin-top:2px; color:var(--c-ac)}
+.ag-pl-linha b{color:var(--c-fg); font-weight:650}
+.ag-pl-res{margin:16px 0 0; font-size:14px; font-weight:650; color:var(--c-fg); font-variant-numeric:tabular-nums}
+
+/* ou então: duas alternativas, círculo conclui e o resto traz para a frente */
+.ag-sec{margin:0 4px 10px; font-size:15px; font-weight:750}
+.ag-alts{display:flex; flex-direction:column; gap:8px; margin:0 0 16px}
+.ag-alt{display:flex; align-items:center; gap:4px; padding:0 0 0 16px; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow)}
+.ag-alt .ck{position:relative; width:22px; height:22px}
+.ag-alt .ck::before{content:''; position:absolute; inset:-11px}
+.ag-alt.k-h .ck{border-color:var(--hc)}
+.ag-alt-b{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; padding:12px 16px 12px 10px; border:0; background:none;
+  color:var(--ink); font:inherit; text-align:left; cursor:pointer}
+@media (hover:hover) and (pointer:fine){ .ag-alt:hover, .ag-depois:hover{background:var(--surface2)} }
+.ag-alt-t{display:flex; align-items:center; gap:7px; min-width:0; font-size:15px; font-weight:650}
+.ag-alt-t .tx{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ag-alt-t .ag-em{margin:0}
+.ag-alt-ic{display:inline-flex; flex:none; color:var(--muted)}
+.ag-alt-ic svg{width:15px; height:15px}
+.ag-alt-b small{font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ag-alt-b small.late{color:var(--danger)}
+.ag-alt.saindo{animation:rowDone .4s cubic-bezier(.4,0,.6,1) forwards; pointer-events:none}
+/* mais tarde: o que tem hora, em linha tracejada (ainda não é agora) */
+.ag-depois{display:flex; align-items:center; gap:10px; width:100%; margin:0 0 16px; padding:12px 16px; border:1px dashed var(--line2); border-radius:16px; background:none;
+  color:var(--muted); font:inherit; font-size:14px; text-align:left; cursor:pointer}
+.ag-depois > svg{width:17px; height:17px; flex:none}
+.ag-depois > svg:last-child{width:16px; height:16px; margin-left:auto}
+.ag-depois > span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ag-depois b{color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums}
+.ag-depois small{margin-left:8px; font-size:12.5px}
+.ag-hm{flex:none; width:52px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
+.ag-chips{margin:4px 0 8px}
+.ag-chips .mc-chip svg{width:16px; height:16px; flex:none; color:var(--muted)}
+.ag-run{margin:0 0 16px; cursor:pointer}
+.ag-run .clock{font-size:17px}
+
+/* uma de cada vez: decidir, rever algum dia e fechar o dia */
+#mback.ag-fl .mhead{display:none}
+#mback.ag-fl .mbody{padding-top:14px; gap:14px}
+#mback.ag-fl .mfoot{padding:8px 12px 10px; border-top:1px solid var(--line)}
+#mback.ag-fl .mfoot .btn{gap:6px}
+#mback.ag-fl .mfoot .btn svg{width:16px; height:16px}
+#mback.ag-fl .mfoot .btn[disabled]{opacity:.35; cursor:default}
+.agf-top{display:flex; align-items:center; gap:12px; margin:0 -8px 0 0}
+.agf-n{font-size:14px; font-weight:600; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
+.agf-n b{margin-right:8px; color:var(--ink); font-weight:750}
+.agf-barra{flex:1; height:5px; border-radius:99px; background:var(--line); overflow:hidden}
+.agf-barra i{display:block; height:100%; border-radius:inherit; background:var(--accent); transition:width .3s}
+.agf-top .icon-btn{border:0; background:none}
+.agf-item{padding:2px 0 0}
+.agf-cab{display:flex; align-items:center; gap:8px; margin:0 0 8px; font-size:13.5px; font-weight:650; color:var(--muted)}
+.agf-cab svg{width:16px; height:16px; flex:none; color:var(--accent)}
+.agf-item.k-h .agf-cab svg{color:var(--hc)}
+.agf-item.k-l .agf-cab svg{color:var(--warn)}
+.agf-tit{margin:0; font-size:25px; line-height:1.16; font-weight:800; font-stretch:114%; letter-spacing:-.015em; overflow-wrap:anywhere}
+.agf-mot{margin:8px 0 0; font-size:14.5px; color:var(--muted)}
+.agf-q{margin:4px 0 -4px; font-size:15px; font-weight:750}
+.agf-ops .rs-op.ok svg{color:var(--good)}
+.agf-ops .rs-op.del svg, .agf-ops .rs-op.del span{color:var(--danger)}
+.agf-fim{display:flex; flex-direction:column; align-items:center; gap:10px; padding:26px 10px 12px; text-align:center}
+.agf-fim > svg{width:46px; height:46px; color:var(--good)}
+.agf-fim h2{margin:0; font-size:27px; font-weight:800; font-stretch:116%; letter-spacing:-.02em}
+.agf-fim p{max-width:36ch; margin:0; font-size:15px; color:var(--muted)}
+
+/* avisos: largura do texto, até 80% da tela (antes quebravam na metade) */
+.toast{width:max-content; max-width:min(80vw, 520px)}
+/* barra de baixo no celular: Agora, anotar (+) e Tudo; os botões + de cada aba saem (o + da barra faz o papel deles) */
+.bn-item.bn-anotar{background:none}
+.bn-anotar .ic{width:54px; height:54px; margin:-20px 0 0; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(15,98,180,.34)}
+html[data-theme="dark"] .bn-anotar .ic{color:var(--on-accent); box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.bn-item.bn-anotar .ic svg{width:27px; height:27px; stroke-width:2.4}
+html.assist .tk-fab{display:none}
+.ag-tudo{grid-template-columns:repeat(3, minmax(0, 1fr))}
+.ag-tudo .tk-tile.on{background:var(--accent-soft); color:var(--accent)}
+.nrow.off{opacity:.45; pointer-events:none}
+.ag-capseg button{min-width:38px}
+@media (hover:none), (pointer:coarse){ .ag-tipos .tk-tool:not(.on):hover{background:none; color:var(--muted)} }
+@media (max-width:760px){
+  html.assist[data-view] .toast{bottom:calc(86px + var(--sab))}
+  #mback.ag-fl .modal{min-height:0}
+  #agora .tk-add{margin:0}
+  #agCab{margin-bottom:20px}
+  .ag-ola{font-size:32px}
+  .ag-card{padding:20px 18px 16px; border-radius:24px}
+  .ag-tit{font-size:28px}
+  .ag-vazio .ag-tit, .ag-plano .ag-tit{font-size:25px}
+  .ag-acoes{flex-wrap:wrap}
+  .ag-btn.ok{flex-basis:100%}
+}
+@media (min-width:761px){
+  .ag-tudo{grid-template-columns:repeat(4, minmax(0, 1fr))}
+}
 /* ===================== App Android, notificações, sons e animações ===================== */
 /* áreas seguras: o app Android desenha atrás das barras do sistema */
 :root{
@@ -1476,6 +1651,27 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
 
   <!-- ===== HOJE ===== -->
   <section class="view on" id="view-hoje">
+    <div id="agora">
+      <div class="ag-topo">
+        <span class="ag-data" id="agData"></span>
+        <button class="icon-btn" data-action="ag-opcoes" aria-haspopup="menu" aria-label="Opções" title="Opções"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
+      </div>
+      <div id="agCab"></div>
+      <div class="tk-add ag-add" id="agAdd">
+        <input class="inp tk-add-inp" type="text" id="agInp" placeholder="O que apareceu?" autocomplete="off" enterkeyhint="send" aria-label="Anotar">
+        <div class="tk-ferr ag-tipos" id="agTipos" role="group" aria-label="Tipo">
+          <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="tarefa" title="Tarefa" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="lembrete" title="Lembrete" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="habito" title="Hábito" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="mercado" title="Mercado" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="qd-lab"></span></button>
+        </div>
+        <button class="tk-send" data-action="ag-cap-enviar" aria-label="Anotar" title="Anotar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+        <div class="qa-prev" id="agPrev" aria-live="polite"></div>
+      </div>
+      <div class="tk-add-fundo" data-action="ag-cap-fechar"></div>
+      <div id="agCorpo"></div>
+    </div>
+    <div id="painel">
     <div class="vhead">
       <h1 class="vtitle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:8px; opacity:.6"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Hoje</h1>
       <span class="vdate mono" id="hojeDate"></span>
@@ -1487,6 +1683,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
     <div id="hojeLembretes"></div>
     <div id="hojeHabitos"></div>
     <div id="hojeRodape"></div>
+    </div>
   </section>
 
   <!-- ===== TAREFAS ===== -->
@@ -1742,6 +1939,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
         </div>
       </div>
 
+      <div class="card dcard" id="cardAg"></div>
       <div class="card dcard" id="cardNotif"></div>
       <div class="card dcard" id="cardSons"></div>
       <div class="card dcard" id="cardApp" hidden></div>
@@ -2110,6 +2308,7 @@ function applyTheme(){
   b.querySelector('.ic').innerHTML = S.meta.theme === 'light' ? licn('moon') : licn('sun');
   b.querySelector('.lb').textContent = S.meta.theme === 'light' ? 'Tema escuro' : 'Tema claro';
   document.documentElement.classList.toggle('no-anim', S.meta.animar === false);
+  agNavSync();
   if(BARS) capCall(BARS.setStyle({style: S.meta.theme === 'dark' ? 'DARK' : 'LIGHT'}));
 }
 let VIEW = 'hoje';
@@ -2137,6 +2336,12 @@ function renderBottomNav(){
   const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
   const bn = document.getElementById('bottomNav');
   if(!bn) return;
+  if(agAtivo()){
+    bn.innerHTML = '<button class="bn-item' + (VIEW === 'hoje' ? ' active' : '') + '" data-view="hoje" aria-label="Agora" title="Agora"><span class="ic">' + licn('sparkles') + '</span></button>' +
+      '<button class="bn-item bn-anotar" data-action="ag-mais-um" aria-label="Anotar" title="Anotar"><span class="ic">' + licn('plus') + '</span></button>' +
+      '<button class="bn-item' + (VIEW !== 'hoje' ? ' active' : '') + '" data-action="mais" aria-label="Tudo" title="Tudo"><span class="ic">' + licn('layout-grid') + '</span></button>';
+    return;
+  }
   bn.innerHTML = bt.map(v => {
     const t = TABS[v] || {ic:'circle',lb:v};
     return '<button class="bn-item' + (VIEW === v ? ' active' : '') + '" data-view="' + v + '" aria-label="' + t.lb + '" title="' + t.lb + '"><span class="ic">' + licn(t.ic) + '</span></button>';
@@ -2151,6 +2356,7 @@ function setView(v){
   if(v !== 'tarefas'){ TK_ADD = false; TK_NAV = false; }
   if(v !== 'lembretes'){ LM_ADD = false; LM_NAV = false; }
   if(v !== 'mercado') MC_ADD = false;
+  if(v !== 'hoje'){ AG_ADD = false; AG_FOCO = ''; agCapSync(); }
   if(v !== 'habitos') HB_ADD = false;
   else{ HB_V = 'hoje'; HB_DIA = null; HB_SEM = 0; }
   document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('on', n.dataset.view === v));
@@ -2225,6 +2431,7 @@ function taskRowHTML(t, ctx){
   if(t.notes && String(t.notes).trim()) ics += '<span class="tk-ic" title="Tem descrição">' + licn('file-text') + '</span>';
   if(t.recurrence && t.recurrence.type) ics += '<span class="tk-ic" title="Repete">' + licn('repeat') + '</span>';
   if((t.personIds || []).length) ics += '<span class="tk-ic" title="Pessoas">' + licn('user') + '</span>';
+  if(t.algumDia && !t.due && !done) ics += '<span class="tk-ic" title="Algum dia">' + licn('cloud') + '</span>';
   const due = tkDueLabel(t, ctx);
   return '<div class="trow tk' + (done ? ' done' : '') + '" data-action="open-task" data-id="' + t.id + '">' +
     '<button class="ck p' + (t.priority || 0) + (done ? ' on' : '') + '" data-action="ck" data-id="' + t.id + '" aria-label="' + (done ? 'Reabrir' : 'Concluir') + '"></button>' +
@@ -2273,6 +2480,7 @@ function sortTasks(arr){
 
 /* ===================== Render: Hoje ===================== */
 function renderHoje(){
+  if(agAtivo()){ renderAgora(); return; }
   const t = today();
   $('#hojeDate').textContent = fmtLong(t);
 
@@ -2370,6 +2578,969 @@ function renderHoje(){
   $('#hojeRodape').innerHTML = !precisa ? '' :
     '<div class="backup-line">' + licn('hard-drive-download') + '<span>' + (diasB === null ? 'Nenhum backup exportado ainda' : 'Último backup há ' + diasB + ' dias') + '</span>' +
     '<button class="btn btn-ghost btn-sm" data-action="exportar">Exportar</button></div>';
+}
+
+/* ===================== Agora: o assistente ===================== */
+/* A tela inicial não mostra listas: mostra uma coisa de cada vez, o motivo e as escolhas (feito, começar, depois).
+   De manhã, o plano do dia (o que entra hoje); à noite, fechar o dia (resolver o que sobrou, uma de cada vez).
+   O que aparece entra por um campo só, que separa sozinho em tarefa, lembrete, hábito ou compra.
+   O painel antigo continua em Dados > Tela inicial. */
+LICN['scale'] = '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>';
+LICN['hourglass'] = '<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>';
+LICN['sunset'] = '<path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/>';
+LICN['arrow-left'] = '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>';
+
+let AG_FOCO = '';        /* item trazido para a frente em "Ou então" */
+let AG_ADD = false;      /* folha de anotar aberta (celular) */
+let AG_TIPO = '';        /* tipo escolhido no botão da folha ('' = o que o texto disser) */
+let AG_QUANDO = '';      /* tarefa sem data no texto: '' (decidir depois), 'hoje' ou 'amanha' */
+let AG_PLANO = null;     /* plano do dia sendo escolhido: {ds, sel, mais} */
+let AG_ENTRA = false;    /* o próximo cartão entra com animação (depois de feito, adiado ou trazido) */
+const AG_PER = {manha:['da manhã', 'de manhã'], tarde:['da tarde', 'à tarde'], noite:['da noite', 'à noite']};
+/* emojis de coisas que não costumam ser hábito: ligar, arrumar, cozinhar, finanças, planejar */
+const AG_NAO_HABITO = ['📞', '🧹', '🍳', '💰', '📝'];
+const AG_TIPOS = [['tarefa', 'clipboard-list', 'Tarefa'], ['lembrete', 'bell', 'Lembrete'], ['habito', 'target', 'Hábito'], ['mercado', 'shopping-cart', 'Mercado']];
+const AG_EXEMPLOS = ['Ligar pro banco amanhã', 'Dentista sexta 14h', 'Ler 10 páginas todo dia', 'Leite, pão e café'];
+
+function agAtivo(){ return S.meta.inicio !== 'painel'; }
+function agCap(){ const n = +S.meta.agCap; return [3, 5, 7].includes(n) ? n : 5; }
+/* o que o assistente guarda do dia: plano feito, dia fechado, o que foi adiado (até quando) e o que ficou para outro dia */
+function agEstado(){
+  const t = today();
+  let a = S.meta.ag;
+  if(!a || typeof a !== 'object' || a.ds !== t) a = S.meta.ag = {ds:t, planejado:false, fechado:false, adiado:{}, fora:[], plano:[]};
+  if(!a.adiado || typeof a.adiado !== 'object') a.adiado = {};
+  if(!Array.isArray(a.fora)) a.fora = [];
+  if(!Array.isArray(a.plano)) a.plano = [];
+  return a;
+}
+/* madrugada (00:00 a 04:59) conta como o fim da noite */
+function agMin(hm){ const m = hm2m(hm); return m < 300 ? m + 1440 : m; }
+function agHoraFechar(){ const h = notifCfg().habHora; return hbHoraOk(h) ? hm2m(h) : 1260; }
+/* atrasada há mais de uma semana ficou para trás: sai do dia (plano, sugestões, fechar) e espera uma revisão, uma de cada vez */
+const AG_VELHA = 7;
+function agLimite(){ return addD(today(), -AG_VELHA); }
+function agParaTras(){
+  const lim = agLimite();
+  const ls = S.reminders.filter(r => !r.dismissed && r.date && r.date < lim).map(r => ({k:'l:' + r.id, tipo:'l', id:r.id, d:r.date}));
+  const ts = S.tasks.filter(x => x.status !== 'done' && x.due && x.due < lim).map(x => ({k:'t:' + x.id, tipo:'t', id:x.id, d:x.due}));
+  return ls.concat(ts).sort((a, b) => b.d.localeCompare(a.d));
+}
+function agJuntar(xs){ return xs.length < 2 ? (xs[0] || '') : xs.slice(0, -1).join(', ') + ' e ' + xs[xs.length - 1]; }
+function agItem(k){ k = String(k || ''); const i = k.indexOf(':'); return {k, tipo:k.slice(0, i), id:k.slice(i + 1)}; }
+function agObj(it){
+  if(it.tipo === 't') return S.tasks.find(x => x.id === it.id) || null;
+  if(it.tipo === 'l') return S.reminders.find(x => x.id === it.id) || null;
+  if(it.tipo === 'h') return S.habits.find(x => x.id === it.id) || null;
+  if(it.tipo === 'b') return S.people.find(x => x.id === it.id) || null;
+  return null;
+}
+function agMotivo(it){ const s = (it.m || []).join(', '); return s ? s.charAt(0).toUpperCase() + s.slice(1) + '.' : ''; }
+
+/* ---------- o que pede atenção agora ---------- */
+/* Cada item ganha uma nota (maior = mais urgente) e o motivo em poucas palavras.
+   O que tem hora mais tarde não entra agora: vai para "Mais tarde". Com todos, ignora o adiado e o "hoje não" (plano do dia). */
+function agCandidatos(todos){
+  const t = today(), agora = nowMin(), a = agEstado(), ms = Date.now(), lim = agLimite();
+  const fora = new Set(a.fora), itens = [], depois = [];
+  const vale = k => todos || (!fora.has(k) && !(a.adiado[k] > ms));
+  /* lembretes de hoje e os que passaram */
+  S.reminders.forEach(r => {
+    if(r.dismissed || !r.date || r.date > t || r.date < lim) return;
+    const k = 'l:' + r.id;
+    if(!vale(k)) return;
+    const it = {k, tipo:'l', id:r.id, titulo:r.title, cat:r.category || '', m:[]};
+    if(hbHoraOk(r.time)){
+      const mm = hm2m(r.time);
+      if(r.date === t && mm > agora + 15){ it.m.push('às ' + r.time); depois.push(Object.assign(it, {hora:r.time, min:mm})); return; }
+      if(r.date < t){ it.nota = 92; it.late = true; it.m.push('era para ' + tkDataTxt(r.date) + ', às ' + r.time); }
+      else{ it.nota = mm >= agora - 10 ? 100 : 96; it.late = mm < agora - 10; it.m.push((mm >= agora ? 'às ' : 'era às ') + r.time); }
+    }else if(r.date < t){ it.nota = 70; it.late = true; it.m.push('desde ' + tkDataTxt(r.date)); }
+    else{ it.nota = 55; it.m.push('para hoje'); }
+    itens.push(it);
+  });
+  /* hábitos do dia que faltam: na hora deles, no momento do dia deles ou a qualquer hora */
+  const pa = agora < 300 ? -1 : HB_PER[hbPeriodoDeHora(lmAgora())].i;
+  hbAtivos().forEach(h => {
+    if(!hbPlanejado(h, t) || habDone(h, t)) return;
+    const k = 'h:' + h.id;
+    if(!vale(k)) return;
+    const it = {k, tipo:'h', id:h.id, titulo:h.name, emoji:h.emoji || '', cor:h.color, m:[],
+      extra:h.twoMin ? ['zap', 'Versão de 2 minutos: ' + h.twoMin] : h.cue ? ['link', h.cue] : null};
+    if(hbHoraOk(h.hora)){
+      const mm = agMin(h.hora);
+      if(mm > agora + 15){ it.m.push('às ' + h.hora); depois.push(Object.assign(it, {hora:h.hora, min:mm})); return; }
+      it.nota = 85; it.m.push((mm >= agora - 30 ? 'às ' : 'era às ') + h.hora);
+    }else if(HB_PER[h.periodo]){
+      const ip = HB_PER[h.periodo].i;
+      if(ip > pa){ it.m.push('hábito ' + AG_PER[h.periodo][0]); depois.push(Object.assign(it, {per:h.periodo, min:[300, 720, 1080][ip]})); return; }
+      if(ip === pa){ it.nota = 60; it.m.push('hábito ' + AG_PER[h.periodo][0]); }
+      else{ it.nota = 50; it.m.push('ficou ' + AG_PER[h.periodo][0]); }
+    }else{ it.nota = 42; it.m.push('hábito de hoje'); }
+    if(hbFalhouUma(h, t)){ it.nota += 15; it.m.push('não falhe duas vezes'); }
+    itens.push(it);
+  });
+  /* aniversários de hoje (cedo demais fica mais para baixo) */
+  S.people.forEach(p => {
+    if(nextBday(p.birthday) !== 0) return;
+    const k = 'b:' + p.id;
+    if(!vale(k)) return;
+    const anos = lmIdade(p, t);
+    itens.push({k, tipo:'b', id:p.id, titulo:'Mandar parabéns para ' + p.name, nota:agora < 480 ? 30 : 80, m:['aniversário hoje' + (anos > 0 ? ', ' + anos + ' anos' : '')]});
+  });
+  /* tarefas de hoje, atrasadas e da caixa do dia */
+  const plano = new Set(a.plano);
+  S.tasks.forEach(x => {
+    if(x.status === 'done') return;
+    const cx = tkEhCaixa(x, t);
+    if(!cx && !(x.due && x.due <= t)) return;
+    if(x.due && x.due < lim) return;
+    const k = 't:' + x.id;
+    if(!vale(k)) return;
+    const pr = x.priority || 0;
+    const it = {k, tipo:'t', id:x.id, titulo:x.title, proj:projById(x.projectId), adiou:x.adiou || 0, m:[]};
+    if(x.due && x.due < t){
+      const d = Math.round((fromD(t) - fromD(x.due)) / 864e5);
+      it.nota = 47 + Math.min(d, 5) + 10 * pr; it.late = true;
+      it.m.push(d === 1 ? 'era para ontem' : 'atrasada há ' + d + ' dias');
+    }else if(cx){ it.nota = 40 + 10 * pr; it.m.push('apareceu hoje'); }
+    else{ it.nota = 45 + 10 * pr; it.m.push('para hoje'); }
+    if(pr >= 2) it.m.push(pr === 3 ? 'prioridade alta' : 'prioridade média');
+    if((x.adiou || 0) >= 3) it.m.push('já adiada ' + x.adiou + ' vezes');
+    if(plano.has(k)) it.nota += 6;
+    itens.push(it);
+  });
+  /* organizar: decidir as sem data; à noite, fechar o dia */
+  if(!todos){
+    const nd = agParaDecidir().length;
+    if(nd && vale('x:decidir')) itens.push({k:'x:decidir', tipo:'x', id:'decidir', titulo:nd === 1 ? 'Decidir 1 tarefa sem data' : 'Decidir ' + nd + ' tarefas sem data', nota:24 + Math.min(nd, 12),
+      m:['uma de cada vez: hoje, outro dia ou algum dia']});
+    const nv = agParaTras().length;
+    if(nv && vale('x:tras')) itens.push({k:'x:tras', tipo:'x', id:'tras', titulo:nv === 1 ? 'Rever 1 que ficou para trás' : 'Rever ' + nv + ' que ficaram para trás', nota:22,
+      m:['atrasadas há mais de uma semana', 'uma de cada vez']});
+    const fh = agHoraFechar();
+    if(!a.fechado && vale('x:fechar') && agora >= fh - 90){
+      const n = agItensFechar().length;
+      if(n) itens.push({k:'x:fechar', tipo:'x', id:'fechar', titulo:'Fechar o dia', nota:agora >= fh ? 97 : 38, m:[n === 1 ? 'ficou 1 coisa em aberto' : 'ficaram ' + n + ' coisas em aberto', 'uma de cada vez']});
+    }
+  }
+  itens.sort((x, y) => y.nota - x.nota);
+  depois.sort((x, y) => x.min - y.min);
+  return {itens, depois};
+}
+/* tarefas sem data para decidir (as mais novas primeiro); algum dia fica de fora */
+function agParaDecidir(){
+  const t = today();
+  return S.tasks.filter(x => x.status !== 'done' && !x.due && !tkEhCaixa(x, t) && !x.algumDia)
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+function agAlgumDia(){
+  return S.tasks.filter(x => x.status !== 'done' && !x.due && x.algumDia).sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+}
+/* o que sobrou do dia, na ordem do fechar: hábitos (rápido), lembretes, tarefas; o que ainda tem hora hoje fica de fora */
+function agItensFechar(){
+  const t = today(), a = agEstado(), fora = new Set(a.fora), agora = nowMin(), lim = agLimite(), xs = [];
+  hbAtivos().filter(h => hbPlanejado(h, t) && !habDone(h, t) && !fora.has('h:' + h.id) && !(hbHoraOk(h.hora) && agMin(h.hora) > agora + 15))
+    .sort(hbOrdenador()).forEach(h => xs.push({k:'h:' + h.id, tipo:'h', id:h.id}));
+  S.reminders.filter(r => !r.dismissed && r.date && r.date <= t && r.date >= lim && !(r.date === t && hbHoraOk(r.time) && hm2m(r.time) > agora + 15))
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '99').localeCompare(b.time || '99')).forEach(r => xs.push({k:'l:' + r.id, tipo:'l', id:r.id}));
+  sortTasks(S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= t && x.due >= lim) || tkEhCaixa(x, t))))
+    .forEach(x => xs.push({k:'t:' + x.id, tipo:'t', id:x.id}));
+  return xs;
+}
+/* feitos e total do dia (o que repete conta pela última vez feita) */
+function agProgresso(){
+  const t = today(), lim = agLimite(), fora = new Set(agEstado().fora), noDia = iso => !!iso && dstr(new Date(iso)) === t;
+  let ok = 0, n = 0;
+  S.tasks.forEach(x => {
+    if(x.status === 'done'){ if(noDia(x.completedAt)){ ok++; n++; } return; }
+    if(noDia(x.ultimaFeita)){ ok++; n++; }
+    if((x.due && x.due <= t && x.due >= lim) || tkEhCaixa(x, t)) n++;
+  });
+  hbAtivos().forEach(h => {
+    if(!hbPlanejado(h, t)) return;
+    if(habDone(h, t)){ ok++; n++; } else if(!fora.has('h:' + h.id)) n++;
+  });
+  S.reminders.forEach(r => {
+    if(r.dismissed){ if(noDia(r.dismissedAt)){ ok++; n++; } return; }
+    if(noDia(r.ultimaFeita)){ ok++; n++; }
+    if(r.date && r.date <= t && r.date >= lim) n++;
+  });
+  return [ok, n];
+}
+/* o principal (ou o que a pessoa trouxe para a frente) e duas alternativas */
+function agEscolha(){
+  const c = agCandidatos();
+  let p = AG_FOCO ? c.itens.find(x => x.k === AG_FOCO) || c.depois.find(x => x.k === AG_FOCO) : null;
+  if(!p){ AG_FOCO = ''; p = c.itens[0] || null; }
+  return {principal:p, alt:c.itens.filter(x => x !== p && x.tipo !== 'x').slice(0, 2), depois:c.depois.filter(x => x !== p)};
+}
+
+/* ---------- tela ---------- */
+function agRotulo(it){
+  if(it.tipo === 't') return ['clipboard-list', 'Tarefa' + (it.proj ? ', ' + it.proj.name : '')];
+  if(it.tipo === 'l') return ['bell', 'Lembrete' + (it.cat ? ', ' + it.cat : '')];
+  if(it.tipo === 'h') return ['target', 'Hábito'];
+  if(it.tipo === 'b') return ['cake', 'Aniversário'];
+  return it.id === 'fechar' ? ['sunset', 'Fim do dia'] : it.id === 'tras' ? ['rotate-ccw', 'Para organizar'] : ['scale', 'Para organizar'];
+}
+function agCor(it){ return it.tipo === 'h' ? ' style="' + hbCorVars(it.cor) + '"' : ''; }
+function agCardHTML(it){
+  const [ic, rot] = agRotulo(it), k = esc(it.k);
+  const b = (cls, acao, icone, txt, extra) => '<button class="ag-btn' + (cls ? ' ' + cls : '') + '" data-action="' + acao + '" data-k="' + k + '"' + (extra || '') + '>' + licn(icone) + '<span>' + txt + '</span></button>';
+  const acoes = it.tipo === 'x' ?
+    b('ok', 'ag-fluxo', agRotulo(it)[0], it.id === 'fechar' ? 'Resolver agora' : it.id === 'tras' ? 'Rever agora' : 'Decidir agora', ' data-f="' + it.id + '"') + b('', 'ag-depois', 'clock', 'Depois', ' aria-haspopup="menu"') :
+    b('ok', 'ag-feito', 'check', it.tipo === 'b' ? 'Já mandei' : 'Feito') + (it.tipo === 't' || it.tipo === 'h' ? b('', 'ag-comecar', 'play', 'Começar') : '') + b('', 'ag-depois', 'clock', 'Depois', ' aria-haspopup="menu"');
+  return '<article class="ag-card k-' + it.tipo + (AG_ENTRA ? ' entra' : '') + '" data-k="' + k + '"' + agCor(it) + '>' +
+    '<p class="ag-rot">' + licn(ic) + '<span>' + esc(rot) + '</span></p>' +
+    '<h2 class="ag-tit"><button data-action="ag-abrir" data-k="' + k + '" title="Abrir">' + (it.emoji ? '<span class="ag-em">' + esc(it.emoji) + '</span>' : '') + esc(it.titulo) + '</button></h2>' +
+    '<p class="ag-mot' + (it.late ? ' late' : '') + '">' + esc(agMotivo(it)) + '</p>' +
+    (it.extra ? '<p class="ag-extra">' + licn(it.extra[0]) + '<span>' + esc(it.extra[1]) + '</span></p>' : '') +
+    '<div class="ag-acoes">' + acoes + '</div></article>';
+}
+function agAltHTML(it){
+  const k = esc(it.k);
+  return '<div class="ag-alt k-' + it.tipo + '" data-k="' + k + '"' + agCor(it) + '>' +
+    '<button class="ck" data-action="ag-feito" data-k="' + k + '" aria-label="' + (it.tipo === 'b' ? 'Já mandei: ' : 'Feito: ') + esc(it.titulo) + '"></button>' +
+    '<button class="ag-alt-b" data-action="ag-foco" data-k="' + k + '" title="Trazer para a frente">' +
+      '<span class="ag-alt-t">' + (it.emoji ? '<span class="ag-em">' + esc(it.emoji) + '</span>' : '<span class="ag-alt-ic">' + licn(agRotulo(it)[0]) + '</span>') + '<span class="tx">' + esc(it.titulo) + '</span></span>' +
+      '<small' + (it.late ? ' class="late"' : '') + '>' + esc(agMotivo(it)) + '</small></button></div>';
+}
+function agQuandoTxt(d){ return d.hora || AG_PER[d.per][1]; }
+function agDepoisLinhaHTML(xs){
+  const d = xs[0];
+  return '<button class="ag-depois" data-action="ag-agenda" aria-haspopup="menu">' + licn('hourglass') +
+    '<span>Mais tarde: <b>' + esc(agQuandoTxt(d)) + '</b> ' + esc((d.emoji ? d.emoji + ' ' : '') + d.titulo) + (xs.length > 1 ? '<small>e mais ' + (xs.length - 1) + '</small>' : '') + '</span>' +
+    licn('chevron-down') + '</button>';
+}
+function agAgendaHTML(){
+  const xs = agCandidatos().depois;
+  if(!xs.length) return '<div class="tk-mh">Nada mais para hoje.</div>';
+  return '<div class="tk-mh">Mais tarde hoje</div>' + xs.map(d => '<button class="tk-mi" role="menuitem" data-action="ag-foco" data-k="' + esc(d.k) + '"><span class="ag-hm">' + esc(agQuandoTxt(d)) + '</span>' +
+    '<span class="l">' + esc((d.emoji ? d.emoji + ' ' : '') + d.titulo) + '</span></button>').join('');
+}
+function agVazioHTML(depois, ok, n){
+  if(!S.tasks.length && !S.reminders.length && !hbAtivos().length)
+    return '<article class="ag-card ag-vazio"><p class="ag-rot">' + licn('sparkles') + '<span>Para começar</span></p>' +
+      '<h2 class="ag-tit">Me diga o que precisa fazer.</h2>' +
+      '<p class="ag-mot">Escreva do seu jeito. Eu separo em tarefa, lembrete, hábito ou compra e trago aqui na hora certa.</p>' +
+      '<div class="ag-ex">' + AG_EXEMPLOS.map(x => '<button class="ag-exb" data-action="ag-exemplo" data-t="' + esc(x) + '">' + esc(x) + '</button>').join('') + '</div></article>';
+  const prox = depois[0], cheio = n > 0 && ok === n;
+  return '<article class="ag-card ag-vazio' + (AG_ENTRA ? ' entra' : '') + '"><p class="ag-rot">' + licn('check-circle') + '<span>Agora</span></p>' +
+    '<h2 class="ag-tit">' + (cheio && !prox ? 'Tudo feito hoje.' : 'Nada para agora.') + '</h2>' +
+    '<p class="ag-mot">' + (prox ? esc('Próximo: ' + agQuandoTxt(prox) + ', ' + (prox.emoji ? prox.emoji + ' ' : '') + prox.titulo + '.') : 'Se aparecer alguma coisa, é só anotar.') + '</p>' +
+    '<div class="ag-acoes"><button class="ag-btn" data-action="ag-cap-abrir">' + licn('plus') + '<span>Anotar</span></button></div></article>';
+}
+function agFocoHTML(){
+  const rr = running();
+  if(rr) return '<div class="card runstrip ag-run" data-action="ir-tempo"><span class="rundot"></span><span class="clock-desc">' + esc(rr.desc) + '</span>' +
+    '<span class="clock" data-tick-start="' + rr.start + '">' + fmtClock(durSec(rr)) + '</span><button class="btn btn-sm" data-action="parar-timer">Parar</button></div>';
+  if(POMO.running) return '<div class="card runstrip ag-run" data-action="ir-tempo"><span class="rundot"></span><span class="clock-desc">' + esc(pomoPhaseLabel() + (POMO.label ? ': ' + POMO.label : '')) + '</span>' +
+    '<span class="clock" id="agPomo">' + mmss(pomoRemaining()) + '</span></div>';
+  return '';
+}
+function agChipsHTML(pk){
+  const a = agEstado(), xs = [], nd = agParaDecidir().length, nm = S.shoppingItems.filter(i => i.need && !i.bought).length;
+  if(nd && pk !== 'x:decidir') xs.push('<button class="mc-chip" data-action="ag-fluxo" data-f="decidir">' + licn('scale') + nd + ' para decidir</button>');
+  const nv = agParaTras().length;
+  if(nv && pk !== 'x:tras') xs.push('<button class="mc-chip" data-action="ag-fluxo" data-f="tras">' + licn('rotate-ccw') + nv + (nv === 1 ? ' ficou para trás' : ' ficaram para trás') + '</button>');
+  if(nm) xs.push('<button class="mc-chip" data-action="ag-ir" data-v="mercado">' + licn('shopping-cart') + nm + ' no mercado</button>');
+  if(!a.fechado && pk !== 'x:fechar' && nowMin() >= agHoraFechar() - 180 && agItensFechar().length) xs.push('<button class="mc-chip" data-action="ag-fluxo" data-f="fechar">' + licn('sunset') + 'Fechar o dia</button>');
+  return xs.length ? '<div class="mc-chips ag-chips">' + xs.join('') + '</div>' : '';
+}
+function agBackupHTML(){
+  if(!S.tasks.length && !S.habits.length) return '';
+  const lbk = S.meta.lastBackupAt, d = lbk ? Math.floor((Date.now() - new Date(lbk).getTime()) / 864e5) : null;
+  if(d !== null && d <= 7) return '';
+  return '<div class="backup-line">' + licn('hard-drive-download') + '<span>' + (d === null ? 'Nenhum backup exportado ainda' : 'Último backup há ' + d + ' dias') + '</span>' +
+    '<button class="btn btn-ghost btn-sm" data-action="exportar">Exportar</button></div>';
+}
+function renderAgora(){
+  const cab = $('#agCab'), corpo = $('#agCorpo');
+  if(!cab || !corpo) return;
+  const t = today(), d = fromD(t), hr = new Date().getHours(), dt = $('#agData');
+  if(dt) dt.textContent = cap1(DOW_LONGO[d.getDay()]) + ', ' + d.getDate() + ' de ' + MESES_LONGOS[d.getMonth()];
+  const [ok, n] = agProgresso();
+  cab.innerHTML = '<h1 class="ag-ola">' + (hr < 5 || hr >= 18 ? 'Boa noite.' : hr < 12 ? 'Bom dia.' : 'Boa tarde.') + '</h1>' +
+    (n ? '<div class="ag-prog' + (ok === n ? ' cheio' : '') + '"><span class="ag-barra" role="progressbar" aria-label="Feitos hoje" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + ok + '"><i style="width:' + Math.round(ok / n * 100) + '%"></i></span>' +
+      '<span>' + (ok === n ? 'Tudo feito hoje' : ok + ' de ' + n + ' feitos hoje') + '</span></div>' : '');
+  let h = agFocoHTML(), pk = '';
+  if(agPlanoMostrar()) h += agPlanoHTML();
+  else{
+    const e = agEscolha();
+    pk = e.principal ? e.principal.k : '';
+    h += e.principal ? agCardHTML(e.principal) : agVazioHTML(e.depois, ok, n);
+    if(e.principal && e.alt.length) h += '<h3 class="ag-sec">Ou então</h3><div class="ag-alts">' + e.alt.map(agAltHTML).join('') + '</div>';
+    if(e.principal && e.depois.length) h += agDepoisLinhaHTML(e.depois);
+  }
+  corpo.innerHTML = h + agChipsHTML(pk) + agBackupHTML();
+  AG_ENTRA = false;
+}
+/* a cada minuto a tela acompanha a hora (sem atrapalhar menu, folha ou animação abertos) */
+/* volta ao topo (depois do plano, a lista longa some e o cartão do agora fica lá em cima) */
+function agTopo(){ const m = document.querySelector('.main'); if(m) m.scrollTop = 0; window.scrollTo(0, 0); }
+function agTick(){
+  const m = lmAgora();
+  if(m === agTick.min) return;
+  const primeira = !agTick.min;
+  agTick.min = m;
+  if(primeira || VIEW !== 'hoje' || !agAtivo()) return;
+  if($('#mback').classList.contains('on') || POP || AG_ADD || document.querySelector('#agCorpo .saindo')) return;
+  renderAgora();
+}
+function agNavSync(){
+  const ag = agAtivo();
+  document.documentElement.classList.toggle('assist', ag);
+  TABS.hoje = ag ? {ic:'sparkles', lb:'Agora'} : {ic:'layout-dashboard', lb:'Hoje'};
+  const n = document.querySelector('.side .nav-item[data-view="hoje"]');
+  if(n){
+    n.dataset.label = TABS.hoje.lb; n.setAttribute('aria-label', TABS.hoje.lb);
+    const ic = n.querySelector('.ic'), lb = n.querySelector('.lb');
+    if(ic) ic.innerHTML = licn(TABS.hoje.ic);
+    if(lb) lb.textContent = TABS.hoje.lb;
+  }
+}
+
+/* ---------- plano do dia ---------- */
+function agPlanoTarefas(){ return agCandidatos(true).itens.filter(x => x.tipo === 't'); }
+/* de manhã até as 18h, com duas tarefas ou mais (ou alguma atrasada) e o plano ainda não feito */
+function agPlanoMostrar(){
+  if(agEstado().planejado || nowMin() >= 18 * 60) return false;
+  const ts = agPlanoTarefas();
+  return ts.length >= 2 || ts.some(x => x.late);
+}
+function agPlanoHTML(){
+  const ts = agPlanoTarefas(), t = today(), cap = agCap();
+  if(!AG_PLANO || AG_PLANO.ds !== t) AG_PLANO = {ds:t, sel:new Set(ts.slice(0, cap).map(x => x.k)), mais:false};
+  const sel = AG_PLANO.sel, lim = AG_PLANO.mais ? ts.length : Math.max(cap + 3, 6);
+  const nSel = ts.filter(x => sel.has(x.k)).length, algum = ts.filter(x => !sel.has(x.k) && x.adiou >= 3).length, fica = ts.length - nSel - algum;
+  const rows = ts.slice(0, lim).map(x => {
+    const on = sel.has(x.k);
+    return '<button class="ag-pl-row' + (on ? ' on' : '') + '" data-action="ag-plano-ck" data-k="' + esc(x.k) + '" role="checkbox" aria-checked="' + on + '">' +
+      '<span class="ck' + (on ? ' on' : '') + '"></span><span class="tx"><span class="t">' + esc(x.titulo) + '</span><small' + (x.late ? ' class="late"' : '') + '>' + esc(agMotivo(x)) + '</small></span></button>';
+  }).join('');
+  /* o resto do dia, só para saber: lembretes, hábitos e aniversários */
+  const linha = (ic, rot, txt) => txt ? '<p class="ag-pl-linha">' + licn(ic) + '<span><b>' + rot + ':</b> ' + esc(txt) + '</span></p>' : '';
+  const lems = S.reminders.filter(r => !r.dismissed && r.date === t).sort(lmOrd).map(r => (r.time ? r.time + ' ' : '') + r.title);
+  const habs = hbAtivos().filter(h => hbPlanejado(h, t) && !habDone(h, t)).sort(hbOrdenador()).map(h => (h.emoji ? h.emoji + ' ' : '') + h.name + (hbHoraOk(h.hora) ? ' ' + h.hora : ''));
+  const nivs = S.people.filter(p => nextBday(p.birthday) === 0).map(p => p.name);
+  return '<article class="ag-card ag-plano' + (AG_ENTRA ? ' entra' : '') + '">' +
+    '<p class="ag-rot">' + licn('sunrise') + '<span>Plano do dia</span></p>' +
+    '<h2 class="ag-tit">O que entra hoje?</h2>' +
+    '<p class="ag-mot">' + (ts.length > cap ? 'Marquei as ' + cap + ' mais urgentes. As desmarcadas vão para amanhã.' : 'Desmarque o que não cabe hoje. Vai para amanhã.') + '</p>' +
+    '<div class="ag-pl">' + rows + (ts.length > lim ? '<button class="ag-pl-mais" data-action="ag-plano-mais">Ver mais ' + (ts.length - lim) + '</button>' : '') + '</div>' +
+    linha('bell', 'Lembretes', agJuntar(lems)) + linha('target', 'Hábitos', agJuntar(habs)) + linha('cake', 'Aniversário', agJuntar(nivs)) +
+    '<p class="ag-pl-res">' + agJuntar([nSel ? (nSel === 1 ? '1 para hoje' : nSel + ' para hoje') : 'Nada hoje'].concat(fica ? [fica + ' para amanhã'] : [], algum ? [algum + ' para algum dia'] : [])) + '</p>' +
+    '<div class="ag-acoes"><button class="ag-btn ok" data-action="ag-plano-ok">' + licn('check') + '<span>Começar o dia</span></button>' +
+      '<button class="ag-btn" data-action="ag-plano-nao"><span>Agora não</span></button></div></article>';
+}
+function agPlanoAplicar(){
+  const a = agEstado(), t = today(), am = addD(t, 1);
+  const sel = AG_PLANO && AG_PLANO.ds === t ? AG_PLANO.sel : new Set(agPlanoTarefas().slice(0, agCap()).map(x => x.k));
+  const ts = agPlanoTarefas(), ids = new Set(ts.filter(x => !sel.has(x.k)).map(x => x.id)), nSel = ts.length - ids.size;
+  const xs = S.tasks.filter(x => ids.has(x.id));
+  const fotos = xs.map(x => JSON.stringify(x)), agAntes = JSON.stringify(a);
+  let am1 = 0, al = 0;
+  /* a que já foi adiada 3 vezes não volta para amanhã: vai para algum dia */
+  xs.forEach(x => {
+    if((x.adiou || 0) >= 3){ x.due = null; x.inbox = false; x.algumDia = true; al++; }
+    else{ x.due = am; x.inbox = false; x.adiou = (x.adiou || 0) + 1; am1++; }
+  });
+  a.planejado = true; a.plano = [...sel];
+  AG_PLANO = null; AG_FOCO = ''; AG_ENTRA = true;
+  sfx('tap'); haptic('medium');
+  save(); render(); agTopo();
+  if(!xs.length){ toast(nSel ? 'Plano feito: ' + (nSel === 1 ? '1 tarefa' : nSel + ' tarefas') + ' para hoje.' : 'Plano feito: nenhuma tarefa para hoje.'); return; }
+  const partes = [];
+  if(am1) partes.push(am1 === 1 ? '1 tarefa foi para amanhã' : am1 + ' tarefas foram para amanhã');
+  if(al) partes.push(al === 1 ? '1 para algum dia' : al + ' para algum dia');
+  toast(agJuntar(partes) + '.', 'Desfazer', () => {
+    fotos.forEach(j => { const o = JSON.parse(j), i = S.tasks.findIndex(y => y.id === o.id); if(i >= 0) S.tasks[i] = o; });
+    S.meta.ag = JSON.parse(agAntes); AG_PLANO = null;
+    save(); render(); sfx('undo');
+  });
+}
+
+/* ---------- feito, começar, depois ---------- */
+/* foto de um item para desfazer (o hábito guarda só a marca do dia) */
+function agFoto(it){
+  if(it.tipo === 'h'){ const t = today(); return {tipo:'h', id:it.id, ds:t, log:!!(S.habitLogs[it.id] && S.habitLogs[it.id][t])}; }
+  const o = agObj(it);
+  return {tipo:it.tipo, id:it.id, j:o ? JSON.stringify(o) : null, criados:[]};
+}
+function agRestaura(f){
+  if(!f) return;
+  if(f.tipo === 'h'){
+    const l = S.habitLogs[f.id] || (S.habitLogs[f.id] = {});
+    if(f.log) l[f.ds] = true; else delete l[f.ds];
+    return;
+  }
+  const arr = f.tipo === 't' ? S.tasks : f.tipo === 'l' ? S.reminders : null;
+  if(!arr) return;
+  (f.criados || []).forEach(id => { const i = arr.findIndex(y => y.id === id); if(i >= 0) arr.splice(i, 1); });
+  const i = arr.findIndex(y => y.id === f.id);
+  if(f.j){ const o = JSON.parse(f.j); if(i >= 0) arr[i] = o; else arr.push(o); }
+  else if(i >= 0) arr.splice(i, 1);
+}
+/* conclui a tarefa; a que repete vai para a próxima data */
+function agConcluirTarefa(x){
+  const agora = new Date().toISOString();
+  if(x.recurrence && x.recurrence.type){ x.due = proximaFutura(x.due || today(), x.recurrence); x.completedAt = null; x.ultimaFeita = agora; }
+  else{ x.status = 'done'; x.completedAt = agora; }
+  delete x.algumDia;
+}
+/* dispensa o lembrete; o que repete pula para a próxima vez (o atrasado, para a primeira a partir de hoje) */
+function agDispensarLem(r){
+  const t = today();
+  if(lmRepete(r) && r.date){ r.date = lmDepoisDe(r, r.date < t ? addD(t, -1) : r.date); r.ultimaFeita = new Date().toISOString(); }
+  else{ r.dismissed = true; r.dismissedAt = new Date().toISOString(); }
+}
+/* passa o lembrete para outro dia, na mesma hora; no que repete, só esta vez (a série segue) */
+function agMoverLem(r, d){
+  const t = today(), criados = [];
+  if(lmRepete(r) && r.date){
+    const prox = lmDepoisDe(r, t);
+    if(prox !== d){
+      const um = Object.assign(JSON.parse(JSON.stringify(r)), {id:uid(), recurrence:null, date:d, dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()});
+      S.reminders.push(um); criados.push(um.id);
+    }
+    r.date = prox;
+    return criados;
+  }
+  r.date = d; r.dismissed = false; r.dismissedAt = null;
+  return criados;
+}
+/* com as tarefas do dia todas resolvidas, comemora (o aviso leva o Desfazer da última) */
+function agCelebraTarefas(desfazer){
+  const t = today();
+  if(CELEB_TAR === t || S.tasks.some(x => x.status !== 'done' && ((x.due && x.due <= t) || tkEhCaixa(x, t)))) return false;
+  CELEB_TAR = t;
+  setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Tarefas do dia concluídas.', 'Desfazer', desfazer); }, 140);
+  return true;
+}
+/* mudo: o som já tocou no toque */
+function agConcluir(k, mudo){
+  const it = agItem(k), o = agObj(it), a = agEstado(), t = today();
+  if(!o && it.tipo !== 'b') return;
+  const foto = it.tipo === 'b' ? null : agFoto(it), agAntes = JSON.stringify(a);
+  const desfazer = () => { agRestaura(foto); S.meta.ag = JSON.parse(agAntes); AG_ENTRA = true; save(); render(); sfx('undo'); };
+  if(AG_FOCO === k) AG_FOCO = '';
+  AG_ENTRA = true;
+  if(it.tipo === 'h'){
+    if(!mudo){ sfx('habit'); haptic('light'); }
+    if(hbMarcar(it.id, t, true, desfazer)) return;
+    toast('Feito.', 'Desfazer', desfazer);
+    return;
+  }
+  let msg = 'Feito.';
+  if(it.tipo === 't'){ agConcluirTarefa(o); if(o.status !== 'done') msg = 'Feita. Próxima: ' + tkDataTxt(o.due) + '.'; }
+  else if(it.tipo === 'l'){ agDispensarLem(o); if(!o.dismissed) msg = 'Feito. Próximo: ' + lmQuando(o) + '.'; }
+  else if(it.tipo === 'b'){ if(!a.fora.includes(k)) a.fora.push(k); }
+  if(!mudo) playDing();
+  save(); render();
+  if(it.tipo === 't' && agCelebraTarefas(desfazer)) return;
+  toast(msg, 'Desfazer', desfazer);
+}
+function agComecar(k){
+  const it = agItem(k), o = agObj(it);
+  if(!o) return;
+  const desc = it.tipo === 'h' ? (o.emoji ? o.emoji + ' ' : '') + o.name : o.title;
+  ttComecar(desc, it.tipo === 't' ? (o.projectId || '') : '', TT_MODO);
+  toast((TT_MODO === 'pomo' ? 'Foco começou: ' : 'Cronômetro começou: ') + desc, 'Ver', () => setView('tempo'));
+}
+function agAbrir(k){
+  popFechar();
+  const it = agItem(k);
+  if(it.tipo === 't') openTask(it.id);
+  else if(it.tipo === 'l') openLembrete(it.id);
+  else if(it.tipo === 'h') hbAbrir(it.id);
+  else if(it.tipo === 'b') openPessoa(it.id);
+  else if(it.tipo === 'x') agFluxo(it.id);
+}
+function agDepoisHTML(k){
+  const it = agItem(k), t = today(), cedo = new Date().getHours() < 18;
+  const mi = (ic, lab, v, sub, cls) => '<button class="tk-mi' + (cls ? ' ' + cls : '') + '" role="menuitem" data-action="ag-dep" data-k="' + esc(k) + '" data-v="' + v + '">' + licn(ic) +
+    '<span class="l">' + lab + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</button>';
+  const sep = '<div class="tk-msep"></div>';
+  const breve = mi('timer', 'Daqui a 1 hora', 'hora') + (cedo ? mi('moon', 'À noite', 'noite', 'às 19:00') : '');
+  if(it.tipo === 'l'){
+    return lmAdiarOps().map(([ic, lab, ds, hr]) => '<button class="tk-mi" role="menuitem" data-action="ag-dep-lem" data-k="' + esc(k) + '" data-ds="' + ds + '" data-hr="' + hr + '">' + licn(ic) +
+      '<span class="l">' + lab + '</span><small>' + (ds === t ? hr : tkDataTxt(ds) + ', ' + hr) + '</small></button>').join('') + sep + mi('calendar', 'Outro dia ou hora', 'mais');
+  }
+  if(it.tipo === 't'){
+    return breve + sep + tkOpcoesData().slice(1).map(([ic, lab, ds]) => '<button class="tk-mi" role="menuitem" data-action="ag-dep" data-k="' + esc(k) + '" data-v="data" data-ds="' + ds + '">' + licn(ic) +
+      '<span class="l">' + lab + '</span><small>' + tkDataAbs(ds) + '</small></button>').join('') +
+      '<label class="tk-mi">' + licn('calendar') + '<span class="l">Escolher data</span><input type="date" class="ag-dep-data" data-k="' + esc(k) + '" min="' + addD(t, 1) + '" aria-label="Escolher data"></label>' +
+      sep + mi('cloud', 'Algum dia', 'algum', 'sem data');
+  }
+  return breve + sep + mi('x', 'Hoje não', 'fora', it.tipo === 'h' ? 'volta amanhã' : '');
+}
+/* depois: some por um tempo (hoje), vai para outra data (tarefa) ou fica para outro dia */
+function agAdiar(k, v, ds){
+  popFechar();
+  const it = agItem(k), a = agEstado(), agAntes = JSON.stringify(a);
+  let foto = null, msg;
+  if(v === 'hora' || v === 'noite'){
+    a.adiado[k] = v === 'hora' ? Date.now() + 3600000 : quando(today(), '19:00').getTime();
+    msg = v === 'hora' ? 'Volta daqui a 1 hora.' : 'Volta às 19:00.';
+  }else if(v === 'fora'){
+    if(!a.fora.includes(k)) a.fora.push(k);
+    msg = it.tipo === 'h' ? 'Hoje não. Amanhã volta.' : 'Fica para outro dia.';
+  }else if(it.tipo === 't'){
+    const x = agObj(it);
+    if(!x) return;
+    foto = agFoto(it);
+    if(v === 'algum'){ x.due = null; x.inbox = false; x.algumDia = true; msg = 'Guardada para algum dia.'; }
+    else if(v === 'data' && /^\d{4}-\d{2}-\d{2}$/.test(ds || '') && ds > today()){ x.due = ds; x.inbox = false; delete x.algumDia; x.adiou = (x.adiou || 0) + 1; msg = 'Ficou para ' + tkDataTxt(ds) + '.'; }
+    else return;
+  }else return;
+  if(AG_FOCO === k) AG_FOCO = '';
+  AG_ENTRA = true; haptic('light');
+  save(); render();
+  toast(msg, 'Desfazer', () => { agRestaura(foto); S.meta.ag = JSON.parse(agAntes); AG_ENTRA = true; save(); render(); sfx('undo'); });
+}
+function agOpcoesHTML(){
+  const a = agEstado(), nd = agParaDecidir().length, na = agAlgumDia().length, np = agPlanoTarefas().length;
+  const mi = (ic, lab, attrs, c) => '<button class="tk-mi" role="menuitem" ' + attrs + '>' + licn(ic) + '<span class="l">' + lab + '</span>' + (c ? '<span class="c">' + c + '</span>' : '') + '</button>';
+  return (a.planejado && np ? mi('sunrise', 'Refazer o plano do dia', 'data-action="ag-replanejar"') : '') +
+    mi('scale', 'Decidir as sem data', 'data-action="ag-fluxo" data-f="decidir"', nd) +
+    mi('sunset', 'Fechar o dia', 'data-action="ag-fluxo" data-f="fechar"') +
+    (na ? mi('cloud', 'Rever algum dia', 'data-action="ag-fluxo" data-f="algum"', na) : '') +
+    (agParaTras().length ? mi('rotate-ccw', 'Rever o que ficou para trás', 'data-action="ag-fluxo" data-f="tras"', agParaTras().length) : '') +
+    '<div class="tk-msep"></div>' + mi('settings', 'Tela inicial e avisos', 'data-action="ag-config"');
+}
+
+/* ---------- uma de cada vez: decidir as sem data, rever algum dia, fechar o dia ---------- */
+function agFluxo(f){
+  popFechar();
+  if(AG_ADD) agCapFechar();
+  if($('#mback').classList.contains('on')) closeModal();
+  const fila = f === 'fechar' ? agItensFechar() : f === 'tras' ? agParaTras() : (f === 'algum' ? agAlgumDia() : agParaDecidir()).map(x => ({k:'t:' + x.id, tipo:'t', id:x.id}));
+  if(!fila.length){
+    if(f === 'fechar'){ agEstado().fechado = true; save(); render(); toast('Nada em aberto. Dia fechado.'); }
+    else toast(f === 'algum' ? 'Nada guardado para algum dia.' : f === 'tras' ? 'Nada ficou para trás.' : 'Nada para decidir.');
+    return;
+  }
+  M = {type:'ag-fluxo', f, fila, i:0, hist:[], cont:{}};
+  agFluxoRender();
+}
+function agFluxoValido(it){
+  const t = today(), o = agObj(it);
+  if(!o || !M) return false;
+  if(it.tipo === 't'){
+    if(o.status === 'done') return false;
+    if(M.f === 'decidir') return !o.due && !o.algumDia && !tkEhCaixa(o, t);
+    if(M.f === 'algum') return !o.due && !!o.algumDia;
+    if(M.f === 'tras') return !!o.due && o.due < agLimite();
+    return !!((o.due && o.due <= t) || tkEhCaixa(o, t));
+  }
+  if(it.tipo === 'h') return !o.archived && !habDone(o, t);
+  if(it.tipo === 'l') return !o.dismissed && !!o.date && (M.f === 'tras' ? o.date < agLimite() : o.date <= t);
+  return false;
+}
+function agFluxoRender(){
+  if(!M || M.type !== 'ag-fluxo') return;
+  while(M.i < M.fila.length && !agFluxoValido(M.fila[M.i])) M.i++;
+  if(M.i >= M.fila.length){ agFluxoFim(); return; }
+  const it = M.fila[M.i], n = M.fila.length, o = agObj(it), t = today(), od = tkOpcoesData();
+  const op = (v, ic, lab, sub, cls) => '<button class="rs-op' + (cls ? ' ' + cls : '') + '" data-action="agf-op" data-v="' + v + '">' + licn(ic) + '<span>' + lab + '</span><small>' + (sub || '') + '</small></button>';
+  const dt = '<label class="rs-op dt">' + licn('calendar') + '<span>Escolher data</span><small>calendário</small><input type="date" id="f_agfd" min="' + (M.f === 'fechar' ? addD(t, 1) : t) + '" aria-label="Escolher data"></label>';
+  let cab, tit, mot, q, ops;
+  if(it.tipo === 't'){
+    const p = projById(o.projectId);
+    cab = licn('clipboard-list') + '<span>' + esc('Tarefa' + (p ? ', ' + p.name : '')) + '</span>';
+    tit = esc(o.title);
+    if(M.f !== 'fechar'){
+      mot = M.f === 'tras' ? 'Era para ' + tkDataAbs(o.due) + '.' : (M.f === 'algum' ? 'Guardada ' : 'Anotada ') + mcHa(dstr(new Date(o.createdAt || Date.now()))) + '.';
+      q = M.f === 'algum' || M.f === 'tras' ? 'Ainda quer fazer?' : 'Quando você faz?';
+      ops = op('hoje', 'sun', 'Hoje', tkDataAbs(t)) + op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(od[1][2])) + op('fds', 'calendar-range', od[2][1], tkDataAbs(od[2][2])) +
+        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + op('algum', 'cloud', 'Algum dia', M.f === 'algum' ? 'continua guardada' : 'sem data') +
+        op('feito', 'check', 'Já fiz', '', 'ok') + op('apagar', 'trash-2', 'Apagar', '', 'del');
+    }else{
+      const d = o.due && o.due < t ? Math.round((fromD(t) - fromD(o.due)) / 864e5) : 0;
+      mot = d ? (d === 1 ? 'Era para ontem.' : 'Atrasada há ' + d + ' dias.') : tkEhCaixa(o, t) ? 'Apareceu hoje.' : 'Era para hoje.';
+      q = 'Ficou para quando?';
+      ops = op('feito', 'check', 'Feita', '', 'ok') + op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(addD(t, 1))) + op('fds', 'calendar-range', od[2][1], tkDataAbs(od[2][2])) +
+        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + op('algum', 'cloud', 'Algum dia', 'sem data') + op('apagar', 'trash-2', 'Apagar', '', 'del');
+    }
+  }else if(it.tipo === 'h'){
+    cab = licn('target') + '<span>Hábito</span>';
+    tit = (o.emoji ? esc(o.emoji) + ' ' : '') + esc(o.name);
+    mot = hbFalhouUma(o, t) ? 'A última vez ficou sem marcar.' : hbHoraOk(o.hora) ? 'Era às ' + o.hora + '.' : 'Era para hoje.';
+    q = 'Fez hoje?';
+    ops = op('feito', 'check', 'Fiz', '', 'ok') + op('nao', 'x', 'Hoje não', 'volta amanhã');
+  }else{
+    cab = licn('bell') + '<span>' + esc('Lembrete' + (o.category ? ', ' + o.category : '')) + '</span>';
+    tit = esc(o.title);
+    mot = (o.date < t ? 'Era para ' + tkDataTxt(o.date) : 'Hoje') + (o.time ? ', às ' + o.time : '') + '.';
+    q = 'Resolvido?';
+    ops = op('feito', 'check', 'Feito', lmRepete(o) ? 'segue para a próxima' : '', 'ok') + (M.f === 'tras' ? op('hoje', 'sun', 'Hoje', tkDataAbs(t) + (o.time ? ', ' + o.time : '')) : '') +
+      op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(addD(t, 1)) + (o.time ? ', ' + o.time : '')) + dt + (M.f === 'tras' ? op('apagar', 'trash-2', 'Apagar', '', 'del') : '');
+  }
+  const nome = M.f === 'fechar' ? 'Fechar o dia' : M.f === 'algum' ? 'Algum dia' : M.f === 'tras' ? 'Ficou para trás' : 'Decidir';
+  const body = '<div class="agf-top"><span class="agf-n"><b>' + nome + '</b>' + (M.i + 1) + ' de ' + n + '</span>' +
+      '<span class="agf-barra" aria-hidden="true"><i style="width:' + Math.round(M.i / n * 100) + '%"></i></span>' +
+      '<button class="icon-btn" data-action="fechar-modal" aria-label="Fechar" title="Fechar">' + licn('x') + '</button></div>' +
+    '<div class="agf-item k-' + it.tipo + '"' + (it.tipo === 'h' ? ' style="' + hbCorVars(o.color) + '"' : '') + '><p class="agf-cab">' + cab + '</p>' +
+      '<h2 class="agf-tit">' + tit + '</h2><p class="agf-mot">' + esc(mot) + '</p></div>' +
+    '<p class="agf-q">' + q + '</p><div class="rs-ops agf-ops">' + ops + '</div>';
+  const foot = '<button class="btn btn-ghost" data-action="agf-voltar"' + (M.hist.length ? '' : ' disabled') + '>' + licn('arrow-left') + 'Voltar</button><div class="grow"></div>' +
+    '<button class="btn btn-ghost" data-action="agf-pular">Pular' + licn('chevron-right') + '</button>';
+  openModal('', body, foot, {semFoco:true});
+  $('#mback').classList.add('ag-fl');
+}
+function agDataDe(v, ds){
+  const t = today(), od = tkOpcoesData();
+  if(v === 'hoje') return t;
+  if(v === 'amanha') return addD(t, 1);
+  if(v === 'fds') return od[2][2];
+  if(v === 'semana') return od[3][2];
+  if(v === 'data' && /^\d{4}-\d{2}-\d{2}$/.test(ds || '')) return ds;
+  return null;
+}
+function agFluxoAplicar(v, ds){
+  if(!M || M.type !== 'ag-fluxo') return;
+  const it = M.fila[M.i];
+  if(!it) return;
+  const o = agObj(it), t = today();
+  if(!o){ M.i++; agFluxoRender(); return; }
+  const foto = agFoto(it), agAntes = JSON.stringify(agEstado());
+  let res = v;
+  if(it.tipo === 't'){
+    if(v === 'feito') agConcluirTarefa(o);
+    else if(v === 'apagar') S.tasks.splice(S.tasks.indexOf(o), 1);
+    else if(v === 'algum'){ o.due = null; o.inbox = false; o.algumDia = true; }
+    else{
+      const d = agDataDe(v, ds);
+      if(!d || d < t || (M.f === 'fechar' && d === t)) return;
+      o.due = d; o.inbox = false; delete o.algumDia;
+      if(M.f === 'fechar') o.adiou = (o.adiou || 0) + 1;
+      res = d === t ? 'hoje' : 'data';
+    }
+  }else if(it.tipo === 'h'){
+    if(v === 'feito') (S.habitLogs[o.id] || (S.habitLogs[o.id] = {}))[t] = true;
+    else{ const a = agEstado(); if(!a.fora.includes(it.k)) a.fora.push(it.k); res = 'nao'; }
+  }else if(it.tipo === 'l'){
+    if(v === 'feito') agDispensarLem(o);
+    else if(v === 'apagar') S.reminders.splice(S.reminders.indexOf(o), 1);
+    else{
+      const d = agDataDe(v, ds);
+      if(!d || d < t || (M.f === 'fechar' && d === t)) return;
+      foto.criados = agMoverLem(o, d); res = d === t ? 'hoje' : 'data';
+    }
+  }
+  M.hist.push({foto, agAntes, i:M.i, res});
+  M.cont[res] = (M.cont[res] || 0) + 1;
+  if(v === 'feito') playDing(); else haptic('light');
+  M.i++;
+  save(); render();
+  agFluxoRender();
+}
+function agFluxoVoltar(){
+  if(!M || M.type !== 'ag-fluxo' || !M.hist.length) return;
+  const h = M.hist.pop();
+  M.cont[h.res] = Math.max(0, (M.cont[h.res] || 1) - 1);
+  if(h.res !== 'pulo'){ agRestaura(h.foto); S.meta.ag = JSON.parse(h.agAntes); save(); render(); sfx('undo'); }
+  M.i = h.i;
+  agFluxoRender();
+}
+function agFluxoPular(){
+  if(!M || M.type !== 'ag-fluxo') return;
+  M.hist.push({i:M.i, res:'pulo'});
+  M.cont.pulo = (M.cont.pulo || 0) + 1;
+  M.i++;
+  agFluxoRender();
+}
+function agFluxoFim(){
+  const f = M.f, c = M.cont, xs = [];
+  const n = (k, um, varios) => { if(c[k]) xs.push(c[k] === 1 ? um : c[k] + ' ' + varios); };
+  if(f === 'fechar'){
+    agEstado().fechado = true; save();
+    n('feito', '1 feito', 'feitos'); n('data', '1 para outro dia', 'para outro dia'); n('algum', '1 para algum dia', 'para algum dia');
+    n('nao', '1 hábito para amanhã', 'hábitos para amanhã'); n('apagar', '1 apagada', 'apagadas');
+  }else{
+    n('hoje', '1 para hoje', 'para hoje'); n('data', '1 com data', 'com data'); n('algum', '1 para algum dia', 'para algum dia');
+    n('feito', '1 já feita', 'já feitas'); n('apagar', '1 apagada', 'apagadas');
+  }
+  n('pulo', '1 pulada', 'puladas');
+  const am = S.tasks.filter(x => x.status !== 'done' && x.due === addD(today(), 1)).length;
+  const txt = (xs.length ? cap1(agJuntar(xs)) + '.' : 'Nada mudou.') + (f === 'fechar' && am ? ' Amanhã: ' + (am === 1 ? '1 tarefa.' : am + ' tarefas.') : '');
+  const limpo = f === 'fechar' ? !agItensFechar().length : f === 'algum' ? !c.pulo : f === 'tras' ? !agParaTras().length : !agParaDecidir().length;
+  const tit = f === 'fechar' ? 'Dia fechado.' : limpo ? (f === 'algum' ? 'Tudo revisto.' : f === 'tras' ? 'Tudo em dia.' : 'Tudo decidido.') : 'Por agora, é isso.';
+  M = {type:'ag-fim'};
+  openModal('', '<div class="agf-fim">' + licn('check-circle') + '<h2>' + tit + '</h2><p>' + esc(txt) + '</p></div>',
+    '<div class="grow"></div><button class="btn btn-primary" data-action="fechar-modal">Pronto</button>', {semFoco:true});
+  $('#mback').classList.add('ag-fl');
+  if(limpo && (c.feito || f !== 'fechar')){ confete(); sfx('all'); haptic('success'); }
+  render();
+}
+
+/* ---------- anotar: um campo só, que entende o que é ---------- */
+/* item de mercado: o nome é quase todo uma palavra do dicionário dos corredores ("pão de queijo", "ração do Thor") */
+function agEhItem(p){
+  const q = mcLer(p);
+  if(!q) return false;
+  const stop = /^(de|do|da|dos|das|e|com|sem|o|a|os|as|um|uma|pra|para|pro)$/;
+  const t = mcToks(q.name), util = t.filter(w => !stop.test(w));
+  if(!util.length || util.length > 4) return false;
+  for(const kw of mcKW()){
+    const n = kw.toks.length;
+    for(let i = 0; i + n <= t.length; i++){
+      let ok = true;
+      for(let j = 0; j < n; j++) if(t[i + j] !== kw.toks[j]){ ok = false; break; }
+      /* "café com o Pedro" é compromisso; "água com gás" está inteiro no dicionário */
+      if(ok){ const cobre = kw.toks.filter(w => !stop.test(w)).length / util.length; return cobre >= 1 || (cobre >= .5 && !t.includes('com')); }
+    }
+  }
+  return false;
+}
+/* partes da lista: vírgula, ponto e vírgula, e também "e" quando separa itens ("leite e pão") */
+function agMercadoPartes(txt){
+  const s = String(txt || '').replace(/^comprar\s+/i, '');
+  return mcPartes(s).flatMap(p => { const ps = p.split(/\s+e\s+/i).filter(Boolean); return ps.length > 1 && ps.every(agEhItem) ? ps : [p]; });
+}
+function agEhMercado(s){ const ps = agMercadoPartes(s); return ps.length > 0 && ps.every(agEhItem); }
+/* tarefa, lembrete, hábito ou mercado; prefixos ("me lembra de", "hábito:", "mercado:") mandam */
+function agTipoDe(raw){
+  const s = String(raw || '').replace(/\s+/g, ' ').trim();
+  const PREF = [[/^(tarefa|fazer)\s*:\s*/i, 'tarefa'], [/^lembretes?\s*:\s*/i, 'lembrete'], [/^(me\s+)?(lembra|lembre|lembrar)(-me)?\s+(de|que)\s+/i, 'lembrete'],
+    [/^h[aá]bitos?\s*:\s*/i, 'habito'], [/^(mercado|compras?)\s*:\s*/i, 'mercado']];
+  for(const [re, tp] of PREF){
+    const m = s.match(re);
+    if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim())};
+  }
+  const lp = lmParse(s), hp = hbParse(s), rec = lp.rec;
+  if(!lp.date && !lp.time && !rec && agEhMercado(s)) return {tipo:'mercado', txt:s};
+  /* hora vale quando os dois leitores concordam ("2h por dia" e "dormir 8h" são duração) */
+  const temHora = !!lp.time && !!(hp.hora || hp.periodo);
+  const em = hbEmojiDe(hp.name || s), habito = !!em && !AG_NAO_HABITO.includes(em);
+  const ns = ' ' + semAcento(s).replace(/[.,;:!?]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const dias = 'domingo|segunda|terca|quarta|quinta|sexta|sabado';
+  const repete = (hp.dias && hp.dias.length >= 2) || !!(rec && (rec.type === 'daily' || rec.type === 'weekly')) ||
+    new RegExp('\\s(aos|nos|todas as|todos os)\\s(' + dias + ')s?(-feiras?)?\\s').test(ns) || new RegExp('\\s(' + dias + ')s(-feiras)?\\s').test(ns) ||
+    /\s(toda|todas as) (manha|tarde|noite)s?\s/.test(ns);
+  if(/\s(por|ao) dia\s/.test(ns) || (habito && (repete || (hp.cue && !lp.date)))) return {tipo:'habito', txt:s};
+  if(temHora || rec) return {tipo:'lembrete', txt:s};
+  return {tipo:'tarefa', txt:s};
+}
+function agTipoAtual(raw){ const d = agTipoDe(raw); return AG_TIPO ? {tipo:AG_TIPO, txt:d.txt} : d; }
+function agLembreteDe(txt){
+  const q = lmParse(txt);
+  if(!q.title) return null;
+  const time = q.time || '', rec = q.rec;
+  let date = q.date || null;
+  if(!date) date = rec ? lmPrimeiraData(rec, time) : time ? (time > lmAgora() ? today() : addD(today(), 1)) : today();
+  if(rec && date) lmRepFixa(rec, date);
+  return {title:q.title, date, time, rec, cat:q.cat || ''};
+}
+function agHabitoDe(txt){
+  const q = hbParse(txt);
+  if(!q.name) return null;
+  /* "toda semana" é uma vez por semana, no dia de hoje */
+  if(!q.dias && /\b(toda (a )?semana|semanalmente)\b/i.test(semAcento(q.name))){
+    q.dias = [fromD(today()).getDay()];
+    q.name = hbNome(q.name.replace(/\b(toda (a )?semana|semanalmente)\b/i, ' '));
+  }
+  return q;
+}
+function agTarefaDe(txt){ const q = qaParse(txt); return q.title ? q : {title:txt, due:null, priority:null, projectId:null, tags:[]}; }
+function agPrevHTML(d){
+  const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
+  const v = d.txt;
+  if(d.tipo === 'mercado'){
+    return agMercadoPartes(v).map(mcLer).filter(Boolean).slice(0, 8).map(q => {
+      const ex = mcAchar(q.name), sec = mcSec(q.cat || (ex ? mcSecDe(ex) : mcSecaoDe(q.name)));
+      return '<span class="qa-tok' + (ex && ex.need ? ' mc-ja' : '') + '"><span class="em">' + sec[2] + '</span>' + esc(ex ? ex.name : q.name) +
+        (q.qty ? ' · ' + esc(mcQtyTxt(q.qty)) : '') + (ex && ex.need ? ' · já na lista' : '') + '</span>';
+    }).join('');
+  }
+  if(d.tipo === 'habito'){
+    const q = agHabitoDe(v);
+    if(!q) return '';
+    const em = q.emoji || hbEmojiDe(q.name);
+    let h = tok('', (em ? em + ' ' : '') + q.name) + tok('repeat', hbFreqTxt(q.dias || HB_TODOS));
+    if(q.hora || q.periodo) h += tok(q.hora ? 'clock' : HB_PER[q.periodo].ic, hbQuandoTxt(q.hora, q.periodo));
+    if(q.cue) h += tok('link', q.cue);
+    return h;
+  }
+  if(d.tipo === 'lembrete'){
+    const q = agLembreteDe(v);
+    if(!q) return '';
+    let h = tok('calendar', tkDataTxt(q.date));
+    if(q.time) h += tok('clock', q.time);
+    if(q.rec) h += tok('repeat', recResumo(q.rec));
+    if(q.cat) h += tok('tag', q.cat);
+    return h + (q.title !== v ? '<span class="qa-titulo">' + esc(q.title) + '</span>' : '');
+  }
+  const q = agTarefaDe(v);
+  let h = q.due ? tok('calendar', tkDataTxt(q.due)) :
+    '<span class="ag-quando" role="group" aria-label="Quando">' + [['', 'Decidir depois'], ['hoje', 'Hoje'], ['amanha', 'Amanhã']].map(([k, l]) =>
+      '<button class="ag-qb' + (AG_QUANDO === k ? ' on' : '') + '" type="button" data-action="ag-cap-quando" data-v="' + k + '" aria-pressed="' + (AG_QUANDO === k) + '">' + l + '</button>').join('') + '</span>';
+  const p = projById(q.projectId);
+  if(p) h += '<span class="qa-tok">' + projIco(p) + esc(p.name) + '</span>';
+  if(q.priority) h += '<span class="qa-tok pr' + q.priority + '">' + licn('flag') + PRIO_TXT[q.priority] + '</span>';
+  q.tags.forEach(tg => h += tok('', '#' + tg));
+  return h + (q.title !== v ? '<span class="qa-titulo">' + esc(q.title) + '</span>' : '');
+}
+function agTiposSync(tipo){
+  document.querySelectorAll('#agTipos [data-t]').forEach(b => {
+    const t = b.dataset.t, on = t === tipo, x = AG_TIPOS.find(y => y[0] === t);
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', AG_TIPO === t ? 'true' : 'false');
+    const lab = b.querySelector('.qd-lab');
+    if(lab) lab.textContent = on && x ? x[2] : '';
+  });
+}
+function agPreview(){
+  const el = $('#agPrev'), inp = $('#agInp');
+  if(!el || !inp) return;
+  const v = inp.value.trim();
+  if(!v){
+    agTiposSync(AG_TIPO);
+    el.innerHTML = document.activeElement !== inp ? '' : '<span class="qa-dica">Escreva do seu jeito: ligar pro banco amanhã, dentista sexta 14h, ler todo dia, leite e pão</span>';
+    return;
+  }
+  const d = agTipoAtual(v);
+  agTiposSync(d.tipo);
+  el.innerHTML = agPrevHTML(d);
+}
+function agCapSync(){
+  const a = $('#agAdd'), f = document.querySelector('#agora .tk-add-fundo');
+  if(a) a.classList.toggle('on', AG_ADD);
+  if(f) f.classList.toggle('on', AG_ADD);
+}
+function agCapAbrir(txt){
+  if(VIEW !== 'hoje') setView('hoje');
+  const tt = $('#toast'); if(tt) tt.classList.remove('on', 'act');
+  AG_ADD = true; agCapSync();
+  const i = $('#agInp');
+  if(i){ if(txt != null) i.value = txt; i.focus(); }
+  agPreview();
+}
+function agCapFechar(){
+  AG_ADD = false; agCapSync();
+  const i = $('#agInp');
+  if(i && document.activeElement === i) i.blur();
+}
+function agCriarTarefa(txt, quandoEsc){
+  const q = agTarefaDe(txt), t = today();
+  const due = q.due || (quandoEsc === 'hoje' ? t : quandoEsc === 'amanha' ? addD(t, 1) : null);
+  S.tasks.push({id:uid(), title:q.title, notes:'', projectId:q.projectId || null, priority:q.priority || 0, due, tags:q.tags, subtasks:[], status:'open',
+    createdAt:new Date().toISOString(), completedAt:null});
+  return {msg:due ? 'Tarefa para ' + tkDataTxt(due) + '.' : 'Anotado. Fica para decidir depois.'};
+}
+function agCriarLembrete(txt){
+  const q = agLembreteDe(txt);
+  if(!q) return null;
+  const r = {id:uid(), title:q.title, date:q.date, time:q.time, category:q.cat, notes:'', recurrence:q.rec || null, personIds:[], dismissed:false, dismissedAt:null, createdAt:new Date().toISOString()};
+  S.reminders.push(r);
+  return {msg:'Lembrete para ' + lmQuando(r) + (r.recurrence ? ', ' + recResumo(r.recurrence).toLowerCase() : '') + '.'};
+}
+function agCriarHabito(txt){
+  const q = agHabitoDe(txt);
+  if(!q) return null;
+  const igual = x => semAcento(x.name) === semAcento(q.name);
+  const ativo = hbAtivos().find(igual);
+  if(ativo) return {erro:ativo.name + ' já está nos hábitos.', abrir:() => hbAbrir(ativo.id)};
+  const arq = S.habits.find(x => x.archived && igual(x));
+  if(arq){
+    arq.archived = false;
+    if(q.dias) arq.freq = hbFreq(q.dias);
+    if(q.hora || q.periodo){ arq.hora = q.hora; arq.periodo = q.periodo; }
+    if(q.cue) arq.cue = q.cue;
+    if(q.emoji) arq.emoji = q.emoji;
+    return {msg:arq.name + ' voltou do arquivo, com o histórico.'};
+  }
+  const h = {id:uid(), name:q.name, emoji:q.emoji || hbEmojiDe(q.name), color:hbCorLivre(), freq:hbFreq(q.dias || HB_TODOS), hora:q.hora, periodo:q.periodo, cue:q.cue || '', twoMin:'', notes:'',
+    archived:false, createdAt:new Date().toISOString()};
+  S.habits.push(h);
+  const dias = hbFreqTxt(hbDiasDe(h)).replace(/^Só /, '');
+  return {msg:h.name + (schedOn(h, today()) ? ' começa hoje.' : ' entra nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.')};
+}
+function agCriarMercado(txt){
+  const r = mcAdicionar(agMercadoPartes(txt).join('; '), '');
+  if(!r.lidos) return null;
+  const n = r.novos + r.voltaram;
+  if(!n && !r.qtd) return {msg:r.ja.length === 1 ? r.ja[0] + ' já está na lista do mercado.' : 'Já estavam na lista do mercado.', igual:true};
+  if(!n) return {msg:r.qtd === 1 ? 'Quantidade atualizada no mercado.' : 'Quantidades atualizadas no mercado.'};
+  return {msg:(n === 1 ? r.nomes[0] : n + ' itens') + ' na lista do mercado.'};
+}
+function agCapturar(){
+  const inp = $('#agInp'), raw = inp ? inp.value.trim() : '';
+  if(!raw){ if(inp) inp.focus(); return; }
+  const d = agTipoAtual(raw);
+  const col = {tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[d.tipo];
+  const antes = JSON.stringify(S[col]);
+  const r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, AG_QUANDO);
+  if(!r){ inp.focus(); return; }
+  if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
+  inp.value = ''; AG_TIPO = ''; AG_QUANDO = '';
+  const cel = window.matchMedia && matchMedia('(max-width: 760px)').matches;
+  if(cel) agCapFechar();
+  if(!r.igual){ sfx('add'); haptic('light'); }
+  save(); render(); agPreview();
+  if(!cel) inp.focus();
+  if(r.igual) toast(r.msg);
+  else toast(r.msg, 'Desfazer', () => { S[col] = JSON.parse(antes); save(); render(); sfx('undo'); });
+}
+
+/* ---------- Tudo (celular), Dados e avisos ---------- */
+const AG_TUDO = [['tarefas', 'Tarefas'], ['lembretes', 'Lembretes'], ['habitos', 'Hábitos'], ['mercado', 'Mercado'], ['tempo', 'Tempo'], ['calendario', 'Calendário'],
+  ['pessoas', 'Pessoas'], ['financas', 'Finanças'], ['estudos', 'Estudos'], ['rotina', 'Rotina'], ['conhecimento', 'Notas'], ['lugares', 'Lugares'], ['dados', 'Dados']];
+function agTudo(){
+  M = {type:'mais'};
+  const body = '<button class="nav-item" id="maisBusca" style="width:100%; margin-bottom:10px"><span class="ic">' + licn('search') + '</span><span class="lb">Buscar em tudo</span></button>' +
+    '<div class="tk-tiles ag-tudo">' + AG_TUDO.map(([v, lb]) => '<button class="tk-tile' + (VIEW === v ? ' on' : '') + '" data-action="ag-ir" data-v="' + v + '">' + licn(TABS[v].ic) + '<span>' + lb + '</span></button>').join('') + '</div>' +
+    '<button class="nav-item" id="maisTema" style="width:100%; margin-top:10px"><span class="ic">' + licn(S.meta.theme === 'light' ? 'moon' : 'sun') + '</span><span class="lb">' + (S.meta.theme === 'light' ? 'Tema escuro' : 'Tema claro') + '</span></button>';
+  openModal('Tudo', body, '<div class="grow"></div><button class="btn btn-ghost" data-action="fechar-modal">Fechar</button>', {semFoco:true});
+  const mb = document.getElementById('maisBusca'); if(mb) mb.onclick = () => { closeModal(); openGlobalSearch(); };
+  const tm = document.getElementById('maisTema');
+  if(tm) tm.onclick = () => { S.meta.theme = S.meta.theme === 'light' ? 'dark' : 'light'; save(); applyTheme(); closeModal(); };
+}
+function renderAgCard(){
+  const el = document.getElementById('cardAg');
+  if(!el) return;
+  const on = agAtivo(), cap = agCap();
+  el.innerHTML = '<h3>Tela inicial</h3><p>Com o assistente, a tela inicial mostra uma coisa de cada vez e você só escolhe: feito, começar ou depois. Sem ele, volta o painel com as listas de hoje.</p>' +
+    '<div class="nrow"><span class="nl">Assistente<small>' + (on ? 'a tela inicial é o Agora' : 'a tela inicial é o painel de hoje') + '</small></span>' + swHTML('ag-modo', 'inicio', on) + '</div>' +
+    '<div class="nrow' + (on ? '' : ' off') + '"><span class="nl">Tarefas marcadas no plano do dia<small>as outras vão para amanhã, se você não marcar</small></span>' +
+      '<span class="seg ag-capseg" role="group" aria-label="Tarefas no plano">' + [3, 5, 7].map(n => '<button class="' + (cap === n ? 'on' : '') + '" data-action="ag-cap" data-n="' + n + '" aria-pressed="' + (cap === n) + '">' + n + '</button>').join('') + '</span></div>';
+}
+/* avisos do assistente: de manhã o plano do dia, à noite fechar o dia */
+function agNotifManha(add, c, t){
+  const a = agEstado(), ate = addD(t, 6), dias = {};
+  const abertas = S.tasks.filter(x => x.status !== 'done');
+  abertas.forEach(x => {
+    if(!x.due){ if(tkEhCaixa(x, t)) (dias[t] = dias[t] || []).push(x); return; }
+    ocorrencias(x.due, x.recurrence, x.due < t ? addD(t, 1) : t, ate, 7).forEach(ds => (dias[ds] = dias[ds] || []).push(x));
+  });
+  for(let d = 0; d < 7; d++){
+    const ds = addD(t, d);
+    if(d === 0 && a.planejado) continue;
+    const ts = (d === 0 ? abertas.filter(x => x.due && x.due < t && x.due >= agLimite()) : []).concat(dias[ds] || []);
+    const lems = S.reminders.filter(r => !r.dismissed && r.date && ocorrencias(r.date, r.recurrence, ds, ds, 1).length).sort(lmOrd);
+    const comHora = lems.filter(r => hbHoraOk(r.time));
+    if(!ts.length && !comHora.length) continue;
+    const nh = hbAtivos().filter(h => schedOn(h, ds) && (d > 0 || !habDone(h, t))).length;
+    const xs = [];
+    if(ts.length) xs.push(ts.length === 1 ? '1 tarefa' : ts.length + ' tarefas');
+    if(lems.length) xs.push(lems.length === 1 ? '1 lembrete' : lems.length + ' lembretes');
+    if(nh) xs.push(nh === 1 ? '1 hábito' : nh + ' hábitos');
+    const top = ts.slice().sort((x, y) => (y.priority || 0) - (x.priority || 0) || (x.due || '9').localeCompare(y.due || '9'))[0];
+    const corpo = (top ? 'Comece por: ' + top.title + '.' : '') + (comHora.length ? (top ? ' ' : '') + 'Às ' + comHora[0].time + ': ' + comHora[0].title + '.' : '');
+    add('agm:' + ds, quando(ds, c.tarHora), 'Bom dia. Hoje: ' + agJuntar(xs), corta(corpo, 140), 'tarefas', 'hoje');
+  }
+}
+function agNotifNoite(add, c, t, d){
+  const ds = addD(t, d), a = agEstado();
+  if(d === 0 && a.fechado) return;
+  const lim = agLimite();
+  const n = S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= ds && x.due >= lim) || (d === 0 && tkEhCaixa(x, t)))).length +
+    hbAtivos().filter(h => schedOn(h, ds) && (d > 0 || (!habDone(h, t) && !a.fora.includes('h:' + h.id)))).length +
+    S.reminders.filter(r => !r.dismissed && r.date && r.date <= ds && r.date >= lim).length;
+  if(!n) return;
+  add('agn:' + ds, quando(ds, c.habHora), 'Fechar o dia', n === 1 ? 'Ficou 1 coisa em aberto. Toque para resolver.' : 'Ficaram ' + n + ' coisas em aberto. Toque para resolver uma de cada vez.',
+    'habitos', 'hoje', {fechar:1});
 }
 
 /* ===================== Render: Tarefas ===================== */
@@ -2711,7 +3882,7 @@ function renderDados(){
   $('#restoreBox').innerHTML = !rp ? '<div class="stat-row"><span class="k">Nenhuma cópia guardada ainda.</span></div>' :
     '<div class="stat-row"><span class="k">Cópia de ' + fmtDT(rp.at) + ', antes de ' + esc(rp.motivo) + '</span><span class="v">' + rp.itens + ' itens</span></div>' +
     '<button class="btn" data-action="restaurar-ponto" style="margin-top:10px">Restaurar esta cópia</button>';
-  renderNotifCard(); renderSonsCard(); renderAppCard();
+  renderAgCard(); renderNotifCard(); renderSonsCard(); renderAppCard();
 }
 function renderSide(){
   const b = S.meta.lastBackupAt;
@@ -2745,6 +3916,7 @@ function render(){
   const _t = today();
   let _dirty = false;
   S.tasks.forEach(x => {
+    if(x.algumDia && x.due){ delete x.algumDia; _dirty = true; }
     if(x.inbox && x.inboxDate && x.inboxDate < _t && x.status !== 'done'){
       x.inbox = false;
       if(!x.due) x.due = x.inboxDate;
@@ -3296,8 +4468,9 @@ function tick(){
   }
   if(VIEW === 'lembretes') lmAgoraSync();
   if(VIEW === 'habitos') hbDiaSync();
+  if(VIEW === 'hoje') agTick();
 }
-document.addEventListener('visibilitychange', () => { if(!document.hidden) hbDiaSync(); });
+document.addEventListener('visibilitychange', () => { if(!document.hidden){ hbDiaSync(); agTick(); } });
 
 /* ===================== Pessoas ===================== */
 const KIND = {ligacao:'ligação', conversa:'conversa', mensagem:'mensagem', encontro:'encontro', outro:'outro'};
@@ -3764,7 +4937,7 @@ function lmDispensar(id){
   if(!r) return;
   const fotos = lmFoto([id]), t = today();
   if(!r.dismissed && lmRepete(r) && r.date){
-    r.date = lmDepoisDe(r, r.date < t ? addD(t, -1) : r.date);
+    r.date = lmDepoisDe(r, r.date < t ? addD(t, -1) : r.date); r.ultimaFeita = new Date().toISOString();
     playDing(); save(); render();
     toast('Próximo: ' + lmQuando(r) + '.', 'Desfazer', lmDesfazer(fotos));
     return;
@@ -3838,7 +5011,7 @@ function lmAcaoNotif(id, acao, ds){
   if(acao === 'adiar'){ const [d1, h1] = lmMais1h(); lmMover(id, d1, h1, ds); return; }
   if(lmRepete(r) && r.date){
     const fotos = lmFoto([id]);
-    r.date = lmDepoisDe(r, ds && ds > r.date ? ds : r.date);
+    r.date = lmDepoisDe(r, ds && ds > r.date ? ds : r.date); r.ultimaFeita = new Date().toISOString();
     playDing(); save(); render();
     toast('Feito. Próximo: ' + lmQuando(r) + '.', 'Desfazer', lmDesfazer(fotos));
     return;
@@ -4869,6 +6042,7 @@ function pomoTick(){
 function mmss(sec){ return String(Math.floor(sec / 60)).padStart(2,'0') + ':' + String(sec % 60).padStart(2,'0'); }
 function pomoClock(){
   const hp = document.getElementById('hojePomo'); if(hp) hp.textContent = mmss(pomoRemaining());
+  const ap = document.getElementById('agPomo'); if(ap) ap.textContent = mmss(pomoRemaining());
   ttDialUpdate();
 }
 function pomoRestore(){
@@ -5207,6 +6381,31 @@ function mcPreview(){
       (ex && ex.need ? (q.qty && q.qty !== ex.qty && !ex.bought ? ' · muda a quantidade' : ex.bought ? ' · já no carrinho' : ' · já na lista') : '') + '</span>';
   }).join('');
 }
+/* põe na lista o que foi escrito (novos, os da despensa voltam, quantidade nova) e conta o que aconteceu */
+function mcAdicionar(raw, sec){
+  const lidos = mcPartes(raw).map(mcLer).filter(Boolean);
+  const r = {lidos:lidos.length, novos:0, voltaram:0, qtd:0, ja:[], nomes:[]};
+  lidos.forEach(q => {
+    const cat = sec || q.cat, ex = mcAchar(q.name);
+    if(ex){
+      if(ex.need){
+        if(q.qty && q.qty !== ex.qty && !ex.bought){ ex.qty = q.qty; r.qtd++; window.__novo = ex.id; }
+        else r.ja.push(ex.name);
+        return;
+      }
+      ex.need = true; ex.bought = false;
+      if(q.qty) ex.qty = q.qty;
+      if(cat) ex.category = cat;
+      r.voltaram++; r.nomes.push(ex.name); window.__novo = ex.id;
+      return;
+    }
+    const it = {id:uid(), name:q.name, category:cat || mcSecaoDe(q.name), qty:q.qty || '', note:'', price:null, need:true, bought:false, fixo:false,
+      count:0, lastBought:null, createdAt:new Date().toISOString()};
+    S.shoppingItems.push(it);
+    r.novos++; r.nomes.push(it.name); window.__novo = it.id;
+  });
+  return r;
+}
 function quickAddShop(viaBotao){
   const inp = $('#shopInp');
   const raw = inp.value.trim();
@@ -5216,36 +6415,15 @@ function quickAddShop(viaBotao){
     else inp.focus();
     return;
   }
-  const lidos = mcPartes(raw).map(mcLer).filter(Boolean);
-  if(!lidos.length){ inp.focus(); return; }
-  let novos = 0, voltaram = 0, qtd = 0;
-  const ja = [];
-  lidos.forEach(q => {
-    const cat = MC_SEC || q.cat, ex = mcAchar(q.name);
-    if(ex){
-      if(ex.need){
-        if(q.qty && q.qty !== ex.qty && !ex.bought){ ex.qty = q.qty; qtd++; window.__novo = ex.id; }
-        else ja.push(ex.name);
-        return;
-      }
-      ex.need = true; ex.bought = false;
-      if(q.qty) ex.qty = q.qty;
-      if(cat) ex.category = cat;
-      voltaram++; window.__novo = ex.id;
-      return;
-    }
-    const it = {id:uid(), name:q.name, category:cat || mcSecaoDe(q.name), qty:q.qty || '', note:'', price:null, need:true, bought:false, fixo:false,
-      count:0, lastBought:null, createdAt:new Date().toISOString()};
-    S.shoppingItems.push(it);
-    novos++; window.__novo = it.id;
-  });
+  const r = mcAdicionar(raw, MC_SEC);
+  if(!r.lidos){ inp.focus(); return; }
   inp.value = ''; MC_SEC = '';
-  if(novos + voltaram + qtd){ sfx('add'); haptic('light'); }
+  if(r.novos + r.voltaram + r.qtd){ sfx('add'); haptic('light'); }
   save(); render(); inp.focus();
-  const n = novos + voltaram;
-  if(!n && !qtd) toast(ja.length === 1 ? ja[0] + ' já está na lista.' : 'Já estavam na lista.');
-  else if(!n && qtd) toast(qtd === 1 ? 'Quantidade atualizada.' : 'Quantidades atualizadas.');
-  else if(lidos.length > 1) toast((n === 1 ? '1 item' : n + ' itens') + ' na lista' + (ja.length ? ', ' + ja.length + ' já estava' + (ja.length > 1 ? 'm' : '') : '') + '.');
+  const n = r.novos + r.voltaram;
+  if(!n && !r.qtd) toast(r.ja.length === 1 ? r.ja[0] + ' já está na lista.' : 'Já estavam na lista.');
+  else if(!n && r.qtd) toast(r.qtd === 1 ? 'Quantidade atualizada.' : 'Quantidades atualizadas.');
+  else if(r.lidos > 1) toast((n === 1 ? '1 item' : n + ' itens') + ' na lista' + (r.ja.length ? ', ' + r.ja.length + ' já estava' + (r.ja.length > 1 ? 'm' : '') : '') + '.');
 }
 
 /* ---------- carrinho, lista, concluir e desfazer ---------- */
@@ -5436,6 +6614,7 @@ function syncAny(){
 /* ===================== Menu "Mais" (celular) ===================== */
 let MAIS_EDIT = false;
 function openMais(){
+  if(agAtivo()){ agTudo(); return; }
   M = { type:'mais' };
   const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
   const allTabs = ['hoje','tarefas','lembretes','habitos','tempo','financas','estudos','calendario','pessoas','rotina','conhecimento','lugares','mercado'];
@@ -5557,6 +6736,7 @@ function runGlobalSearch(raw){
 
 /* ===================== Modal base ===================== */
 function openModal(title, body, foot, o){
+  $('#mback').classList.remove('ag-fl');
   $('#mTitle').textContent = title;
   $('#mBody').innerHTML = body;
   $('#mFoot').innerHTML = foot;
@@ -5568,7 +6748,7 @@ function closeModal(){
   /* os detalhes de tarefa, lembrete, item do mercado e hábito salvam sozinhos ao fechar */
   const tipo = M && M.type;
   const mudou = tipo === 'task' ? tkAutoSalvar() : tipo === 'lembrete' ? lmAutoSalvar() : tipo === 'shop' ? mcAutoSalvar() : tipo === 'habito' ? hbAutoSalvar() : false;
-  $('#mback').classList.remove('on', 'tk-det');
+  $('#mback').classList.remove('on', 'tk-det', 'ag-fl');
   M = null;
   popFechar();
   if(mudou) render();
@@ -6930,7 +8110,7 @@ function toggleTask(id){
   if(!t) return;
   if(t.status !== 'done' && t.recurrence && t.recurrence.type){
     t.due = proximaFutura(t.due || today(), t.recurrence);
-    t.completedAt = null;
+    t.completedAt = null; t.ultimaFeita = new Date().toISOString();
     save(); render();
     toast('Feita. Próxima: ' + fmtCurto(t.due) + '.');
     return;
@@ -7292,6 +8472,90 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'open-task'){ openTask(el.dataset.id); return; }
+  /* Agora (assistente) */
+  if(a === 'ag-feito'){
+    e.stopPropagation();
+    const k = el.dataset.k, it = agItem(k);
+    if(ANIM_PEND.has('ag:' + k)) return;
+    if(it.tipo === 'h'){ sfx('habit'); haptic('light'); } else playDing();
+    const caixa = el.closest('.ag-card, .ag-alt');
+    if(caixa && animOn()){
+      ANIM_PEND.add('ag:' + k);
+      if(el.classList.contains('ck')) el.classList.add('on', 'pop');
+      caixa.classList.add('saindo');
+      setTimeout(() => { ANIM_PEND.delete('ag:' + k); agConcluir(k, true); }, 300);
+      return;
+    }
+    agConcluir(k, true);
+    return;
+  }
+  if(a === 'ag-comecar'){ agComecar(el.dataset.k); return; }
+  if(a === 'ag-depois'){ popAbrir(el, agDepoisHTML(el.dataset.k)); return; }
+  if(a === 'ag-dep'){
+    const it = agItem(el.dataset.k);
+    if(el.dataset.v === 'mais'){ popFechar(); if(it.tipo === 'l') lmAdiar(it.id); return; }
+    agAdiar(el.dataset.k, el.dataset.v, el.dataset.ds);
+    return;
+  }
+  if(a === 'ag-dep-lem'){
+    popFechar();
+    const it = agItem(el.dataset.k);
+    if(AG_FOCO === it.k) AG_FOCO = '';
+    AG_ENTRA = true;
+    lmMover(it.id, el.dataset.ds, el.dataset.hr);
+    return;
+  }
+  if(a === 'ag-abrir'){ agAbrir(el.dataset.k); return; }
+  if(a === 'ag-foco'){
+    popFechar();
+    AG_FOCO = el.dataset.k; AG_ENTRA = true; haptic('light');
+    renderAgora();
+    const c = document.querySelector('#agCorpo .ag-card');
+    if(c && c.getBoundingClientRect().top < 0) c.scrollIntoView({block:'start', behavior:animOn() ? 'smooth' : 'auto'});
+    return;
+  }
+  if(a === 'ag-agenda'){ popAbrir(el, agAgendaHTML()); return; }
+  if(a === 'ag-opcoes'){ popAbrir(el, agOpcoesHTML(), {direita:true}); return; }
+  if(a === 'ag-replanejar'){ popFechar(); agEstado().planejado = false; AG_PLANO = null; AG_ENTRA = true; save(); render(); agTopo(); return; }
+  if(a === 'ag-config'){
+    popFechar(); setView('dados');
+    setTimeout(() => { const c = document.getElementById('cardAg'); if(c) c.scrollIntoView({block:'start', behavior:animOn() ? 'smooth' : 'auto'}); }, 80);
+    return;
+  }
+  if(a === 'ag-plano-ck'){
+    const k = el.dataset.k;
+    if(AG_PLANO){ if(AG_PLANO.sel.has(k)) AG_PLANO.sel.delete(k); else AG_PLANO.sel.add(k); }
+    haptic('light'); renderAgora();
+    return;
+  }
+  if(a === 'ag-plano-mais'){ if(AG_PLANO) AG_PLANO.mais = true; renderAgora(); return; }
+  if(a === 'ag-plano-ok'){ agPlanoAplicar(); return; }
+  if(a === 'ag-plano-nao'){ agEstado().planejado = true; AG_PLANO = null; AG_ENTRA = true; save(); render(); agTopo(); return; }
+  if(a === 'ag-fluxo'){ agFluxo(el.dataset.f); return; }
+  if(a === 'agf-op'){ agFluxoAplicar(el.dataset.v); return; }
+  if(a === 'agf-voltar'){ agFluxoVoltar(); return; }
+  if(a === 'agf-pular'){ agFluxoPular(); return; }
+  if(a === 'ag-ir'){ if($('#mback').classList.contains('on')) closeModal(); setView(el.dataset.v); return; }
+  if(a === 'ag-mais-um'){
+    if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir();
+    else agCapAbrir();
+    return;
+  }
+  if(a === 'ag-cap-abrir'){ agCapAbrir(); return; }
+  if(a === 'ag-cap-fechar'){ agCapFechar(); return; }
+  if(a === 'ag-cap-enviar'){ agCapturar(); return; }
+  if(a === 'ag-cap-tipo'){ const t = el.dataset.t; AG_TIPO = AG_TIPO === t ? '' : t; agPreview(); const i = $('#agInp'); if(i) i.focus(); return; }
+  if(a === 'ag-cap-quando'){ AG_QUANDO = el.dataset.v || ''; agPreview(); const i = $('#agInp'); if(i) i.focus(); return; }
+  if(a === 'ag-exemplo'){ agCapAbrir(el.dataset.t || ''); return; }
+  if(a === 'ag-modo'){
+    S.meta.inicio = agAtivo() ? 'painel' : 'assistente';
+    AG_PLANO = null; AG_FOCO = ''; AG_ADD = false;
+    save(); applyTheme(); renderBottomNav(); renderAgCard(); renderNotifCard(); notifSoon(true);
+    sfx('tap'); haptic('light');
+    toast(agAtivo() ? 'Assistente ligado: a tela inicial é o Agora.' : 'Assistente desligado: a tela inicial é o painel de hoje.');
+    return;
+  }
+  if(a === 'ag-cap'){ S.meta.agCap = +el.dataset.n; AG_PLANO = null; save(); renderAgCard(); return; }
   /* hábitos */
   if(a === 'thab'){
     const id = el.dataset.id;
@@ -8418,6 +9682,8 @@ document.addEventListener('change', e => {
   if(e.target.classList && e.target.classList.contains('tk-dataesc') && e.target.value) tkAplicarData(e.target.dataset.acao, e.target.value);
   if(e.target.id === 'f_rsd' && e.target.value && M && M.type === 'resched') tkMover(M.ids, e.target.value);
   if(e.target.id === 'f_lmadiar' && e.target.value && M && M.type === 'lm-adiar') lmMover(M.id, e.target.value, null);
+  if(e.target.id === 'f_agfd' && e.target.value && M && M.type === 'ag-fluxo') agFluxoAplicar('data', e.target.value);
+  if(e.target.classList && e.target.classList.contains('ag-dep-data') && e.target.value) agAdiar(e.target.dataset.k, 'data', e.target.value);
   /* no celular a hora vem inteira do relógio do Android; no PC vale o OK */
   if(e.target.classList && e.target.classList.contains('lm-horainp') && e.target.value && window.matchMedia && matchMedia('(pointer: coarse)').matches)
     lmAplicarHora(e.target.dataset.acao, e.target.value.slice(0, 5));
@@ -8440,6 +9706,7 @@ document.addEventListener('input', e => {
   if(e.target.id === 'rlTitle') lmPreview();
   if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); }
   if(e.target.id === 'hbInp') hbPreview();
+  if(e.target.id === 'agInp') agPreview();
   if(/^f_hb(nome|cue|2m|nota)$/.test(e.target.id)) tkAltura(e.target);
   if(e.target.id === 'f_hbnome' && M && M.type === 'habito' && !M.draft.emoji){ const b = document.querySelector('#mBody .hbd-badge .ini'); if(b) b.textContent = hbInicial(e.target.value); }
   if(e.target.id === 'f_shname' || (e.target.id === 'f_shnote' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
@@ -8452,8 +9719,8 @@ document.addEventListener('input', e => {
 });
 
 /* dica do adicionar rápido aparece com o campo em foco */
-document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); } if(e.target.id === 'hbInp') hbPreview(); });
-document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); if(e.target.id === 'shopInp') setTimeout(() => { mcPreview(); mcSugSync(); }, 150); if(e.target.id === 'hbInp') setTimeout(hbPreview, 120); });
+document.addEventListener('focusin', e => { if(e.target.id === 'qaTitle') qaPreview(); if(e.target.id === 'rlTitle') lmPreview(); if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); } if(e.target.id === 'hbInp') hbPreview(); if(e.target.id === 'agInp') agPreview(); });
+document.addEventListener('focusout', e => { if(e.target.id === 'qaTitle') setTimeout(qaPreview, 120); if(e.target.id === 'rlTitle') setTimeout(lmPreview, 120); if(e.target.id === 'shopInp') setTimeout(() => { mcPreview(); mcSugSync(); }, 150); if(e.target.id === 'hbInp') setTimeout(hbPreview, 120); if(e.target.id === 'agInp') setTimeout(agPreview, 120); });
 /* colar uma lista de várias linhas no campo do mercado: cada linha vira um item (títulos e corredores ficam de fora) */
 document.addEventListener('paste', e => {
   if(!e.target || e.target.id !== 'shopInp') return;
@@ -8473,7 +9740,7 @@ document.addEventListener('paste', e => {
   mcPreview(); mcSugSync();
 });
 /* tocar num chip de sugestão não tira o foco do campo (o teclado não fecha) */
-document.addEventListener('mousedown', e => { if(e.target.closest && e.target.closest('.mc-chip, #mcSecBtn')) e.preventDefault(); });
+document.addEventListener('mousedown', e => { if(e.target.closest && e.target.closest('.mc-chip, #mcSecBtn, #agTipos .tk-tool, .ag-qb')) e.preventDefault(); });
 
 /* desfazer: guarda o estado antes de excluir e oferece voltar */
 document.addEventListener('click', e => {
@@ -8501,6 +9768,7 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && LM_NAV){ LM_NAV = false; lmNavSync(); return; }
   if(e.key === 'Escape' && MC_ADD && !$('#mback').classList.contains('on')){ mcQaFechar(); return; }
   if(e.key === 'Escape' && HB_ADD && !$('#mback').classList.contains('on')){ hbQaFechar(); return; }
+  if(e.key === 'Escape' && AG_ADD && !$('#mback').classList.contains('on')){ agCapFechar(); return; }
   if(e.key === 'Escape' && $('#mback').classList.contains('on')){ closeModal(); return; }
   if(e.key === ' ' && (VIEW === 'tempo' || ttFocoAberto()) && !$('#mback').classList.contains('on') && !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)){ e.preventDefault(); ttPlay(); return; }
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); openGlobalSearch(); return; }
@@ -8511,9 +9779,10 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('lm-horainp')){
     e.preventDefault(); const b = e.target.parentElement.querySelector('[data-action="lm-hora-ok"]'); if(b) b.click(); return;
   }
-  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado' || VIEW === 'habitos') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else hbQaAbrir(); return; }
+  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado' || VIEW === 'habitos' || (VIEW === 'hoje' && agAtivo())) && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir(); else agCapAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
+  if(e.key === 'Enter' && e.target.id === 'agInp'){ e.preventDefault(); agCapturar(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
   if(e.key === 'Enter' && e.target.id === 'pLogName'){ e.preventDefault(); const n = $('#pLogNotes'); if(n) n.focus(); return; }
   if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && e.target.id === 'pLogNotes'){ const b = document.querySelector('[data-action="salvar-log-pessoa"]'); if(b) b.click(); return; }
@@ -8605,7 +9874,9 @@ function notifPlan(now){
         add('lem:' + r.id + ':' + ds + ':' + hora, quando(ds, hora), corta(r.title, 80), corpo, 'lembretes', 'lembretes', {lem:r.id, ds}));
     });
   }
-  if(c.tarefas){
+  const ag = agAtivo();
+  if(c.tarefas && ag) agNotifManha(add, c, t);
+  else if(c.tarefas){
     const abertas = S.tasks.filter(x => x.status !== 'done'), dias = {}, ate = addD(t, 6);
     abertas.forEach(x => {
       if(!x.due){ if(x.inbox && x.inboxDate === t) (dias[t] = dias[t] || []).push(x); return; }
@@ -8624,7 +9895,8 @@ function notifPlan(now){
   }
   for(let d = 0; d < 7; d++){
     const ds = addD(t, d), dw = fromD(ds).getDay();
-    if(c.habitos){
+    if(c.habitos && ag) agNotifNoite(add, c, t, d);
+    else if(c.habitos){
       const hs = S.habits.filter(h => !h.archived && schedOn(h, ds) && !habDone(h, ds));
       if(hs.length) add('hab:' + ds, quando(ds, c.habHora), hs.length === 1 ? 'Falta 1 hábito hoje' : 'Faltam ' + hs.length + ' hábitos hoje',
         corta(hs.map(h => (h.emoji ? h.emoji + ' ' : '') + h.name).join(', '), 140), 'habitos', 'habitos');
@@ -8761,12 +10033,12 @@ function renderNotifCard(){
   const el = document.getElementById('cardNotif');
   if(!el) return;
   if(!NATIVE){
-    el.innerHTML = '<h3>App Android</h3><p>No app, o Central avisa na hora dos lembretes e dos hábitos, de manhã com as tarefas do dia, à noite com os hábitos que faltam e no fim de cada Pomodoro.</p>' +
+    el.innerHTML = '<h3>App Android</h3><p>No app, o Central avisa na hora dos lembretes e dos hábitos, ' + (agAtivo() ? 'de manhã com o plano do dia, à noite para fechar o dia' : 'de manhã com as tarefas do dia, à noite com os hábitos que faltam') + ' e no fim de cada Pomodoro.</p>' +
       '<a class="btn btn-primary" href="' + APK_URL + '">Baixar o app (APK)</a>' +
       '<p class="nhint">No celular, baixe o arquivo e toque nele para instalar. Os dados chegam pelo mesmo login do Google.</p>';
     return;
   }
-  const c = notifCfg();
+  const c = notifCfg(), ag = agAtivo();
   let st;
   if(NOTIF.err) st = 'Erro ao programar: ' + NOTIF.err;
   else if(NOTIF.perm === 'denied') st = 'Notificações bloqueadas para o Central. Toque em Permitir ou libere em Configurações > Apps > Central.';
@@ -8782,9 +10054,9 @@ function renderNotifCard(){
     '<div class="nrow nmaster"><span class="nl">Avisos do Central</span>' + swHTML('notif-sw', 'on', c.on) + '</div>' +
     '<div class="nlist' + (c.on ? '' : ' off') + '">' +
       row('lembretes', 'Lembretes', 'lemHora', 'horário dos que não têm hora') +
-      row('tarefas', 'Tarefas do dia', 'tarHora') +
+      row('tarefas', ag ? 'Plano do dia' : 'Tarefas do dia', 'tarHora', ag ? 'de manhã, com o que tem para hoje' : '') +
       row('habAviso', 'Hábitos no horário', '', 'na hora marcada em cada hábito, se ainda faltar') +
-      row('habitos', 'Hábitos que faltam', 'habHora') +
+      row('habitos', ag ? 'Fechar o dia' : 'Hábitos que faltam', 'habHora', ag ? 'à noite, se algo ficou em aberto' : '') +
       row('aniversarios', 'Aniversários', 'anivHora') +
       row('pomodoro', 'Fim do Pomodoro') +
       row('fixo', 'Aviso fixo da sessão', '', 'tempo correndo enquanto o Pomodoro ou o cronômetro rodam') +
@@ -8924,6 +10196,7 @@ function nativeInit(){
       if(LM_NAV){ LM_NAV = false; lmNavSync(); return; }
       if(MC_ADD){ mcQaFechar(); return; }
       if(HB_ADD){ hbQaFechar(); return; }
+      if(AG_ADD){ agCapFechar(); return; }
       if(VIEW !== 'hoje'){ setView('hoje'); return; }
       if(CAPP.minimizeApp) capCall(CAPP.minimizeApp());
     });
@@ -8953,6 +10226,7 @@ function nativeInit(){
       if(ex.hab && S.habits.some(h => h.id === ex.hab)){ HB_V = 'hoje'; HB_DIA = null; setView('habitos'); return; }
       if(ex.lem && (a.actionId === 'adiar' || a.actionId === 'feito')){ lmAcaoNotif(ex.lem, a.actionId, ex.ds); return; }
       if(ex.lem && S.reminders.some(r => r.id === ex.lem)){ lmIrPara('agenda'); setView('lembretes'); openLembrete(ex.lem); return; }
+      if(ex.fechar){ setView('hoje'); if(agAtivo()) agFluxo('fechar'); return; }
       if(ex.view && TABS[ex.view]) setView(ex.view);
     });
     const acoes = typeof LN.registerActionTypes === 'function' ?

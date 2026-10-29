@@ -5,13 +5,31 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 - Web: https://jpvanacor.github.io/Central/
 - Android: https://github.com/jpvanacor/Central/releases/latest/download/central.apk
 
+## Agora (a tela inicial)
+
+O Central abre como um assistente: em vez de listas, mostra uma coisa de cada vez e você só escolhe.
+
+- **O cartão do agora:** o que fazer agora, o porquê numa linha (era às 08:00, atrasada há 2 dias, prioridade alta, não falhe duas vezes) e três botões: **Feito**, **Começar** (liga o foco do Tempo com o nome da tarefa ou do hábito) e **Depois** (daqui a 1 hora, à noite, amanhã, fim de semana, próxima semana, outra data ou algum dia; no hábito, também **Hoje não**). Tudo tem Desfazer. Tocar no título abre o detalhe.
+- **A ordem:** lembrete na hora (ou que passou), hábito no horário, aniversário do dia, tarefas atrasadas e de hoje pela prioridade, hábitos do momento do dia. O que tem hora mais tarde fica numa linha **Mais tarde**; um toque nela traz para agora.
+- **Ou então:** duas alternativas embaixo. O círculo conclui direto; tocar no resto traz para a frente.
+- **Plano do dia** (de manhã, até as 18h, com duas tarefas ou mais): as tarefas de hoje e as atrasadas, as 5 mais urgentes já marcadas (3, 5 ou 7, em Dados). As desmarcadas vão para amanhã; a que já foi adiada 3 vezes vai para **algum dia**. Embaixo, só para saber: lembretes, hábitos e aniversários do dia.
+- **Anotar:** o **+** do meio da barra (no PC, o campo **O que apareceu?**) entende sozinho o que é: `Ligar pro banco amanhã` vira tarefa, `Dentista sexta 14h` vira lembrete, `Ler 10 páginas todo dia` e `Meditar ao acordar` viram hábito, `leite, pão e café` vai para o mercado. A linha de baixo mostra o que vai ser criado; os ícones mudam o tipo. Tarefa sem data fica para **decidir depois** (ou escolha Hoje ou Amanhã ali mesmo). `me lembra de…`, `hábito:` e `mercado:` no começo mandam no tipo.
+- **Uma de cada vez:** os atalhos embaixo abrem uma folha que pergunta item por item:
+  - **Para decidir:** tarefas sem data; hoje, amanhã, fim de semana, próxima semana, outra data, algum dia, já fiz ou apagar;
+  - **Ficaram para trás:** o que está atrasado há mais de uma semana sai do dia (não pesa no plano nem no fechar) e espera aqui;
+  - **Fechar o dia** (à noite, perto do horário do aviso): hábitos (fiz, hoje não), lembretes e tarefas que sobraram, para amanhã, outro dia, algum dia ou feito;
+  - **Algum dia** (no ⋮): rever o que foi guardado.
+  Voltar desfaz a última escolha; Pular deixa como está.
+- **Barra de baixo:** Agora, **+** e **Tudo** (todas as abas em grade). Dentro de Tarefas, Lembretes, Hábitos e Mercado, o **+** abre o adicionar da própria aba.
+- **Painel antigo:** Dados > Tela inicial desliga o assistente e volta a tela de Hoje com as listas e a barra de antes.
+
 ## Tarefas
 
 Organizada em camadas, como no TickTick:
 
 - **Gaveta de listas** (☰ no celular; fixa ao lado no PC): Hoje, Próximos 7 dias, Todas, Feitas, etiquetas e os projetos. Projetos podem ter emoji, cor e pasta; projetos com a mesma pasta ficam juntos (por exemplo 1. Projetos, 2. Áreas). Para criar ou editar: botão **+ Projeto** ou a engrenagem no fim da gaveta.
 - **A lista** mostra só o nome no topo e as tarefas em cartões que abrem e fecham. O menu ⋮ escolhe agrupar por projeto, data ou prioridade, move as atrasadas para hoje e apaga as concluídas. A data fica à direita da tarefa (vermelha quando atrasada), com ícones para descrição, subtarefas, repetição e pessoas.
-- **Adicionar:** no celular, pelo botão + flutuante; no PC, pelo campo no topo da lista. O prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
+- **Adicionar:** no celular, pelo + da barra de baixo; no PC, pelo campo no topo da lista. O prazo, o projeto e a prioridade podem ir junto com o título, e a linha de baixo mostra o que foi entendido antes de salvar:
   - `Ligar para o cartório sexta #promotoria !!!` cria a tarefa para sexta, no projeto Promotoria, com prioridade alta;
   - datas: `hoje`, `amanhã`, `depois de amanhã`, dias da semana (`sexta`, `na segunda`, `quinta-feira`), `dia 15`, `15/10`, `próxima semana`, `fim de semana`, `em 3 dias`;
   - `#nome` escolhe o projeto pelo começo do nome; se nenhum projeto bater, vira etiqueta;
@@ -73,9 +91,9 @@ Mesma estrutura das Tarefas, pensada como agenda:
 | Aviso | Quando |
 | --- | --- |
 | Lembretes | na data e hora do lembrete; sem hora, às 09:00. Com os botões Adiar 1 h e Feito |
-| Tarefas do dia | 07:30, com as tarefas do dia e as atrasadas |
+| Plano do dia | 07:30, com o que tem para hoje e por onde começar; tocar abre o plano (com o painel antigo: as tarefas do dia e as atrasadas) |
 | Hábitos no horário | na hora marcada em cada hábito, se ainda faltar. Com o botão Feito |
-| Hábitos que faltam | 21:00, só se ainda faltar algum |
+| Fechar o dia | 21:00, se algo ficou em aberto; tocar abre o fechar o dia, uma coisa de cada vez (com o painel antigo: os hábitos que faltam) |
 | Aniversários | 09:00 do dia |
 | Pomodoro | no fim de cada foco e de cada pausa |
 | Sessão em andamento | aviso fixo com o tempo correndo: regressivo no Pomodoro (some no fim da fase), progressivo no cronômetro; tocar abre o Tempo |
