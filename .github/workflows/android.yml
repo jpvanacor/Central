@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: android-app
+  group: android-app-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -62,7 +62,9 @@ jobs:
           ./gradlew --no-daemon assembleRelease
           cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/central.apk"
 
+      # Em outro branch o build só confere se compila; o APK publicado sai só da main.
       - name: Publish the release
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
           V: ${{ steps.version.outputs.number }}

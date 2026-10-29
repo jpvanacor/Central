@@ -49,4 +49,16 @@
     <!-- Horário exato para lembretes e Pomodoro sem passar pelas configurações (Android 13+). -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Anotar falando: o reconhecimento de voz do Android escuta dentro do app. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Android 11+: para enxergar o serviço de voz e a janela de voz do Google. -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+        </intent>
+    </queries>
 </manifest>
