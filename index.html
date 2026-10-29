@@ -2240,6 +2240,8 @@ function toast(msg, actLabel, actFn){
   t.innerHTML = esc(msg) + (actLabel ? '<button class="toast-act" type="button">' + esc(actLabel) + '</button>' : '');
   t.classList.toggle('act', !!actLabel);
   if(actLabel) t.querySelector('.toast-act').onclick = () => { t.classList.remove('on', 'act'); actFn(); };
+  const folha = [...document.querySelectorAll('.view.on .tk-add.on')].find(x => getComputedStyle(x).position === 'fixed');
+  t.style.bottom = folha ? Math.round(window.innerHeight - folha.getBoundingClientRect().top + 10) + 'px' : '';
   t.classList.add('on');
   clearTimeout(toast._h);
   toast._h = setTimeout(() => t.classList.remove('on', 'act'), actLabel ? 6500 : 2600);
@@ -2594,7 +2596,7 @@ let AG_FOCO = '';        /* item trazido para a frente em "Ou então" */
 let AG_ADD = false;      /* folha de anotar aberta (celular) */
 let AG_TIPO = '';        /* tipo escolhido no botão da folha ('' = o que o texto disser) */
 let AG_QUANDO = '';      /* tarefa sem data no texto: '' (decidir depois), 'hoje' ou 'amanha' */
-let AG_PLANO = null;     /* plano do dia sendo escolhido: {ds, sel, mais} */
+let AG_PLANO = null;     /* plano do dia sendo escolhido: {ds, sel, vistos, mais, mexeu} */
 let AG_ENTRA = false;    /* o próximo cartão entra com animação (depois de feito, adiado ou trazido) */
 const AG_PER = {manha:['da manhã', 'de manhã'], tarde:['da tarde', 'à tarde'], noite:['da noite', 'à noite']};
 /* emojis de coisas que não costumam ser hábito: ligar, arrumar, cozinhar, finanças, planejar */
@@ -2616,10 +2618,11 @@ function agEstado(){
 }
 /* madrugada (00:00 a 04:59) conta como o fim da noite */
 function agMin(hm){ const m = hm2m(hm); return m < 300 ? m + 1440 : m; }
-function agHoraFechar(){ const h = notifCfg().habHora; return hbHoraOk(h) ? hm2m(h) : 1260; }
+function agHoraFechar(){ const h = notifCfg().habHora; return hbHoraOk(h) ? agMin(h) : 1260; }
+function agRepete(x){ return !!(x && x.recurrence && x.recurrence.type); }
 /* atrasada há mais de uma semana ficou para trás: sai do dia (plano, sugestões, fechar) e espera uma revisão, uma de cada vez */
 const AG_VELHA = 7;
-function agLimite(){ return addD(today(), -AG_VELHA); }
+function agLimite(ds){ return addD(ds || today(), -AG_VELHA); }
 function agParaTras(){
   const lim = agLimite();
   const ls = S.reminders.filter(r => !r.dismissed && r.date && r.date < lim).map(r => ({k:'l:' + r.id, tipo:'l', id:r.id, d:r.date}));
@@ -2660,15 +2663,17 @@ function agCandidatos(todos){
     itens.push(it);
   });
   /* hábitos do dia que faltam: na hora deles, no momento do dia deles ou a qualquer hora */
-  const pa = agora < 300 ? -1 : HB_PER[hbPeriodoDeHora(lmAgora())].i;
+  const cedo = agora < 300, pa = cedo ? -1 : HB_PER[hbPeriodoDeHora(lmAgora())].i, ontem = addD(t, -1);
   hbAtivos().forEach(h => {
-    if(!hbPlanejado(h, t) || habDone(h, t)) return;
+    /* hora de madrugada é o fim da noite do dia do hábito: de madrugada, vale o de ontem */
+    const mad = hbHoraOk(h.hora) && hm2m(h.hora) < 300, dia = mad && cedo ? ontem : t;
+    if(!hbPlanejado(h, dia) || habDone(h, dia)) return;
     const k = 'h:' + h.id;
     if(!vale(k)) return;
-    const it = {k, tipo:'h', id:h.id, titulo:h.name, emoji:h.emoji || '', cor:h.color, m:[],
+    const it = {k, tipo:'h', id:h.id, ds:dia, titulo:h.name, emoji:h.emoji || '', cor:h.color, m:[],
       extra:h.twoMin ? ['zap', 'Versão de 2 minutos: ' + h.twoMin] : h.cue ? ['link', h.cue] : null};
     if(hbHoraOk(h.hora)){
-      const mm = agMin(h.hora);
+      const mm = mad && cedo ? hm2m(h.hora) : agMin(h.hora);
       if(mm > agora + 15){ it.m.push('às ' + h.hora); depois.push(Object.assign(it, {hora:h.hora, min:mm})); return; }
       it.nota = 85; it.m.push((mm >= agora - 30 ? 'às ' : 'era às ') + h.hora);
     }else if(HB_PER[h.periodo]){
@@ -2677,7 +2682,7 @@ function agCandidatos(todos){
       if(ip === pa){ it.nota = 60; it.m.push('hábito ' + AG_PER[h.periodo][0]); }
       else{ it.nota = 50; it.m.push('ficou ' + AG_PER[h.periodo][0]); }
     }else{ it.nota = 42; it.m.push('hábito de hoje'); }
-    if(hbFalhouUma(h, t)){ it.nota += 15; it.m.push('não falhe duas vezes'); }
+    if(hbFalhouUma(h, dia)){ it.nota += 15; it.m.push('não falhe duas vezes'); }
     itens.push(it);
   });
   /* aniversários de hoje (cedo demais fica mais para baixo) */
@@ -2698,7 +2703,7 @@ function agCandidatos(todos){
     const k = 't:' + x.id;
     if(!vale(k)) return;
     const pr = x.priority || 0;
-    const it = {k, tipo:'t', id:x.id, titulo:x.title, proj:projById(x.projectId), adiou:x.adiou || 0, m:[]};
+    const it = {k, tipo:'t', id:x.id, titulo:x.title, proj:projById(x.projectId), adiou:x.adiou || 0, rep:agRepete(x), m:[]};
     if(x.due && x.due < t){
       const d = Math.round((fromD(t) - fromD(x.due)) / 864e5);
       it.nota = 47 + Math.min(d, 5) + 10 * pr; it.late = true;
@@ -2737,14 +2742,18 @@ function agParaDecidir(){
 function agAlgumDia(){
   return S.tasks.filter(x => x.status !== 'done' && !x.due && x.algumDia).sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
 }
-/* o que sobrou do dia, na ordem do fechar: hábitos (rápido), lembretes, tarefas; o que ainda tem hora hoje fica de fora */
-function agItensFechar(){
-  const t = today(), a = agEstado(), fora = new Set(a.fora), agora = nowMin(), lim = agLimite(), xs = [];
-  hbAtivos().filter(h => hbPlanejado(h, t) && !habDone(h, t) && !fora.has('h:' + h.id) && !(hbHoraOk(h.hora) && agMin(h.hora) > agora + 15))
+/* o que sobrou do dia ds, na ordem do fechar: hábitos (rápido), lembretes, tarefas.
+   ate: até que hora (minutos) conta; o que tem hora depois fica de fora. Hoje, até agora; dia passado, tudo. */
+function agItensFechar(ds, ate){
+  const t = today();
+  ds = ds || t;
+  if(ate == null) ate = ds === t ? nowMin() : ds < t ? Infinity : -1;
+  const fora = new Set(ds === t ? agEstado().fora : []), lim = agLimite(ds), xs = [];
+  hbAtivos().filter(h => hbPlanejado(h, ds) && !habDone(h, ds) && !fora.has('h:' + h.id) && !(hbHoraOk(h.hora) && agMin(h.hora) > ate + 15))
     .sort(hbOrdenador()).forEach(h => xs.push({k:'h:' + h.id, tipo:'h', id:h.id}));
-  S.reminders.filter(r => !r.dismissed && r.date && r.date <= t && r.date >= lim && !(r.date === t && hbHoraOk(r.time) && hm2m(r.time) > agora + 15))
+  S.reminders.filter(r => !r.dismissed && r.date && r.date <= ds && r.date >= lim && !(r.date === ds && hbHoraOk(r.time) && hm2m(r.time) > ate + 15))
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '99').localeCompare(b.time || '99')).forEach(r => xs.push({k:'l:' + r.id, tipo:'l', id:r.id}));
-  sortTasks(S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= t && x.due >= lim) || tkEhCaixa(x, t))))
+  sortTasks(S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= ds && x.due >= lim) || tkEhCaixa(x, ds))))
     .forEach(x => xs.push({k:'t:' + x.id, tipo:'t', id:x.id}));
   return xs;
 }
@@ -2903,17 +2912,31 @@ function agNavSync(){
 
 /* ---------- plano do dia ---------- */
 function agPlanoTarefas(){ return agCandidatos(true).itens.filter(x => x.tipo === 't'); }
-/* de manhã até as 18h, com duas tarefas ou mais (ou alguma atrasada) e o plano ainda não feito */
-function agPlanoMostrar(){
-  if(agEstado().planejado || nowMin() >= 18 * 60) return false;
+/* das 5h às 18h, com duas tarefas ou mais (ou alguma atrasada) */
+function agPlanoPossivel(){
+  const m = nowMin();
+  if(m < 300 || m >= 18 * 60) return false;
   const ts = agPlanoTarefas();
   return ts.length >= 2 || ts.some(x => x.late);
 }
+/* com o plano ainda não feito; quem já começou a escolher não perde o plano no meio (às 18h) */
+function agPlanoMostrar(){
+  if(agEstado().planejado) return false;
+  if(AG_PLANO && AG_PLANO.ds === today() && AG_PLANO.mexeu && agPlanoTarefas().length) return true;
+  return agPlanoPossivel();
+}
 function agPlanoHTML(){
   const ts = agPlanoTarefas(), t = today(), cap = agCap();
-  if(!AG_PLANO || AG_PLANO.ds !== t) AG_PLANO = {ds:t, sel:new Set(ts.slice(0, cap).map(x => x.k)), mais:false};
+  const novo = !AG_PLANO || AG_PLANO.ds !== t;
+  if(novo) AG_PLANO = {ds:t, sel:new Set(), vistos:new Set(), mais:false, mexeu:false};
+  /* as mais urgentes vêm marcadas (até o limite); o que aparece depois, anotado com o plano aberto, já entra marcado */
+  ts.forEach(x => {
+    if(AG_PLANO.vistos.has(x.k)) return;
+    AG_PLANO.vistos.add(x.k);
+    if(!novo || ts.filter(y => AG_PLANO.sel.has(y.k)).length < cap) AG_PLANO.sel.add(x.k);
+  });
   const sel = AG_PLANO.sel, lim = AG_PLANO.mais ? ts.length : Math.max(cap + 3, 6);
-  const nSel = ts.filter(x => sel.has(x.k)).length, algum = ts.filter(x => !sel.has(x.k) && x.adiou >= 3).length, fica = ts.length - nSel - algum;
+  const nSel = ts.filter(x => sel.has(x.k)).length, algum = ts.filter(x => !sel.has(x.k) && x.adiou >= 3 && !x.rep).length, fica = ts.length - nSel - algum;
   const rows = ts.slice(0, lim).map(x => {
     const on = sel.has(x.k);
     return '<button class="ag-pl-row' + (on ? ' on' : '') + '" data-action="ag-plano-ck" data-k="' + esc(x.k) + '" role="checkbox" aria-checked="' + on + '">' +
@@ -2941,9 +2964,9 @@ function agPlanoAplicar(){
   const xs = S.tasks.filter(x => ids.has(x.id));
   const fotos = xs.map(x => JSON.stringify(x)), agAntes = JSON.stringify(a);
   let am1 = 0, al = 0;
-  /* a que já foi adiada 3 vezes não volta para amanhã: vai para algum dia */
+  /* a que já foi adiada 3 vezes não volta para amanhã: vai para algum dia (a que repete, não: seguiria sem data) */
   xs.forEach(x => {
-    if((x.adiou || 0) >= 3){ x.due = null; x.inbox = false; x.algumDia = true; al++; }
+    if((x.adiou || 0) >= 3 && !agRepete(x)){ x.due = null; x.inbox = false; x.algumDia = true; al++; }
     else{ x.due = am; x.inbox = false; x.adiou = (x.adiou || 0) + 1; am1++; }
   });
   a.planejado = true; a.plano = [...sel];
@@ -2963,8 +2986,8 @@ function agPlanoAplicar(){
 
 /* ---------- feito, começar, depois ---------- */
 /* foto de um item para desfazer (o hábito guarda só a marca do dia) */
-function agFoto(it){
-  if(it.tipo === 'h'){ const t = today(); return {tipo:'h', id:it.id, ds:t, log:!!(S.habitLogs[it.id] && S.habitLogs[it.id][t])}; }
+function agFoto(it, ds){
+  if(it.tipo === 'h'){ const d = ds || today(); return {tipo:'h', id:it.id, ds:d, log:!!(S.habitLogs[it.id] && S.habitLogs[it.id][d])}; }
   const o = agObj(it);
   return {tipo:it.tipo, id:it.id, j:o ? JSON.stringify(o) : null, criados:[]};
 }
@@ -2987,17 +3010,17 @@ function agConcluirTarefa(x){
   const agora = new Date().toISOString();
   if(x.recurrence && x.recurrence.type){ x.due = proximaFutura(x.due || today(), x.recurrence); x.completedAt = null; x.ultimaFeita = agora; }
   else{ x.status = 'done'; x.completedAt = agora; }
-  delete x.algumDia;
+  delete x.algumDia; delete x.adiou;
 }
-/* dispensa o lembrete; o que repete pula para a próxima vez (o atrasado, para a primeira a partir de hoje) */
-function agDispensarLem(r){
-  const t = today();
+/* dispensa o lembrete; o que repete pula para a próxima vez (o atrasado, para a primeira a partir do dia) */
+function agDispensarLem(r, base){
+  const t = base || today();
   if(lmRepete(r) && r.date){ r.date = lmDepoisDe(r, r.date < t ? addD(t, -1) : r.date); r.ultimaFeita = new Date().toISOString(); }
   else{ r.dismissed = true; r.dismissedAt = new Date().toISOString(); }
 }
 /* passa o lembrete para outro dia, na mesma hora; no que repete, só esta vez (a série segue) */
-function agMoverLem(r, d){
-  const t = today(), criados = [];
+function agMoverLem(r, d, base){
+  const t = base || today(), criados = [];
   if(lmRepete(r) && r.date){
     const prox = lmDepoisDe(r, t);
     if(prox !== d){
@@ -3018,17 +3041,20 @@ function agCelebraTarefas(desfazer){
   setTimeout(() => { confete(); sfx('all'); haptic('success'); toast('Tarefas do dia concluídas.', 'Desfazer', desfazer); }, 140);
   return true;
 }
+/* dia do item na tela (o hábito de madrugada é o de ontem) */
+function agDiaDe(k){ const c = agCandidatos(), x = c.itens.concat(c.depois).find(y => y.k === k); return (x && x.ds) || today(); }
 /* mudo: o som já tocou no toque */
 function agConcluir(k, mudo){
-  const it = agItem(k), o = agObj(it), a = agEstado(), t = today();
+  const it = agItem(k), o = agObj(it), a = agEstado(), t = today(), ds = it.tipo === 'h' ? agDiaDe(k) : t;
   if(!o && it.tipo !== 'b') return;
-  const foto = it.tipo === 'b' ? null : agFoto(it), agAntes = JSON.stringify(a);
+  if(it.tipo === 'h' && habDone(o, ds)){ render(); return; }
+  const foto = it.tipo === 'b' ? null : agFoto(it, ds), agAntes = JSON.stringify(a);
   const desfazer = () => { agRestaura(foto); S.meta.ag = JSON.parse(agAntes); AG_ENTRA = true; save(); render(); sfx('undo'); };
   if(AG_FOCO === k) AG_FOCO = '';
   AG_ENTRA = true;
   if(it.tipo === 'h'){
     if(!mudo){ sfx('habit'); haptic('light'); }
-    if(hbMarcar(it.id, t, true, desfazer)) return;
+    if(hbMarcar(it.id, ds, true, desfazer)) return;
     toast('Feito.', 'Desfazer', desfazer);
     return;
   }
@@ -3064,14 +3090,16 @@ function agDepoisHTML(k){
   const sep = '<div class="tk-msep"></div>';
   const breve = mi('timer', 'Daqui a 1 hora', 'hora') + (cedo ? mi('moon', 'À noite', 'noite', 'às 19:00') : '');
   if(it.tipo === 'l'){
-    return lmAdiarOps().map(([ic, lab, ds, hr]) => '<button class="tk-mi" role="menuitem" data-action="ag-dep-lem" data-k="' + esc(k) + '" data-ds="' + ds + '" data-hr="' + hr + '">' + licn(ic) +
+    /* só o que fica depois da hora atual dele (o das 18:00 não "adia" para as 11:30) */
+    const r = agObj(it), atual = r && r.date ? r.date + ' ' + (r.time || '00:00') : '';
+    return lmAdiarOps().filter(([, , ds, hr]) => !atual || ds + ' ' + hr > atual).map(([ic, lab, ds, hr]) => '<button class="tk-mi" role="menuitem" data-action="ag-dep-lem" data-k="' + esc(k) + '" data-ds="' + ds + '" data-hr="' + hr + '">' + licn(ic) +
       '<span class="l">' + lab + '</span><small>' + (ds === t ? hr : tkDataTxt(ds) + ', ' + hr) + '</small></button>').join('') + sep + mi('calendar', 'Outro dia ou hora', 'mais');
   }
   if(it.tipo === 't'){
     return breve + sep + tkOpcoesData().slice(1).map(([ic, lab, ds]) => '<button class="tk-mi" role="menuitem" data-action="ag-dep" data-k="' + esc(k) + '" data-v="data" data-ds="' + ds + '">' + licn(ic) +
       '<span class="l">' + lab + '</span><small>' + tkDataAbs(ds) + '</small></button>').join('') +
       '<label class="tk-mi">' + licn('calendar') + '<span class="l">Escolher data</span><input type="date" class="ag-dep-data" data-k="' + esc(k) + '" min="' + addD(t, 1) + '" aria-label="Escolher data"></label>' +
-      sep + mi('cloud', 'Algum dia', 'algum', 'sem data');
+      (agRepete(agObj(it)) ? '' : sep + mi('cloud', 'Algum dia', 'algum', 'sem data'));
   }
   return breve + sep + mi('x', 'Hoje não', 'fora', it.tipo === 'h' ? 'volta amanhã' : '');
 }
@@ -3090,7 +3118,7 @@ function agAdiar(k, v, ds){
     const x = agObj(it);
     if(!x) return;
     foto = agFoto(it);
-    if(v === 'algum'){ x.due = null; x.inbox = false; x.algumDia = true; msg = 'Guardada para algum dia.'; }
+    if(v === 'algum'){ if(agRepete(x)) return; x.due = null; x.inbox = false; x.algumDia = true; msg = 'Guardada para algum dia.'; }
     else if(v === 'data' && /^\d{4}-\d{2}-\d{2}$/.test(ds || '') && ds > today()){ x.due = ds; x.inbox = false; delete x.algumDia; x.adiou = (x.adiou || 0) + 1; msg = 'Ficou para ' + tkDataTxt(ds) + '.'; }
     else return;
   }else return;
@@ -3100,9 +3128,9 @@ function agAdiar(k, v, ds){
   toast(msg, 'Desfazer', () => { agRestaura(foto); S.meta.ag = JSON.parse(agAntes); AG_ENTRA = true; save(); render(); sfx('undo'); });
 }
 function agOpcoesHTML(){
-  const a = agEstado(), nd = agParaDecidir().length, na = agAlgumDia().length, np = agPlanoTarefas().length;
+  const a = agEstado(), nd = agParaDecidir().length, na = agAlgumDia().length;
   const mi = (ic, lab, attrs, c) => '<button class="tk-mi" role="menuitem" ' + attrs + '>' + licn(ic) + '<span class="l">' + lab + '</span>' + (c ? '<span class="c">' + c + '</span>' : '') + '</button>';
-  return (a.planejado && np ? mi('sunrise', 'Refazer o plano do dia', 'data-action="ag-replanejar"') : '') +
+  return (a.planejado && agPlanoPossivel() ? mi('sunrise', 'Refazer o plano do dia', 'data-action="ag-replanejar"') : '') +
     mi('scale', 'Decidir as sem data', 'data-action="ag-fluxo" data-f="decidir"', nd) +
     mi('sunset', 'Fechar o dia', 'data-action="ag-fluxo" data-f="fechar"') +
     (na ? mi('cloud', 'Rever algum dia', 'data-action="ag-fluxo" data-f="algum"', na) : '') +
@@ -3111,40 +3139,44 @@ function agOpcoesHTML(){
 }
 
 /* ---------- uma de cada vez: decidir as sem data, rever algum dia, fechar o dia ---------- */
-function agFluxo(f){
+/* ds: o dia que está sendo fechado (fica o mesmo mesmo que a meia-noite passe no meio) */
+function agFluxo(f, ds){
   popFechar();
   if(AG_ADD) agCapFechar();
   if($('#mback').classList.contains('on')) closeModal();
-  const fila = f === 'fechar' ? agItensFechar() : f === 'tras' ? agParaTras() : (f === 'algum' ? agAlgumDia() : agParaDecidir()).map(x => ({k:'t:' + x.id, tipo:'t', id:x.id}));
+  const t = today(), dia = f === 'fechar' && ds ? ds : t;
+  const fila = f === 'fechar' ? agItensFechar(dia) : f === 'tras' ? agParaTras() : (f === 'algum' ? agAlgumDia() : agParaDecidir()).map(x => ({k:'t:' + x.id, tipo:'t', id:x.id}));
   if(!fila.length){
-    if(f === 'fechar'){ agEstado().fechado = true; save(); render(); toast('Nada em aberto. Dia fechado.'); }
+    if(f === 'fechar'){ if(dia === t){ agEstado().fechado = true; save(); render(); } toast('Nada em aberto. Dia fechado.'); }
     else toast(f === 'algum' ? 'Nada guardado para algum dia.' : f === 'tras' ? 'Nada ficou para trás.' : 'Nada para decidir.');
     return;
   }
-  M = {type:'ag-fluxo', f, fila, i:0, hist:[], cont:{}};
+  M = {type:'ag-fluxo', f, ds:dia, fila, i:0, hist:[], cont:{}};
   agFluxoRender();
 }
 function agFluxoValido(it){
-  const t = today(), o = agObj(it);
+  const o = agObj(it);
   if(!o || !M) return false;
+  const base = M.ds || today();
   if(it.tipo === 't'){
     if(o.status === 'done') return false;
-    if(M.f === 'decidir') return !o.due && !o.algumDia && !tkEhCaixa(o, t);
+    if(M.f === 'decidir') return !o.due && !o.algumDia && !tkEhCaixa(o, base);
     if(M.f === 'algum') return !o.due && !!o.algumDia;
     if(M.f === 'tras') return !!o.due && o.due < agLimite();
-    return !!((o.due && o.due <= t) || tkEhCaixa(o, t));
+    return !!((o.due && o.due <= base) || tkEhCaixa(o, base));
   }
-  if(it.tipo === 'h') return !o.archived && !habDone(o, t);
-  if(it.tipo === 'l') return !o.dismissed && !!o.date && (M.f === 'tras' ? o.date < agLimite() : o.date <= t);
+  if(it.tipo === 'h') return !o.archived && !habDone(o, base);
+  if(it.tipo === 'l') return !o.dismissed && !!o.date && (M.f === 'tras' ? o.date < agLimite() : o.date <= base);
   return false;
 }
 function agFluxoRender(){
   if(!M || M.type !== 'ag-fluxo') return;
   while(M.i < M.fila.length && !agFluxoValido(M.fila[M.i])) M.i++;
   if(M.i >= M.fila.length){ agFluxoFim(); return; }
-  const it = M.fila[M.i], n = M.fila.length, o = agObj(it), t = today(), od = tkOpcoesData();
+  M.fim = false;
+  const it = M.fila[M.i], n = M.fila.length, o = agObj(it), hoje = today(), t = M.ds || hoje, od = tkOpcoesData(), rep = it.tipo === 't' && agRepete(o);
   const op = (v, ic, lab, sub, cls) => '<button class="rs-op' + (cls ? ' ' + cls : '') + '" data-action="agf-op" data-v="' + v + '">' + licn(ic) + '<span>' + lab + '</span><small>' + (sub || '') + '</small></button>';
-  const dt = '<label class="rs-op dt">' + licn('calendar') + '<span>Escolher data</span><small>calendário</small><input type="date" id="f_agfd" min="' + (M.f === 'fechar' ? addD(t, 1) : t) + '" aria-label="Escolher data"></label>';
+  const dt = '<label class="rs-op dt">' + licn('calendar') + '<span>Escolher data</span><small>calendário</small><input type="date" id="f_agfd" min="' + (M.f === 'fechar' ? addD(t, 1) : hoje) + '" aria-label="Escolher data"></label>';
   let cab, tit, mot, q, ops;
   if(it.tipo === 't'){
     const p = projById(o.projectId);
@@ -3154,27 +3186,27 @@ function agFluxoRender(){
       mot = M.f === 'tras' ? 'Era para ' + tkDataAbs(o.due) + '.' : (M.f === 'algum' ? 'Guardada ' : 'Anotada ') + mcHa(dstr(new Date(o.createdAt || Date.now()))) + '.';
       q = M.f === 'algum' || M.f === 'tras' ? 'Ainda quer fazer?' : 'Quando você faz?';
       ops = op('hoje', 'sun', 'Hoje', tkDataAbs(t)) + op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(od[1][2])) + op('fds', 'calendar-range', od[2][1], tkDataAbs(od[2][2])) +
-        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + op('algum', 'cloud', 'Algum dia', M.f === 'algum' ? 'continua guardada' : 'sem data') +
+        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + (rep ? '' : op('algum', 'cloud', 'Algum dia', M.f === 'algum' ? 'continua guardada' : 'sem data')) +
         op('feito', 'check', 'Já fiz', '', 'ok') + op('apagar', 'trash-2', 'Apagar', '', 'del');
     }else{
       const d = o.due && o.due < t ? Math.round((fromD(t) - fromD(o.due)) / 864e5) : 0;
       mot = d ? (d === 1 ? 'Era para ontem.' : 'Atrasada há ' + d + ' dias.') : tkEhCaixa(o, t) ? 'Apareceu hoje.' : 'Era para hoje.';
       q = 'Ficou para quando?';
-      ops = op('feito', 'check', 'Feita', '', 'ok') + op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(addD(t, 1))) + op('fds', 'calendar-range', od[2][1], tkDataAbs(od[2][2])) +
-        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + op('algum', 'cloud', 'Algum dia', 'sem data') + op('apagar', 'trash-2', 'Apagar', '', 'del');
+      ops = op('feito', 'check', 'Feita', rep ? 'segue para a próxima' : '', 'ok') + op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(addD(t, 1))) + op('fds', 'calendar-range', od[2][1], tkDataAbs(od[2][2])) +
+        op('semana', 'calendar-plus', 'Próxima semana', tkDataAbs(od[3][2])) + dt + (rep ? '' : op('algum', 'cloud', 'Algum dia', 'sem data')) + op('apagar', 'trash-2', 'Apagar', '', 'del');
     }
   }else if(it.tipo === 'h'){
     cab = licn('target') + '<span>Hábito</span>';
     tit = (o.emoji ? esc(o.emoji) + ' ' : '') + esc(o.name);
     mot = hbFalhouUma(o, t) ? 'A última vez ficou sem marcar.' : hbHoraOk(o.hora) ? 'Era às ' + o.hora + '.' : 'Era para hoje.';
-    q = 'Fez hoje?';
-    ops = op('feito', 'check', 'Fiz', '', 'ok') + op('nao', 'x', 'Hoje não', 'volta amanhã');
+    q = t === hoje ? 'Fez hoje?' : 'Fez ' + tkDataTxt(t) + '?';
+    ops = op('feito', 'check', 'Fiz', '', 'ok') + op('nao', 'x', t === hoje ? 'Hoje não' : 'Não fiz', t === hoje ? 'volta amanhã' : '');
   }else{
     cab = licn('bell') + '<span>' + esc('Lembrete' + (o.category ? ', ' + o.category : '')) + '</span>';
     tit = esc(o.title);
-    mot = (o.date < t ? 'Era para ' + tkDataTxt(o.date) : 'Hoje') + (o.time ? ', às ' + o.time : '') + '.';
+    mot = (o.date < t ? 'Era para ' + tkDataTxt(o.date) : cap1(tkDataTxt(o.date))) + (o.time ? ', às ' + o.time : '') + '.';
     q = 'Resolvido?';
-    ops = op('feito', 'check', 'Feito', lmRepete(o) ? 'segue para a próxima' : '', 'ok') + (M.f === 'tras' ? op('hoje', 'sun', 'Hoje', tkDataAbs(t) + (o.time ? ', ' + o.time : '')) : '') +
+    ops = op('feito', 'check', 'Feito', lmRepete(o) ? 'segue para a próxima' : '', 'ok') + (M.f === 'tras' ? op('hoje', 'sun', 'Hoje', tkDataAbs(hoje) + (o.time ? ', ' + o.time : '')) : '') +
       op('amanha', 'calendar-days', 'Amanhã', tkDataAbs(addD(t, 1)) + (o.time ? ', ' + o.time : '')) + dt + (M.f === 'tras' ? op('apagar', 'trash-2', 'Apagar', '', 'del') : '');
   }
   const nome = M.f === 'fechar' ? 'Fechar o dia' : M.f === 'algum' ? 'Algum dia' : M.f === 'tras' ? 'Ficou para trás' : 'Decidir';
@@ -3189,8 +3221,8 @@ function agFluxoRender(){
   openModal('', body, foot, {semFoco:true});
   $('#mback').classList.add('ag-fl');
 }
-function agDataDe(v, ds){
-  const t = today(), od = tkOpcoesData();
+function agDataDe(v, ds, base){
+  const t = base || today(), od = tkOpcoesData();
   if(v === 'hoje') return t;
   if(v === 'amanha') return addD(t, 1);
   if(v === 'fds') return od[2][2];
@@ -3202,31 +3234,34 @@ function agFluxoAplicar(v, ds){
   if(!M || M.type !== 'ag-fluxo') return;
   const it = M.fila[M.i];
   if(!it) return;
-  const o = agObj(it), t = today();
+  const o = agObj(it), hoje = today(), base = M.ds || hoje;
   if(!o){ M.i++; agFluxoRender(); return; }
-  const foto = agFoto(it), agAntes = JSON.stringify(agEstado());
+  const foto = agFoto(it, base), agAntes = JSON.stringify(agEstado());
+  /* data nova: nunca no passado; no fechar, depois do dia que está sendo fechado */
+  const vale = d => !!d && d >= hoje && !(M.f === 'fechar' && d <= base);
   let res = v;
   if(it.tipo === 't'){
     if(v === 'feito') agConcluirTarefa(o);
     else if(v === 'apagar') S.tasks.splice(S.tasks.indexOf(o), 1);
-    else if(v === 'algum'){ o.due = null; o.inbox = false; o.algumDia = true; }
+    else if(v === 'algum'){ if(agRepete(o)) return; o.due = null; o.inbox = false; o.algumDia = true; }
     else{
-      const d = agDataDe(v, ds);
-      if(!d || d < t || (M.f === 'fechar' && d === t)) return;
+      const d = agDataDe(v, ds, base);
+      if(!vale(d)) return;
       o.due = d; o.inbox = false; delete o.algumDia;
       if(M.f === 'fechar') o.adiou = (o.adiou || 0) + 1;
-      res = d === t ? 'hoje' : 'data';
+      res = d === hoje && M.f !== 'fechar' ? 'hoje' : 'data';
     }
   }else if(it.tipo === 'h'){
-    if(v === 'feito') (S.habitLogs[o.id] || (S.habitLogs[o.id] = {}))[t] = true;
-    else{ const a = agEstado(); if(!a.fora.includes(it.k)) a.fora.push(it.k); res = 'nao'; }
+    if(v === 'feito') (S.habitLogs[o.id] || (S.habitLogs[o.id] = {}))[base] = true;
+    else if(base === hoje){ const a = agEstado(); if(!a.fora.includes(it.k)) a.fora.push(it.k); res = 'nao'; }
+    else res = 'naofiz';
   }else if(it.tipo === 'l'){
-    if(v === 'feito') agDispensarLem(o);
+    if(v === 'feito') agDispensarLem(o, base);
     else if(v === 'apagar') S.reminders.splice(S.reminders.indexOf(o), 1);
     else{
-      const d = agDataDe(v, ds);
-      if(!d || d < t || (M.f === 'fechar' && d === t)) return;
-      foto.criados = agMoverLem(o, d); res = d === t ? 'hoje' : 'data';
+      const d = agDataDe(v, ds, base);
+      if(!vale(d)) return;
+      foto.criados = agMoverLem(o, d, base); res = d === hoje && M.f !== 'fechar' ? 'hoje' : 'data';
     }
   }
   M.hist.push({foto, agAntes, i:M.i, res});
@@ -3238,6 +3273,8 @@ function agFluxoAplicar(v, ds){
 }
 function agFluxoVoltar(){
   if(!M || M.type !== 'ag-fluxo' || !M.hist.length) return;
+  /* do fim de volta para a última: o dia que tinha fechado reabre */
+  if(M.fim){ M.fim = false; if(M.fechou && S.meta.ag && S.meta.ag.ds === M.ds) S.meta.ag.fechado = false; M.fechou = false; }
   const h = M.hist.pop();
   M.cont[h.res] = Math.max(0, (M.cont[h.res] || 1) - 1);
   if(h.res !== 'pulo'){ agRestaura(h.foto); S.meta.ag = JSON.parse(h.agAntes); save(); render(); sfx('undo'); }
@@ -3252,26 +3289,29 @@ function agFluxoPular(){
   agFluxoRender();
 }
 function agFluxoFim(){
-  const f = M.f, c = M.cont, xs = [];
+  const f = M.f, c = M.cont, base = M.ds || today(), xs = [], primeira = !M.fim;
   const n = (k, um, varios) => { if(c[k]) xs.push(c[k] === 1 ? um : c[k] + ' ' + varios); };
+  M.fim = true;
   if(f === 'fechar'){
-    agEstado().fechado = true; save();
+    /* fecha o dia que estava sendo fechado; se a meia-noite já passou, o dia novo continua aberto */
+    if(base === today()){ const a = agEstado(); if(!a.fechado){ a.fechado = true; M.fechou = true; } save(); }
     n('feito', '1 feito', 'feitos'); n('data', '1 para outro dia', 'para outro dia'); n('algum', '1 para algum dia', 'para algum dia');
-    n('nao', '1 hábito para amanhã', 'hábitos para amanhã'); n('apagar', '1 apagada', 'apagadas');
+    n('nao', '1 hábito para amanhã', 'hábitos para amanhã'); n('naofiz', '1 hábito não feito', 'hábitos não feitos'); n('apagar', '1 apagada', 'apagadas');
   }else{
     n('hoje', '1 para hoje', 'para hoje'); n('data', '1 com data', 'com data'); n('algum', '1 para algum dia', 'para algum dia');
     n('feito', '1 já feita', 'já feitas'); n('apagar', '1 apagada', 'apagadas');
   }
   n('pulo', '1 pulada', 'puladas');
-  const am = S.tasks.filter(x => x.status !== 'done' && x.due === addD(today(), 1)).length;
-  const txt = (xs.length ? cap1(agJuntar(xs)) + '.' : 'Nada mudou.') + (f === 'fechar' && am ? ' Amanhã: ' + (am === 1 ? '1 tarefa.' : am + ' tarefas.') : '');
-  const limpo = f === 'fechar' ? !agItensFechar().length : f === 'algum' ? !c.pulo : f === 'tras' ? !agParaTras().length : !agParaDecidir().length;
+  const am = S.tasks.filter(x => x.status !== 'done' && x.due === addD(base, 1)).length;
+  const txt = (xs.length ? cap1(agJuntar(xs)) + '.' : 'Nada mudou.') + (f === 'fechar' && am ? (base === today() ? ' Amanhã: ' : ' Hoje: ') + (am === 1 ? '1 tarefa.' : am + ' tarefas.') : '');
+  const limpo = f === 'fechar' ? !agItensFechar(base).length : f === 'algum' ? !c.pulo : f === 'tras' ? !agParaTras().length : !agParaDecidir().length;
   const tit = f === 'fechar' ? 'Dia fechado.' : limpo ? (f === 'algum' ? 'Tudo revisto.' : f === 'tras' ? 'Tudo em dia.' : 'Tudo decidido.') : 'Por agora, é isso.';
-  M = {type:'ag-fim'};
+  /* Voltar no fim desfaz a última escolha (até um Apagar) */
   openModal('', '<div class="agf-fim">' + licn('check-circle') + '<h2>' + tit + '</h2><p>' + esc(txt) + '</p></div>',
+    (M.hist.length ? '<button class="btn btn-ghost" data-action="agf-voltar">' + licn('arrow-left') + 'Voltar</button>' : '') +
     '<div class="grow"></div><button class="btn btn-primary" data-action="fechar-modal">Pronto</button>', {semFoco:true});
   $('#mback').classList.add('ag-fl');
-  if(limpo && (c.feito || f !== 'fechar')){ confete(); sfx('all'); haptic('success'); }
+  if(primeira && limpo && (c.feito || f !== 'fechar')){ confete(); sfx('all'); haptic('success'); }
   render();
 }
 
@@ -3281,16 +3321,18 @@ function agEhItem(p){
   const q = mcLer(p);
   if(!q) return false;
   const stop = /^(de|do|da|dos|das|e|com|sem|o|a|os|as|um|uma|pra|para|pro)$/;
-  const t = mcToks(q.name), util = t.filter(w => !stop.test(w));
+  const t = mcToks(q.name);
+  while(t.length && stop.test(t[0])) t.shift();
+  const util = t.filter(w => !stop.test(w));
   if(!util.length || util.length > 4) return false;
+  /* o nome começa pela palavra do dicionário: "descongelar a carne", "pagar água" e "aula de salsa" não são compras */
   for(const kw of mcKW()){
     const n = kw.toks.length;
-    for(let i = 0; i + n <= t.length; i++){
-      let ok = true;
-      for(let j = 0; j < n; j++) if(t[i + j] !== kw.toks[j]){ ok = false; break; }
-      /* "café com o Pedro" é compromisso; "água com gás" está inteiro no dicionário */
-      if(ok){ const cobre = kw.toks.filter(w => !stop.test(w)).length / util.length; return cobre >= 1 || (cobre >= .5 && !t.includes('com')); }
-    }
+    if(n > t.length) continue;
+    let ok = true;
+    for(let j = 0; j < n; j++) if(t[j] !== kw.toks[j]){ ok = false; break; }
+    /* "café com o Pedro" é compromisso; "água com gás" está inteiro no dicionário */
+    if(ok){ const cobre = kw.toks.filter(w => !stop.test(w)).length / util.length; return cobre >= 1 || (cobre >= .5 && !t.includes('com')); }
   }
   return false;
 }
@@ -3300,38 +3342,61 @@ function agMercadoPartes(txt){
   return mcPartes(s).flatMap(p => { const ps = p.split(/\s+e\s+/i).filter(Boolean); return ps.length > 1 && ps.every(agEhItem) ? ps : [p]; });
 }
 function agEhMercado(s){ const ps = agMercadoPartes(s); return ps.length > 0 && ps.every(agEhItem); }
-/* tarefa, lembrete, hábito ou mercado; prefixos ("me lembra de", "hábito:", "mercado:") mandam */
+/* "2h" e "1h30" que o leitor dos hábitos deixou no nome são duração, não hora ("estudar 2h amanhã às 20h"):
+   ficam protegidos para o leitor dos lembretes não tomar como 02:00 */
+const AG_PROT = '\u2063';
+function agSemDuracao(txt){
+  const hp = hbParse(txt), durs = new Set((String(hp.name || '').match(/\d{1,2}h(?:\d{2})?/gi) || []).map(x => x.toLowerCase()));
+  if(!durs.size) return String(txt);
+  return String(txt).split(/(\s+)/).map(w => durs.has(w.toLowerCase().replace(/[.,;:!?]+$/, '')) ? w.replace(/h/i, AG_PROT + 'h') : w).join('');
+}
+function agTiraProt(s){ return String(s || '').split(AG_PROT).join(''); }
+/* dias da semana que repetem sem "todo/toda": "terças e quintas", "às segundas", "aos sábados" */
+function agRepeteDias(s, hp){
+  if(!hp.dias || !hp.dias.length) return false;
+  if(hp.dias.length >= 2) return true;
+  const ns = ' ' + semAcento(s).replace(/[.,;:!?]/g, ' ').replace(/\s+/g, ' ') + ' ', dias = 'domingo|segunda|terca|quarta|quinta|sexta|sabado';
+  return new RegExp('\\s(aos|nos|nas|as|todas as|todos os)\\s(' + dias + ')s?(-feiras?)?\\s').test(ns) || new RegExp('\\s(' + dias + ')s(-feiras)?\\s').test(ns);
+}
+/* tarefa, lembrete, hábito ou mercado; prefixos ("me lembra", "hábito:", "mercado:") mandam */
 function agTipoDe(raw){
   const s = String(raw || '').replace(/\s+/g, ' ').trim();
-  const PREF = [[/^(tarefa|fazer)\s*:\s*/i, 'tarefa'], [/^lembretes?\s*:\s*/i, 'lembrete'], [/^(me\s+)?(lembra|lembre|lembrar)(-me)?\s+(de|que)\s+/i, 'lembrete'],
-    [/^h[aá]bitos?\s*:\s*/i, 'habito'], [/^(mercado|compras?)\s*:\s*/i, 'mercado']];
+  const PREF = [[/^(tarefa|fazer)\s*:\s*/i, 'tarefa'], [/^lembretes?\s*:\s*/i, 'lembrete'], [/^me\s+(lembra|lembre|lembrar)\s+/i, 'lembrete'],
+    [/^(lembra|lembre|lembrar)(-me)?\s+(de|que)\s+/i, 'lembrete'], [/^lembre-me\s+/i, 'lembrete'], [/^h[aá]bitos?\s*:\s*/i, 'habito'], [/^(mercado|compras?)\s*:\s*/i, 'mercado']];
   for(const [re, tp] of PREF){
     const m = s.match(re);
-    if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim())};
+    if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim().replace(/^(de|que)\s+/i, ''))};
   }
-  const lp = lmParse(s), hp = hbParse(s), rec = lp.rec;
+  const lp = lmParse(agSemDuracao(s)), hp = hbParse(s), rec = lp.rec;
   if(!lp.date && !lp.time && !rec && agEhMercado(s)) return {tipo:'mercado', txt:s};
   /* hora vale quando os dois leitores concordam ("2h por dia" e "dormir 8h" são duração) */
   const temHora = !!lp.time && !!(hp.hora || hp.periodo);
   const em = hbEmojiDe(hp.name || s), habito = !!em && !AG_NAO_HABITO.includes(em);
   const ns = ' ' + semAcento(s).replace(/[.,;:!?]/g, ' ').replace(/\s+/g, ' ') + ' ';
-  const dias = 'domingo|segunda|terca|quarta|quinta|sexta|sabado';
-  const repete = (hp.dias && hp.dias.length >= 2) || !!(rec && (rec.type === 'daily' || rec.type === 'weekly')) ||
-    new RegExp('\\s(aos|nos|todas as|todos os)\\s(' + dias + ')s?(-feiras?)?\\s').test(ns) || new RegExp('\\s(' + dias + ')s(-feiras)?\\s').test(ns) ||
-    /\s(toda|todas as) (manha|tarde|noite)s?\s/.test(ns);
+  const semana = agRepeteDias(s, hp);
+  const repete = semana || !!(rec && (rec.type === 'daily' || rec.type === 'weekly')) || /\s(toda|todas as) (manha|tarde|noite)s?\s/.test(ns);
   if(/\s(por|ao) dia\s/.test(ns) || (habito && (repete || (hp.cue && !lp.date)))) return {tipo:'habito', txt:s};
-  if(temHora || rec) return {tipo:'lembrete', txt:s};
+  /* aniversário com data vira lembrete que repete todo ano */
+  if(temHora || rec || semana || (lp.date && /^anivers[aá]rio\b/i.test(s))) return {tipo:'lembrete', txt:s};
   return {tipo:'tarefa', txt:s};
 }
 function agTipoAtual(raw){ const d = agTipoDe(raw); return AG_TIPO ? {tipo:AG_TIPO, txt:d.txt} : d; }
 function agLembreteDe(txt){
-  const q = lmParse(txt);
-  if(!q.title) return null;
-  const time = q.time || '', rec = q.rec;
-  let date = q.date || null;
+  const hp = hbParse(txt), q = lmParse(agSemDuracao(txt));
+  let title = agTiraProt(q.title).replace(/^(de|que)\s+/i, ''), time = q.time || '', rec = q.rec, date = q.date || null;
+  /* dias que repetem sem "todo/toda" ("terças e quintas 7h", "aos sábados"): toda semana nesses dias */
+  if(!rec && agRepeteDias(txt, hp)){
+    rec = hp.dias.length >= 7 ? {type:'daily'} : {type:'weekly', days:hp.dias.slice()};
+    title = agTiraProt(hp.name) || title;
+    time = hp.hora || ({manha:'09:00', tarde:'15:00', noite:'20:00'})[hp.periodo] || time;
+    date = null;
+  }
+  if(!title) return null;
+  title = cap1(title);
+  if(!rec && date && /^anivers[aá]rio\b/i.test(title)) rec = {type:'yearly'};
   if(!date) date = rec ? lmPrimeiraData(rec, time) : time ? (time > lmAgora() ? today() : addD(today(), 1)) : today();
   if(rec && date) lmRepFixa(rec, date);
-  return {title:q.title, date, time, rec, cat:q.cat || ''};
+  return {title, date, time, rec, cat:q.cat || ''};
 }
 function agHabitoDe(txt){
   const q = hbParse(txt);
@@ -3420,6 +3485,7 @@ function agCapAbrir(txt){
 function agCapFechar(){
   AG_ADD = false; agCapSync();
   const i = $('#agInp');
+  if(i && !i.value.trim()){ AG_TIPO = ''; AG_QUANDO = ''; }
   if(i && document.activeElement === i) i.blur();
 }
 function agCriarTarefa(txt, quandoEsc){
@@ -3534,13 +3600,11 @@ function agNotifManha(add, c, t){
 function agNotifNoite(add, c, t, d){
   const ds = addD(t, d), a = agEstado();
   if(d === 0 && a.fechado) return;
-  const lim = agLimite();
-  const n = S.tasks.filter(x => x.status !== 'done' && ((x.due && x.due <= ds && x.due >= lim) || (d === 0 && tkEhCaixa(x, t)))).length +
-    hbAtivos().filter(h => schedOn(h, ds) && (d > 0 || (!habDone(h, t) && !a.fora.includes('h:' + h.id)))).length +
-    S.reminders.filter(r => !r.dismissed && r.date && r.date <= ds && r.date >= lim).length;
+  /* conta o mesmo que o fechar vai mostrar naquela hora; hora de madrugada é o fim da noite (toca no dia seguinte) */
+  const fh = hbHoraOk(c.habHora) ? agMin(c.habHora) : 1260, n = agItensFechar(ds, fh).length;
   if(!n) return;
-  add('agn:' + ds, quando(ds, c.habHora), 'Fechar o dia', n === 1 ? 'Ficou 1 coisa em aberto. Toque para resolver.' : 'Ficaram ' + n + ' coisas em aberto. Toque para resolver uma de cada vez.',
-    'habitos', 'hoje', {fechar:1});
+  add('agn:' + ds, quando(fh >= 1440 ? addD(ds, 1) : ds, c.habHora), 'Fechar o dia',
+    n === 1 ? 'Ficou 1 coisa em aberto. Toque para resolver.' : 'Ficaram ' + n + ' coisas em aberto. Toque para resolver uma de cada vez.', 'habitos', 'hoje', {fechar:1, ds});
 }
 
 /* ===================== Render: Tarefas ===================== */
@@ -8110,13 +8174,14 @@ function toggleTask(id){
   if(!t) return;
   if(t.status !== 'done' && t.recurrence && t.recurrence.type){
     t.due = proximaFutura(t.due || today(), t.recurrence);
-    t.completedAt = null; t.ultimaFeita = new Date().toISOString();
+    t.completedAt = null; t.ultimaFeita = new Date().toISOString(); delete t.adiou;
     save(); render();
     toast('Feita. Próxima: ' + fmtCurto(t.due) + '.');
     return;
   }
   t.status = t.status === 'done' ? 'open' : 'done';
   t.completedAt = t.status === 'done' ? new Date().toISOString() : null;
+  if(t.status === 'done') delete t.adiou;
   save(); render();
 }
 let QA_CAIXA = false;
@@ -8524,11 +8589,11 @@ document.addEventListener('click', e => {
   }
   if(a === 'ag-plano-ck'){
     const k = el.dataset.k;
-    if(AG_PLANO){ if(AG_PLANO.sel.has(k)) AG_PLANO.sel.delete(k); else AG_PLANO.sel.add(k); }
+    if(AG_PLANO){ if(AG_PLANO.sel.has(k)) AG_PLANO.sel.delete(k); else AG_PLANO.sel.add(k); AG_PLANO.mexeu = true; }
     haptic('light'); renderAgora();
     return;
   }
-  if(a === 'ag-plano-mais'){ if(AG_PLANO) AG_PLANO.mais = true; renderAgora(); return; }
+  if(a === 'ag-plano-mais'){ if(AG_PLANO){ AG_PLANO.mais = true; AG_PLANO.mexeu = true; } renderAgora(); return; }
   if(a === 'ag-plano-ok'){ agPlanoAplicar(); return; }
   if(a === 'ag-plano-nao'){ agEstado().planejado = true; AG_PLANO = null; AG_ENTRA = true; save(); render(); agTopo(); return; }
   if(a === 'ag-fluxo'){ agFluxo(el.dataset.f); return; }
@@ -9706,7 +9771,7 @@ document.addEventListener('input', e => {
   if(e.target.id === 'rlTitle') lmPreview();
   if(e.target.id === 'shopInp'){ mcPreview(); mcSugSync(); }
   if(e.target.id === 'hbInp') hbPreview();
-  if(e.target.id === 'agInp') agPreview();
+  if(e.target.id === 'agInp'){ if(!e.target.value.trim()){ AG_TIPO = ''; AG_QUANDO = ''; } agPreview(); }
   if(/^f_hb(nome|cue|2m|nota)$/.test(e.target.id)) tkAltura(e.target);
   if(e.target.id === 'f_hbnome' && M && M.type === 'habito' && !M.draft.emoji){ const b = document.querySelector('#mBody .hbd-badge .ini'); if(b) b.textContent = hbInicial(e.target.value); }
   if(e.target.id === 'f_shname' || (e.target.id === 'f_shnote' && e.target.classList.contains('tkd-notas'))) tkAltura(e.target);
@@ -10226,7 +10291,14 @@ function nativeInit(){
       if(ex.hab && S.habits.some(h => h.id === ex.hab)){ HB_V = 'hoje'; HB_DIA = null; setView('habitos'); return; }
       if(ex.lem && (a.actionId === 'adiar' || a.actionId === 'feito')){ lmAcaoNotif(ex.lem, a.actionId, ex.ds); return; }
       if(ex.lem && S.reminders.some(r => r.id === ex.lem)){ lmIrPara('agenda'); setView('lembretes'); openLembrete(ex.lem); return; }
-      if(ex.fechar){ setView('hoje'); if(agAtivo()) agFluxo('fechar'); return; }
+      /* o aviso da noite abre o fechar do dia dele; se o dia já passou, só avisa (de madrugada ainda vale o de ontem) */
+      if(ex.fechar){
+        setView('hoje');
+        const dia = ex.ds || (nowMin() >= agHoraFechar() - 180 ? today() : ''), vale = !!dia && (dia === today() || (dia === addD(today(), -1) && nowMin() < 300));
+        if(agAtivo() && vale) agFluxo('fechar', dia);
+        else if(dia && dia !== today()) toast('Esse aviso era de ' + tkDataTxt(dia) + '.');
+        return;
+      }
       if(ex.view && TABS[ex.view]) setView(ex.view);
     });
     const acoes = typeof LN.registerActionTypes === 'function' ?
