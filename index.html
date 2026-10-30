@@ -2549,7 +2549,7 @@ function renderHoje(){
     '<span class="clock-desc">' + esc(rr.desc) + '</span>' +
     '<span class="clock" style="font-size:17px" data-tick-start="' + rr.start + '">' + fmtClock(durSec(rr)) + '</span>' +
     '<button class="btn btn-sm" data-action="parar-timer">Parar</button></div>';
-  const pomo = !(POMO.running && !POMO.paused) ? '' :
+  const pomo = !POMO.running ? '' :
     '<div class="card runstrip"><span class="rundot"></span>' +
     '<span class="clock-desc">' + esc(pomoPhaseLabel() + (POMO.label ? ': ' + POMO.label : '')) + '</span>' +
     '<span class="clock" style="font-size:17px" id="hojePomo">' + mmss(pomoRemaining()) + '</span><button class="btn btn-sm" data-action="parar-pomo">Parar</button></div>';
@@ -3476,6 +3476,8 @@ function agPrevHTML(d){
   const v = d.txt;
   if(d.tipo === 'financa') return agFinChips(agFinDe(v, true));
   if(d.tipo === 'mercado'){
+    const pc = mcPrecoDito(v);
+    if(pc) return agPrevHTML({tipo:'mercado', txt:pc.nome}) + tok('tag', fmtR(pc.preco));
     return agMercadoPartes(v).map(mcLer).filter(Boolean).slice(0, 8).map(q => {
       const ex = mcAchar(q.name), sec = mcSec(q.cat || (ex ? mcSecDe(ex) : mcSecaoDe(q.name)));
       return '<span class="qa-tok' + (ex && ex.need ? ' mc-ja' : '') + '"><span class="em">' + sec[2] + '</span>' + esc(ex ? ex.name : q.name) +
@@ -3588,6 +3590,15 @@ function agCriarHabito(txt){
 }
 function agCriarMercado(txt, sec){
   if(/^(comprei|compramos)\s/i.test(String(txt).trim())){ const c = agMarcarComprados(agMercadoPartes(txt)); return c.n ? {msg:c.msg} : null; }
+  /* "leite 5 reais": o item com o preço */
+  const pc = mcPrecoDito(txt);
+  if(pc){
+    if(!mcAdicionar(pc.nome, sec || '').lidos) return null;
+    const q = mcLer(pc.nome), it = q && mcAchar(q.name);
+    if(!it) return null;
+    it.price = pc.preco;
+    return {msg:it.name + (it.bought ? ' no carrinho, ' : ' na lista, ') + fmtR(pc.preco) + '.'};
+  }
   const r = mcAdicionar(agMercadoPartes(txt).join('; '), sec || '');
   if(!r.lidos) return null;
   const n = r.novos + r.voltaram;
@@ -3686,7 +3697,8 @@ LICN['keyboard'] = '<path d="M10 8h.01"/><path d="M12 12h.01"/><path d="M14 8h.0
    "urgente" vira prioridade alta, "no projeto Promotoria" vira #Promotoria e "acabou o café" vai para o mercado.
    No começo, "anota aí", "tenho que" e "não esquecer de" saem; "nova tarefa", "lembrete" e "hábito" dizem o tipo. */
 const AG_NUM = {um:1, uma:1, dois:2, duas:2, tres:3, quatro:4, cinco:5, seis:6, sete:7, oito:8, nove:9, dez:10, onze:11, doze:12, treze:13,
-  quatorze:14, catorze:14, quinze:15, dezesseis:16, dezessete:17, dezoito:18, dezenove:19, vinte:20, trinta:30, quarenta:40, cinquenta:50};
+  quatorze:14, catorze:14, quinze:15, dezesseis:16, dezessete:17, dezoito:18, dezenove:19, vinte:20, trinta:30, quarenta:40, cinquenta:50,
+  sessenta:60, setenta:70, oitenta:80, noventa:90};
 const AG_MESES = {janeiro:1, fevereiro:2, marco:3, abril:4, maio:5, junho:6, julho:7, agosto:8, setembro:9, outubro:10, novembro:11, dezembro:12};
 const agNorm = w => semAcento(w).replace(/^[("']+|[.,;:!?)"']+$/g, '');
 function agHm(h, m){ return h + 'h' + (m ? pad(m) : ''); }
@@ -3790,7 +3802,9 @@ function agFala(raw){
       if(w === 'daqui' && n[j] === 'a') j++;
       if(w === 'dentro') j = n[j] === 'de' ? j + 1 : -1;
       const r = j > 0 ? agRelativo(n, j) : null;
-      if(r){ out.push(...agRelTokens(r)); i = j + r.k - 1; continue; }
+      /* "parcelado em 12 meses", "1200 em 12 meses": são parcelas, não data */
+      const parc = r && r.meses && w === 'em' && /^((parcelad|dividid|financiad)[oa]s?|reais|real|contos?|(r\$)?\d+([.,]\d+)*)$/.test(n[i - 1] || '');
+      if(r && !parc){ out.push(...agRelTokens(r)); i = j + r.k - 1; continue; }
     }
     const dw = w.replace(/-feira$/, '');
     if(TK_DIAS[dw] != null && dw.length > 3 && w1 === 'que' && w2 === 'vem'){
@@ -4064,10 +4078,15 @@ function vozTipo(t){
   let d;
   AG_VOZ = true;
   try{ d = agTipoDe(cap1(String(t || '').trim())); }finally{ AG_VOZ = false; }
-  const forc = {tarefas:'tarefa', lembretes:'lembrete', habitos:'habito', mercado:'mercado', financas:'financa'}[VOZ.destino];
-  /* dinheiro dito vale em qualquer aba ("deu 230" no Mercado lança a compra) */
-  if(d.tipo === 'financa') return d;
-  return forc ? {tipo:forc, txt:d.txt} : d;
+  const dest = VOZ.destino, forc = {tarefas:'tarefa', lembretes:'lembrete', habitos:'habito', mercado:'mercado', financas:'financa'}[dest];
+  if(!forc) return d;
+  /* na aba Finanças, tudo é lançamento, menos dívida ("a Ana me deve 50" vira tarefa) */
+  if(dest === 'financas') return agFinDivida(d.txt) ? d : {tipo:'financa', txt:d.txt};
+  /* no Mercado, a compra ("deu 230", "comprei leite por 25") e o gasto com verbo ("gastei 30 de uber"); "cerveja 6" é da lista */
+  if(dest === 'mercado') return agFinDe(d.txt, false, {mercado:true}) ? {tipo:'financa', txt:d.txt} : {tipo:'mercado', txt:d.txt};
+  /* em Tarefas, Lembretes e Hábitos, só o gasto dito com verbo ("gastei", "paguei", "recebi"); "boleto de 89 até sexta" fica na aba */
+  if(d.tipo === 'financa'){ const q = agFinDe(d.txt); if(q && q.verbo) return d; }
+  return {tipo:forc, txt:d.txt};
 }
 function vozPrevHTML(t){
   const d = vozTipo(t);
@@ -4152,7 +4171,10 @@ function vozTextoAbrir(dest, v){
 }
 function vozDigitar(){
   const t = VOZ.texto.trim(), dest = VOZ.destino;
+  /* dinheiro dito numa aba (o Mercado, por exemplo): Digitar abre o lançamento, não o campo da aba */
+  const fin = !!t && dest !== 'agora' && dest !== 'financas' && vozTipo(t).tipo === 'financa';
   vozCancelar();
+  if(fin){ finNovaCom(cap1(t), {mercado:dest === 'mercado'}); return; }
   vozTextoAbrir(dest, t ? cap1(t) : '');
 }
 /* anota o que foi dito; o aviso diz o que virou e tem Desfazer */
@@ -4163,14 +4185,14 @@ function vozAnotar(t){
   VOZ_SEM_FOCO = true;
   try{
     if(d.tipo === 'financa') r = agCriarFinanca(d.txt, {forcar:dest === 'financas', mercado:dest === 'mercado'});
-    else if(dest === 'agora') r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, '');
+    else if(dest === 'agora' || dest === 'financas') r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, '');
     else r = vozNaAba(d, dest);
   }finally{ VOZ_SEM_FOCO = false; }
   vozFechar();
   if(!r){ toast('Não deu para anotar “' + corta(cap1(t), 60) + '”.', 'Digitar', () => vozTextoAbrir(dest, cap1(t))); return; }
   if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
   const novos = S[col].filter(x => !ids.has(x.id));
-  if((dest === 'agora' || d.tipo === 'financa') && !r.igual){ sfx('add'); haptic('light'); }
+  if((dest === 'agora' || dest === 'financas' || d.tipo === 'financa') && !r.igual){ sfx('add'); haptic('light'); }
   save(); render();
   const msg = vozMsg(d.tipo, novos, r);
   if(r.igual) toast(msg);
@@ -4222,7 +4244,7 @@ function vozMsg(tipo, novos, r){
   const x = novos[0];
   if(tipo === 'tarefa' && x){
     const p = projById(x.projectId);
-    return x.title + ': ' + (x.due ? 'tarefa para ' + tkDataTxt(x.due) : x.inbox ? 'tarefa na caixa de entrada' : VOZ.destino === 'agora' ? 'fica para decidir depois' : 'tarefa sem data') +
+    return x.title + ': ' + (x.due ? 'tarefa para ' + tkDataTxt(x.due) : x.inbox ? 'tarefa na caixa de entrada' : (VOZ.destino === 'agora' || VOZ.destino === 'financas') ? 'fica para decidir depois' : 'tarefa sem data') +
       (p ? ', em ' + p.name : '') + '.';
   }
   if(tipo === 'lembrete' && x) return x.title + ': lembrete ' + (x.date ? 'para ' + lmQuando(x) : 'sem data') + (x.recurrence ? ', ' + recResumo(x.recurrence).toLowerCase() : '') + '.';
@@ -4256,17 +4278,28 @@ function dicaToast(msg, n){
 }
 
 /* ===================== Dinheiro falado ===================== */
-/* "gastei 50 no uber", "almoço 35 reais", "recebi 3000 de salário", "paguei 120 de luz ontem", "comprei um tênis de 300 em 3 vezes",
-   "netflix 55,90 todo mês" (despesa fixa), "deu 230 no mercado" (lança e conclui o carrinho), "comprei leite e pão por 25 reais"
-   (lança e tira os itens da lista). Vale no + de qualquer aba e no campo de anotar; na aba Finanças, o valor sozinho basta. */
+/* "gastei 50 no uber", "almoço 35 reais", "uber 18 e 50", "recebi 3000 de salário", "paguei 120 de luz ontem",
+   "comprei um tênis de 300 em 3 vezes", "3x de 100", "netflix 55,90 todo mês" (despesa fixa), "deu 230 no mercado" (lança e conclui
+   o carrinho), "comprei leite e pão por 25 reais" (lança e tira os itens da lista). Vale no + de qualquer aba e no campo de anotar;
+   na aba Finanças, o valor sozinho basta. Continua tarefa ou lembrete: o que é para fazer ("pagar a luz 120 reais"), o que é para
+   depois sem verbo de gasto ("luz 120 reais amanhã", "dentista dia 5 às 14h 200 reais", "boleto de 89 até sexta", "condomínio 850
+   todo dia 10") e dívida ("a Ana me deve 50 reais"). Quantidade não é valor ("comprei 2 pães", "6 ovos"). */
 LICN['trending-up'] = '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
 const AG_CENTENAS = {cem:100, cento:100, duzentos:200, duzentas:200, trezentos:300, trezentas:300, quatrocentos:400, quatrocentas:400, quinhentos:500, quinhentas:500,
   seiscentos:600, seiscentas:600, setecentos:700, setecentas:700, oitocentos:800, oitocentas:800, novecentos:900, novecentas:900};
 const FIN_MOEDA = /^(reais|real|conto|contos|pila|pilas|mango|mangos|prata|pratas|pau|paus)$/;
-const FIN_SAI = /^(gastei|gastamos|paguei|pagamos|comprei|compramos|custou|custaram|deu|saiu|sairam|transferi|mandei|torrei|desembolsei|pixei)$/;
-const FIN_ENTRA = /^(recebi|recebemos|ganhei|ganhamos|entrou|entraram|caiu|cairam|vendi|vendemos|reembolsaram|reembolsou)$/;
+const FIN_SAI = /^(gastei|gastamos|paguei|pagamos|comprei|compramos|custou|custaram|deu|saiu|sairam|transferi|mandei|torrei|desembolsei|pixei|devolvi|devolvemos)$/;
+const FIN_ENTRA = /^(recebi|recebemos|recebo|ganhei|ganhamos|ganho|entrou|entraram|caiu|cairam|vendi|vendemos|reembolsaram|reembolsou|devolveram|devolveu|estornaram|estornou)$/;
+/* "me pagaram", "a Ana me devolveu": entra */
+const FIN_ME = /^(pagaram|pagou|deram|deu|mandou|mandaram|transferiu|transferiram|devolveu|devolveram|reembolsou|reembolsaram|pixou|pixaram|depositou|depositaram|estornou|estornaram)$/;
+/* dívida e empréstimo não são lançamento: "a Ana me deve 50", "devo 200 pro Pedro", "pediu 50 emprestado" */
+const FIN_DIVIDA = /^(deve|devo|devemos|devem|devendo|devia|deveria|emprestad[oa]s?|emprestar|empresta|emprestei|emprestou|emprestamos|emprestaram|fiado)$/;
 /* começo de tarefa: "pagar a luz 120 reais amanhã" é coisa para fazer, não gasto feito */
 const FIN_AFAZER = /^(pagar|comprar|transferir|depositar|cobrar|receber|mandar|enviar|devolver|separar|guardar|investir|vender|sacar|pedir|fazer|ligar|levar|buscar|lembrar|renovar|cancelar|contratar|reservar|agendar|marcar|ver|ir|economizar|juntar|poupar)$/;
+/* em qualquer lugar, sem verbo de gasto feito: "amanhã pagar 120 de luz", "vou receber 3000" */
+const FIN_AFAZER_DINHEIRO = /^(pagar|comprar|transferir|depositar|cobrar|receber|devolver|investir|vender|sacar|quitar|parcelar|gastar|pixar)$/;
+/* "segunda parcela", "quarta vez": número de ordem, não dia da semana */
+const FIN_ORDINAL = /^(parcelas?|prestac(ao|oes)|vez|mensalidade|etapa|fase|via|serie|chamada|semana|quinzena|rodada|aula|consulta|sessao|edicao|turma|dose)$/;
 const FIN_CATS_PAL = [
   ['alimentação', 'mercado|supermercado|feira|almoco|almocei|jantar|jantei|janta|lanche|lanchei|cafe|ifood|restaurante|padaria|acougue|hortifruti|pizza|comida|delivery|sorvete|bar|cerveja|marmita|acai|hamburguer|sushi|rodizio|confeitaria'],
   ['transporte', 'uber|99|taxi|gasolina|combustivel|etanol|alcool|diesel|estacionamento|onibus|passagem|metro|trem|trensurb|pedagio|oficina|mecanico|pneu|ipva|licenciamento|lavagem|lava jato|carro'],
@@ -4278,6 +4311,9 @@ const FIN_CATS_PAL = [
   ['pessoal', 'roupa|roupas|tenis|sapato|camisa|calca|cabelo|cabeleireiro|cabeleireira|barbeiro|barbearia|salao|manicure|unha|presente|perfume|maquiagem|relogio']
 ];
 const FIN_UNIDADE = /^(kg|g|gramas?|quilos?|litros?|l|ml|dias?|horas?|h|minutos?|min|vezes|x|parcelas?|%|paginas?|km|metros?|anos?|meses|semanas?|unidades?|pacotes?|caixas?|duzias?|pessoas?|copos?|garrafas?|latas?)$/;
+/* o que pode vir logo depois do valor sem ser o que foi comprado ("50 no uber", "120 de luz", "300 semana passada") */
+const FIN_DEPOIS = /^(no|na|nos|nas|de|do|da|dos|das|em|com|pro|pra|pros|pras|para|pelo|pela|pelos|pelas|por|e|ou|a|o|as|os|ao|aos|um|uma|hoje|ontem|anteontem|amanha|todo|toda|todos|ja|so|que|foi|ai|cada|mensal|mensais|mensalmente|semana|mes|dia|esse|essa|este|esta|nesse|nessa|neste|nesta|agora|mil|centavos?|passada|passado)$/;
+const finDiaSemana = w => { const b = String(w || '').replace(/-feira$/, ''); return TK_DIAS[b] != null && b.length > 3; };
 function agFinCat(titulo, tipo, tudo){
   const s = ' ' + semAcento((titulo || '') + ' ' + (tudo || '')).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ') + ' ';
   if(tipo === 'receita') return /\s(salario|freela|freelance|honorarios|pagamento|plantao|bonus|decimo|ferias|consultoria|trabalho)\s/.test(s) ? 'trabalho' : 'outro';
@@ -4292,7 +4328,7 @@ function finNum(w){
   if(/^\d+\.\d{1,2}$/.test(s)) return parseFloat(s);
   return null;
 }
-/* o valor no texto: {i, j, valor, forca: 'moeda' (R$, reais), 'centavos' (18,50) ou 'numero'} */
+/* o valor no texto: {i, j, valor, forca: 'moeda' (R$, reais), 'centavos' (18,50 ou "18 e 50") ou 'numero'} */
 function agFinValor(n){
   const palavra = w => AG_NUM[w] != null || AG_CENTENAS[w] != null;
   const achados = [];
@@ -4304,7 +4340,7 @@ function agFinValor(n){
     if(finNum(w) != null){ v = finNum(w); k = j + 1; if(/^r\$\d/.test(w)) moeda = true; }
     else if(palavra(w) || w === 'mil'){
       extenso = true;
-      /* por extenso: "duzentos e cinquenta", "dois mil e quinhentos" */
+      /* por extenso: "duzentos e cinquenta", "setenta e cinco", "dois mil e quinhentos" */
       let total = 0, cur = 0, m = j, ok = false;
       while(m < n.length && (palavra(n[m]) || n[m] === 'mil' || (n[m] === 'e' && m > j && (palavra(n[m + 1]) || n[m + 1] === 'mil')))){
         if(n[m] === 'mil'){ cur = (cur || 1) * 1000; total += cur; cur = 0; }
@@ -4315,15 +4351,26 @@ function agFinValor(n){
     }
     if(v == null) continue;
     if(n[k] === 'mil'){ v *= 1000; k++; if(n[k] === 'e' && finNum(n[k + 1]) != null){ v += finNum(n[k + 1]); k += 2; } }
-    let cent = /,\d{1,2}$/.test(n[j] || '');
-    /* "18 e 50 (reais)": centavos */
-    if(n[k] === 'e' && /^\d{2}$/.test(n[k + 1] || '') && (FIN_MOEDA.test(n[k + 2] || '') || /^centavos?$/.test(n[k + 2] || '') || moeda)){ v += +n[k + 1] / 100; k += 2; cent = true; if(/^centavos?$/.test(n[k] || '')) k++; }
+    const virgula = /,\d{1,2}$/.test(n[j] || '');
+    let cent = virgula;
+    /* centavos ditos: "18 e 50", "18 e 50 reais", "18 e 5 centavos" (depois de "às" ou "dia", "18 e 30" é hora) */
+    if(!virgula && n[k] === 'e' && /^\d{1,2}$/.test(n[k + 1] || '') && !/^(as|dia)$/.test(n[i - 1] || '')){
+      const c = n[k + 1], dep = n[k + 2] || '';
+      const centavos = /^centavos?$/.test(dep);
+      const hora = /^(horas?|h|min|minutos?)$/.test(dep) || (dep === 'da' && /^(manha|tarde|noite|madrugada)$/.test(n[k + 3] || ''));
+      if(centavos || (c.length === 2 && !hora && !FIN_UNIDADE.test(dep))){ v += +c / 100; k += 2; cent = true; if(centavos) k++; }
+    }
     if(FIN_MOEDA.test(n[k] || '')){
       moeda = true; k++;
       if(n[k] === 'e' && /^\d{1,2}$/.test(n[k + 1] || '') && /^centavos?$/.test(n[k + 2] || '')){ v += +n[k + 1] / 100; k += 3; }
     }else if(/^centavos?$/.test(n[k] || '') && v < 100){ v = v / 100; moeda = true; k++; }
-    /* não é dinheiro: quantidade com unidade, dia, hora, parcelas ("em 3 vezes"); por extenso, só com "reais" ("uma pizza" é quantidade) */
-    if(!moeda && (extenso || FIN_UNIDADE.test(n[k] || '') || (/^(dia|as)$/.test(n[i - 1] || '') && !cent))) continue;
+    const nx = n[k] || '';
+    /* não é dinheiro: hora e dia ("às 7", "dia 5"), quantidade com unidade ("2 kg", "3 dias", "em 3 vezes"), por extenso sem
+       "reais" ("uma pizza"); "300 dia 5" e "300 semana passada" são valor e data */
+    const unidade = FIN_UNIDADE.test(nx) && !(nx === 'dia' && /^\d{1,2}$/.test(n[k + 1] || '')) && !(/^semanas?$/.test(nx) && /^(passada|retrasada)$/.test(n[k + 1] || ''));
+    if(!moeda && (extenso || unidade || (/^(dia|as)$/.test(n[i - 1] || '') && !virgula))) continue;
+    /* "2 pães", "6 ovos", "3 camisetas", "2 boletos de 150": é quantidade */
+    if(!moeda && !cent && /^[a-z]/.test(nx) && !FIN_DEPOIS.test(nx) && !finDiaSemana(nx) && (v <= 12 || /s$/.test(nx))) continue;
     if(!(v > 0)) continue;
     achados.push({i, j:k, valor:Math.round(v * 100) / 100, forca:moeda ? 'moeda' : cent ? 'centavos' : 'numero'});
     i = k - 1;
@@ -4331,32 +4378,62 @@ function agFinValor(n){
   const peso = {moeda:3, centavos:2, numero:1};
   return achados.sort((a, b) => peso[b.forca] - peso[a.forca] || a.i - b.i)[0] || null;
 }
-/* data de gasto (para trás): hoje, ontem, anteontem, dia 5, 05/10, segunda (a última) */
-function agFinData(n, usado){
+/* marcado para depois: "amanhã", "próxima", "que vem", "daqui", "segunda", "dia 5", "às 14h", "até sexta", "todo dia 10", "toda segunda" */
+function agFinAgenda(n, usado){
+  const t = today();
+  for(let i = 0; i < n.length; i++){
+    if(usado[i]) continue;
+    const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '';
+    if(/^(amanha|daqui|proxima|proximo|proximas|proximos|diariamente|semanalmente)$/.test(w)) return true;
+    if(w === 'que' && w1 === 'vem') return true;
+    if(/^\d{1,2}h(\d{2})?$/.test(w) || /^\d{1,2}:\d{2}$/.test(w) || (w === 'as' && /^\d/.test(w1))) return true;
+    if(/^(meio-dia|meia-noite)$/.test(w) || (/^(meio|meia)$/.test(w) && /^(dia|noite)$/.test(w1))) return true;
+    if(/^(todo|toda|todos|todas)$/.test(w) && w1 !== 'mes') return true;
+    if((w === 'a' && w1 === 'cada') || (/^(por|ao)$/.test(w) && w1 === 'dia')) return true;
+    if(w === 'dia' && /^\d{1,2}$/.test(w1)) return true;
+    if(/^\d{1,2}\/\d{1,2}(\/\d{2,4})?$/.test(w)){
+      const [dd, mm, aa] = w.split('/').map(Number), ano = aa ? (aa < 100 ? 2000 + aa : aa) : fromD(t).getFullYear(), x = new Date(ano, mm - 1, dd, 12);
+      if(dstr(x) > t) return true;
+    }
+    if(finDiaSemana(w) && !FIN_ORDINAL.test(w1)){
+      const dep = w1 === 'feira' ? w2 : w1;
+      if(!/^(passada|passado|retrasada)$/.test(dep)) return true;
+    }
+  }
+  return false;
+}
+/* a data do lançamento: hoje, ontem, anteontem, semana passada, dia 5, 05/10, segunda, amanhã. Com verbo de gasto ("paguei"),
+   "dia 5" e o dia da semana são os que passaram; "pra sexta" e "até sexta" são para quando, não quando foi; "segunda parcela" não é data */
+function agFinData(n, usado, passado){
   const t = today(), marca = (i, k) => { for(let x = i; x < i + k; x++) usado[x] = true; };
   for(let i = 0; i < n.length; i++){
     if(usado[i]) continue;
-    const w = n[i], w1 = n[i + 1] || '';
+    const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '', pv = n[i - 1] || '';
+    if(/^(pra|para|pro|ate)$/.test(pv)) continue;
     let d = null, k = 1;
     if(w === 'hoje') d = t;
     else if(w === 'ontem') d = addD(t, -1);
     else if(w === 'anteontem') d = addD(t, -2);
-    else if(w === 'semana' && w1 === 'passada'){ d = addD(t, -7); k = 2; }
+    else if(w === 'amanha') d = addD(t, 1);
+    else if(w === 'depois' && w1 === 'de' && w2 === 'amanha'){ d = addD(t, 2); k = 3; }
+    else if(w === 'semana' && /^(passada|retrasada)$/.test(w1)){ d = addD(t, w1 === 'passada' ? -7 : -14); k = 2; }
     else if(w === 'dia' && /^\d{1,2}$/.test(w1) && +w1 >= 1 && +w1 <= 31){
       const d0 = fromD(t), dd = +w1;
       let x = new Date(d0.getFullYear(), d0.getMonth(), dd, 12);
-      if(dstr(x) > t || x.getDate() !== dd) x = new Date(d0.getFullYear(), d0.getMonth() - 1, dd, 12);
+      if(passado && (dstr(x) > t || x.getDate() !== dd)) x = new Date(d0.getFullYear(), d0.getMonth() - 1, dd, 12);
       if(x.getDate() === dd){ d = dstr(x); k = 2; }
     }else if(/^\d{1,2}\/\d{1,2}(\/\d{2,4})?$/.test(w)){
       const [dd, mm, aa] = w.split('/').map(Number), d0 = fromD(t), ano = aa ? (aa < 100 ? 2000 + aa : aa) : d0.getFullYear();
       const x = new Date(ano, mm - 1, dd, 12);
       if(x.getDate() === dd && x.getMonth() === mm - 1) d = dstr(x);
-    }else{
-      const b = w.replace(/-feira$/, '');
-      if(TK_DIAS[b] != null && b.length > 3){
-        const atras = (fromD(t).getDay() - TK_DIAS[b] + 7) % 7;
+    }else if(finDiaSemana(w) && !FIN_ORDINAL.test(w1)){
+      const dia = TK_DIAS[w.replace(/-feira$/, '')];
+      if(w1 === 'feira') k = 2;
+      if(/^(proxima|proximo)$/.test(pv)){ d = tkProxDia(dia); usado[i - 1] = true; }
+      else{
+        const atras = (fromD(t).getDay() - dia + 7) % 7;
         d = addD(t, -atras);
-        if(/^(passada|passado)$/.test(w1)){ k = 2; if(!atras) d = addD(t, -7); }
+        if(/^(passada|passado)$/.test(n[i + k] || '')){ k++; if(!atras) d = addD(t, -7); }
       }
     }
     if(d){
@@ -4367,80 +4444,122 @@ function agFinData(n, usado){
   }
   return t;
 }
+function agFinDivida(txt){ return String(txt || '').split(/\s+/).map(agNorm).some(w => FIN_DIVIDA.test(w)); }
 /* lê o gasto ou a receita. forcar: a aba Finanças (o valor sozinho basta); ctx.mercado: dito na aba Mercado */
 function agFinDe(txt, forcar, ctx){
   ctx = ctx || {};
   const t = String(txt || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
   if(!t.length) return null;
   const n = t.map(w => agNorm(w).replace(/^r\$$/, 'r$'));
+  if(n.some(w => FIN_DIVIDA.test(w))) return null;
   const usado = t.map(() => false);
   const val = agFinValor(n);
   if(!val) return agFinFixaPaga(t, n, usado);
-  let sai = false, entra = false, verbo = -1;
+  let sai = false, entra = false;
   n.forEach((w, i) => {
-    if(FIN_SAI.test(w)){ sai = true; if(verbo < 0) verbo = i; usado[i] = true; }
-    else if(FIN_ENTRA.test(w)){ entra = true; if(verbo < 0) verbo = i; usado[i] = true; }
+    if(FIN_SAI.test(w)){ sai = true; usado[i] = true; }
+    else if(FIN_ENTRA.test(w)){
+      /* "recebi uma multa de 195": a conta chegou, é despesa */
+      const a = /^(um|uma|o|a)$/.test(n[i + 1] || '') ? i + 2 : i + 1;
+      if(/^(recebi|recebemos)$/.test(w) && /^(multa|conta|boleto|cobranca|fatura|notificacao)$/.test(n[a] || '')) sai = true;
+      else entra = true;
+      usado[i] = true;
+    }
   });
-  /* "me pagaram", "me pagou", "me deram", "me mandou": entra */
-  n.forEach((w, i) => { if(w === 'me' && /^(pagaram|pagou|deram|deu|mandou|mandaram|transferiu|transferiram)$/.test(n[i + 1] || '')){ entra = true; sai = false; usado[i] = usado[i + 1] = true; } });
+  /* "me pagaram", "me devolveu": entra */
+  n.forEach((w, i) => { if(w === 'me' && FIN_ME.test(n[i + 1] || '')){ entra = true; sai = false; usado[i] = usado[i + 1] = true; } });
   /* "fiz um pix de 50 pra Ana": sai */
   n.forEach((w, i) => { if(w === 'fiz' && /^(um|uma)$/.test(n[i + 1] || '') && /^(pix|transferencia|compra)$/.test(n[i + 2] || '')){ sai = true; usado[i] = usado[i + 1] = true; } });
-  const afazer = FIN_AFAZER.test(n[0]) && verbo !== 0;
+  const passado = sai || entra;
+  const afazer = !passado && (FIN_AFAZER.test(n[0]) || n.some(w => FIN_AFAZER_DINHEIRO.test(w)));
   for(let x = val.i; x < val.j; x++) usado[x] = true;
   /* "por 300", "de 120", "no valor de 50": a preposição sai com o valor */
   if(val.i > 0 && /^(por|de|custando|valor)$/.test(n[val.i - 1])){ usado[val.i - 1] = true; if(n[val.i - 1] === 'de' && n[val.i - 2] === 'valor'){ usado[val.i - 2] = true; if(n[val.i - 3] === 'no') usado[val.i - 3] = true; } }
-  let valor = val.valor, parcelas = 0, fixa = false, porParcela = false;
+  /* forma de pagamento e hora não entram no título: "no cartão", "no pix", "em dinheiro", "à vista", "às 14h" */
+  n.forEach((w, i) => {
+    if(usado[i]) return;
+    if(/^(cartao|credito|debito|pix|dinheiro|especie)$/.test(w) && /^(no|na|em|pelo|pela|com|via|de|do)$/.test(n[i - 1] || '') && !usado[i - 1]){
+      usado[i] = usado[i - 1] = true;
+      if(w === 'cartao' && n[i + 1] === 'de' && /^(credito|debito)$/.test(n[i + 2] || '')) usado[i + 1] = usado[i + 2] = true;
+    }else if(w === 'vista' && /^(a|as)$/.test(n[i - 1] || '')) usado[i] = usado[i - 1] = true;
+    else if(/^\d{1,2}h(\d{2})?$/.test(w) || /^\d{1,2}:\d{2}$/.test(w)){ usado[i] = true; if(n[i - 1] === 'as') usado[i - 1] = true; }
+  });
+  let valor = val.valor, parcelas = 0, iParc = -1, fixa = false;
+  const qtd = w => /^\d{1,2}$/.test(w || '') ? +w : (AG_NUM[w] != null ? AG_NUM[w] : 0);
+  const PARC = /^(vezes|x|parcelas|prestacoes|meses)$/;
   for(let i = 0; i < n.length; i++){
     if(usado[i]) continue;
     const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '';
-    /* "em 3 vezes", "em 3x", "3x", "parcelado em 3", "3 parcelas (de 100)" */
-    let m = null;
-    if(w === 'em' && /^\d{1,2}$/.test(w1) && /^(vezes|x|parcelas)$/.test(w2)){ m = +w1; usado[i] = usado[i + 1] = usado[i + 2] = true; }
-    else if(w === 'em' && /^\d{1,2}x$/.test(w1)){ m = parseInt(w1); usado[i] = usado[i + 1] = true; }
-    else if(/^\d{1,2}x$/.test(w)){ m = parseInt(w); usado[i] = true; }
-    else if(/^parcelad[oa]s?$/.test(w)){ usado[i] = true; if(w1 === 'em' && /^\d{1,2}$/.test(w2)){ m = +w2; usado[i + 1] = usado[i + 2] = true; if(/^(vezes|x|parcelas)$/.test(n[i + 3] || '')) usado[i + 3] = true; } }
-    else if(/^\d{1,2}$/.test(w) && /^parcelas?$/.test(w1)){ m = +w; usado[i] = usado[i + 1] = true; if(val.i > i){ porParcela = true; } }
-    if(m && m >= 2 && m <= 48) parcelas = m;
-    /* "todo mês", "por mês", "mensal" */
+    /* "em 3 vezes", "em 3x", "3x", "parcelado em 12 meses", "em três vezes", "3 parcelas (de 100)", "3 vezes de 100" */
+    let m = 0, ate = i;
+    if(w === 'em' && qtd(w1) && PARC.test(w2)){ m = qtd(w1); ate = i + 2; }
+    else if(w === 'em' && /^\d{1,2}x$/.test(w1)){ m = parseInt(w1); ate = i + 1; }
+    else if(/^\d{1,2}x$/.test(w)) m = parseInt(w);
+    else if(/^(parcelad|dividid|financiad)[oa]s?$/.test(w)){
+      usado[i] = true;
+      if(w1 === 'em' && qtd(w2)){ m = qtd(w2); ate = i + 2; if(PARC.test(n[i + 3] || '')) ate = i + 3; }
+      else if(/^\d{1,2}x$/.test(w1)){ m = parseInt(w1); ate = i + 1; }
+    }
+    else if(qtd(w) && /^(parcelas|prestacoes)$/.test(w1)){ m = qtd(w); ate = i + 1; }
+    else if(qtd(w) && w1 === 'vezes' && w2 === 'de'){ m = qtd(w); ate = i + 1; }
+    if(m >= 2 && m <= 48){ parcelas = m; iParc = i; for(let x = i; x <= ate; x++) usado[x] = true; continue; }
+    /* "todo mês", "todos os meses", "por mês", "mensal"; na aba Finanças, "todo dia 10" também */
     if((w === 'todo' && w1 === 'mes') || ((w === 'por' || w === 'ao') && w1 === 'mes')){ fixa = true; usado[i] = usado[i + 1] = true; }
+    else if(w === 'todos' && w1 === 'os' && w2 === 'meses'){ fixa = true; usado[i] = usado[i + 1] = usado[i + 2] = true; }
     else if(/^(mensal|mensais|mensalmente)$/.test(w)){ fixa = true; usado[i] = true; }
+    else if(forcar && w === 'todo' && w1 === 'dia' && /^\d{1,2}$/.test(w2)){ fixa = true; usado[i] = usado[i + 1] = usado[i + 2] = true; }
   }
-  if(parcelas && !porParcela) valor = Math.round(valor / parcelas * 100) / 100;
-  const data = agFinData(n, usado);
+  /* "300 em 3 vezes" é o total; "3x de 100", "em 3 vezes de 100" e "3 parcelas de 100" já são a parcela */
+  if(parcelas && val.i < iParc) valor = Math.round(valor / parcelas * 100) / 100;
+  /* sem verbo de gasto feito, o que é para depois é tarefa ou lembrete */
+  if(!forcar && !passado && agFinAgenda(n, usado)) return null;
+  const data = agFinData(n, usado, passado);
   /* título: o que sobrou, sem as preposições soltas e o "R$" */
   let resto = t.filter((_, i) => !usado[i]).join(' ').replace(/\b[Rr]\$/g, ' ').replace(/\s+/g, ' ').trim();
   const solta = /^(de|do|da|dos|das|no|na|nos|nas|em|com|o|a|os|as|um|uma|pro|pra|para|pelo|pela|por|e|que|foi|foram|ai|aí)\s+/i;
   for(let x = 0; x < 4; x++) resto = resto.replace(solta, '');
   resto = resto.replace(/\s+(de|do|da|no|na|em|com|pro|pra|para|e|o|a)$/i, '').replace(/^[\s,.;:–-]+|[\s,.;:–-]+$/g, '');
-  /* "comprei leite e pão por 25": os itens saem da lista e o gasto é do mercado */
-  let itens = null, mercado = !!ctx.mercado || /^(mercado|supermercado|feira|compras?( do mes)?|rancho)$/.test(semAcento(resto));
-  if(resto && n.some(w => /^compr(ei|amos)$/.test(w)) && agEhMercado(resto) && !/^(mercado|supermercado|feira)$/.test(semAcento(resto))){ itens = agMercadoPartes(resto); mercado = true; }
-  const tipo = entra && !sai ? 'receita' : (!sai && /\b(salario|freela|honorarios|rendimento|dividendos|reembolso)\b/.test(semAcento(resto)) ? 'receita' : 'despesa');
+  if(/^(foi|foram|ai|aí)$/i.test(resto)) resto = '';
+  /* a compra do mercado: "deu 230 no mercado", no Mercado só "deu 230", e "comprei leite e pão por 25" (os itens saem da lista) */
+  const mercadoNome = /^(mercado|supermercado|feira|compras?( do mes| de mercado| do mercado)?|rancho)$/.test(semAcento(resto));
+  let itens = null;
+  if(resto && n.some(w => /^compr(ei|amos)$/.test(w)) && !mercadoNome && agEhMercado(resto)) itens = agMercadoPartes(resto);
+  const mercado = !!itens || mercadoNome || (!!ctx.mercado && !resto);
+  const tipo = entra && !sai ? 'receita' : (!sai && /\b(salario|freela|freelance|honorarios|rendimentos?|dividendos|reembolso|estorno|cashback|devolucao)\b/.test(semAcento(resto)) ? 'receita' : 'despesa');
   const titulo = itens || (mercado && !resto) ? 'Mercado' : resto ? cap1(resto) : (tipo === 'receita' ? 'Receita' : 'Gasto');
   const cat = mercado ? 'alimentação' : agFinCat(titulo, tipo);
-  /* dito no Agora, só vale como dinheiro com sinal forte: R$, reais, centavos, um verbo de gasto, ou o nome de um gasto com o valor no fim */
+  /* dito no Agora, só vale como dinheiro com sinal forte: R$, reais, centavos, um verbo de gasto, ou o nome de um gasto com o valor no fim.
+     No Mercado, só a compra ou um gasto com verbo ("gastei 30 de uber"); "cerveja 6" e "leite 5 reais" são da lista */
   const fimValor = !n.slice(val.j).some((w, x) => !usado[val.j + x]);
-  const forte = !afazer && (val.forca !== 'numero' || sai || entra || parcelas > 0 || (fixa && cat !== 'outro') || (cat !== 'outro' && fimValor && t.length <= 4));
+  const forte = !afazer && (ctx.mercado ? (passado || mercado)
+    : (passado || val.forca !== 'numero' || parcelas > 0 || (fixa && cat !== 'outro') || (cat !== 'outro' && fimValor && t.length <= 4)));
   if(!forcar && !forte) return null;
-  return {tipo, valor, titulo, cat, data, parcela:parcelas ? '1/' + parcelas : '', parcelas, fixa:fixa && tipo === 'despesa', itens, mercado, forte,
+  const q = {tipo, valor, titulo, cat, data, parcela:parcelas ? '1/' + parcelas : '', parcelas, fixa:fixa && tipo === 'despesa', itens, mercado, forte, verbo:passado,
     nota:itens ? itens.map(mcNome).join(', ') : ''};
+  /* receita fixa não tem lugar em Finanças ("recebo 3000 todo mês") */
+  if(fixa && tipo === 'receita'){
+    if(!forcar) return null;
+    q.erro = 'Finanças guarda só despesa fixa. Quando entrar, diga: recebi 3000 de salário.';
+  }
+  return q;
 }
 /* "paguei o aluguel": sem valor dito, vale o da despesa fixa com esse nome (e ela conta como paga no mês) */
 function agFinFixaPaga(t, n, usado){
   const v = n.findIndex(w => /^(paguei|pagamos)$/.test(w));
   if(v < 0 || !(S.fixedExpenses || []).length) return null;
   usado[v] = true;
-  const data = agFinData(n, usado);
+  const data = agFinData(n, usado, true);
   const nome = semAcento(t.filter((_, i) => !usado[i]).join(' ')).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
   if(!nome) return null;
   const fx = S.fixedExpenses.find(f => { const k = semAcento(f.name || '').trim(); return k.length >= 3 && (nome === k || (' ' + nome + ' ').includes(' ' + k + ' ')); });
   if(!fx || !(fx.amount > 0)) return null;
   return {tipo:'despesa', valor:fx.amount, titulo:fx.name, cat:fx.category || agFinCat(fx.name, 'despesa'), data, parcela:'', parcelas:0, fixa:false,
-    itens:null, mercado:false, forte:true, nota:''};
+    itens:null, mercado:false, forte:true, verbo:true, nota:''};
 }
 function agFinChips(q){
   const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
   if(!q) return tok('', 'diga o valor', 'voz-sem');
+  if(q.erro) return tok('', 'receita fixa não entra em Finanças', 'voz-sem');
   let h = tok(q.tipo === 'receita' ? 'trending-up' : 'trending-down', (q.tipo === 'receita' ? '+' : '−') + fmtR(q.valor), q.tipo === 'receita' ? 'fin-in-tok' : 'fin-out-tok');
   if(q.fixa) h += tok('repeat', 'todo mês');
   else{
@@ -4449,7 +4568,7 @@ function agFinChips(q){
   }
   if(q.cat && q.cat !== 'outro') h += tok('tag', q.cat);
   if(q.itens) h += tok('shopping-cart', 'sai da lista: ' + q.itens.length);
-  else if(q.mercado){ const n = S.shoppingItems.filter(i => i.need && i.bought).length; if(n) h += tok('shopping-cart', 'conclui o carrinho: ' + n); }
+  else if(q.mercado && q.data === today()){ const n = S.shoppingItems.filter(i => i.need && i.bought).length; if(n) h += tok('shopping-cart', 'conclui o carrinho: ' + n); }
   return h + '<span class="qa-titulo">' + esc(q.titulo) + '</span>';
 }
 /* o carrinho vai para a despensa, como no Concluir compra */
@@ -4476,10 +4595,26 @@ function agMarcarComprados(partes){
   const um = nomes.length === 1;
   return {n:nomes.length, msg:agJuntar(nomes) + (naLista ? (um ? ' saiu da lista.' : ' saíram da lista.') : (um ? ' ficou como comprado.' : ' ficaram como comprados.'))};
 }
+/* "leite 5 reais", "café por 18,90", "arroz R$ 22" ditos no Mercado: o preço do item (o carrinho soma) */
+function mcPrecoDito(txt){
+  const t = String(txt || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  if(t.length < 2) return null;
+  const n = t.map(w => agNorm(w).replace(/^r\$$/, 'r$'));
+  if(/^(comprei|compramos)$/.test(n[0])) return null;
+  const v = agFinValor(n);
+  if(!v || v.forca === 'numero' || v.j !== n.length) return null;
+  let i = v.i;
+  if(i > 0 && /^(por|a|custando|custa|custou|de)$/.test(n[i - 1])) i--;
+  const nome = t.slice(0, i).join(' ').trim();
+  if(!nome || i > 5) return null;
+  return {nome, preco:v.valor};
+}
 function agCriarFinanca(txt, o){
   o = o || {};
+  if(agFinDivida(txt)) return {erro:'Dívida não vira lançamento. Anote como tarefa.'};
   const q = agFinDe(txt, true, o);
   if(!q) return {erro:'Faltou o valor. Por exemplo: almoço 35 reais.'};
+  if(q.erro) return {erro:q.erro};
   if(q.fixa){
     if(!S.fixedExpenses) S.fixedExpenses = [];
     const ex = S.fixedExpenses.find(f => semAcento(f.name) === semAcento(q.titulo));
@@ -4491,7 +4626,8 @@ function agCriarFinanca(txt, o){
     date:q.data, installment:q.parcela, notes:q.nota});
   let extra = '';
   if(q.itens) extra = ' ' + agMarcarComprados(q.itens).msg;
-  else if(q.mercado){ const n = agConcluirCarrinho(); if(n) extra = ' Compra concluída: ' + (n === 1 ? '1 item' : n + ' itens') + '.'; }
+  /* o carrinho só fecha com a compra de hoje ("gastei 120 dia 25 no mercado" é outra compra) */
+  else if(q.mercado && q.data === today()){ const n = agConcluirCarrinho(); if(n) extra = ' Compra concluída: ' + (n === 1 ? '1 item' : n + ' itens') + '.'; }
   const valor = fmtR(q.valor) + (q.parcelas ? ' (parcela 1 de ' + q.parcelas + ')' : '');
   return {msg:q.titulo + ': ' + (q.tipo === 'receita' ? 'receita' : 'despesa') + ' de ' + valor + ', ' + tkDataTxt(q.data) + '.' + extra};
 }
@@ -4509,18 +4645,19 @@ function agDesfazerFotos(fotos){
   });
   return () => {
     partes.forEach(({col, velho, depois, novos, mudados}) => {
-      S[col] = (S[col] || []).filter(x => !novos.has(x.id));
+      /* o que foi criado sai, a não ser que já tenha sido mexido (ex.: o item posto de volta na lista) */
+      S[col] = (S[col] || []).filter(x => !novos.has(x.id) || JSON.stringify(x) !== depois.get(x.id));
       mudados.forEach(id => { const i = S[col].findIndex(x => x.id === id); if(i >= 0 && JSON.stringify(S[col][i]) === depois.get(id)) S[col][i] = JSON.parse(velho.get(id)); });
     });
     save(); render(); sfx('undo');
   };
 }
-/* o lançamento novo, com o que foi dito (na aba Finanças, Digitar abre aqui) */
-function finNovaCom(txt){
+/* o lançamento novo, com o que foi dito (na aba Finanças, Digitar abre aqui; nas outras abas, quando o que foi dito é dinheiro) */
+function finNovaCom(txt, ctx){
   openTransacao(null);
-  const q = txt ? agFinDe(txt, true) : null;
+  const q = txt ? agFinDe(txt, true, ctx) : null;
   if(!M || M.type !== 'fin') return;
-  if(q){ Object.assign(M.draft, {title:q.titulo, type:q.tipo, amount:q.valor, category:q.cat === 'outro' ? '' : q.cat, date:q.data, installment:q.parcela}); renderFinModal(); }
+  if(q && !q.erro){ Object.assign(M.draft, {title:q.titulo, type:q.tipo, amount:q.valor, category:q.cat === 'outro' ? '' : q.cat, date:q.data, installment:q.parcela}); renderFinModal(); }
   else if(txt){ M.draft.title = cap1(txt); renderFinModal(); }
 }
 
@@ -4528,9 +4665,13 @@ function finNovaCom(txt){
 /* Tempo, Estudos e Notas saíram dos menus; os dados continuam guardados (backup, Colar do Claude) e voltam se a aba voltar. */
 const ABAS_FORA = ['tempo', 'estudos', 'conhecimento'];
 const ABAS_BARRA = ['hoje', 'tarefas', 'habitos', 'mercado', 'lembretes'];
+/* a barra do painel antigo: a aba que saiu dá lugar a outra; depois de editar a barra, vale o que foi escolhido */
 function abasBarra(){
-  const xs = (S.meta.bottomTabs || ABAS_BARRA.slice(0, 4)).filter(v => TABS[v] && !ABAS_FORA.includes(v));
-  ABAS_BARRA.forEach(v => { if(xs.length < 4 && !xs.includes(v)) xs.push(v); });
+  const salvo = S.meta.bottomTabs;
+  if(!Array.isArray(salvo)) return ABAS_BARRA.slice(0, 4);
+  const xs = salvo.filter(v => TABS[v] && !ABAS_FORA.includes(v));
+  let falta = salvo.filter(v => ABAS_FORA.includes(v)).length;
+  for(const v of ABAS_BARRA){ if(falta <= 0) break; if(!xs.includes(v)){ xs.push(v); falta--; } }
   return xs;
 }
 
@@ -11146,7 +11287,7 @@ function ttAvisoSync(force){
       const quem = POMO.label ? corta(POMO.label, 70) : '';
       const cor = POMO.phase === 'work' ? '#0F62B4' : POMO.phase === 'short' ? '#1F8A4C' : '#B4700F';
       if(POMO.paused){
-        d = {titulo:'Pomodoro pausado', texto:'Faltam ' + mmss(Math.round(POMO.remaining / 1000)) + ' de ' + fase.toLowerCase() + (quem ? ', ' + quem : '') + '. Toque para continuar.', cor};
+        d = {titulo:'Pomodoro pausado', texto:'Faltam ' + mmss(Math.round(POMO.remaining / 1000)) + ' de ' + fase.toLowerCase() + (quem ? ', ' + quem : '') + '. Toque para abrir e encerrar.', cor};
       }else{
         const f = new Date(POMO.endsAt);
         d = {titulo:fase + ' até ' + pad(f.getHours()) + ':' + pad(f.getMinutes()), texto:(quem ? quem + ', ' : '') + ciclo, fim:POMO.endsAt, cor};
