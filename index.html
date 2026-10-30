@@ -1565,6 +1565,10 @@ html.voz-ok .ag-add .voz-btn{display:inline-flex}
 .bn-anotar{-webkit-touch-callout:none; -webkit-user-select:none; user-select:none}
 /* com a escuta aberta, o aviso da última anotação sobe para o topo e o Desfazer continua ao alcance */
 html.voz-on .toast{top:calc(12px + var(--sat)); bottom:auto !important; z-index:96}
+/* ===================== Dinheiro falado e Mercado só com a lista ===================== */
+.qa-tok.fin-out-tok{background:var(--danger-soft); color:var(--danger)}
+.qa-tok.fin-in-tok{background:var(--good-soft); color:var(--good)}
+.tk-tit.so{cursor:default}
 /* ===================== App Android, notificações, sons e animações ===================== */
 /* áreas seguras: o app Android desenha atrás das barras do sistema */
 :root{
@@ -1675,13 +1679,10 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
   <button class="nav-item" data-view="tarefas" data-label="Tarefas" aria-label="Tarefas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span class="lb">Tarefas</span></button>
   <button class="nav-item" data-view="lembretes" data-label="Lembretes" aria-label="Lembretes"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lb">Lembretes</span></button>
   <button class="nav-item" data-view="habitos" data-label="Hábitos" aria-label="Hábitos"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="lb">Hábitos</span></button>
-  <button class="nav-item" data-view="tempo" data-label="Tempo" aria-label="Tempo"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span class="lb">Tempo</span></button>
   <button class="nav-item" data-view="financas" data-label="Finanças" aria-label="Finanças"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span><span class="lb">Finanças</span></button>
-  <button class="nav-item" data-view="estudos" data-label="Estudos" aria-label="Estudos"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span><span class="lb">Estudos</span></button>
   <button class="nav-item" data-view="calendario" data-label="Calendário" aria-label="Calendário"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span><span class="lb">Calendário</span></button>
   <button class="nav-item" data-view="pessoas" data-label="Pessoas" aria-label="Pessoas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="lb">Pessoas</span></button>
   <button class="nav-item" data-view="rotina" data-label="Rotina" aria-label="Rotina"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span><span class="lb">Rotina</span></button>
-  <button class="nav-item" data-view="conhecimento" data-label="Notas" aria-label="Notas"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="lb">Conhecimento</span></button>
   <button class="nav-item" data-view="lugares" data-label="Lugares" aria-label="Lugares"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="lb">Lugares</span></button>
   <button class="nav-item" data-view="mercado" data-label="Mercado" aria-label="Mercado"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span><span class="lb">Mercado</span></button>
 
@@ -1713,6 +1714,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
           <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="lembrete" title="Lembrete" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="qd-lab"></span></button>
           <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="habito" title="Hábito" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span class="qd-lab"></span></button>
           <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="mercado" title="Mercado" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="qd-lab"></span></button>
+          <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="financa" title="Gasto" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg><span class="qd-lab"></span></button>
         </div>
         <button class="tk-tool voz-btn" type="button" data-action="voz-abrir" aria-label="Anotar falando" title="Falar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
         <button class="tk-send" data-action="ag-cap-enviar" aria-label="Anotar" title="Anotar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
@@ -1946,7 +1948,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
   <section class="view" id="view-mercado">
     <div class="tk-main">
       <div class="tk-top">
-        <h1 class="vtitle tk-tit" id="mcTitulo" data-action="mc-vista" aria-haspopup="menu" title="Lista de compras ou despensa"></h1>
+        <h1 class="vtitle tk-tit" id="mcTitulo" data-action="mc-vista"></h1>
         <span id="mcResumo"></span>
         <button class="icon-btn" data-action="mc-opcoes" aria-haspopup="menu" aria-label="Opções do mercado" title="Opções do mercado"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
       </div>
@@ -2140,7 +2142,7 @@ if(NATIVE) document.documentElement.classList.add('native');
 function blank(){
   const n = new Date().toISOString();
   return {
-    meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','tempo']},
+    meta:{version:1, createdAt:n, updatedAt:n, lastBackupAt:null, theme:'light', bottomTabs:['hoje','tarefas','habitos','mercado']},
     projects:[], tasks:[], habits:[], habitLogs:{},
     timeEntries:[], routines:[], people:[], interactions:[], notes:[], places:[], reminders:[],
     finances:[], fixedExpenses:[], subjects:[], studySessions:[], studyPlan:[], workStudy:[], questionLog:{}, routineChecks:{}, shoppingItems:[]
@@ -2385,7 +2387,7 @@ function licn(n){
 }
 function refreshIcons(){}
 function renderBottomNav(){
-  const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
+  const bt = abasBarra();
   const bn = document.getElementById('bottomNav');
   if(!bn) return;
   if(agAtivo()){
@@ -2401,6 +2403,7 @@ function renderBottomNav(){
   refreshIcons();
 }
 function setView(v){
+  if(ABAS_FORA.includes(v)) v = 'hoje';
   const mudou = v !== VIEW;
   VIEW = v;
   document.documentElement.dataset.view = v;
@@ -2490,7 +2493,6 @@ function taskRowHTML(t, ctx){
     '<span class="tk-body"><span class="tt">' + esc(t.title) + '</span>' + (meta ? '<span class="tk-meta">' + meta + '</span>' : '') + '</span>' +
     (due || ics ? '<span class="tk-side">' + due + (ics ? '<span class="tk-ics">' + ics + '</span>' : '') + '</span>' : '') +
     (done ? '' : '<span class="tk-acts">' +
-      '<button class="icon-btn sm" data-action="timer-task" data-id="' + t.id + '" title="Focar nesta tarefa" aria-label="Focar nesta tarefa">' + licn('timer') + '</button>' +
       '<button class="icon-btn sm" data-action="tk-reagendar" data-id="' + t.id + '" title="Reagendar" aria-label="Reagendar">' + licn('calendar') + '</button></span>') +
     '</div>';
 }
@@ -2548,9 +2550,9 @@ function renderHoje(){
     '<span class="clock" style="font-size:17px" data-tick-start="' + rr.start + '">' + fmtClock(durSec(rr)) + '</span>' +
     '<button class="btn btn-sm" data-action="parar-timer">Parar</button></div>';
   const pomo = !(POMO.running && !POMO.paused) ? '' :
-    '<div class="card runstrip" style="cursor:pointer" data-action="ir-tempo"><span class="rundot"></span>' +
+    '<div class="card runstrip"><span class="rundot"></span>' +
     '<span class="clock-desc">' + esc(pomoPhaseLabel() + (POMO.label ? ': ' + POMO.label : '')) + '</span>' +
-    '<span class="clock" style="font-size:17px" id="hojePomo">' + mmss(pomoRemaining()) + '</span></div>';
+    '<span class="clock" style="font-size:17px" id="hojePomo">' + mmss(pomoRemaining()) + '</span><button class="btn btn-sm" data-action="parar-pomo">Parar</button></div>';
   const cb = currentBlock(), nb = nextBlock();
   const rp = rtProgress(t);
   const rot = (!cb && !nb && !rp.total) ? '' :
@@ -2651,7 +2653,7 @@ let AG_ENTRA = false;    /* o próximo cartão entra com animação (depois de f
 const AG_PER = {manha:['da manhã', 'de manhã'], tarde:['da tarde', 'à tarde'], noite:['da noite', 'à noite']};
 /* emojis de coisas que não costumam ser hábito: ligar, arrumar, cozinhar, finanças, planejar */
 const AG_NAO_HABITO = ['📞', '🧹', '🍳', '💰', '📝'];
-const AG_TIPOS = [['tarefa', 'clipboard-list', 'Tarefa'], ['lembrete', 'bell', 'Lembrete'], ['habito', 'target', 'Hábito'], ['mercado', 'shopping-cart', 'Mercado']];
+const AG_TIPOS = [['tarefa', 'clipboard-list', 'Tarefa'], ['lembrete', 'bell', 'Lembrete'], ['habito', 'target', 'Hábito'], ['mercado', 'shopping-cart', 'Mercado'], ['financa', 'wallet', 'Gasto']];
 const AG_EXEMPLOS = ['Ligar pro banco amanhã', 'Dentista sexta 14h', 'Ler 10 páginas todo dia', 'Leite, pão e café'];
 
 function agAtivo(){ return S.meta.inicio !== 'painel'; }
@@ -2849,7 +2851,7 @@ function agCardHTML(it){
   const b = (cls, acao, icone, txt, extra) => '<button class="ag-btn' + (cls ? ' ' + cls : '') + '" data-action="' + acao + '" data-k="' + k + '"' + (extra || '') + '>' + licn(icone) + '<span>' + txt + '</span></button>';
   const acoes = it.tipo === 'x' ?
     b('ok', 'ag-fluxo', agRotulo(it)[0], it.id === 'fechar' ? 'Resolver agora' : it.id === 'tras' ? 'Rever agora' : 'Decidir agora', ' data-f="' + it.id + '"') + b('', 'ag-depois', 'clock', 'Depois', ' aria-haspopup="menu"') :
-    b('ok', 'ag-feito', 'check', it.tipo === 'b' ? 'Já mandei' : 'Feito') + (it.tipo === 't' || it.tipo === 'h' ? b('', 'ag-comecar', 'play', 'Começar') : '') + b('', 'ag-depois', 'clock', 'Depois', ' aria-haspopup="menu"');
+    b('ok', 'ag-feito', 'check', it.tipo === 'b' ? 'Já mandei' : 'Feito') + b('', 'ag-depois', 'clock', 'Depois', ' aria-haspopup="menu"');
   return '<article class="ag-card k-' + it.tipo + (AG_ENTRA ? ' entra' : '') + '" data-k="' + k + '"' + agCor(it) + '>' +
     '<p class="ag-rot">' + licn(ic) + '<span>' + esc(rot) + '</span></p>' +
     '<h2 class="ag-tit"><button data-action="ag-abrir" data-k="' + k + '" title="Abrir">' + (it.emoji ? '<span class="ag-em">' + esc(it.emoji) + '</span>' : '') + esc(it.titulo) + '</button></h2>' +
@@ -2892,10 +2894,10 @@ function agVazioHTML(depois, ok, n){
 }
 function agFocoHTML(){
   const rr = running();
-  if(rr) return '<div class="card runstrip ag-run" data-action="ir-tempo"><span class="rundot"></span><span class="clock-desc">' + esc(rr.desc) + '</span>' +
+  if(rr) return '<div class="card runstrip ag-run"><span class="rundot"></span><span class="clock-desc">' + esc(rr.desc) + '</span>' +
     '<span class="clock" data-tick-start="' + rr.start + '">' + fmtClock(durSec(rr)) + '</span><button class="btn btn-sm" data-action="parar-timer">Parar</button></div>';
-  if(POMO.running) return '<div class="card runstrip ag-run" data-action="ir-tempo"><span class="rundot"></span><span class="clock-desc">' + esc(pomoPhaseLabel() + (POMO.label ? ': ' + POMO.label : '')) + '</span>' +
-    '<span class="clock" id="agPomo">' + mmss(pomoRemaining()) + '</span></div>';
+  if(POMO.running) return '<div class="card runstrip ag-run"><span class="rundot"></span><span class="clock-desc">' + esc(pomoPhaseLabel() + (POMO.label ? ': ' + POMO.label : '')) + '</span>' +
+    '<span class="clock" id="agPomo">' + mmss(pomoRemaining()) + '</span><button class="btn btn-sm" data-action="parar-pomo">Parar</button></div>';
   return '';
 }
 function agChipsHTML(pk){
@@ -3389,7 +3391,7 @@ function agEhItem(p){
 /* partes da lista: vírgula, ponto e vírgula, e também "e" quando separa itens ("leite e pão") */
 function agMercadoPartes(txt){
   const s = String(txt || '').replace(/(^|\s)!{1,3}(?=\s|$)/g, ' ').trim()
-    .replace(/^(comprar|compra|falta(m|ndo)?|faltou|faltaram|(t[aá]|est[aá])\s+faltando|acab(ou|aram)|adiciona|adicionar|adicione|coloca|colocar|coloque|p[oõ]e|p[oô]r|bota|botar|inclui|incluir)\s+/i, '');
+    .replace(/^(comprar|compra|comprei|compramos|falta(m|ndo)?|faltou|faltaram|(t[aá]|est[aá])\s+faltando|acab(ou|aram)|adiciona|adicionar|adicione|coloca|colocar|coloque|p[oõ]e|p[oô]r|bota|botar|inclui|incluir)\s+/i, '');
   /* "o arroz e o feijão": o artigo não entra no nome */
   const sem = x => agQtdPalavra(String(x).replace(/^(o|a|os|as)\s+(?=\S)/i, ''));
   return mcPartes(s).flatMap(p => {
@@ -3425,6 +3427,8 @@ function agTipoDe(raw){
     const m = s.match(re);
     if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim().replace(/^(de|que)\s+(?!(manh[aã]|tarde|noite|madrugada)(\s|$))/i, ''))};
   }
+  /* dinheiro: "gastei 50 no uber", "almoço 35 reais", "recebi 3000 de salário" */
+  if(agFinDe(s)) return {tipo:'financa', txt:s};
   const lp = lmParse(agSemDuracao(s)), hp = hbParse(s), rec = lp.rec;
   if(!lp.date && !lp.time && !rec && agEhMercado(s)) return {tipo:'mercado', txt:s};
   /* hora vale quando os dois leitores concordam ("2h por dia" e "dormir 8h" são duração) */
@@ -3470,6 +3474,7 @@ function agTarefaDe(txt){ const q = qaParse(txt); if(q.title) q.title = cap1(q.t
 function agPrevHTML(d){
   const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
   const v = d.txt;
+  if(d.tipo === 'financa') return agFinChips(agFinDe(v, true));
   if(d.tipo === 'mercado'){
     return agMercadoPartes(v).map(mcLer).filter(Boolean).slice(0, 8).map(q => {
       const ex = mcAchar(q.name), sec = mcSec(q.cat || (ex ? mcSecDe(ex) : mcSecaoDe(q.name)));
@@ -3582,6 +3587,7 @@ function agCriarHabito(txt){
   return {msg:h.name + (schedOn(h, today()) ? ' começa hoje.' : ' entra nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.')};
 }
 function agCriarMercado(txt, sec){
+  if(/^(comprei|compramos)\s/i.test(String(txt).trim())){ const c = agMarcarComprados(agMercadoPartes(txt)); return c.n ? {msg:c.msg} : null; }
   const r = mcAdicionar(agMercadoPartes(txt).join('; '), sec || '');
   if(!r.lidos) return null;
   const n = r.novos + r.voltaram;
@@ -3593,9 +3599,8 @@ function agCapturar(){
   const inp = $('#agInp'), raw = inp ? inp.value.trim() : '';
   if(!raw){ if(inp) inp.focus(); return; }
   const d = agTipoAtual(raw);
-  const col = {tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[d.tipo];
-  const antes = JSON.parse(JSON.stringify(S[col]));
-  const r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, AG_QUANDO);
+  const fotos = agFotos(agColsDe(d.tipo));
+  const r = d.tipo === 'financa' ? agCriarFinanca(d.txt, {forcar:true}) : d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, AG_QUANDO);
   if(!r){ inp.focus(); return; }
   if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
   inp.value = ''; AG_TIPO = ''; AG_QUANDO = '';
@@ -3605,12 +3610,12 @@ function agCapturar(){
   save(); render(); agPreview();
   if(!cel) inp.focus();
   if(r.igual) toast(r.msg);
-  else toast(r.msg, 'Desfazer', agDesfazerDe(col, antes));
+  else toast(r.msg, 'Desfazer', agDesfazerFotos(fotos));
 }
 
 /* ---------- Tudo (celular), Dados e avisos ---------- */
-const AG_TUDO = [['tarefas', 'Tarefas'], ['lembretes', 'Lembretes'], ['habitos', 'Hábitos'], ['mercado', 'Mercado'], ['tempo', 'Tempo'], ['calendario', 'Calendário'],
-  ['pessoas', 'Pessoas'], ['financas', 'Finanças'], ['estudos', 'Estudos'], ['rotina', 'Rotina'], ['conhecimento', 'Notas'], ['lugares', 'Lugares'], ['dados', 'Dados']];
+const AG_TUDO = [['tarefas', 'Tarefas'], ['lembretes', 'Lembretes'], ['habitos', 'Hábitos'], ['mercado', 'Mercado'], ['financas', 'Finanças'], ['calendario', 'Calendário'],
+  ['pessoas', 'Pessoas'], ['rotina', 'Rotina'], ['lugares', 'Lugares'], ['dados', 'Dados']];
 function agTudo(){
   M = {type:'mais'};
   const body = '<button class="nav-item" id="maisBusca" style="width:100%; margin-bottom:10px"><span class="ic">' + licn('search') + '</span><span class="lb">Buscar em tudo</span></button>' +
@@ -3629,7 +3634,7 @@ function renderAgCard(){
     '<div class="nrow"><span class="nl">Assistente<small>' + (on ? 'a tela inicial é o Agora' : 'a tela inicial é o painel de hoje') + '</small></span>' + swHTML('ag-modo', 'inicio', on) + '</div>' +
     '<div class="nrow' + (on ? '' : ' off') + '"><span class="nl">Tarefas marcadas no plano do dia<small>as outras vão para amanhã, se você não marcar</small></span>' +
       '<span class="seg ag-capseg" role="group" aria-label="Tarefas no plano">' + [3, 5, 7].map(n => '<button class="' + (cap === n ? 'on' : '') + '" data-action="ag-cap" data-n="' + n + '" aria-pressed="' + (cap === n) + '">' + n + '</button>').join('') + '</span></div>' +
-    '<div class="nrow' + (on && vozPode() ? '' : ' off') + '"><span class="nl">Anotar falando<small>' + (vozPode() ? 'no celular, o + começa ouvindo; segure o + para digitar' : 'este aparelho não reconhece voz') + '</small></span>' +
+    '<div class="nrow' + (on && vozPode() ? '' : ' off') + '"><span class="nl">Anotar falando<small>' + (vozPode() ? 'no celular, o + começa ouvindo (tarefas, lembretes, hábitos, compras e gastos); segure o + para digitar' : 'este aparelho não reconhece voz') + '</small></span>' +
       swHTML('voz-modo', 'voz', S.meta.vozPadrao !== false && vozPode()) + '</div>';
 }
 /* avisos do assistente: de manhã o plano do dia, à noite fechar o dia */
@@ -3913,7 +3918,8 @@ const VOZ_DICA = {nada:'Toque no microfone e fale de novo.', cancelado:'Toque no
 const VOZ_EX = {agora:['ligar pro banco amanhã', 'dentista sexta às 2 da tarde', 'meditar todo dia de manhã', 'leite, pão e café', 'me lembra daqui a 20 minutos de tirar o bolo'],
   tarefas:['revisar a minuta amanhã', 'pagar o boleto até sexta, urgente', 'ligar pro contador segunda que vem'],
   lembretes:['tomar remédio às 8 da noite', 'reunião segunda às 10', 'pagar o condomínio todo dia 10'],
-  habitos:['ler 10 páginas toda noite', 'academia segunda, quarta e sexta às 7'], mercado:['leite, pão e ovos', '2 quilos de arroz e feijão']};
+  habitos:['ler 10 páginas toda noite', 'academia segunda, quarta e sexta às 7'], mercado:['leite, pão e ovos', 'deu 230 reais', 'comprei leite e pão'],
+  financas:['almoço 35 reais', 'uber 18,50', 'recebi 3000 de salário', 'netflix 55,90 todo mês']};
 function vozWeb(){ return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
 function vozPode(){ return VOZ.ok !== false && !!(VOZ_NAT || vozWeb()); }
 function vozCelular(){ return NATIVE || !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
@@ -3926,11 +3932,11 @@ function vozChecar(){
   marca();
 }
 setTimeout(vozChecar, 0);
-function vozDestino(){ return ['tarefas', 'lembretes', 'habitos', 'mercado'].includes(VIEW) ? VIEW : 'agora'; }
+function vozDestino(){ return ['tarefas', 'lembretes', 'habitos', 'mercado', 'financas'].includes(VIEW) ? VIEW : 'agora'; }
 function vozOnde(){
   const d = VOZ.destino;
   if(d === 'tarefas'){ const p = TF === 'proj' ? projById(TPROJ) : null; return p ? 'Nova tarefa em ' + p.name : TF === 'hoje' ? 'Nova tarefa para hoje' : 'Nova tarefa'; }
-  return {lembretes:'Novo lembrete', habitos:'Novo hábito', mercado:'Para o mercado'}[d] || 'O que apareceu?';
+  return {lembretes:'Novo lembrete', habitos:'Novo hábito', mercado:'Para o mercado', financas:'Novo lançamento'}[d] || 'O que apareceu?';
 }
 function vozMontar(){
   if($('#voz')) return;
@@ -4058,12 +4064,18 @@ function vozTipo(t){
   let d;
   AG_VOZ = true;
   try{ d = agTipoDe(cap1(String(t || '').trim())); }finally{ AG_VOZ = false; }
-  const forc = {tarefas:'tarefa', lembretes:'lembrete', habitos:'habito', mercado:'mercado'}[VOZ.destino];
+  const forc = {tarefas:'tarefa', lembretes:'lembrete', habitos:'habito', mercado:'mercado', financas:'financa'}[VOZ.destino];
+  /* dinheiro dito vale em qualquer aba ("deu 230" no Mercado lança a compra) */
+  if(d.tipo === 'financa') return d;
   return forc ? {tipo:forc, txt:d.txt} : d;
 }
 function vozPrevHTML(t){
   const d = vozTipo(t);
   const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
+  if(d.tipo === 'financa'){
+    const q = agFinDe(d.txt, VOZ.destino === 'financas', {mercado:VOZ.destino === 'mercado'});
+    return tok('wallet', q && q.tipo === 'receita' ? 'Receita' : q && q.fixa ? 'Despesa fixa' : 'Despesa', 'voz-tipo') + agFinChips(q);
+  }
   const lab = {tarefa:['clipboard-list', 'Tarefa'], lembrete:['bell', 'Lembrete'], habito:['target', 'Hábito'], mercado:['shopping-cart', 'Mercado']}[d.tipo];
   let h = tok(lab[0], lab[1], 'voz-tipo');
   if(d.tipo === 'lembrete' && VOZ.destino === 'lembretes'){
@@ -4135,6 +4147,7 @@ function vozTextoAbrir(dest, v){
   else if(dest === 'lembretes'){ lmQaAbrir(); const i = $('#rlTitle'); if(i && v){ i.value = v; lmPreview(); } }
   else if(dest === 'habitos'){ hbQaAbrir(); const i = $('#hbInp'); if(i && v){ i.value = v; hbPreview(); } }
   else if(dest === 'mercado'){ mcQaAbrir(); const i = $('#shopInp'); if(i && v){ i.value = v; mcPreview(); } }
+  else if(dest === 'financas') finNovaCom(v);
   else agCapAbrir(v || null);
 }
 function vozDigitar(){
@@ -4145,35 +4158,26 @@ function vozDigitar(){
 /* anota o que foi dito; o aviso diz o que virou e tem Desfazer */
 function vozAnotar(t){
   const d = vozTipo(t), dest = VOZ.destino;
-  const col = {tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[d.tipo];
-  const antes = JSON.parse(JSON.stringify(S[col])), ids = new Set(S[col].map(x => x.id));
+  const cols = agColsDe(d.tipo), col = cols[0], fotos = agFotos(cols), ids = new Set(S[col].map(x => x.id));
   let r = null;
   VOZ_SEM_FOCO = true;
   try{
-    if(dest === 'agora') r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, '');
+    if(d.tipo === 'financa') r = agCriarFinanca(d.txt, {forcar:dest === 'financas', mercado:dest === 'mercado'});
+    else if(dest === 'agora') r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, '');
     else r = vozNaAba(d, dest);
   }finally{ VOZ_SEM_FOCO = false; }
   vozFechar();
   if(!r){ toast('Não deu para anotar “' + corta(cap1(t), 60) + '”.', 'Digitar', () => vozTextoAbrir(dest, cap1(t))); return; }
   if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
   const novos = S[col].filter(x => !ids.has(x.id));
-  if(dest === 'agora' && !r.igual){ sfx('add'); haptic('light'); }
+  if((dest === 'agora' || d.tipo === 'financa') && !r.igual){ sfx('add'); haptic('light'); }
   save(); render();
   const msg = vozMsg(d.tipo, novos, r);
   if(r.igual) toast(msg);
-  else toast(msg, 'Desfazer', agDesfazerDe(col, antes));
+  else toast(msg, 'Desfazer', agDesfazerFotos(fotos));
 }
 /* desfazer só o que a anotação mexeu: tira o que ela criou e volta o que ela alterou (se ninguém mexeu de novo) */
-function agDesfazerDe(col, antes){
-  const velho = new Map(antes.map(x => [x.id, JSON.stringify(x)])), depois = new Map(S[col].map(x => [x.id, JSON.stringify(x)]));
-  const novos = new Set([...depois.keys()].filter(id => !velho.has(id)));
-  const mudados = [...depois.keys()].filter(id => velho.has(id) && velho.get(id) !== depois.get(id));
-  return () => {
-    S[col] = S[col].filter(x => !novos.has(x.id));
-    mudados.forEach(id => { const i = S[col].findIndex(x => x.id === id); if(i >= 0 && JSON.stringify(S[col][i]) === depois.get(id)) S[col][i] = JSON.parse(velho.get(id)); });
-    save(); render(); sfx('undo');
-  };
-}
+function agDesfazerDe(col, antes){ return agDesfazerFotos({[col]:antes}); }
 /* nas abas, o adicionar da própria aba (lista, projeto e corredor de onde a pessoa está) */
 /* o que acabou de ser criado pela aba começa com maiúscula ("sexta que vem jantar com a Ana") */
 function vozMaiuscula(col, campo){ const x = S[col].find(y => y.id === window.__novo); if(x && x[campo]) x[campo] = cap1(x[campo]); }
@@ -4211,6 +4215,7 @@ function vozNaAba(d, dest){
   }
   /* corredor pelo nome de cada item, não o escolhido na folha */
   if(dest === 'mercado') return agCriarMercado(d.txt, '');
+  if(dest === 'financas') return agCriarFinanca(d.txt, {forcar:true});
   return null;
 }
 function vozMsg(tipo, novos, r){
@@ -4221,6 +4226,7 @@ function vozMsg(tipo, novos, r){
       (p ? ', em ' + p.name : '') + '.';
   }
   if(tipo === 'lembrete' && x) return x.title + ': lembrete ' + (x.date ? 'para ' + lmQuando(x) : 'sem data') + (x.recurrence ? ', ' + recResumo(x.recurrence).toLowerCase() : '') + '.';
+  if(tipo === 'financa') return (r && r.msg) || 'Anotado em Finanças.';
   if(tipo === 'habito' && x && !(r && r.msg)){
     const dias = hbFreqTxt(hbDiasDe(x)).replace(/^Só /, '');
     return x.name + (schedOn(x, today()) ? ' começa hoje.' : ' entra nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.');
@@ -4247,6 +4253,285 @@ function dicaToast(msg, n){
   const t = $('#toast');
   if(t && t.classList.contains('on') && (n || 0) < 8){ setTimeout(() => dicaToast(msg, (n || 0) + 1), 1500); return; }
   toast(msg);
+}
+
+/* ===================== Dinheiro falado ===================== */
+/* "gastei 50 no uber", "almoço 35 reais", "recebi 3000 de salário", "paguei 120 de luz ontem", "comprei um tênis de 300 em 3 vezes",
+   "netflix 55,90 todo mês" (despesa fixa), "deu 230 no mercado" (lança e conclui o carrinho), "comprei leite e pão por 25 reais"
+   (lança e tira os itens da lista). Vale no + de qualquer aba e no campo de anotar; na aba Finanças, o valor sozinho basta. */
+LICN['trending-up'] = '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>';
+const AG_CENTENAS = {cem:100, cento:100, duzentos:200, duzentas:200, trezentos:300, trezentas:300, quatrocentos:400, quatrocentas:400, quinhentos:500, quinhentas:500,
+  seiscentos:600, seiscentas:600, setecentos:700, setecentas:700, oitocentos:800, oitocentas:800, novecentos:900, novecentas:900};
+const FIN_MOEDA = /^(reais|real|conto|contos|pila|pilas|mango|mangos|prata|pratas|pau|paus)$/;
+const FIN_SAI = /^(gastei|gastamos|paguei|pagamos|comprei|compramos|custou|custaram|deu|saiu|sairam|transferi|mandei|torrei|desembolsei|pixei)$/;
+const FIN_ENTRA = /^(recebi|recebemos|ganhei|ganhamos|entrou|entraram|caiu|cairam|vendi|vendemos|reembolsaram|reembolsou)$/;
+/* começo de tarefa: "pagar a luz 120 reais amanhã" é coisa para fazer, não gasto feito */
+const FIN_AFAZER = /^(pagar|comprar|transferir|depositar|cobrar|receber|mandar|enviar|devolver|separar|guardar|investir|vender|sacar|pedir|fazer|ligar|levar|buscar|lembrar|renovar|cancelar|contratar|reservar|agendar|marcar|ver|ir|economizar|juntar|poupar)$/;
+const FIN_CATS_PAL = [
+  ['alimentação', 'mercado|supermercado|feira|almoco|almocei|jantar|jantei|janta|lanche|lanchei|cafe|ifood|restaurante|padaria|acougue|hortifruti|pizza|comida|delivery|sorvete|bar|cerveja|marmita|acai|hamburguer|sushi|rodizio|confeitaria'],
+  ['transporte', 'uber|99|taxi|gasolina|combustivel|etanol|alcool|diesel|estacionamento|onibus|passagem|metro|trem|trensurb|pedagio|oficina|mecanico|pneu|ipva|licenciamento|lavagem|lava jato|carro'],
+  ['moradia', 'aluguel|condominio|luz|energia|agua|gas|internet|iptu|faxina|diarista|movel|moveis|reforma|conserto|eletricista|encanador|celular|telefone'],
+  ['saúde', 'farmacia|remedio|remedios|medico|consulta|dentista|exame|exames|plano de saude|unimed|psicologo|psicologa|terapia|academia|fisioterapia|hospital|vacina|otica|oculos'],
+  ['lazer', 'cinema|show|teatro|viagem|hotel|passeio|parque|festa|ingresso|jogo|balada|museu|pousada|airbnb'],
+  ['educação', 'curso|livro|livros|faculdade|escola|material|apostila|concurso|inscricao|mensalidade|aula|aulas|oab'],
+  ['assinatura', 'netflix|spotify|prime|assinatura|claude|chatgpt|youtube|icloud|google one|disney|hbo|globoplay|deezer'],
+  ['pessoal', 'roupa|roupas|tenis|sapato|camisa|calca|cabelo|cabeleireiro|cabeleireira|barbeiro|barbearia|salao|manicure|unha|presente|perfume|maquiagem|relogio']
+];
+const FIN_UNIDADE = /^(kg|g|gramas?|quilos?|litros?|l|ml|dias?|horas?|h|minutos?|min|vezes|x|parcelas?|%|paginas?|km|metros?|anos?|meses|semanas?|unidades?|pacotes?|caixas?|duzias?|pessoas?|copos?|garrafas?|latas?)$/;
+function agFinCat(titulo, tipo, tudo){
+  const s = ' ' + semAcento((titulo || '') + ' ' + (tudo || '')).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  if(tipo === 'receita') return /\s(salario|freela|freelance|honorarios|pagamento|plantao|bonus|decimo|ferias|consultoria|trabalho)\s/.test(s) ? 'trabalho' : 'outro';
+  for(const [cat, pal] of FIN_CATS_PAL) if(new RegExp('\\s(' + pal + ')\\s').test(s)) return cat;
+  return 'outro';
+}
+/* "1.500", "18,50", "R$50", "50.90" */
+function finNum(w){
+  const s = String(w || '').replace(/^r\$/i, '');
+  if(/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(s)) return parseFloat(s.replace(/\./g, '').replace(',', '.'));
+  if(/^\d+(,\d{1,2})?$/.test(s)) return parseFloat(s.replace(',', '.'));
+  if(/^\d+\.\d{1,2}$/.test(s)) return parseFloat(s);
+  return null;
+}
+/* o valor no texto: {i, j, valor, forca: 'moeda' (R$, reais), 'centavos' (18,50) ou 'numero'} */
+function agFinValor(n){
+  const palavra = w => AG_NUM[w] != null || AG_CENTENAS[w] != null;
+  const achados = [];
+  for(let i = 0; i < n.length; i++){
+    let j = i, v = null, moeda = false, extenso = false;
+    if(n[i] === 'r$' && i + 1 < n.length){ moeda = true; j = i + 1; }
+    const w = n[j] || '';
+    let k = j;
+    if(finNum(w) != null){ v = finNum(w); k = j + 1; if(/^r\$\d/.test(w)) moeda = true; }
+    else if(palavra(w) || w === 'mil'){
+      extenso = true;
+      /* por extenso: "duzentos e cinquenta", "dois mil e quinhentos" */
+      let total = 0, cur = 0, m = j, ok = false;
+      while(m < n.length && (palavra(n[m]) || n[m] === 'mil' || (n[m] === 'e' && m > j && (palavra(n[m + 1]) || n[m + 1] === 'mil')))){
+        if(n[m] === 'mil'){ cur = (cur || 1) * 1000; total += cur; cur = 0; }
+        else if(n[m] !== 'e') cur += AG_NUM[n[m]] != null ? AG_NUM[n[m]] : AG_CENTENAS[n[m]];
+        ok = true; m++;
+      }
+      if(ok){ v = total + cur; k = m; }
+    }
+    if(v == null) continue;
+    if(n[k] === 'mil'){ v *= 1000; k++; if(n[k] === 'e' && finNum(n[k + 1]) != null){ v += finNum(n[k + 1]); k += 2; } }
+    let cent = /,\d{1,2}$/.test(n[j] || '');
+    /* "18 e 50 (reais)": centavos */
+    if(n[k] === 'e' && /^\d{2}$/.test(n[k + 1] || '') && (FIN_MOEDA.test(n[k + 2] || '') || /^centavos?$/.test(n[k + 2] || '') || moeda)){ v += +n[k + 1] / 100; k += 2; cent = true; if(/^centavos?$/.test(n[k] || '')) k++; }
+    if(FIN_MOEDA.test(n[k] || '')){
+      moeda = true; k++;
+      if(n[k] === 'e' && /^\d{1,2}$/.test(n[k + 1] || '') && /^centavos?$/.test(n[k + 2] || '')){ v += +n[k + 1] / 100; k += 3; }
+    }else if(/^centavos?$/.test(n[k] || '') && v < 100){ v = v / 100; moeda = true; k++; }
+    /* não é dinheiro: quantidade com unidade, dia, hora, parcelas ("em 3 vezes"); por extenso, só com "reais" ("uma pizza" é quantidade) */
+    if(!moeda && (extenso || FIN_UNIDADE.test(n[k] || '') || (/^(dia|as)$/.test(n[i - 1] || '') && !cent))) continue;
+    if(!(v > 0)) continue;
+    achados.push({i, j:k, valor:Math.round(v * 100) / 100, forca:moeda ? 'moeda' : cent ? 'centavos' : 'numero'});
+    i = k - 1;
+  }
+  const peso = {moeda:3, centavos:2, numero:1};
+  return achados.sort((a, b) => peso[b.forca] - peso[a.forca] || a.i - b.i)[0] || null;
+}
+/* data de gasto (para trás): hoje, ontem, anteontem, dia 5, 05/10, segunda (a última) */
+function agFinData(n, usado){
+  const t = today(), marca = (i, k) => { for(let x = i; x < i + k; x++) usado[x] = true; };
+  for(let i = 0; i < n.length; i++){
+    if(usado[i]) continue;
+    const w = n[i], w1 = n[i + 1] || '';
+    let d = null, k = 1;
+    if(w === 'hoje') d = t;
+    else if(w === 'ontem') d = addD(t, -1);
+    else if(w === 'anteontem') d = addD(t, -2);
+    else if(w === 'semana' && w1 === 'passada'){ d = addD(t, -7); k = 2; }
+    else if(w === 'dia' && /^\d{1,2}$/.test(w1) && +w1 >= 1 && +w1 <= 31){
+      const d0 = fromD(t), dd = +w1;
+      let x = new Date(d0.getFullYear(), d0.getMonth(), dd, 12);
+      if(dstr(x) > t || x.getDate() !== dd) x = new Date(d0.getFullYear(), d0.getMonth() - 1, dd, 12);
+      if(x.getDate() === dd){ d = dstr(x); k = 2; }
+    }else if(/^\d{1,2}\/\d{1,2}(\/\d{2,4})?$/.test(w)){
+      const [dd, mm, aa] = w.split('/').map(Number), d0 = fromD(t), ano = aa ? (aa < 100 ? 2000 + aa : aa) : d0.getFullYear();
+      const x = new Date(ano, mm - 1, dd, 12);
+      if(x.getDate() === dd && x.getMonth() === mm - 1) d = dstr(x);
+    }else{
+      const b = w.replace(/-feira$/, '');
+      if(TK_DIAS[b] != null && b.length > 3){
+        const atras = (fromD(t).getDay() - TK_DIAS[b] + 7) % 7;
+        d = addD(t, -atras);
+        if(/^(passada|passado)$/.test(w1)){ k = 2; if(!atras) d = addD(t, -7); }
+      }
+    }
+    if(d){
+      marca(i, k);
+      if(i > 0 && !usado[i - 1] && /^(no|na|em|de|desde)$/.test(n[i - 1])) usado[i - 1] = true;
+      return d;
+    }
+  }
+  return t;
+}
+/* lê o gasto ou a receita. forcar: a aba Finanças (o valor sozinho basta); ctx.mercado: dito na aba Mercado */
+function agFinDe(txt, forcar, ctx){
+  ctx = ctx || {};
+  const t = String(txt || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  if(!t.length) return null;
+  const n = t.map(w => agNorm(w).replace(/^r\$$/, 'r$'));
+  const usado = t.map(() => false);
+  const val = agFinValor(n);
+  if(!val) return agFinFixaPaga(t, n, usado);
+  let sai = false, entra = false, verbo = -1;
+  n.forEach((w, i) => {
+    if(FIN_SAI.test(w)){ sai = true; if(verbo < 0) verbo = i; usado[i] = true; }
+    else if(FIN_ENTRA.test(w)){ entra = true; if(verbo < 0) verbo = i; usado[i] = true; }
+  });
+  /* "me pagaram", "me pagou", "me deram", "me mandou": entra */
+  n.forEach((w, i) => { if(w === 'me' && /^(pagaram|pagou|deram|deu|mandou|mandaram|transferiu|transferiram)$/.test(n[i + 1] || '')){ entra = true; sai = false; usado[i] = usado[i + 1] = true; } });
+  /* "fiz um pix de 50 pra Ana": sai */
+  n.forEach((w, i) => { if(w === 'fiz' && /^(um|uma)$/.test(n[i + 1] || '') && /^(pix|transferencia|compra)$/.test(n[i + 2] || '')){ sai = true; usado[i] = usado[i + 1] = true; } });
+  const afazer = FIN_AFAZER.test(n[0]) && verbo !== 0;
+  for(let x = val.i; x < val.j; x++) usado[x] = true;
+  /* "por 300", "de 120", "no valor de 50": a preposição sai com o valor */
+  if(val.i > 0 && /^(por|de|custando|valor)$/.test(n[val.i - 1])){ usado[val.i - 1] = true; if(n[val.i - 1] === 'de' && n[val.i - 2] === 'valor'){ usado[val.i - 2] = true; if(n[val.i - 3] === 'no') usado[val.i - 3] = true; } }
+  let valor = val.valor, parcelas = 0, fixa = false, porParcela = false;
+  for(let i = 0; i < n.length; i++){
+    if(usado[i]) continue;
+    const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '';
+    /* "em 3 vezes", "em 3x", "3x", "parcelado em 3", "3 parcelas (de 100)" */
+    let m = null;
+    if(w === 'em' && /^\d{1,2}$/.test(w1) && /^(vezes|x|parcelas)$/.test(w2)){ m = +w1; usado[i] = usado[i + 1] = usado[i + 2] = true; }
+    else if(w === 'em' && /^\d{1,2}x$/.test(w1)){ m = parseInt(w1); usado[i] = usado[i + 1] = true; }
+    else if(/^\d{1,2}x$/.test(w)){ m = parseInt(w); usado[i] = true; }
+    else if(/^parcelad[oa]s?$/.test(w)){ usado[i] = true; if(w1 === 'em' && /^\d{1,2}$/.test(w2)){ m = +w2; usado[i + 1] = usado[i + 2] = true; if(/^(vezes|x|parcelas)$/.test(n[i + 3] || '')) usado[i + 3] = true; } }
+    else if(/^\d{1,2}$/.test(w) && /^parcelas?$/.test(w1)){ m = +w; usado[i] = usado[i + 1] = true; if(val.i > i){ porParcela = true; } }
+    if(m && m >= 2 && m <= 48) parcelas = m;
+    /* "todo mês", "por mês", "mensal" */
+    if((w === 'todo' && w1 === 'mes') || ((w === 'por' || w === 'ao') && w1 === 'mes')){ fixa = true; usado[i] = usado[i + 1] = true; }
+    else if(/^(mensal|mensais|mensalmente)$/.test(w)){ fixa = true; usado[i] = true; }
+  }
+  if(parcelas && !porParcela) valor = Math.round(valor / parcelas * 100) / 100;
+  const data = agFinData(n, usado);
+  /* título: o que sobrou, sem as preposições soltas e o "R$" */
+  let resto = t.filter((_, i) => !usado[i]).join(' ').replace(/\b[Rr]\$/g, ' ').replace(/\s+/g, ' ').trim();
+  const solta = /^(de|do|da|dos|das|no|na|nos|nas|em|com|o|a|os|as|um|uma|pro|pra|para|pelo|pela|por|e|que|foi|foram|ai|aí)\s+/i;
+  for(let x = 0; x < 4; x++) resto = resto.replace(solta, '');
+  resto = resto.replace(/\s+(de|do|da|no|na|em|com|pro|pra|para|e|o|a)$/i, '').replace(/^[\s,.;:–-]+|[\s,.;:–-]+$/g, '');
+  /* "comprei leite e pão por 25": os itens saem da lista e o gasto é do mercado */
+  let itens = null, mercado = !!ctx.mercado || /^(mercado|supermercado|feira|compras?( do mes)?|rancho)$/.test(semAcento(resto));
+  if(resto && n.some(w => /^compr(ei|amos)$/.test(w)) && agEhMercado(resto) && !/^(mercado|supermercado|feira)$/.test(semAcento(resto))){ itens = agMercadoPartes(resto); mercado = true; }
+  const tipo = entra && !sai ? 'receita' : (!sai && /\b(salario|freela|honorarios|rendimento|dividendos|reembolso)\b/.test(semAcento(resto)) ? 'receita' : 'despesa');
+  const titulo = itens || (mercado && !resto) ? 'Mercado' : resto ? cap1(resto) : (tipo === 'receita' ? 'Receita' : 'Gasto');
+  const cat = mercado ? 'alimentação' : agFinCat(titulo, tipo);
+  /* dito no Agora, só vale como dinheiro com sinal forte: R$, reais, centavos, um verbo de gasto, ou o nome de um gasto com o valor no fim */
+  const fimValor = !n.slice(val.j).some((w, x) => !usado[val.j + x]);
+  const forte = !afazer && (val.forca !== 'numero' || sai || entra || parcelas > 0 || (fixa && cat !== 'outro') || (cat !== 'outro' && fimValor && t.length <= 4));
+  if(!forcar && !forte) return null;
+  return {tipo, valor, titulo, cat, data, parcela:parcelas ? '1/' + parcelas : '', parcelas, fixa:fixa && tipo === 'despesa', itens, mercado, forte,
+    nota:itens ? itens.map(mcNome).join(', ') : ''};
+}
+/* "paguei o aluguel": sem valor dito, vale o da despesa fixa com esse nome (e ela conta como paga no mês) */
+function agFinFixaPaga(t, n, usado){
+  const v = n.findIndex(w => /^(paguei|pagamos)$/.test(w));
+  if(v < 0 || !(S.fixedExpenses || []).length) return null;
+  usado[v] = true;
+  const data = agFinData(n, usado);
+  const nome = semAcento(t.filter((_, i) => !usado[i]).join(' ')).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  if(!nome) return null;
+  const fx = S.fixedExpenses.find(f => { const k = semAcento(f.name || '').trim(); return k.length >= 3 && (nome === k || (' ' + nome + ' ').includes(' ' + k + ' ')); });
+  if(!fx || !(fx.amount > 0)) return null;
+  return {tipo:'despesa', valor:fx.amount, titulo:fx.name, cat:fx.category || agFinCat(fx.name, 'despesa'), data, parcela:'', parcelas:0, fixa:false,
+    itens:null, mercado:false, forte:true, nota:''};
+}
+function agFinChips(q){
+  const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
+  if(!q) return tok('', 'diga o valor', 'voz-sem');
+  let h = tok(q.tipo === 'receita' ? 'trending-up' : 'trending-down', (q.tipo === 'receita' ? '+' : '−') + fmtR(q.valor), q.tipo === 'receita' ? 'fin-in-tok' : 'fin-out-tok');
+  if(q.fixa) h += tok('repeat', 'todo mês');
+  else{
+    if(q.parcelas) h += tok('credit-card', q.parcelas + 'x');
+    h += tok('calendar', tkDataTxt(q.data));
+  }
+  if(q.cat && q.cat !== 'outro') h += tok('tag', q.cat);
+  if(q.itens) h += tok('shopping-cart', 'sai da lista: ' + q.itens.length);
+  else if(q.mercado){ const n = S.shoppingItems.filter(i => i.need && i.bought).length; if(n) h += tok('shopping-cart', 'conclui o carrinho: ' + n); }
+  return h + '<span class="qa-titulo">' + esc(q.titulo) + '</span>';
+}
+/* o carrinho vai para a despensa, como no Concluir compra */
+function agConcluirCarrinho(){
+  const carro = S.shoppingItems.filter(i => i.need && i.bought), t = today();
+  carro.forEach(i => { i.bought = false; i.count = (i.count || 0) + 1; i.lastBought = t; i.need = !!i.fixo; });
+  return carro.length;
+}
+/* "comprei leite e pão": saem da lista (os que não estavam ficam guardados como comprados, sem aparecer) */
+function agMarcarComprados(partes){
+  const t = today(), nomes = [];
+  let naLista = 0;
+  partes.map(mcLer).filter(Boolean).forEach(q => {
+    let i = mcAchar(q.name);
+    if(i){ if(i.need) naLista++; i.bought = false; i.count = (i.count || 0) + 1; i.lastBought = t; i.need = !!i.fixo; }
+    else{
+      i = {id:uid(), name:mcNome(q.name), category:q.cat || mcSecaoDe(q.name), qty:q.qty || '', note:'', price:null, need:false, bought:false, fixo:false,
+        count:1, lastBought:t, createdAt:new Date().toISOString()};
+      S.shoppingItems.push(i);
+    }
+    nomes.push(i.name);
+  });
+  if(!nomes.length) return {n:0, msg:''};
+  const um = nomes.length === 1;
+  return {n:nomes.length, msg:agJuntar(nomes) + (naLista ? (um ? ' saiu da lista.' : ' saíram da lista.') : (um ? ' ficou como comprado.' : ' ficaram como comprados.'))};
+}
+function agCriarFinanca(txt, o){
+  o = o || {};
+  const q = agFinDe(txt, true, o);
+  if(!q) return {erro:'Faltou o valor. Por exemplo: almoço 35 reais.'};
+  if(q.fixa){
+    if(!S.fixedExpenses) S.fixedExpenses = [];
+    const ex = S.fixedExpenses.find(f => semAcento(f.name) === semAcento(q.titulo));
+    if(ex){ ex.amount = q.valor; if(q.cat !== 'outro') ex.category = q.cat; return {msg:q.titulo + ': despesa fixa agora é de ' + fmtR(q.valor) + ' por mês.'}; }
+    S.fixedExpenses.push({id:uid(), name:q.titulo, amount:q.valor, category:q.cat === 'outro' ? '' : q.cat});
+    return {msg:q.titulo + ': despesa fixa de ' + fmtR(q.valor) + ' por mês.'};
+  }
+  S.finances.push({id:uid(), createdAt:new Date().toISOString(), title:q.titulo, type:q.tipo, amount:q.valor, category:q.cat === 'outro' ? '' : q.cat,
+    date:q.data, installment:q.parcela, notes:q.nota});
+  let extra = '';
+  if(q.itens) extra = ' ' + agMarcarComprados(q.itens).msg;
+  else if(q.mercado){ const n = agConcluirCarrinho(); if(n) extra = ' Compra concluída: ' + (n === 1 ? '1 item' : n + ' itens') + '.'; }
+  const valor = fmtR(q.valor) + (q.parcelas ? ' (parcela 1 de ' + q.parcelas + ')' : '');
+  return {msg:q.titulo + ': ' + (q.tipo === 'receita' ? 'receita' : 'despesa') + ' de ' + valor + ', ' + tkDataTxt(q.data) + '.' + extra};
+}
+/* antes e depois de anotar: o Desfazer tira o que foi criado e volta o que foi mudado (se ninguém mexeu de novo) */
+function agFotos(cols){
+  const f = {};
+  cols.forEach(c => { if(!Array.isArray(S[c])) S[c] = []; f[c] = JSON.parse(JSON.stringify(S[c])); });
+  return f;
+}
+function agColsDe(tipo){ return tipo === 'financa' ? ['finances', 'fixedExpenses', 'shoppingItems'] : [{tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[tipo]]; }
+function agDesfazerFotos(fotos){
+  const partes = Object.keys(fotos).map(col => {
+    const velho = new Map(fotos[col].map(x => [x.id, JSON.stringify(x)])), depois = new Map((S[col] || []).map(x => [x.id, JSON.stringify(x)]));
+    return {col, velho, depois, novos:new Set([...depois.keys()].filter(id => !velho.has(id))), mudados:[...depois.keys()].filter(id => velho.has(id) && velho.get(id) !== depois.get(id))};
+  });
+  return () => {
+    partes.forEach(({col, velho, depois, novos, mudados}) => {
+      S[col] = (S[col] || []).filter(x => !novos.has(x.id));
+      mudados.forEach(id => { const i = S[col].findIndex(x => x.id === id); if(i >= 0 && JSON.stringify(S[col][i]) === depois.get(id)) S[col][i] = JSON.parse(velho.get(id)); });
+    });
+    save(); render(); sfx('undo');
+  };
+}
+/* o lançamento novo, com o que foi dito (na aba Finanças, Digitar abre aqui) */
+function finNovaCom(txt){
+  openTransacao(null);
+  const q = txt ? agFinDe(txt, true) : null;
+  if(!M || M.type !== 'fin') return;
+  if(q){ Object.assign(M.draft, {title:q.titulo, type:q.tipo, amount:q.valor, category:q.cat === 'outro' ? '' : q.cat, date:q.data, installment:q.parcela}); renderFinModal(); }
+  else if(txt){ M.draft.title = cap1(txt); renderFinModal(); }
+}
+
+/* ===================== Abas que saíram ===================== */
+/* Tempo, Estudos e Notas saíram dos menus; os dados continuam guardados (backup, Colar do Claude) e voltam se a aba voltar. */
+const ABAS_FORA = ['tempo', 'estudos', 'conhecimento'];
+const ABAS_BARRA = ['hoje', 'tarefas', 'habitos', 'mercado', 'lembretes'];
+function abasBarra(){
+  const xs = (S.meta.bottomTabs || ABAS_BARRA.slice(0, 4)).filter(v => TABS[v] && !ABAS_FORA.includes(v));
+  ABAS_BARRA.forEach(v => { if(xs.length < 4 && !xs.includes(v)) xs.push(v); });
+  return xs;
 }
 
 /* ===================== Render: Tarefas ===================== */
@@ -4573,13 +4858,10 @@ function renderDados(){
     '<div class="stat-row"><span class="k">Dias de hábito marcados</span><span class="v">' + logs + '</span></div>' +
     '<div class="stat-row"><span class="k">Pessoas</span><span class="v">' + S.people.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Contatos registrados</span><span class="v">' + S.interactions.length + '</span></div>' +
-    '<div class="stat-row"><span class="k">Tempo lançado</span><span class="v">' + (tsec ? fmtDur(tsec) : '0min') + '</span></div>' +
     '<div class="stat-row"><span class="k">Lembretes ativos</span><span class="v">' + S.reminders.filter(r => !r.dismissed).length + '</span></div>' +
     '<div class="stat-row"><span class="k">Blocos de rotina</span><span class="v">' + S.routines.length + '</span></div>' +
-    '<div class="stat-row"><span class="k">Notas</span><span class="v">' + S.notes.length + '</span></div>' +
     '<div class="stat-row"><span class="k">Lugares (quero · fui)</span><span class="v">' + S.places.filter(x => x.status !== 'fui').length + ' · ' + S.places.filter(x => x.status === 'fui').length + '</span></div>' +
     '<div class="stat-row"><span class="k">Lançamentos financeiros</span><span class="v">' + S.finances.length + '</span></div>' +
-    '<div class="stat-row"><span class="k">Plano de estudos</span><span class="v">' + (S.studyPlan || []).filter(x => x.done).length + '/' + (S.studyPlan || []).length + ' sessões</span></div>' +
     '<div class="stat-row"><span class="k">Tamanho (limite da nuvem: 1.024 KB)</span><span class="v" style="' + (+kb > 800 ? 'color:var(--danger); font-weight:700' : '') + '">' + kb + ' KB</span></div>' +
     '<div class="stat-row"><span class="k">Criado em</span><span class="v">' + fmtDT(S.meta.createdAt) + '</span></div>';
   $('#stBackup').textContent = fmtDT(S.meta.lastBackupAt);
@@ -6983,6 +7265,8 @@ function mcMaisComprados(n){
   return S.shoppingItems.filter(i => !i.need).sort((a, b) => (b.count || 0) - (a.count || 0) || (b.lastBought || '').localeCompare(a.lastBought || '') || mcPorNome(a, b)).slice(0, n);
 }
 function mcSugHTML(){
+  /* só o que foi posto na lista: o que já foi comprado fica guardado (para reconhecer o nome e o corredor), sem aparecer */
+  if(MC_SO_LISTA) return '';
   const inp = $('#shopInp'), v = inp ? inp.value.trim() : '';
   let xs, tit;
   if(v){
@@ -7002,7 +7286,9 @@ function mcSugSync(){
   const celular = window.matchMedia && matchMedia('(max-width:760px)').matches;
   el.innerHTML = (celular ? MC_ADD : document.activeElement === inp) ? mcSugHTML() : '';
 }
+const MC_SO_LISTA = true;
 function mcVazioHTML(){
+  if(MC_SO_LISTA) return '<div class="tk-vazio">' + licn('shopping-cart') + '<p>Nada na lista. Toque no + e diga o que falta.</p></div>';
   if(MC_V === 'despensa') return '<div class="tk-vazio">' + licn('archive') + '<p>A despensa guarda tudo o que você já pôs na lista.</p></div>';
   const mais = mcMaisComprados(10);
   return '<div class="tk-vazio">' + licn('shopping-cart') + '<p>' + (mais.length ? 'Nada na lista.' : 'Lista vazia. Escreva o que falta: 2 kg tomate, leite, 6 ovos.') + '</p>' +
@@ -7023,10 +7309,11 @@ function mcQaSync(){
 }
 function renderMercado(){
   mcMigra();
-  if(MC_V !== 'lista' && MC_V !== 'despensa') MC_V = 'lista';
+  if((MC_V !== 'lista' && MC_V !== 'despensa') || MC_SO_LISTA) MC_V = 'lista';
   const xs = S.shoppingItems, lista = xs.filter(i => i.need), carro = lista.filter(i => i.bought);
   const desp = MC_V === 'despensa';
-  $('#mcTitulo').innerHTML = '<span class="nm">' + (desp ? 'Despensa' : 'Mercado') + '</span>' + licn('chevron-down');
+  $('#mcTitulo').innerHTML = '<span class="nm">' + (desp ? 'Despensa' : 'Mercado') + '</span>' + (MC_SO_LISTA ? '' : licn('chevron-down'));
+  $('#mcTitulo').classList.toggle('so', MC_SO_LISTA);
   $('#mcResumo').innerHTML = !desp && lista.length ? '<span class="hj-pill' + (carro.length === lista.length ? ' ok' : '') + '" title="No carrinho">' + licn('shopping-cart') + carro.length + '/' + lista.length + '</span>' : '';
   mcAddSync(); mcQaSync();
   const gs = mcGrupos();
@@ -7262,7 +7549,7 @@ function renderShopModal(){
 function mcMaisHTML(){
   const d = M.draft;
   return '<button class="tk-mi" role="menuitem" data-action="mcd-lista">' + licn(d.need ? 'circle-minus' : 'plus') + '<span class="l">' + (d.need ? 'Tirar da lista' : 'Pôr na lista') + '</span></button>' +
-    '<button class="tk-mi del" role="menuitem" data-action="excluir-shop">' + licn('trash-2') + '<span class="l">Excluir da despensa</span></button>';
+    '<button class="tk-mi del" role="menuitem" data-action="excluir-shop">' + licn('trash-2') + '<span class="l">Excluir</span></button>';
 }
 const mcNorm = o => JSON.stringify([(o.name || '').trim(), o.category || '', (o.qty || '').trim(), (o.note || '').trim(), +o.price || null, !!o.need, !!o.bought, !!o.fixo]);
 /* grava se algo mudou; item novo com o nome de um que já existe vai para ele */
@@ -7322,8 +7609,8 @@ let MAIS_EDIT = false;
 function openMais(){
   if(agAtivo()){ agTudo(); return; }
   M = { type:'mais' };
-  const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
-  const allTabs = ['hoje','tarefas','lembretes','habitos','tempo','financas','estudos','calendario','pessoas','rotina','conhecimento','lugares','mercado'];
+  const bt = abasBarra();
+  const allTabs = ['hoje','tarefas','lembretes','habitos','financas','calendario','pessoas','rotina','lugares','mercado'];
   const settingsTabs = ['dados'];
   const item = (v) => {
     const t = TABS[v] || {ic:'?',lb:v};
@@ -7353,7 +7640,7 @@ function openGlobalSearch(){
   if($('#mback').classList.contains('on')) closeModal();
   M = { type:'gsearch' };
   openModal('Buscar tudo',
-    '<div class="gsearch"><input class="inp" id="gq" placeholder="Digite para buscar em tudo…" autofocus></div><div id="gresults"><div class="gempty">Busque em tarefas, lembretes, pessoas, notas, lugares, finanças, rotina e mais.</div></div>',
+    '<div class="gsearch"><input class="inp" id="gq" placeholder="Digite para buscar em tudo…" autofocus></div><div id="gresults"><div class="gempty">Busque em tarefas, lembretes, hábitos, pessoas, lugares, mercado, finanças e mais.</div></div>',
     '<div class="grow"></div><span class="mono" style="font-size:11px; color:var(--muted)">Ctrl+K para abrir</span><button class="btn btn-ghost" data-action="fechar-modal" style="margin-left:12px">Fechar</button>');
   const inp = document.getElementById('gq');
   if(inp) inp.addEventListener('input', () => runGlobalSearch(inp.value));
@@ -7374,7 +7661,7 @@ function runGlobalSearch(raw){
   const q = fold(raw).trim();
   const el = document.getElementById('gresults');
   if(!el) return;
-  if(!q){ el.innerHTML = '<div class="gempty">Busque em tarefas, lembretes, pessoas, notas, lugares, finanças, rotina e mais.</div>'; return; }
+  if(!q){ el.innerHTML = '<div class="gempty">Busque em tarefas, lembretes, hábitos, pessoas, lugares, mercado, finanças e mais.</div>'; return; }
   const results = [];
   const m = (s) => s && fold(s).includes(q);
 
@@ -7395,10 +7682,6 @@ function runGlobalSearch(raw){
     const p = S.people.find(pp => pp.id === x.personId);
     results.push({type:'Conversas', icon:'message-circle', text:(p ? p.name + ': ' : '') + x.notes, meta:fmtCurto(x.date), action:'edit-pessoa', id:x.personId});
   });
-  S.notes.forEach(x => {
-    if(m(x.title) || m(x.body) || (x.tags||[]).some(m))
-      results.push({type:'Conhecimento', icon:'book-open', text:x.title, meta:'', action:'edit-nota', id:x.id});
-  });
   S.places.forEach(x => {
     if(m(x.name) || m(x.city) || m(x.notes))
       results.push({type:'Lugares', icon:'map-pin', text:x.name, meta:x.city || '', action:'edit-lugar', id:x.id});
@@ -7413,11 +7696,8 @@ function runGlobalSearch(raw){
     if(m(x.title) || m(x.category) || m(x.notes))
       results.push({type:'Finanças', icon:'wallet', text:x.title, meta:fmtR(x.amount), action:'edit-fin', id:x.id});
   });
-  (S.studyPlan || []).forEach(x => {
-    if(m(x.subject) || m(x.topic))
-      results.push({type:'Estudos', icon:'graduation-cap', text:x.subject + ': ' + x.topic, meta:'Sem ' + x.week, action:'est-go', id:String(x.week)});
-  });
   S.shoppingItems.forEach(x => {
+    if(MC_SO_LISTA && !x.need) return;
     if(m(x.name) || m(x.category))
       results.push({type:'Mercado', icon:'shopping-cart', text:x.name, meta:mcSec(mcSecDe(x))[1] + (x.need ? ', na lista' : ''), action:'edit-shop', id:x.id});
   });
@@ -7544,7 +7824,6 @@ function renderTaskModal(){
   const foot = ferr('tags', 'tag', (d.tags || []).length, 'Etiquetas') + ferr('subs', 'list-checks', subs.length, 'Subtarefas') +
     ferr('rep', 'repeat', !!rec, 'Repetição') + ferr('pessoas', 'user', (d.personIds || []).length, 'Pessoas') +
     '<span class="grow"></span>' +
-    (M.id && !feita ? '<button class="tkd-tool" data-action="tk-focar" title="Focar nesta tarefa" aria-label="Focar nesta tarefa">' + licn('timer') + '</button>' : '') +
     '<button class="tkd-ok" data-action="fechar-modal" title="Pronto" aria-label="Pronto">' + licn('check') + '</button>';
   openModal('', body, foot, {semFoco:!primeira || !!M.id});
   $('#mback').classList.add('tk-det');
@@ -7552,7 +7831,6 @@ function renderTaskModal(){
 }
 function tkMaisHTML(){
   return '<div class="tk-tiles">' +
-    '<button class="tk-tile" data-action="tk-focar">' + licn('timer') + 'Focar</button>' +
     '<button class="tk-tile" data-action="task-to-lem">' + licn('bell') + 'Lembrete</button>' +
     '<button class="tk-tile" data-action="tk-duplicar">' + licn('copy') + 'Duplicar</button>' +
     '<button class="tk-tile del" data-action="excluir-task">' + licn('trash-2') + 'Excluir</button></div>';
@@ -9247,6 +9525,7 @@ document.addEventListener('click', e => {
     if(VOZ.longo){ VOZ.longo = false; return; }
     if(vozPadrao()){ vozAbrir(); return; }
     if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir();
+    else if(VIEW === 'financas') openTransacao(null);
     else agCapAbrir();
     return;
   }
@@ -9699,7 +9978,7 @@ document.addEventListener('click', e => {
   if(a === 'toggle-mais-edit'){ MAIS_EDIT = !MAIS_EDIT; openMais(); return; }
   if(a === 'toggle-pin'){
     const v = el.dataset.v;
-    const bt = S.meta.bottomTabs || ['hoje','tarefas','habitos','tempo'];
+    const bt = abasBarra();
     const i = bt.indexOf(v);
     if(i >= 0){ bt.splice(i, 1); }
     else if(bt.length >= 5){ toast('Máximo 5 itens na barra. Tire um antes de adicionar.'); return; }
@@ -9834,6 +10113,7 @@ document.addEventListener('click', e => {
     return;
   }
   if(a === 'parar-timer'){ stopTimer(); return; }
+  if(a === 'parar-pomo'){ ttPararPomo(); return; }
   if(a === 'lanc-manual'){ openEntry(null); return; }
   if(a === 'edit-entry'){ openEntry(el.dataset.id); return; }
   if(a === 'salvar-entry'){ salvarEntry(); return; }
@@ -10313,7 +10593,7 @@ document.addEventListener('click', e => {
     mcPreview(); mcSugSync();
     return;
   }
-  if(a === 'mc-vista'){ popAbrir(el, mcVistaHTML()); return; }
+  if(a === 'mc-vista'){ if(!MC_SO_LISTA) popAbrir(el, mcVistaHTML()); return; }
   if(a === 'mc-vista-set'){
     MC_V = el.dataset.v === 'despensa' ? 'despensa' : 'lista'; tkLSset('mcVista', MC_V);
     popFechar(); renderMercado();
@@ -10499,8 +10779,8 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.target.classList && e.target.classList.contains('lm-horainp')){
     e.preventDefault(); const b = e.target.parentElement.querySelector('[data-action="lm-hora-ok"]'); if(b) b.click(); return;
   }
-  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado' || VIEW === 'habitos' || (VIEW === 'hoje' && agAtivo())) && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
-     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir(); else agCapAbrir(); return; }
+  if(e.key === 'n' && (VIEW === 'tarefas' || VIEW === 'lembretes' || VIEW === 'mercado' || VIEW === 'habitos' || VIEW === 'financas' || (VIEW === 'hoje' && agAtivo())) && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#mback').classList.contains('on') && !ttFocoAberto() &&
+     !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && !e.target.isContentEditable){ e.preventDefault(); if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir(); else if(VIEW === 'financas') openTransacao(null); else agCapAbrir(); return; }
   if(e.key === 'Enter' && e.target.id === 'qaTitle'){ quickAdd(); return; }
   if(e.key === 'Enter' && e.target.id === 'agInp'){ e.preventDefault(); agCapturar(); return; }
   if(e.key === 'Enter' && e.target.id === 'rlTitle'){ quickAddLem(); return; }
@@ -10778,8 +11058,6 @@ function renderNotifCard(){
       row('habAviso', 'Hábitos no horário', '', 'na hora marcada em cada hábito, se ainda faltar') +
       row('habitos', ag ? 'Fechar o dia' : 'Hábitos que faltam', 'habHora', ag ? 'à noite, se algo ficou em aberto' : '') +
       row('aniversarios', 'Aniversários', 'anivHora') +
-      row('pomodoro', 'Fim do Pomodoro') +
-      row('fixo', 'Aviso fixo da sessão', '', 'tempo correndo enquanto o Pomodoro ou o cronômetro rodam') +
       row('rotina', 'Início dos blocos da rotina', '', 'desligado para não repetir o Orders of the Day') +
     '</div>' +
     '<div class="nbtns">' + (NOTIF.perm !== 'granted' ? '<button class="btn btn-primary" data-action="notif-permitir">Permitir</button>' : '') +

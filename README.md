@@ -1,6 +1,6 @@
 # Central
 
-App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas e mais. Um único `index.html` que roda no navegador e, empacotado com Capacitor, como app Android.
+App pessoal de tarefas, lembretes, hábitos, mercado, finanças, pessoas e mais. Um único `index.html` que roda no navegador e, empacotado com Capacitor, como app Android.
 
 - Web: https://jpvanacor.github.io/Central/
 - Android: https://github.com/jpvanacor/Central/releases/latest/download/central.apk
@@ -9,19 +9,20 @@ App pessoal de tarefas, lembretes, hábitos, tempo, finanças, estudos, pessoas 
 
 O Central abre como um assistente: em vez de listas, mostra uma coisa de cada vez e você só escolhe.
 
-- **O cartão do agora:** o que fazer agora, o porquê numa linha (era às 08:00, atrasada há 2 dias, prioridade alta, não falhe duas vezes) e três botões: **Feito**, **Começar** (liga o foco do Tempo com o nome da tarefa ou do hábito) e **Depois** (daqui a 1 hora, à noite, amanhã, fim de semana, próxima semana, outra data ou algum dia; no hábito, também **Hoje não**). Tudo tem Desfazer. Tocar no título abre o detalhe.
+- **O cartão do agora:** o que fazer agora, o porquê numa linha (era às 08:00, atrasada há 2 dias, prioridade alta, não falhe duas vezes) e dois botões: **Feito** e **Depois** (daqui a 1 hora, à noite, amanhã, fim de semana, próxima semana, outra data ou algum dia; no hábito, também **Hoje não**). Tudo tem Desfazer. Tocar no título abre o detalhe.
 - **A ordem:** lembrete na hora (ou que passou), hábito no horário, aniversário do dia, tarefas atrasadas e de hoje pela prioridade, hábitos do momento do dia. O que tem hora mais tarde fica numa linha **Mais tarde**; um toque nela traz para agora.
 - **Ou então:** duas alternativas embaixo. O círculo conclui direto; tocar no resto traz para a frente.
 - **Plano do dia** (de manhã, até as 18h, com duas tarefas ou mais): as tarefas de hoje e as atrasadas, as 5 mais urgentes já marcadas (3, 5 ou 7, em Dados). As desmarcadas vão para amanhã; a que já foi adiada 3 vezes vai para **algum dia** (a que repete só vai para amanhã e continua repetindo). Embaixo, só para saber: lembretes, hábitos e aniversários do dia.
-- **Anotar:** o **+** do meio da barra (no PC, o campo **O que apareceu?**) entende sozinho o que é: `Ligar pro banco amanhã` vira tarefa, `Dentista sexta 14h` vira lembrete, `Ler 10 páginas todo dia` e `Meditar ao acordar` viram hábito, `leite, pão e café` vai para o mercado. `Pilates terças e quintas 7h` vira lembrete que repete toda semana, `Aniversário da mãe 12/03` repete todo ano e `Estudar 2h amanhã às 20h` guarda o 2h no nome. A linha de baixo mostra o que vai ser criado; os ícones mudam o tipo. Tarefa sem data fica para **decidir depois** (ou escolha Hoje ou Amanhã ali mesmo). `me lembra de…`, `hábito:` e `mercado:` no começo mandam no tipo.
-- **Anotar falando:** no celular, o **+** começa ouvindo. Você fala e o app anota na hora, entendendo o tipo como o campo de digitar, e o aviso diz o que virou, com Desfazer. Nas abas Tarefas, Lembretes, Hábitos e Mercado, o que você fala entra na própria aba (em Tarefas, no projeto aberto). Segure o **+** para digitar; na escuta, **Digitar** leva para o campo o que já foi dito. Entende o jeito falado: `dentista sexta às 2 da tarde`, `me lembra daqui a 20 minutos de tirar o bolo`, `ligar pro João segunda que vem`, `revisar a minuta amanhã urgente`, `minuta no projeto Promotoria`, `leite pão e ovos`, `acabou o café`. "Às 7" sem dizer manhã ou noite vira a próxima vez que chega; de 1 a 6, é de tarde. No app Android usa o reconhecimento de voz do celular (pede o microfone na primeira vez); no navegador, o do Chrome. No PC, o microfone fica no campo **O que apareceu?**. Dados > Tela inicial > Anotar falando desliga.
+- **Anotar:** o **+** do meio da barra (no PC, o campo **O que apareceu?**) entende sozinho o que é: `Ligar pro banco amanhã` vira tarefa, `Dentista sexta 14h` vira lembrete, `Ler 10 páginas todo dia` e `Meditar ao acordar` viram hábito, `leite, pão e café` vai para o mercado e `almoço 35 reais` vai para Finanças. `Pilates terças e quintas 7h` vira lembrete que repete toda semana, `Aniversário da mãe 12/03` repete todo ano e `Estudar 2h amanhã às 20h` guarda o 2h no nome. A linha de baixo mostra o que vai ser criado; os ícones mudam o tipo (o da carteira é **Gasto**). Tarefa sem data fica para **decidir depois** (ou escolha Hoje ou Amanhã ali mesmo). `me lembra de…`, `hábito:` e `mercado:` no começo mandam no tipo.
+- **Anotar falando:** no celular, o **+** começa ouvindo. Você fala e o app anota na hora, entendendo o tipo como o campo de digitar, e o aviso diz o que virou, com Desfazer. Nas abas Tarefas, Lembretes, Hábitos, Mercado e Finanças, o que você fala entra na própria aba (em Tarefas, no projeto aberto); dinheiro dito vai para Finanças de qualquer aba. Segure o **+** para digitar; na escuta, **Digitar** leva para o campo o que já foi dito. Entende o jeito falado: `dentista sexta às 2 da tarde`, `me lembra daqui a 20 minutos de tirar o bolo`, `ligar pro João segunda que vem`, `revisar a minuta amanhã urgente`, `minuta no projeto Promotoria`, `leite pão e ovos`, `acabou o café`. "Às 7" sem dizer manhã ou noite vira a próxima vez que chega; de 1 a 6, é de tarde. No app Android usa o reconhecimento de voz do celular (pede o microfone na primeira vez); no navegador, o do Chrome. No PC, o microfone fica no campo **O que apareceu?**. Dados > Tela inicial > Anotar falando desliga.
 - **Uma de cada vez:** os atalhos embaixo abrem uma folha que pergunta item por item:
   - **Para decidir:** tarefas sem data; hoje, amanhã, fim de semana, próxima semana, outra data, algum dia, já fiz ou apagar;
   - **Ficaram para trás:** o que está atrasado há mais de uma semana sai do dia (não pesa no plano nem no fechar) e espera aqui;
   - **Fechar o dia** (à noite, perto do horário do aviso): hábitos (fiz, hoje não), lembretes e tarefas que sobraram, para amanhã, outro dia, algum dia ou feito. Se passar da meia-noite no meio, continua fechando o dia que começou; o aviso da noite tocado no dia seguinte não abre o fechar de hoje;
   - **Algum dia** (no ⋮): rever o que foi guardado.
   Voltar desfaz a última escolha; Pular deixa como está.
-- **Barra de baixo:** Agora, **+** e **Tudo** (todas as abas em grade). Dentro de Tarefas, Lembretes, Hábitos e Mercado, o **+** abre o adicionar da própria aba.
+- **Barra de baixo:** Agora, **+** e **Tudo** (todas as abas em grade). Dentro de Tarefas, Lembretes, Hábitos, Mercado e Finanças, o **+** abre o adicionar da própria aba.
+- **Abas que saíram:** Tempo, Estudos e Notas não aparecem mais (nem na busca). Os dados delas continuam guardados no backup e voltam se as abas voltarem.
 - **Painel antigo:** Dados > Tela inicial desliga o assistente e volta a tela de Hoje com as listas e a barra de antes.
 
 ## Tarefas
@@ -36,9 +37,9 @@ Organizada em camadas, como no TickTick:
   - `#nome` escolhe o projeto pelo começo do nome; se nenhum projeto bater, vira etiqueta;
   - `!`, `!!`, `!!!` ou `!baixa`, `!média`, `!alta` definem a prioridade;
   - os ícones da folha (prazo, prioridade, projeto, caixa do dia) fazem o mesmo sem digitar; com o campo vazio, a seta abre o detalhe completo.
-- **Detalhe da tarefa:** projeto e bandeira de prioridade no topo, o círculo para concluir e a data com o atraso, título, descrição e subtarefas; embaixo, ícones para etiquetas, subtarefas, repetição, pessoas e foco. O ⋮ tem Focar, Lembrete, Duplicar e Excluir. Salva sozinho ao fechar.
+- **Detalhe da tarefa:** projeto e bandeira de prioridade no topo, o círculo para concluir e a data com o atraso, título, descrição e subtarefas; embaixo, ícones para etiquetas, subtarefas, repetição e pessoas. O ⋮ tem Lembrete, Duplicar e Excluir. Salva sozinho ao fechar.
 
-No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para focar ou reagendar, e a tecla **N** abre o adicionar. Toda mudança de prazo pode ser desfeita no aviso.
+No celular, arraste a tarefa para a direita para concluir e para a esquerda para reagendar. No PC, passe o mouse na linha para reagendar, e a tecla **N** abre o adicionar. Toda mudança de prazo pode ser desfeita no aviso.
 
 ## Lembretes
 
@@ -59,12 +60,19 @@ Mesma estrutura das Tarefas, pensada como agenda:
 
 ## Mercado
 
-- **Lista e despensa:** a lista mostra só o que falta comprar desta vez. Tudo o que já foi comprado fica na despensa (toque no título para trocar), de onde volta para a lista com um toque no +. Itens marcados como **sempre na lista** (o alfinete no detalhe) voltam sozinhos depois de cada compra.
+- **Só a lista:** mostra só o que você pôs para comprar desta vez. O que já foi comprado fica guardado, sem aparecer, para o app reconhecer o nome e o corredor quando você pedir de novo. Itens marcados como **sempre na lista** (o alfinete no detalhe) voltam sozinhos depois de cada compra.
 - **Corredores:** 🥬 Hortifruti, 🥖 Padaria, 🥩 Carnes e peixes, 🧀 Frios e laticínios, 🥫 Mercearia, 🧊 Congelados, 🥤 Bebidas, 🧽 Limpeza e casa, 🧴 Higiene, 🐾 Pet e 🛒 Outros. O corredor é escolhido pelo nome do item (dá para trocar no detalhe, no botão da etiqueta ou com `#corredor` no texto), e a ordem dos corredores pode seguir a do seu mercado (⋮ > Ordem dos corredores).
-- **Adicionar:** pelo + no celular ou pelo campo no topo no PC. Entende quantidade e vários itens de uma vez: `2 kg tomate`, `tomate 2kg`, `leite x3`, `6 ovos`, `meia dúzia de ovos`, `arroz, feijão, café`. Colar uma lista de várias linhas (do WhatsApp, por exemplo) também funciona. Embaixo aparecem os mais comprados e, enquanto você digita, o que já está na despensa; um toque põe na lista.
-- **No mercado:** o círculo (ou arrastar para a direita no celular) põe no carrinho; arrastar para a esquerda tira da lista. **Concluir compra** manda o carrinho para a despensa e conta mais uma compra de cada item. Tudo tem Desfazer.
+- **Adicionar:** pelo + no celular ou pelo campo no topo no PC. Entende quantidade e vários itens de uma vez: `2 kg tomate`, `tomate 2kg`, `leite x3`, `6 ovos`, `meia dúzia de ovos`, `arroz, feijão, café`. Colar uma lista de várias linhas (do WhatsApp, por exemplo) também funciona.
+- **No mercado:** o círculo (ou arrastar para a direita no celular) põe no carrinho; arrastar para a esquerda tira da lista. **Concluir compra** tira o carrinho da lista (o item fica guardado, sem aparecer) e conta mais uma compra de cada item. Tudo tem Desfazer.
 - **Detalhe do item:** corredor no topo, quantidade com − e +, preço (o carrinho soma), nome, observação (marca, tamanho) e quantas vezes você já comprou. Salva sozinho ao fechar.
 - **Compartilhar a lista** (⋮): manda o texto separado por corredor, pelo compartilhar do Android ou copiando no navegador.
+- **Falando:** `leite pão e ovos` põe na lista; `comprei leite e pão` tira da lista (comprados); `deu 230 reais` lança o gasto em Finanças e conclui o carrinho; `comprei leite e pão por 25 reais` faz as duas coisas.
+
+## Finanças
+
+- **Falando ou no campo O que apareceu?:** `almoço 35 reais`, `uber 18,50`, `gastei 50 no mercado`, `paguei 120 de luz ontem`, `recebi 3000 de salário`, `me pagaram 200 do freela`, `fiz um pix de 50 pra Ana`. Entende R$, reais, centavos, `2 mil`, valores por extenso com "reais", a data (hoje, ontem, anteontem, dia 5, segunda) e a categoria pelo nome (mercado e almoço em alimentação, uber e gasolina em transporte, luz e aluguel em moradia…).
+- **Parcelas e fixas:** `comprei um tênis de 300 em 3 vezes` lança R$ 100,00 como parcela 1 de 3; `3 parcelas de 100` também. `netflix 55,90 todo mês` entra nas despesas fixas; depois, `paguei o aluguel` usa o valor da fixa e ela conta como paga no mês.
+- **O que continua tarefa:** `pagar a luz 120 reais amanhã` (é coisa para fazer). Na aba Finanças, o valor sozinho basta (`academia 99`); sem valor, o app pede.
 
 ## Hábitos
 
@@ -96,8 +104,6 @@ Mesma estrutura das Tarefas, pensada como agenda:
 | Hábitos no horário | na hora marcada em cada hábito, se ainda faltar. Com o botão Feito |
 | Fechar o dia | 21:00, se algo ficou em aberto; tocar abre o fechar o dia, uma coisa de cada vez (com o painel antigo: os hábitos que faltam) |
 | Aniversários | 09:00 do dia |
-| Pomodoro | no fim de cada foco e de cada pausa |
-| Sessão em andamento | aviso fixo com o tempo correndo: regressivo no Pomodoro (some no fim da fase), progressivo no cronômetro; tocar abre o Tempo |
 | Blocos da rotina | desligado, para não repetir o Orders of the Day |
 
 Os avisos são recalculados sempre que o app abre ou algo muda nele. Cada tipo tem um canal próprio no Android, com som próprio, que dá para ajustar nas configurações de notificação do sistema.
