@@ -1516,6 +1516,55 @@ html.assist .tk-fab{display:none}
 @media (min-width:761px){
   .ag-tudo{grid-template-columns:repeat(4, minmax(0, 1fr))}
 }
+/* ===================== Anotar falando ===================== */
+.voz{position:fixed; inset:0; z-index:95; display:none}
+.voz.on{display:block}
+.voz-fundo{position:absolute; inset:0; background:rgba(12,16,20,.46); animation:vozFundo .18s ease-out}
+.voz-folha{position:absolute; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; text-align:center; max-height:calc(100% - 12px - var(--sat)); overflow-y:auto;
+  padding:16px calc(18px + var(--sar)) calc(10px + var(--sab)) calc(18px + var(--sal)); background:var(--surface); color:var(--ink);
+  border-radius:24px 24px 0 0; box-shadow:0 -12px 40px rgba(0,0,0,.24); animation:vozSobe .24s cubic-bezier(.2,.8,.2,1)}
+.voz-onde{margin:0 0 26px; font-size:13px; font-weight:650; color:var(--muted)}
+.voz-mic{position:relative; width:84px; height:84px; padding:0; border:0; border-radius:50%; background:var(--accent); color:var(--on-accent);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; --nivel:0; -webkit-tap-highlight-color:transparent}
+.voz-mic svg{position:relative; z-index:1; width:34px; height:34px; stroke-width:2.2}
+.voz-mic:focus-visible{outline:3px solid var(--accent-soft); outline-offset:4px}
+.voz-anel{position:absolute; inset:-10px; border-radius:50%; background:var(--accent); opacity:.18; transform:scale(calc(.86 + var(--nivel) * .42)); transition:transform .1s linear}
+.voz[data-estado="ouvindo"] .voz-anel, .voz.sem-nivel[data-estado="falando"] .voz-anel, .voz[data-estado="abrindo"] .voz-anel{animation:vozRespira 1.5s ease-in-out infinite}
+.voz[data-estado="processando"] .voz-mic, .voz[data-estado="pronto"] .voz-mic{opacity:.55; cursor:default}
+.voz[data-estado="processando"] .voz-anel, .voz[data-estado="pronto"] .voz-anel{transform:scale(.86)}
+.voz[data-estado="nada"] .voz-mic, .voz[data-estado="cancelado"] .voz-mic, .voz[data-estado="rede"] .voz-mic, .voz[data-estado="permissao"] .voz-mic,
+.voz[data-estado="microfone"] .voz-mic, .voz[data-estado="idioma"] .voz-mic, .voz[data-estado="ocupado"] .voz-mic, .voz[data-estado="indisponivel"] .voz-mic,
+.voz[data-estado="erro"] .voz-mic{background:var(--surface2); color:var(--ink)}
+.voz[data-estado="nada"] .voz-anel, .voz[data-estado="cancelado"] .voz-anel, .voz[data-estado="rede"] .voz-anel, .voz[data-estado="permissao"] .voz-anel,
+.voz[data-estado="microfone"] .voz-anel, .voz[data-estado="idioma"] .voz-anel, .voz[data-estado="ocupado"] .voz-anel, .voz[data-estado="indisponivel"] .voz-anel,
+.voz[data-estado="erro"] .voz-anel{opacity:0}
+.voz-estado{margin:26px 0 0; font-size:15px; font-weight:650; color:var(--ink)}
+.voz-texto{margin:6px 0 0; min-height:2.6em; max-height:30vh; overflow-y:auto; max-width:30ch; font-size:22px; line-height:1.3; font-weight:650; letter-spacing:-.01em; overflow-wrap:anywhere}
+.voz-texto.dica{min-height:2.6em; font-size:15px; line-height:1.45; font-weight:400; letter-spacing:0; color:var(--muted)}
+.voz-prev{justify-content:center; max-width:100%; margin:12px 0 0}
+.voz-prev .qa-titulo{flex:0 1 auto; max-width:100%}
+.voz-prev .voz-tipo{background:var(--ink); color:var(--surface)}
+.voz-prev .voz-sem{background:var(--surface2); color:var(--muted)}
+.voz-pe{display:flex; align-self:stretch; align-items:center; margin-top:16px; padding-top:8px; border-top:1px solid var(--line)}
+.voz-pe .grow{flex:1}
+.voz-pe .btn{gap:7px}
+.voz-pe .btn svg{width:18px; height:18px}
+@keyframes vozRespira{0%, 100%{transform:scale(.86)} 50%{transform:scale(1.06)}}
+@keyframes vozSobe{from{transform:translateY(100%)} to{transform:none}}
+@keyframes vozFundo{from{opacity:0} to{opacity:1}}
+@media (min-width:761px){
+  .voz-folha{left:50%; right:auto; bottom:28px; width:440px; margin-left:-220px; padding:20px 22px 12px; border-radius:22px; animation:vozAparece .2s ease-out}
+  @keyframes vozAparece{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+}
+@media (prefers-reduced-motion: reduce){ .voz-anel, .voz-folha, .voz-fundo{animation:none !important; transition:none !important} }
+html.no-anim .voz-anel, html.no-anim .voz-folha, html.no-anim .voz-fundo{animation:none !important; transition:none !important}
+/* microfone no campo de anotar (só onde há reconhecimento de voz) */
+.ag-add .voz-btn{display:none}
+html.voz-ok .ag-add .voz-btn{display:inline-flex}
+/* segurar o + não seleciona nem abre o menu do sistema */
+.bn-anotar{-webkit-touch-callout:none; -webkit-user-select:none; user-select:none}
+/* com a escuta aberta, o aviso da última anotação sobe para o topo e o Desfazer continua ao alcance */
+html.voz-on .toast{top:calc(12px + var(--sat)); bottom:auto !important; z-index:96}
 /* ===================== App Android, notificações, sons e animações ===================== */
 /* áreas seguras: o app Android desenha atrás das barras do sistema */
 :root{
@@ -1665,6 +1714,7 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{animation:none !im
           <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="habito" title="Hábito" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span class="qd-lab"></span></button>
           <button class="tk-tool" type="button" data-action="ag-cap-tipo" data-t="mercado" title="Mercado" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="qd-lab"></span></button>
         </div>
+        <button class="tk-tool voz-btn" type="button" data-action="voz-abrir" aria-label="Anotar falando" title="Falar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
         <button class="tk-send" data-action="ag-cap-enviar" aria-label="Anotar" title="Anotar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
         <div class="qa-prev" id="agPrev" aria-live="polite"></div>
       </div>
@@ -3338,8 +3388,14 @@ function agEhItem(p){
 }
 /* partes da lista: vírgula, ponto e vírgula, e também "e" quando separa itens ("leite e pão") */
 function agMercadoPartes(txt){
-  const s = String(txt || '').replace(/^comprar\s+/i, '');
-  return mcPartes(s).flatMap(p => { const ps = p.split(/\s+e\s+/i).filter(Boolean); return ps.length > 1 && ps.every(agEhItem) ? ps : [p]; });
+  const s = String(txt || '').replace(/(^|\s)!{1,3}(?=\s|$)/g, ' ').trim()
+    .replace(/^(comprar|compra|falta(m|ndo)?|faltou|faltaram|(t[aá]|est[aá])\s+faltando|acab(ou|aram)|adiciona|adicionar|adicione|coloca|colocar|coloque|p[oõ]e|p[oô]r|bota|botar|inclui|incluir)\s+/i, '');
+  /* "o arroz e o feijão": o artigo não entra no nome */
+  const sem = x => agQtdPalavra(String(x).replace(/^(o|a|os|as)\s+(?=\S)/i, ''));
+  return mcPartes(s).flatMap(p => {
+    const ps = p.split(/\s+e\s+/i).filter(Boolean).flatMap(x => { const sg = agMercadoSeg(sem(x)); return sg && sg.map(sem).every(agEhItem) ? sg.map(sem) : [sem(x)]; });
+    return ps.length > 1 && ps.every(agEhItem) ? ps : [sem(p)];
+  });
 }
 function agEhMercado(s){ const ps = agMercadoPartes(s); return ps.length > 0 && ps.every(agEhItem); }
 /* "2h" e "1h30" que o leitor dos hábitos deixou no nome são duração, não hora ("estudar 2h amanhã às 20h"):
@@ -3360,12 +3416,14 @@ function agRepeteDias(s, hp){
 }
 /* tarefa, lembrete, hábito ou mercado; prefixos ("me lembra", "hábito:", "mercado:") mandam */
 function agTipoDe(raw){
-  const s = String(raw || '').replace(/\s+/g, ' ').trim();
-  const PREF = [[/^(tarefa|fazer)\s*:\s*/i, 'tarefa'], [/^lembretes?\s*:\s*/i, 'lembrete'], [/^me\s+(lembra|lembre|lembrar)\s+/i, 'lembrete'],
+  const f = agFala(raw), s = f.txt;
+  /* "nova tarefa…", "lembrete…", "hábito…" e "… na lista de compras" dizem o tipo */
+  if(f.tipo && s) return {tipo:f.tipo, txt:cap1(s)};
+  const PREF = [[/^(tarefa|fazer)\s*:\s*/i, 'tarefa'], [/^lembretes?\s*:\s*/i, 'lembrete'], [/^me\s+(lembra|lembre|lembrar|avisa|avise|avisar|alerta|alerte|cobra|cobre)\s+/i, 'lembrete'],
     [/^(lembra|lembre|lembrar)(-me)?\s+(de|que)\s+/i, 'lembrete'], [/^lembre-me\s+/i, 'lembrete'], [/^h[aá]bitos?\s*:\s*/i, 'habito'], [/^(mercado|compras?)\s*:\s*/i, 'mercado']];
   for(const [re, tp] of PREF){
     const m = s.match(re);
-    if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim().replace(/^(de|que)\s+/i, ''))};
+    if(m && s.length > m[0].length) return {tipo:tp, txt:cap1(s.slice(m[0].length).trim().replace(/^(de|que)\s+(?!(manh[aã]|tarde|noite|madrugada)(\s|$))/i, ''))};
   }
   const lp = lmParse(agSemDuracao(s)), hp = hbParse(s), rec = lp.rec;
   if(!lp.date && !lp.time && !rec && agEhMercado(s)) return {tipo:'mercado', txt:s};
@@ -3385,7 +3443,7 @@ function agLembreteDe(txt){
   const hp = hbParse(txt), q = lmParse(agSemDuracao(txt));
   let title = agTiraProt(q.title).replace(/^(de|que)\s+/i, ''), time = q.time || '', rec = q.rec, date = q.date || null;
   /* dias que repetem sem "todo/toda" ("terças e quintas 7h", "aos sábados"): toda semana nesses dias */
-  if(!rec && agRepeteDias(txt, hp)){
+  if(agRepeteDias(txt, hp) && (!rec || (rec.type === 'weekly' && hp.dias.length > (rec.days || []).length))){
     rec = hp.dias.length >= 7 ? {type:'daily'} : {type:'weekly', days:hp.dias.slice()};
     title = agTiraProt(hp.name) || title;
     time = hp.hora || ({manha:'09:00', tarde:'15:00', noite:'20:00'})[hp.periodo] || time;
@@ -3408,7 +3466,7 @@ function agHabitoDe(txt){
   }
   return q;
 }
-function agTarefaDe(txt){ const q = qaParse(txt); return q.title ? q : {title:txt, due:null, priority:null, projectId:null, tags:[]}; }
+function agTarefaDe(txt){ const q = qaParse(txt); if(q.title) q.title = cap1(q.title); return q.title ? q : {title:txt, due:null, priority:null, projectId:null, tags:[]}; }
 function agPrevHTML(d){
   const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
   const v = d.txt;
@@ -3523,20 +3581,20 @@ function agCriarHabito(txt){
   const dias = hbFreqTxt(hbDiasDe(h)).replace(/^Só /, '');
   return {msg:h.name + (schedOn(h, today()) ? ' começa hoje.' : ' entra nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.')};
 }
-function agCriarMercado(txt){
-  const r = mcAdicionar(agMercadoPartes(txt).join('; '), '');
+function agCriarMercado(txt, sec){
+  const r = mcAdicionar(agMercadoPartes(txt).join('; '), sec || '');
   if(!r.lidos) return null;
   const n = r.novos + r.voltaram;
   if(!n && !r.qtd) return {msg:r.ja.length === 1 ? r.ja[0] + ' já está na lista do mercado.' : 'Já estavam na lista do mercado.', igual:true};
   if(!n) return {msg:r.qtd === 1 ? 'Quantidade atualizada no mercado.' : 'Quantidades atualizadas no mercado.'};
-  return {msg:(n === 1 ? r.nomes[0] : n + ' itens') + ' na lista do mercado.'};
+  return {msg:(n <= 3 ? agJuntar(r.nomes.slice(0, n)) : n + ' itens') + ' na lista do mercado.'};
 }
 function agCapturar(){
   const inp = $('#agInp'), raw = inp ? inp.value.trim() : '';
   if(!raw){ if(inp) inp.focus(); return; }
   const d = agTipoAtual(raw);
   const col = {tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[d.tipo];
-  const antes = JSON.stringify(S[col]);
+  const antes = JSON.parse(JSON.stringify(S[col]));
   const r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, AG_QUANDO);
   if(!r){ inp.focus(); return; }
   if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
@@ -3547,7 +3605,7 @@ function agCapturar(){
   save(); render(); agPreview();
   if(!cel) inp.focus();
   if(r.igual) toast(r.msg);
-  else toast(r.msg, 'Desfazer', () => { S[col] = JSON.parse(antes); save(); render(); sfx('undo'); });
+  else toast(r.msg, 'Desfazer', agDesfazerDe(col, antes));
 }
 
 /* ---------- Tudo (celular), Dados e avisos ---------- */
@@ -3570,7 +3628,9 @@ function renderAgCard(){
   el.innerHTML = '<h3>Tela inicial</h3><p>Com o assistente, a tela inicial mostra uma coisa de cada vez e você só escolhe: feito, começar ou depois. Sem ele, volta o painel com as listas de hoje.</p>' +
     '<div class="nrow"><span class="nl">Assistente<small>' + (on ? 'a tela inicial é o Agora' : 'a tela inicial é o painel de hoje') + '</small></span>' + swHTML('ag-modo', 'inicio', on) + '</div>' +
     '<div class="nrow' + (on ? '' : ' off') + '"><span class="nl">Tarefas marcadas no plano do dia<small>as outras vão para amanhã, se você não marcar</small></span>' +
-      '<span class="seg ag-capseg" role="group" aria-label="Tarefas no plano">' + [3, 5, 7].map(n => '<button class="' + (cap === n ? 'on' : '') + '" data-action="ag-cap" data-n="' + n + '" aria-pressed="' + (cap === n) + '">' + n + '</button>').join('') + '</span></div>';
+      '<span class="seg ag-capseg" role="group" aria-label="Tarefas no plano">' + [3, 5, 7].map(n => '<button class="' + (cap === n ? 'on' : '') + '" data-action="ag-cap" data-n="' + n + '" aria-pressed="' + (cap === n) + '">' + n + '</button>').join('') + '</span></div>' +
+    '<div class="nrow' + (on && vozPode() ? '' : ' off') + '"><span class="nl">Anotar falando<small>' + (vozPode() ? 'no celular, o + começa ouvindo; segure o + para digitar' : 'este aparelho não reconhece voz') + '</small></span>' +
+      swHTML('voz-modo', 'voz', S.meta.vozPadrao !== false && vozPode()) + '</div>';
 }
 /* avisos do assistente: de manhã o plano do dia, à noite fechar o dia */
 function agNotifManha(add, c, t){
@@ -3605,6 +3665,588 @@ function agNotifNoite(add, c, t, d){
   if(!n) return;
   add('agn:' + ds, quando(fh >= 1440 ? addD(ds, 1) : ds, c.habHora), 'Fechar o dia',
     n === 1 ? 'Ficou 1 coisa em aberto. Toque para resolver.' : 'Ficaram ' + n + ' coisas em aberto. Toque para resolver uma de cada vez.', 'habitos', 'hoje', {fechar:1, ds});
+}
+
+/* ===================== Anotar falando ===================== */
+/* No celular, o + começa ouvindo: a pessoa fala, o app entende se é tarefa, lembrete, hábito ou compra e anota na hora,
+   com Desfazer. Segurar o + abre o campo de digitar. No Android usa o reconhecimento de voz do sistema (plugin Voz);
+   no navegador, o reconhecimento do Chrome. Nas abas Tarefas, Lembretes, Hábitos e Mercado, o que foi dito vai para
+   o adicionar da própria aba. */
+LICN['mic'] = '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>';
+LICN['keyboard'] = '<path d="M10 8h.01"/><path d="M12 12h.01"/><path d="M14 8h.01"/><path d="M16 12h.01"/><path d="M18 8h.01"/><path d="M6 8h.01"/><path d="M7 16h10"/><path d="M8 12h.01"/><rect width="20" height="16" x="2" y="4" rx="2"/>';
+
+/* ---------- o jeito falado vira o jeito que os leitores entendem ---------- */
+/* "3 da tarde" vira 15h, "às 10 horas" vira às 10h, "às 7" é a próxima vez que chega (de manhã cedo 7h, depois 19h),
+   "daqui a 20 minutos" vira dia e hora, "segunda que vem" vira próxima segunda, "15 de novembro" vira 15/11,
+   "urgente" vira prioridade alta, "no projeto Promotoria" vira #Promotoria e "acabou o café" vai para o mercado.
+   No começo, "anota aí", "tenho que" e "não esquecer de" saem; "nova tarefa", "lembrete" e "hábito" dizem o tipo. */
+const AG_NUM = {um:1, uma:1, dois:2, duas:2, tres:3, quatro:4, cinco:5, seis:6, sete:7, oito:8, nove:9, dez:10, onze:11, doze:12, treze:13,
+  quatorze:14, catorze:14, quinze:15, dezesseis:16, dezessete:17, dezoito:18, dezenove:19, vinte:20, trinta:30, quarenta:40, cinquenta:50};
+const AG_MESES = {janeiro:1, fevereiro:2, marco:3, abril:4, maio:5, junho:6, julho:7, agosto:8, setembro:9, outubro:10, novembro:11, dezembro:12};
+const agNorm = w => semAcento(w).replace(/^[("']+|[.,;:!?)"']+$/g, '');
+function agHm(h, m){ return h + 'h' + (m ? pad(m) : ''); }
+/* daqui a / em / dentro de: quanto tempo, a partir do token j */
+function agRelativo(n, j){
+  if(n[j] === 'meia' && n[j + 1] === 'hora') return {min:30, k:2};
+  let q, u, k;
+  const m = (n[j] || '').match(/^(\d{1,3})(h|min)$/);
+  if(m){ q = +m[1]; u = m[2] === 'h' ? 'h' : 'min'; k = 1; }
+  else if(/^\d{1,3}$/.test(n[j] || '')){
+    q = +n[j]; const w = n[j + 1] || '';
+    u = /^(minutos?|min)$/.test(w) ? 'min' : /^(horas?|h)$/.test(w) ? 'h' : /^dias?$/.test(w) ? 'd' : /^semanas?$/.test(w) ? 's' : /^(mes|meses)$/.test(w) ? 'm' : '';
+    if(!u) return null;
+    k = 2;
+  }else return null;
+  if(u === 'd') return {dias:q, k};
+  if(u === 's') return {dias:q * 7, k};
+  if(u === 'm') return {meses:q, k};
+  let min = u === 'h' ? q * 60 : q;
+  /* "uma hora e meia", "uma hora e quinze (minutos)" */
+  if(u === 'h' && n[j + k] === 'e' && n[j + k + 1] === 'meia'){ min += 30; k += 2; }
+  else if(u === 'h' && n[j + k] === 'e' && /^\d{1,2}$/.test(n[j + k + 1] || '') && +n[j + k + 1] < 60){ min += +n[j + k + 1]; k += 2; if(/^(minutos?|min)$/.test(n[j + k] || '')) k++; }
+  return {min, k};
+}
+function agRelTokens(r){
+  const ddmm = d => pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+  if(r.dias != null) return ['em', String(r.dias), r.dias === 1 ? 'dia' : 'dias'];
+  if(r.meses != null){
+    const d0 = fromD(today()), fim = new Date(d0.getFullYear(), d0.getMonth() + r.meses + 1, 0).getDate();
+    return [ddmm(new Date(d0.getFullYear(), d0.getMonth() + r.meses, Math.min(d0.getDate(), fim), 12))];
+  }
+  /* minuto mais próximo; "às" na frente, para não ser lido como duração ("2h de estudo") */
+  const d = new Date(Date.now() + r.min * 60000 + 30000);
+  return [ddmm(d), 'às', agHm(d.getHours(), d.getMinutes())];
+}
+/* "no projeto Promotoria", "na lista casa nova": o nome que bate com um projeto (1 a 3 palavras) */
+function agProjetoFalado(n, j){
+  const ativos = S.projects.filter(p => !p.archived), junto = s => semAcento(s).replace(/[^a-z0-9]/g, '');
+  for(let L = 3; L >= 1; L--){
+    if(j + L > n.length) continue;
+    const alvo = n.slice(j, j + L).join('').replace(/[^a-z0-9]/g, '');
+    const p = ativos.find(x => junto(x.name) === alvo) || (L === 1 && alvo.length >= 3 ? ativos.find(x => junto(x.name).startsWith(alvo)) : null);
+    if(p) return {p, k:L};
+  }
+  return null;
+}
+/* verbos de anotar ditos no começo */
+const AG_VERBO = 'adiciona|adicionar|adicione|cria|criar|crie|coloca|colocar|coloque|p[oõ]e|bota|botar|inclui|incluir|registra|registrar|anota|anotar|anote|salva|salvar';
+let AG_VOZ = false;   /* o texto veio da voz: "3:30" dito é "três e meia" (de tarde); digitado, vale como está */
+function agFala(raw){
+  let s = String(raw || '').replace(/\s+/g, ' ').trim(), tipo = '';
+  if(!s) return {txt:'', tipo};
+  const ini = s, voz = AG_VOZ;
+  /* começo falado */
+  s = s.replace(/^(ok|certo|ent[aã]o|olha)[,.]?\s+/i, '');
+  /* lista de compras dita no começo: "lista de compras leite e pão", "coloca na lista arroz", "adiciona no mercado café" */
+  const lc = s.match(new RegExp('^((' + AG_VERBO + ')\\s+)?((na|à|a|pra|para|no|pro)\\s+)?lista\\s+(de\\s+compras?|do\\s+(super)?mercado|da\\s+feira)\\s*:?\\s+', 'i')) ||
+    s.match(new RegExp('^(' + AG_VERBO + ')\\s+((na|à|a|pra|para|no|pro)\\s+)?(lista|(super)?mercado|feira)\\s*:?\\s+', 'i'));
+  if(lc && s.length > lc[0].length) return {txt:cap1(s.slice(lc[0].length)), tipo:'mercado'};
+  /* "anota (aí)…": sai; os outros verbos só saem com "aí", "pra mim" ou ":" ("criar a apresentação" e "anotar os gastos" ficam) */
+  s = s.replace(/^(anota|anote)\s+(a[ií]\s+|(pra|para)\s+mim\s+)?(?=\S)/i, '');
+  s = s.replace(new RegExp('^(' + AG_VERBO + ')((\\s+a[ií]|\\s+(pra|para)\\s+mim)+[,:]?\\s+|\\s*:\\s*)', 'i'), '');
+  /* "nova tarefa…", "lembrete de…", "criar o hábito de…": o tipo vem dito ("tarefa de casa" é título) */
+  const tm = s.match(new RegExp('^((' + AG_VERBO + ')\\s+)?((o|a|um|uma)\\s+)?(nov[oa]\\s+)?(tarefa|lembrete|h[aá]bito)(\\s*:\\s*|\\s+de\\s+|\\s+)', 'i'));
+  if(tm && s.length > tm[0].length && !(semAcento(tm[6]) === 'tarefa' && /\sde\s/i.test(tm[7]))){ tipo = semAcento(tm[6]); s = s.slice(tm[0].length); }
+  s = s.replace(/^(eu\s+)?(tenho\s+que|tem\s+que|tenho\s+de|preciso|precisa|vou\s+ter\s+que|vou|devo)\s+(?=\S*(ar|er|ir|or|ôr)(\s|$))/i, '');
+  s = s.replace(/^n[aã]o\s+(posso\s+)?(esquecer|esque[cç]a|esquece|deixar|deixe)\s+de\s+/i, '');
+  if(s !== ini) s = cap1(s);
+  /* "... na lista de compras", "... no mercado": é compra (no mercado, só se o resto for item de mercado) */
+  const suf = s.match(/\s+(na|a|à|pra|para|no|pro)\s+(lista(\s+(de\s+compras?|do\s+(super)?mercado|da\s+feira))?|(super)?mercado|feira)\s*[.!]?$/i);
+  if(suf){ const resto = s.slice(0, suf.index).trim(); if(resto && (/^lista/i.test(suf[2]) || agEhMercado(resto))){ tipo = 'mercado'; s = resto; } }
+  if(tipo === 'mercado') return {txt:s, tipo};
+
+  /* 1: números por extenso perto de hora, minuto, dia ou mês ("às duas e meia", "à uma", "daqui a cinco minutos", "dia quinze", "oito e quinze") */
+  let t = s.split(' '), n = t.map(agNorm), out = [];
+  const UNID = /^(horas?|h|hrs?|minutos?|min|dias?|semanas?|mes|meses)$/;
+  for(let i = 0; i < t.length; i++){
+    let v = AG_NUM[n[i]], k = 1;
+    if(n[i] === 'primeiro' && n[i - 1] === 'dia'){ out.push('1'); continue; }
+    if(v == null){ out.push(t[i]); continue; }
+    if(v >= 20 && v % 10 === 0 && n[i + 1] === 'e' && AG_NUM[n[i + 2]] != null && AG_NUM[n[i + 2]] < 10){ v += AG_NUM[n[i + 2]]; k = 3; }
+    const nx = n[i + k] || '', nx2 = n[i + k + 1] || '', pvo = (out[out.length - 1] || '').toLowerCase(), pvn = n[i - 1] || '', pv2 = n[i - 2] || '';
+    const o1 = agNorm(out[out.length - 1] || ''), o2 = agNorm(out[out.length - 2] || '');
+    const ctx = UNID.test(nx) || (nx === 'e' && (nx2 === 'meia' || /^\d+$/.test(nx2) || AG_NUM[nx2] != null)) || (/^(da|de)$/.test(nx) && /^(manha|tarde|noite|madrugada)$/.test(nx2)) ||
+      pvo === 'às' || pvo === 'à' || /^(pelas|pras|daqui)$/.test(pvn) || (pvn === 'a' && pv2 === 'daqui') || (pvn === 'das' && pv2 === 'volta') ||
+      (pvn === 'dia' && v <= 31) || (/^(de|do)$/.test(nx) && AG_MESES[nx2] != null) || (o1 === 'e' && (UNID.test(o2) || /^\d+$/.test(o2)));
+    if(ctx){ out.push(String(v)); i += k - 1; } else out.push(t[i]);
+  }
+  /* 2: daqui a…, "segunda que vem", "15 de novembro" */
+  t = out; n = t.map(agNorm); out = [];
+  for(let i = 0; i < t.length; i++){
+    const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '';
+    /* "daqui a pouco": meia hora; "daqui a pouquinho": 15 minutos */
+    if(w === 'daqui' && (/^(pouco|pouquinho)$/.test(w1) || (w1 === 'a' && /^(pouco|pouquinho)$/.test(w2)))){
+      const k = w1 === 'a' ? 3 : 2;
+      out.push(...agRelTokens({min:/pouquinho$/.test(n[i + k - 1]) ? 15 : 30})); i += k - 1; continue;
+    }
+    /* "de 8 em 8 horas" é repetição, não "daqui a 8 horas" */
+    if(/^(daqui|em|dentro)$/.test(w) && !(w === 'em' && /^\d+$/.test(n[i - 1] || '') && n[i - 2] === 'de')){
+      let j = i + 1;
+      if(w === 'daqui' && n[j] === 'a') j++;
+      if(w === 'dentro') j = n[j] === 'de' ? j + 1 : -1;
+      const r = j > 0 ? agRelativo(n, j) : null;
+      if(r){ out.push(...agRelTokens(r)); i = j + r.k - 1; continue; }
+    }
+    const dw = w.replace(/-feira$/, '');
+    if(TK_DIAS[dw] != null && dw.length > 3 && w1 === 'que' && w2 === 'vem'){
+      /* "sexta que vem" dito na quinta é a da semana seguinte (amanhã seria "amanhã") */
+      const px = tkProxDia(TK_DIAS[dw]), d = px === addD(today(), 1) ? fromD(addD(px, 7)) : null;
+      if(d) out.push(pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear()); else out.push('próxima', t[i]);
+      i += 2; continue;
+    }
+    if((/^\d{1,2}$/.test(w) || w === 'primeiro' || /^1[ºo°]$/.test(w)) && /^(de|do)$/.test(w1) && AG_MESES[w2]){
+      const d = /^\d{1,2}$/.test(w) ? +w : 1;
+      let k = 3, ano = '';
+      if(n[i + 3] === 'de' && /^\d{4}$/.test(n[i + 4] || '')){ ano = n[i + 4]; k = 5; }
+      if(out.length && agNorm(out[out.length - 1]) === 'dia') out.pop();
+      out.push(pad(d) + '/' + pad(AG_MESES[w2]) + (ano ? '/' + ano : ''));
+      i += k - 1; continue;
+    }
+    out.push(t[i]);
+  }
+  /* 3: horas ("às 3 da tarde", "às 10 horas", "às 7", "pras 4", "por volta das 3", "meio-dia e meia"), prioridade e projeto falados */
+  t = out; n = t.map(agNorm); out = [];
+  const due = qaParse(t.join(' ')).due, outroDia = !!due && due !== today(), agora = nowMin();
+  const tudo = ' ' + n.join(' ') + ' ', cedo = /\s(acordar|despertar|despertador|cafe da manha)\s/.test(tudo), tarde = /\s(jantar|janta|dormir|deitar)\s/.test(tudo);
+  for(let i = 0; i < t.length; i++){
+    const w = n[i], w1 = n[i + 1] || '', w2 = n[i + 2] || '';
+    const pvTok = out.length ? out[out.length - 1] : '', pvo = pvTok.toLowerCase(), pv = agNorm(pvTok), pvv = agNorm(out[out.length - 2] || '');
+    if(w === 'meio-dia' || (w === 'meio' && w1 === 'dia') || w === 'meia-noite' || (w === 'meia' && w1 === 'noite')){
+      let k = w.indexOf('-') > 0 ? 1 : 2, mm = 0;
+      if(n[i + k] === 'e' && n[i + k + 1] === 'meia'){ mm = 30; k += 2; }
+      else if(n[i + k] === 'e' && /^\d{1,2}$/.test(n[i + k + 1] || '') && +n[i + k + 1] < 60){ mm = +n[i + k + 1]; k += 2; }
+      if(/^(ao|a|pelo|pela|perto|pro|pra)$/.test(pv)) out[out.length - 1] = 'às';
+      out.push(agHm(/^meio/.test(w) ? 12 : 0, mm)); i += k - 1; continue;
+    }
+    if(w === 'cedo' && /^(amanha|hoje|segunda|terca|quarta|quinta|sexta|sabado|domingo)(-feira)?$/.test(pv)){ out.push('às', '8h'); continue; }
+    if(w === 'cedo' && pv === 'manha') continue;
+    const mt = w.match(/^(\d{1,2})(?:h(\d{2})?|:(\d{2}))?$/);
+    if(mt){
+      let h = +mt[1], mm = +(mt[2] || mt[3] || 0), k = 1, suf2 = '';
+      const comH = /h/.test(w), comDois = /:/.test(w);
+      let unid = false, minutos = false;
+      if(/^(horas?|hrs?)$/.test(n[i + k] || '')){ unid = true; k++; }
+      const prepOk = pvo === 'às' || pvo === 'à' || /^(pelas|pras|ate)$/.test(pv) || (pv === 'das' && pvv === 'volta') || (pv === 'as' && (unid || i + k >= t.length));
+      if(n[i + k] === 'e' && n[i + k + 1] === 'meia' && (prepOk || comH || comDois || unid)){ mm = 30; k += 2; minutos = true; }
+      else if(n[i + k] === 'e' && /^\d{1,2}$/.test(n[i + k + 1] || '') && +n[i + k + 1] < 60 && (prepOk || unid)){ mm = +n[i + k + 1]; k += 2; minutos = true; if(/^(minutos?|min)$/.test(n[i + k] || '')) k++; }
+      if(/^(da|de)$/.test(n[i + k] || '') && /^(manha|tarde|noite|madrugada)$/.test(n[i + k + 1] || '')){ suf2 = n[i + k + 1]; k += 2; }
+      /* "15h" e "14:30" digitados valem como estão; "3:30" dito é "três e meia", que pode ser de tarde */
+      const literal = !voz && (comH || comDois), quase = /^(umas|uns)$/.test(pv);
+      const hora = suf2 || prepOk || (quase && (unid || i + k >= t.length)) || (comDois && voz) || ((comH || comDois) && minutos);
+      if(hora && h < 24 && mm < 60){
+        if(suf2 === 'tarde'){ if(h < 12) h += 12; }
+        else if(suf2 === 'noite'){ if(h === 12) h = 0; else if(h >= 5 && h < 12) h += 12; }
+        else if(suf2 === 'manha' || suf2 === 'madrugada'){ if(h === 12) h = 0; }
+        else if(!literal && h >= 1 && h <= 11){
+          /* sem manhã ou noite: 1 a 6 é de tarde; 7 a 9, a próxima vez que chega (em outro dia, de manhã); 10 e 11, de manhã */
+          if(cedo){ /* fica de manhã */ }
+          else if(tarde){ if(h >= 5) h += 12; }
+          else if(h <= 6) h += 12;
+          else if(h <= 9 && !outroDia && h * 60 + mm <= agora && (h + 12) * 60 + mm > agora) h += 12;
+        }
+        /* a preposição falada vira "às", que o leitor tira do título */
+        if(/^(pras|pelas|umas|uns)$/.test(pv)){ out[out.length - 1] = 'às'; if(pvv === 'la') out.splice(out.length - 2, 1); }
+        else if(pv === 'das' && pvv === 'volta'){ out.splice(out.length - 2, 2); if(agNorm(out[out.length - 1] || '') === 'por') out.pop(); out.push('às'); }
+        else if(pvo === 'à') out[out.length - 1] = 'às';
+        out.push(agHm(h, mm)); i += k - 1; continue;
+      }
+    }
+    if(w === 'urgente'){ out.push('!!!'); continue; }
+    if(w === 'com' && w1 === 'urgencia'){ out.push('!!!'); i++; continue; }
+    if(w === 'prioridade' && /^(alta|maxima|media|baixa)$/.test(w1)){ out.push({alta:'!!!', maxima:'!!!', media:'!!', baixa:'!'}[w1]); i++; continue; }
+    if((/^(no|na|do|da|pro|pra|ao)$/.test(w) && /^(projeto|lista|pasta)$/.test(w1)) || (/^(para|pra)$/.test(w) && /^(o|a)$/.test(w1) && /^(projeto|lista|pasta)$/.test(w2))){
+      const j = /^(projeto|lista|pasta)$/.test(w1) ? i + 2 : i + 3, pj = agProjetoFalado(n, j);
+      if(pj){ out.push('#' + pj.p.name.replace(/\s+/g, '')); i = j + pj.k - 1; continue; }
+    }
+    out.push(t[i]);
+  }
+  return {txt:out.join(' ').replace(/\s+/g, ' ').replace(/^[\s,;:–-]+|[\s,;]+$/g, '').trim(), tipo};
+}
+
+/* ---------- lista de compras falada, sem vírgula: "leite pão e ovos", "2 litros de leite 1 dúzia de ovos" ---------- */
+function agMercadoSeg(p){
+  const o = String(p || '').trim().split(/\s+/).filter(Boolean);
+  if(o.length < 2) return null;
+  const k = o.map(w => mcToks(w).join(' '));
+  const qtd = w => /^\d+([.,]\d+)?[a-z]*$/i.test(w) || AG_NUM[semAcento(w)] != null || /^(meia|meio)$/i.test(w);
+  const segs = [];
+  let i = 0;
+  while(i < o.length){
+    const ini = i;
+    if(qtd(o[i]) && i + 1 < o.length){ i++; if(mcUnid(o[i]) && i + 1 < o.length) i++; if(/^(de|do|da|dos|das)$/.test(k[i]) && i + 1 < o.length) i++; }
+    let n = 0;
+    for(const kw of mcKW()){
+      const m = kw.toks.length;
+      if(m <= n || i + m > o.length) continue;
+      let ok = true;
+      for(let j = 0; j < m; j++) if(k[i + j] !== kw.toks[j]){ ok = false; break; }
+      if(ok) n = m;
+    }
+    if(!n){
+      if(!segs.length || ini !== i) return null;
+      /* "suco de laranja", "água com gás": o conector e a palavra seguinte continuam o item; palavra solta também ("leite integral") */
+      const cola = /^(de|do|da|dos|das|com|sem)$/.test(k[i]) && i + 1 < o.length ? 2 : 1;
+      segs[segs.length - 1].push(...o.slice(i, i + cola)); i += cola;
+      continue;
+    }
+    segs.push(o.slice(ini, i + n)); i += n;
+  }
+  return segs.length > 1 ? segs.map(x => x.join(' ')) : null;
+}
+/* "uma dúzia de ovos" vira "1 dúzia de ovos" */
+function agQtdPalavra(p){
+  const m = String(p).match(/^(\S+)\s+(?=\S)/), v = m ? AG_NUM[semAcento(m[1])] : null;
+  return v != null && v <= 12 ? v + String(p).slice(m[1].length) : p;
+}
+
+/* ---------- o + do celular começa ouvindo ---------- */
+const VOZ_NAT = capPlugin('Voz');
+const VOZ = {ok:null, aberto:false, estado:'', texto:'', destino:'agora', rec:null, tentativa:0, ouvinte:false, longo:false, toqueT:0, nivel:false, foco:null};
+let VOZ_SEM_FOCO = false;
+const VOZ_TXT = {abrindo:'Abrindo o microfone…', ouvindo:'Pode falar', falando:'Ouvindo…', processando:'Entendendo…', pronto:'Anotando…',
+  nada:'Não ouvi nada', cancelado:'Parou de ouvir', rede:'Sem internet para entender a voz', permissao:'O Central não tem acesso ao microfone',
+  microfone:'O microfone não respondeu', idioma:'O reconhecimento de voz deste aparelho não tem português', ocupado:'O reconhecimento de voz está ocupado',
+  indisponivel:'Este aparelho não reconhece voz', erro:'Não deu para ouvir'};
+const VOZ_DICA = {nada:'Toque no microfone e fale de novo.', cancelado:'Toque no microfone e fale de novo.', rede:'Digite, ou tente de novo com internet.',
+  permissao:'Toque no microfone para permitir, ou digite.', microfone:'Toque no microfone para tentar de novo.', idioma:'Use o Digitar.',
+  ocupado:'Toque no microfone para tentar de novo.', indisponivel:'Use o Digitar.', erro:'Toque no microfone para tentar de novo.'};
+const VOZ_EX = {agora:['ligar pro banco amanhã', 'dentista sexta às 2 da tarde', 'meditar todo dia de manhã', 'leite, pão e café', 'me lembra daqui a 20 minutos de tirar o bolo'],
+  tarefas:['revisar a minuta amanhã', 'pagar o boleto até sexta, urgente', 'ligar pro contador segunda que vem'],
+  lembretes:['tomar remédio às 8 da noite', 'reunião segunda às 10', 'pagar o condomínio todo dia 10'],
+  habitos:['ler 10 páginas toda noite', 'academia segunda, quarta e sexta às 7'], mercado:['leite, pão e ovos', '2 quilos de arroz e feijão']};
+function vozWeb(){ return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
+function vozPode(){ return VOZ.ok !== false && !!(VOZ_NAT || vozWeb()); }
+function vozCelular(){ return NATIVE || !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+function vozPadrao(){ return S.meta.vozPadrao !== false && vozCelular() && vozPode(); }
+function vozChecar(){
+  const marca = () => { document.documentElement.classList.toggle('voz-ok', vozPode()); if(VIEW === 'dados') renderAgCard(); };
+  if(VOZ_NAT && typeof VOZ_NAT.disponivel === 'function'){
+    capCall(VOZ_NAT.disponivel()).then(r => { VOZ.ok = !!(r && r.disponivel); marca(); }).catch(() => { VOZ.ok = false; marca(); });
+  }else VOZ.ok = !!(VOZ_NAT || vozWeb());
+  marca();
+}
+setTimeout(vozChecar, 0);
+function vozDestino(){ return ['tarefas', 'lembretes', 'habitos', 'mercado'].includes(VIEW) ? VIEW : 'agora'; }
+function vozOnde(){
+  const d = VOZ.destino;
+  if(d === 'tarefas'){ const p = TF === 'proj' ? projById(TPROJ) : null; return p ? 'Nova tarefa em ' + p.name : TF === 'hoje' ? 'Nova tarefa para hoje' : 'Nova tarefa'; }
+  return {lembretes:'Novo lembrete', habitos:'Novo hábito', mercado:'Para o mercado'}[d] || 'O que apareceu?';
+}
+function vozMontar(){
+  if($('#voz')) return;
+  const d = document.createElement('div');
+  d.id = 'voz'; d.className = 'voz';
+  d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'vozOnde');
+  d.innerHTML = '<div class="voz-fundo" data-action="voz-cancelar"></div>' +
+    '<div class="voz-folha">' +
+      '<p class="voz-onde" id="vozOnde"></p>' +
+      '<button class="voz-mic" id="vozMic" type="button" data-action="voz-mic"><span class="voz-anel" aria-hidden="true"></span>' + licn('mic') + '</button>' +
+      '<p class="voz-estado" id="vozEstado" aria-live="polite"></p>' +
+      '<p class="voz-texto" id="vozTexto"></p>' +
+      '<div class="qa-prev voz-prev" id="vozPrev"></div>' +
+      '<div class="voz-pe"><button class="btn btn-ghost" type="button" data-action="voz-digitar">' + licn('keyboard') + 'Digitar</button>' +
+        '<div class="grow"></div><button class="btn btn-ghost" type="button" data-action="voz-cancelar">Cancelar</button></div>' +
+    '</div>';
+  document.body.appendChild(d);
+}
+function vozAbrir(dest){
+  vozMontar();
+  if(typeof popFechar === 'function') popFechar();
+  if(AG_ADD) agCapFechar();
+  if(TK_ADD) qaFechar();
+  if(LM_ADD) lmQaFechar();
+  if(MC_ADD) mcQaFechar();
+  if(HB_ADD) hbQaFechar();
+  /* o aviso da última anotação continua (sobe para o topo), com o Desfazer dela */
+  VOZ.foco = vozCelular() ? null : document.activeElement;
+  VOZ.destino = dest || vozDestino(); VOZ.aberto = true; VOZ.texto = ''; VOZ.nivel = false;
+  $('#vozOnde').textContent = vozOnde();
+  $('#voz').classList.add('on');
+  $('#voz').classList.toggle('sem-nivel', !VOZ_NAT);
+  document.documentElement.classList.add('voz-on');
+  try{ $('#vozMic').focus({preventScroll:true}); }catch(e){}
+  haptic('light');
+  vozOuvir();
+}
+function vozOuvir(){
+  VOZ.texto = '';
+  vozEstado('abrindo'); vozTextoSync();
+  const id = ++VOZ.tentativa;
+  if(VOZ_NAT){
+    if(!VOZ.ouvinte){ VOZ.ouvinte = true; capOn(VOZ_NAT, 'voz', vozEvento); }
+    let p;
+    try{ p = VOZ_NAT.ouvir({idioma:'pt-BR'}); }catch(e){ vozFalha('indisponivel'); return; }
+    Promise.resolve(p).then(r => { if(id === VOZ.tentativa) vozFim((r && r.texto) || ''); },
+      e => { if(id === VOZ.tentativa) vozFalha((e && e.code) || 'erro', e && e.data && e.data.parcial); });
+    return;
+  }
+  const SR = vozWeb();
+  if(!SR){ vozFalha('indisponivel'); return; }
+  if(VOZ.rec){ try{ VOZ.rec.abort(); }catch(e){} VOZ.rec = null; }
+  let rec;
+  try{ rec = new SR(); }catch(e){ vozFalha('indisponivel'); return; }
+  VOZ.rec = rec;
+  rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  let final = '', erro = '';
+  rec.onstart = () => { if(id === VOZ.tentativa) vozEstado('ouvindo'); };
+  rec.onspeechstart = () => { if(id === VOZ.tentativa) vozEstado('falando'); };
+  rec.onresult = ev => {
+    if(id !== VOZ.tentativa) return;
+    let txt = '', fin = '';
+    for(let i = 0; i < ev.results.length; i++){ txt += ev.results[i][0].transcript; if(ev.results[i].isFinal) fin = txt; }
+    if(fin) final = fin;
+    VOZ.texto = txt.trim();
+    if(VOZ.estado !== 'processando') vozEstado('falando');
+    vozTextoSync();
+  };
+  rec.onspeechend = () => { if(id === VOZ.tentativa) vozEstado('processando'); };
+  rec.onerror = ev => { erro = (ev && ev.error) || 'erro'; };
+  rec.onend = () => {
+    if(id !== VOZ.tentativa) return;
+    VOZ.rec = null;
+    const t = (final || VOZ.texto || '').trim();
+    if(t && (!erro || erro === 'no-speech' || erro === 'aborted')) vozFim(t);
+    else vozFalha({'no-speech':'nada', aborted:'cancelado', 'audio-capture':'microfone', 'not-allowed':'permissao', 'service-not-allowed':'permissao',
+      network:'rede', 'language-not-supported':'idioma'}[erro] || (erro ? 'erro' : 'nada'), t);
+  };
+  try{ rec.start(); }catch(e){ vozFalha('erro'); }
+}
+function vozEvento(e){
+  if(!VOZ.aberto || !e) return;
+  if(e.tipo === 'pronto'){ if(VOZ.estado === 'abrindo') vozEstado('ouvindo'); }
+  else if(e.tipo === 'falando') vozEstado('falando');
+  else if(e.tipo === 'parcial'){ VOZ.texto = String(e.texto || ''); if(VOZ.estado !== 'processando') vozEstado('falando'); vozTextoSync(); }
+  else if(e.tipo === 'nivel') vozNivel(+e.nivel || 0);
+  else if(e.tipo === 'processando') vozEstado('processando');
+}
+function vozNivel(v){
+  const m = $('#vozMic');
+  if(!m) return;
+  if(v > 0 && !VOZ.nivel){ VOZ.nivel = true; $('#voz').classList.remove('sem-nivel'); }
+  m.style.setProperty('--nivel', Math.max(0, Math.min(1, v)).toFixed(2));
+}
+function vozEstado(st){
+  VOZ.estado = st;
+  const v = $('#voz');
+  if(!v) return;
+  v.dataset.estado = st;
+  $('#vozEstado').textContent = VOZ_TXT[st] || '';
+  const ouvindo = ['abrindo', 'ouvindo', 'falando'].includes(st), mic = $('#vozMic');
+  mic.setAttribute('aria-label', ouvindo ? 'Parar e anotar' : 'Falar de novo');
+  mic.title = ouvindo ? 'Parar e anotar' : 'Falar de novo';
+  mic.disabled = st === 'processando' || st === 'pronto';
+  if(!ouvindo) vozNivel(0);
+}
+function vozTextoSync(){
+  const el = $('#vozTexto'), pv = $('#vozPrev');
+  if(!el) return;
+  const t = VOZ.texto.trim(), st = VOZ.estado;
+  if(!t){
+    const xs = VOZ_EX[VOZ.destino] || VOZ_EX.agora;
+    el.className = 'voz-texto dica';
+    el.textContent = VOZ_DICA[st] || (st === 'abrindo' || st === 'ouvindo' ? 'Por exemplo: “' + xs[VOZ.tentativa % xs.length] + '”' : '');
+    pv.innerHTML = '';
+    return;
+  }
+  el.className = 'voz-texto';
+  el.textContent = cap1(t);
+  el.scrollTop = el.scrollHeight;
+  pv.innerHTML = vozPrevHTML(t);
+}
+/* o tipo: no Agora, o que o texto disser; nas abas, o da aba */
+function vozTipo(t){
+  let d;
+  AG_VOZ = true;
+  try{ d = agTipoDe(cap1(String(t || '').trim())); }finally{ AG_VOZ = false; }
+  const forc = {tarefas:'tarefa', lembretes:'lembrete', habitos:'habito', mercado:'mercado'}[VOZ.destino];
+  return forc ? {tipo:forc, txt:d.txt} : d;
+}
+function vozPrevHTML(t){
+  const d = vozTipo(t);
+  const tok = (ic, txt, cls) => '<span class="qa-tok' + (cls ? ' ' + cls : '') + '">' + (ic ? licn(ic) : '') + esc(txt) + '</span>';
+  const lab = {tarefa:['clipboard-list', 'Tarefa'], lembrete:['bell', 'Lembrete'], habito:['target', 'Hábito'], mercado:['shopping-cart', 'Mercado']}[d.tipo];
+  let h = tok(lab[0], lab[1], 'voz-tipo');
+  if(d.tipo === 'lembrete' && VOZ.destino === 'lembretes'){
+    /* na aba Lembretes, como o adicionar dela: sem data e sem hora, fica sem data */
+    const q = lmParse(agSemDuracao(d.txt)), rec = q.rec, time = q.time || '';
+    let date = q.date || null;
+    if(!date && (rec || time)) date = rec ? lmPrimeiraData(rec, time) : (time > lmAgora() ? today() : addD(today(), 1));
+    h += tok('calendar', date ? tkDataTxt(date) : 'sem data');
+    if(time) h += tok('clock', time);
+    if(rec) h += tok('repeat', recResumo(lmRepFixa(Object.assign({}, rec), date || today())));
+    return h + '<span class="qa-titulo">' + esc(cap1(agTiraProt(q.title).replace(/^(de|que)\s+/i, ''))) + '</span>';
+  }
+  if(d.tipo !== 'tarefa') return h + agPrevHTML(d);
+  const q = agTarefaDe(d.txt), p = projById(q.projectId);
+  if(q.due) h += tok('calendar', tkDataTxt(q.due));
+  else if(VOZ.destino === 'agora') h += tok('', 'para decidir depois', 'voz-sem');
+  if(p) h += '<span class="qa-tok">' + projIco(p) + esc(p.name) + '</span>';
+  if(q.priority) h += '<span class="qa-tok pr' + q.priority + '">' + licn('flag') + PRIO_TXT[q.priority] + '</span>';
+  q.tags.forEach(tg => h += tok('', '#' + tg));
+  return h + '<span class="qa-titulo">' + esc(q.title) + '</span>';
+}
+function vozFim(texto){
+  if(!VOZ.aberto) return;
+  VOZ.texto = String(texto || '').trim();
+  if(VOZ.texto.length < 2){ VOZ.texto = ''; vozEstado('nada'); vozTextoSync(); return; }
+  /* "cancela", "esquece", "deixa pra lá": desiste sem anotar */
+  if(/^(cancela|cancelar|esquece|esquecer|deixa (pra|para) la|nao|nada)$/.test(agNorm(VOZ.texto.replace(/[.!?,]+$/, '')))){ vozFechar(); toast('Nada anotado.'); return; }
+  vozEstado('pronto'); vozTextoSync();
+  vozAnotar(VOZ.texto);
+}
+function vozFalha(code, parcial){
+  if(!VOZ.aberto) return;
+  code = {UNIMPLEMENTED:'indisponivel', UNAVAILABLE:'indisponivel'}[code] || code;
+  if(!VOZ_TXT[code] || ['abrindo', 'ouvindo', 'falando', 'processando', 'pronto'].includes(code)) code = 'erro';
+  if(code === 'indisponivel'){ VOZ.ok = false; document.documentElement.classList.remove('voz-ok'); }
+  if(parcial) VOZ.texto = String(parcial);
+  if(code === 'nada' || code === 'cancelado') haptic('light');
+  vozEstado(code); vozTextoSync();
+}
+function vozMic(){
+  if(['abrindo', 'ouvindo', 'falando'].includes(VOZ.estado)){ vozParar(); return; }
+  if(VOZ.estado === 'indisponivel' || VOZ.estado === 'idioma'){ vozDigitar(); return; }
+  vozOuvir();
+}
+function vozParar(){
+  vozEstado('processando');
+  if(VOZ_NAT) capCall(VOZ_NAT.parar());
+  else if(VOZ.rec){ try{ VOZ.rec.stop(); }catch(e){} }
+}
+function vozFechar(){
+  VOZ.aberto = false;
+  const v = $('#voz');
+  if(v) v.classList.remove('on');
+  document.documentElement.classList.remove('voz-on');
+  /* no PC, o foco volta para onde estava (no celular, não: puxaria o teclado) */
+  const f = VOZ.foco; VOZ.foco = null;
+  if(f && f.focus && document.body.contains(f) && f.id !== 'vozMic') try{ f.focus({preventScroll:true}); }catch(e){}
+}
+function vozCancelar(){
+  if(!VOZ.aberto) return;
+  VOZ.tentativa++;
+  if(VOZ_NAT) capCall(VOZ_NAT.cancelar());
+  else if(VOZ.rec){ try{ VOZ.rec.abort(); }catch(e){} VOZ.rec = null; }
+  vozFechar();
+}
+/* campo de digitar do destino, com o que já foi ouvido */
+function vozTextoAbrir(dest, v){
+  if(dest === 'tarefas'){ qaAbrir(); const i = $('#qaTitle'); if(i && v){ i.value = v; qaPreview(); } }
+  else if(dest === 'lembretes'){ lmQaAbrir(); const i = $('#rlTitle'); if(i && v){ i.value = v; lmPreview(); } }
+  else if(dest === 'habitos'){ hbQaAbrir(); const i = $('#hbInp'); if(i && v){ i.value = v; hbPreview(); } }
+  else if(dest === 'mercado'){ mcQaAbrir(); const i = $('#shopInp'); if(i && v){ i.value = v; mcPreview(); } }
+  else agCapAbrir(v || null);
+}
+function vozDigitar(){
+  const t = VOZ.texto.trim(), dest = VOZ.destino;
+  vozCancelar();
+  vozTextoAbrir(dest, t ? cap1(t) : '');
+}
+/* anota o que foi dito; o aviso diz o que virou e tem Desfazer */
+function vozAnotar(t){
+  const d = vozTipo(t), dest = VOZ.destino;
+  const col = {tarefa:'tasks', lembrete:'reminders', habito:'habits', mercado:'shoppingItems'}[d.tipo];
+  const antes = JSON.parse(JSON.stringify(S[col])), ids = new Set(S[col].map(x => x.id));
+  let r = null;
+  VOZ_SEM_FOCO = true;
+  try{
+    if(dest === 'agora') r = d.tipo === 'mercado' ? agCriarMercado(d.txt) : d.tipo === 'habito' ? agCriarHabito(d.txt) : d.tipo === 'lembrete' ? agCriarLembrete(d.txt) : agCriarTarefa(d.txt, '');
+    else r = vozNaAba(d, dest);
+  }finally{ VOZ_SEM_FOCO = false; }
+  vozFechar();
+  if(!r){ toast('Não deu para anotar “' + corta(cap1(t), 60) + '”.', 'Digitar', () => vozTextoAbrir(dest, cap1(t))); return; }
+  if(r.erro){ if(r.abrir) toast(r.erro, 'Abrir', r.abrir); else toast(r.erro); return; }
+  const novos = S[col].filter(x => !ids.has(x.id));
+  if(dest === 'agora' && !r.igual){ sfx('add'); haptic('light'); }
+  save(); render();
+  const msg = vozMsg(d.tipo, novos, r);
+  if(r.igual) toast(msg);
+  else toast(msg, 'Desfazer', agDesfazerDe(col, antes));
+}
+/* desfazer só o que a anotação mexeu: tira o que ela criou e volta o que ela alterou (se ninguém mexeu de novo) */
+function agDesfazerDe(col, antes){
+  const velho = new Map(antes.map(x => [x.id, JSON.stringify(x)])), depois = new Map(S[col].map(x => [x.id, JSON.stringify(x)]));
+  const novos = new Set([...depois.keys()].filter(id => !velho.has(id)));
+  const mudados = [...depois.keys()].filter(id => velho.has(id) && velho.get(id) !== depois.get(id));
+  return () => {
+    S[col] = S[col].filter(x => !novos.has(x.id));
+    mudados.forEach(id => { const i = S[col].findIndex(x => x.id === id); if(i >= 0 && JSON.stringify(S[col][i]) === depois.get(id)) S[col][i] = JSON.parse(velho.get(id)); });
+    save(); render(); sfx('undo');
+  };
+}
+/* nas abas, o adicionar da própria aba (lista, projeto e corredor de onde a pessoa está) */
+/* o que acabou de ser criado pela aba começa com maiúscula ("sexta que vem jantar com a Ana") */
+function vozMaiuscula(col, campo){ const x = S[col].find(y => y.id === window.__novo); if(x && x[campo]) x[campo] = cap1(x[campo]); }
+/* o que estava escrito e escolhido na folha da aba fica guardado e volta depois (vale só o que foi dito) */
+function vozNaAba(d, dest){
+  if(dest === 'tarefas'){
+    const i = $('#qaTitle'), du = $('#qaDue');
+    if(!i) return null;
+    const g = {v:i.value, du:du ? du.value : '', prio:QA_PRIO, proj:QA_PROJ, cx:QA_CAIXA};
+    i.value = d.txt; if(du) du.value = ''; QA_PRIO = null; QA_PROJ = ''; QA_CAIXA = false;
+    try{ quickAdd(); }finally{ i.value = g.v; if(du) du.value = g.du; QA_PRIO = g.prio; QA_PROJ = g.proj; QA_CAIXA = g.cx; }
+    vozMaiuscula('tasks', 'title'); qaFechar(); return {};
+  }
+  if(dest === 'lembretes'){
+    const i = $('#rlTitle'), dt = $('#rlDate');
+    if(!i) return null;
+    const g = {v:i.value, dt:dt ? dt.value : '', qa:LM_QA};
+    i.value = d.txt; if(dt) dt.value = ''; LM_QA = {hora:'', rep:'', cat:''};
+    try{ quickAddLem(); }finally{ i.value = g.v; if(dt) dt.value = g.dt; LM_QA = g.qa; }
+    vozMaiuscula('reminders', 'title'); lmQaFechar(); return {};
+  }
+  if(dest === 'habitos'){
+    const i = $('#hbInp');
+    if(!i) return null;
+    const g = {v:i.value, qa:HB_QA};
+    HB_QA = {dias:null, quando:null};
+    try{
+      const m = hbMontar(d.txt);
+      if(!m) return null;
+      const ativo = hbAtivos().find(x => semAcento(x.name) === semAcento(m.name));
+      if(ativo) return {erro:ativo.name + ' já está nos hábitos.', abrir:() => hbAbrir(ativo.id)};
+      i.value = d.txt; hbQuickAdd(); hbQaFechar();
+    }finally{ i.value = g.v; HB_QA = g.qa; }
+    return {};
+  }
+  /* corredor pelo nome de cada item, não o escolhido na folha */
+  if(dest === 'mercado') return agCriarMercado(d.txt, '');
+  return null;
+}
+function vozMsg(tipo, novos, r){
+  const x = novos[0];
+  if(tipo === 'tarefa' && x){
+    const p = projById(x.projectId);
+    return x.title + ': ' + (x.due ? 'tarefa para ' + tkDataTxt(x.due) : x.inbox ? 'tarefa na caixa de entrada' : VOZ.destino === 'agora' ? 'fica para decidir depois' : 'tarefa sem data') +
+      (p ? ', em ' + p.name : '') + '.';
+  }
+  if(tipo === 'lembrete' && x) return x.title + ': lembrete ' + (x.date ? 'para ' + lmQuando(x) : 'sem data') + (x.recurrence ? ', ' + recResumo(x.recurrence).toLowerCase() : '') + '.';
+  if(tipo === 'habito' && x && !(r && r.msg)){
+    const dias = hbFreqTxt(hbDiasDe(x)).replace(/^Só /, '');
+    return x.name + (schedOn(x, today()) ? ' começa hoje.' : ' entra nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.');
+  }
+  return (r && r.msg) || 'Anotado.';
+}
+/* segurar o + abre o campo de digitar (pelo tempo ou pelo toque longo do próprio Android) */
+function vozSegurar(){
+  clearTimeout(VOZ.toqueT);
+  if(VOZ.longo || VOZ.aberto || !vozPadrao()) return;
+  VOZ.longo = true; haptic('medium'); vozTextoAbrir(vozDestino(), '');
+}
+document.addEventListener('pointerdown', e => {
+  VOZ.longo = false;
+  const b = e.target && e.target.closest ? e.target.closest('.bn-anotar') : null;
+  clearTimeout(VOZ.toqueT);
+  if(!b || !vozPadrao()) return;
+  VOZ.toqueT = setTimeout(vozSegurar, 420);
+});
+['pointerup', 'pointercancel'].forEach(tp => document.addEventListener(tp, () => clearTimeout(VOZ.toqueT)));
+document.addEventListener('contextmenu', e => { if(e.target && e.target.closest && e.target.closest('.bn-anotar')){ e.preventDefault(); vozSegurar(); } });
+/* dica de uma vez só: espera o aviso que está na tela sair (o de anotar falando tem Desfazer) */
+function dicaToast(msg, n){
+  const t = $('#toast');
+  if(t && t.classList.contains('on') && (n || 0) < 8){ setTimeout(() => dicaToast(msg, (n || 0) + 1), 1500); return; }
+  toast(msg);
 }
 
 /* ===================== Render: Tarefas ===================== */
@@ -3825,7 +4467,7 @@ function renderTarefas(){
   if(window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#tLista .trow.tk:not(.done)')){
     let visto = true;
     try{ visto = localStorage.getItem('central.dicaArrastar') === '1'; if(!visto) localStorage.setItem('central.dicaArrastar', '1'); }catch(e){}
-    if(!visto) setTimeout(() => toast('Dica: arraste uma tarefa para a direita para concluir, para a esquerda para reagendar.'), 700);
+    if(!visto) setTimeout(() => dicaToast('Dica: arraste uma tarefa para a direita para concluir, para a esquerda para reagendar.'), 700);
   }
 }
 /* menu ⋮ da lista */
@@ -4960,7 +5602,7 @@ function renderLembretes(){
   if(window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#rlLista .trow.lm:not(.done):not(.aniv)')){
     let visto = true;
     try{ visto = localStorage.getItem('central.dicaArrastarLem') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarLem', '1'); }catch(e){}
-    if(!visto) setTimeout(() => toast('Dica: arraste um lembrete para a direita para dispensar, para a esquerda para adiar.'), 700);
+    if(!visto) setTimeout(() => dicaToast('Dica: arraste um lembrete para a direita para dispensar, para a esquerda para adiar.'), 700);
   }
 }
 /* menu ⋮ da lista */
@@ -5260,7 +5902,7 @@ function quickAddLem(viaBotao){
   const fora = (LV === 'semdata' && nr.date) || (LV === 'cat' && nr.category !== LCAT);
   inp.value = ''; dEl.value = ''; LM_QA = {hora:'', rep:'', cat:''};
   window.__novo = nr.id; sfx('add'); haptic('light');
-  save(); render(); inp.focus();
+  save(); render(); if(!VOZ_SEM_FOCO) inp.focus();
   const msg = 'Lembrete ' + (nr.date ? 'para ' + lmQuando(nr) : 'sem data') + (nr.recurrence ? ', ' + recResumo(nr.recurrence).toLowerCase() : '') + '.';
   if(fora) toast(msg, 'Ver', () => { lmIrPara(nr.date ? 'agenda' : 'semdata'); lmQaFechar(); setView('lembretes'); });
   else toast(msg);
@@ -6399,7 +7041,7 @@ function renderMercado(){
   if(!desp && window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#shopLista .trow.mc:not(.done)')){
     let visto = true;
     try{ visto = localStorage.getItem('central.dicaArrastarMc') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarMc', '1'); }catch(e){}
-    if(!visto) setTimeout(() => toast('Dica: arraste um item para a direita para pôr no carrinho, para a esquerda para tirar da lista.'), 700);
+    if(!visto) setTimeout(() => dicaToast('Dica: arraste um item para a direita para pôr no carrinho, para a esquerda para tirar da lista.'), 700);
   }
 }
 function mcVistaHTML(){
@@ -7282,7 +7924,7 @@ function renderHabitos(){
   if(HB_V === 'hoje' && window.matchMedia && matchMedia('(pointer: coarse)').matches && document.querySelector('#hbLista .trow.hb:not(.done)')){
     let visto = true;
     try{ visto = localStorage.getItem('central.dicaArrastarHab') === '1'; if(!visto) localStorage.setItem('central.dicaArrastarHab', '1'); }catch(e){}
-    if(!visto) setTimeout(() => toast('Dica: arraste um hábito para a direita para marcar.'), 700);
+    if(!visto) setTimeout(() => dicaToast('Dica: arraste um hábito para a direita para marcar.'), 700);
   }
 }
 function hbTroca(){ const l = $('#hbLista'); if(l && animOn()){ l.classList.remove('troca'); void l.offsetWidth; l.classList.add('troca'); } }
@@ -7578,7 +8220,7 @@ function hbQuickAdd(viaBotao){
     if(m.cue) arquivado.cue = m.cue;
     if(m.emojiTxt) arquivado.emoji = m.emojiTxt;
     window.__novo = arquivado.id; sfx('add'); haptic('light');
-    save(); render(); inp.focus();
+    save(); render(); if(!VOZ_SEM_FOCO) inp.focus();
     toast(arquivado.name + ' voltou do arquivo, com o histórico.');
     return;
   }
@@ -7586,7 +8228,7 @@ function hbQuickAdd(viaBotao){
     archived:false, createdAt:new Date().toISOString()};
   S.habits.push(h);
   window.__novo = h.id; sfx('add'); haptic('light');
-  save(); render(); inp.focus();
+  save(); render(); if(!VOZ_SEM_FOCO) inp.focus();
   const dias = hbFreqTxt(hbDiasDe(h)).replace(/^Só /, '');
   toast(h.name + (schedOn(h, today()) ? ' começa hoje.' : ' entra na lista nos dias dele: ' + dias.charAt(0).toLowerCase() + dias.slice(1) + '.'));
 }
@@ -8356,7 +8998,7 @@ function quickAdd(viaBotao){
   }
   inp.value = ''; dueEl.value = ''; QA_PRIO = null; QA_PROJ = '';
   window.__novo = base.id; sfx('add'); haptic('light');
-  save(); render(); inp.focus();
+  save(); render(); if(!VOZ_SEM_FOCO) inp.focus();
 }
 
 /* ===================== Reagendar ===================== */
@@ -8602,11 +9244,23 @@ document.addEventListener('click', e => {
   if(a === 'agf-pular'){ agFluxoPular(); return; }
   if(a === 'ag-ir'){ if($('#mback').classList.contains('on')) closeModal(); setView(el.dataset.v); return; }
   if(a === 'ag-mais-um'){
+    if(VOZ.longo){ VOZ.longo = false; return; }
+    if(vozPadrao()){ vozAbrir(); return; }
     if(VIEW === 'tarefas') qaAbrir(); else if(VIEW === 'lembretes') lmQaAbrir(); else if(VIEW === 'mercado') mcQaAbrir(); else if(VIEW === 'habitos') hbQaAbrir();
     else agCapAbrir();
     return;
   }
   if(a === 'ag-cap-abrir'){ agCapAbrir(); return; }
+  if(a === 'voz-abrir'){ vozAbrir('agora'); return; }
+  if(a === 'voz-mic'){ vozMic(); return; }
+  if(a === 'voz-cancelar'){ vozCancelar(); return; }
+  if(a === 'voz-digitar'){ vozDigitar(); return; }
+  if(a === 'voz-modo'){
+    S.meta.vozPadrao = S.meta.vozPadrao === false;
+    save(); renderAgCard(); sfx('tap'); haptic('light');
+    toast(S.meta.vozPadrao ? 'O + do celular começa ouvindo. Segure para digitar.' : 'O + do celular abre o campo de digitar.');
+    return;
+  }
   if(a === 'ag-cap-fechar'){ agCapFechar(); return; }
   if(a === 'ag-cap-enviar'){ agCapturar(); return; }
   if(a === 'ag-cap-tipo'){ const t = el.dataset.t; AG_TIPO = AG_TIPO === t ? '' : t; agPreview(); const i = $('#agInp'); if(i) i.focus(); return; }
@@ -9825,6 +10479,7 @@ document.addEventListener('click', e => {
 }, true);
 
 document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && VOZ.aberto){ vozCancelar(); return; }
   if(e.key === 'Escape' && ttFocoAberto()){ ttFocoFechar(); return; }
   if(e.key === 'Escape' && POP){ popFechar(); return; }
   if(e.key === 'Escape' && TK_ADD && !$('#mback').classList.contains('on')){ qaFechar(); return; }
@@ -10252,6 +10907,7 @@ function nativeInit(){
   window.__nativeLogin = loginNoChrome;
   if(CAPP){
     capOn(CAPP, 'backButton', () => {
+      if(VOZ.aberto){ vozCancelar(); return; }
       if(ttFocoAberto()){ ttFocoFechar(); return; }
       if(POP){ popFechar(); return; }
       if($('#mback').classList.contains('on')){ closeModal(); return; }

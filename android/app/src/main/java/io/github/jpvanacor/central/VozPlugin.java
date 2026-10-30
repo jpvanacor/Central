@@ -30,7 +30,8 @@ import java.util.List;
  * ouvir({idioma}): na primeira vez pede o microfone; depois escuta dentro do app e manda pelo evento "voz"
  * o andamento ({tipo: pronto | falando | parcial | nivel | processando}, com texto ou nível de 0 a 1).
  * Resolve com {texto, alternativas} quando a pessoa para de falar.
- * Se o microfone foi negado de vez, usa a janela de voz do Google (que tem o microfone dela).
+ * Sem o microfone do app (negado, ou a janela de permissão fechada), usa a janela de voz do Google, que tem o microfone dela;
+ * também quando o reconhecimento dentro do app não tem português, está ocupado ou não tem acesso ao microfone.
  * Falhas (code): nada, rede, permissao, microfone, idioma, ocupado, indisponivel, cancelado, erro.
  * parar(): termina agora com o que já ouviu. cancelar(): desiste sem anotar.
  */
@@ -42,6 +43,7 @@ public class VozPlugin extends Plugin {
     private PluginCall chamada;
     private String parcial = "";
     private long ultimoNivel = 0;
+    private int repeticao = 0;
 
     @PluginMethod
     public void disponivel(PluginCall call) {
@@ -53,12 +55,10 @@ public class VozPlugin extends Plugin {
 
     @PluginMethod
     public void ouvir(PluginCall call) {
-        PermissionState p = getPermissionState("microfone");
-        if (p == PermissionState.GRANTED) {
-            comecar(call);
-        } else if (p == PermissionState.DENIED) {
-            janela(call);
+        if (getPermissionState("microfone") == PermissionState.GRANTED) {
+            comecar(call, 0);
         } else {
+            // pede sempre: negado de vez, o Android responde na hora e segue para a janela do Google
             requestPermissionForAlias("microfone", call, "depoisDaPermissao");
         }
     }
@@ -66,9 +66,9 @@ public class VozPlugin extends Plugin {
     @PermissionCallback
     private void depoisDaPermissao(PluginCall call) {
         if (getPermissionState("microfone") == PermissionState.GRANTED) {
-            comecar(call);
+            comecar(call, 0);
         } else {
-            call.reject("Sem acesso ao microfone", "permissao");
+            janela(call);
         }
     }
 
@@ -96,7 +96,7 @@ public class VozPlugin extends Plugin {
     protected void handleOnPause() {
         // o app saiu da frente no meio da escuta: desiste (a janela do Google não passa por aqui)
         principal.post(() -> {
-            if (reconhecedor != null) desistir("cancelado");
+            if (reconhecedor != null || chamada != null) desistir("cancelado");
         });
     }
 
@@ -120,9 +120,10 @@ public class VozPlugin extends Plugin {
         return i;
     }
 
-    private void comecar(PluginCall call) {
+    private void comecar(PluginCall call, int vez) {
         principal.post(() -> {
-            desistir("cancelado");
+            if (vez == 0) desistir("cancelado");
+            else limpar();
             if (!SpeechRecognizer.isRecognitionAvailable(getContext())) {
                 if (temJanela()) {
                     janela(call);
@@ -133,6 +134,7 @@ public class VozPlugin extends Plugin {
             }
             chamada = call;
             parcial = "";
+            repeticao = vez;
             try {
                 reconhecedor = SpeechRecognizer.createSpeechRecognizer(getActivity());
                 reconhecedor.setRecognitionListener(new Ouvinte());
@@ -143,6 +145,34 @@ public class VozPlugin extends Plugin {
                 call.reject("Não deu para ouvir", "erro");
             }
         });
+    }
+
+    /* o reconhecimento dentro do app não deu: a janela de voz do Google, com a mesma chamada */
+    private void paraJanela() {
+        PluginCall c = chamada;
+        chamada = null;
+        limpar();
+        if (c == null) return;
+        if (temJanela()) {
+            janela(c);
+        } else {
+            JSObject d = new JSObject();
+            d.put("parcial", parcial);
+            c.reject("Reconhecimento de voz indisponível", "indisponivel", d);
+        }
+    }
+
+    /* tenta de novo uma vez (o serviço de voz às vezes ainda está fechando a escuta anterior) */
+    private boolean repetir() {
+        if (repeticao >= 1 || !parcial.trim().isEmpty() || chamada == null) return false;
+        final PluginCall c = chamada;
+        final int prox = repeticao + 1;
+        limpar();
+        // a chamada continua pendente: se cancelarem na espera, ela é recusada e não volta a ouvir
+        principal.postDelayed(() -> {
+            if (chamada == c) comecar(c, prox);
+        }, 350);
+        return true;
     }
 
     /* sem o microfone do app: a janela de voz do Google */
@@ -294,17 +324,22 @@ public class VozPlugin extends Plugin {
                     falhar("Sem conexão para entender a voz", "rede");
                     break;
                 case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-                    falhar("Sem acesso ao microfone", "permissao");
+                    // o app tem o microfone, mas o serviço de voz não: a janela do Google pede o dela
+                    if (getPermissionState("microfone") == PermissionState.GRANTED) paraJanela();
+                    else falhar("Sem acesso ao microfone", "permissao");
                     break;
                 case SpeechRecognizer.ERROR_AUDIO:
                     falhar("O microfone não respondeu", "microfone");
                     break;
                 case SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED:
                 case SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE:
-                    falhar("Português não disponível no reconhecimento de voz", "idioma");
+                    paraJanela();
                     break;
                 case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                    falhar("O reconhecimento de voz está ocupado", "ocupado");
+                    if (!repetir()) paraJanela();
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    if (!repetir()) falhar("Não deu para ouvir", "erro");
                     break;
                 default:
                     falhar("Não deu para ouvir", "erro");
